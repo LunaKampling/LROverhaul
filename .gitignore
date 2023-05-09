@@ -1,0 +1,8 @@
+.vscode
+*.user
+*.userprefs
+**/.vs
+**/obj
+**/packages
+build
+deploy

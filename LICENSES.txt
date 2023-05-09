@@ -1,0 +1,9 @@
+This program features code from the following libraries:
+
+Microsoft Public License
+NVorbis https://github.com/ioctlLR/NVorbis
+
+MIT License
+gwen-dotnet https://code.google.com/archive/p/gwen-dotnet/
+
+Paper Icons http://snwh.org/paper/icons by Sam Hewitt (http://samuelhewitt.com/) is licensed under CC-SA-4.0 http://creativecommons.org/licenses/by-sa/4.0/
