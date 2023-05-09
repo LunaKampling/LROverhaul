@@ -1,0 +1,426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AB45D1B5-B29D-4792-9CA8-C7C11E33A447}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>linerider</RootNamespace>
+    <AssemblyName>linerider</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AllowedReferenceRelatedFileExtensions>
+      *.pdb;
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>..\build</OutputPath>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>..\build</OutputPath>
+    <DebugType>portable</DebugType>
+    <WarningLevel>4</WarningLevel>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Addons\AddonManager.cs" />
+    <Compile Include="Addons\BaseAddon.cs" />
+    <Compile Include="Addons\MagicAnimator.cs" />
+    <Compile Include="Addons\LineGenerator\Generator.cs" />
+    <Compile Include="Addons\LineGenerator\GeneratorType.cs" />
+    <Compile Include="Addons\LineGenerator\CircleGenerator.cs" />
+    <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
+    <Compile Include="Game\TriggerType.cs" />
+    <Compile Include="Game\GameTrigger.cs" />
+    <Compile Include="IO\json\RiderData.cs" />
+    <Compile Include="IO\TriggerConverter.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="GameCanvas.cs" />
+    <Compile Include="Editor.cs" />
+    <Compile Include="GameResources.cs" />
+    <Compile Include="GameService.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="EntryPoint.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\AudioDevice.cs" />
+    <Compile Include="Audio\AudioService.cs" />
+    <Compile Include="Audio\AudioSource.cs" />
+    <Compile Include="Audio\AudioStreamer.cs" />
+    <Compile Include="Audio\Song.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Drawing\DrawOptions.cs" />
+    <Compile Include="Drawing\GenericVertex.cs" />
+    <Compile Include="Drawing\GLBuffer.cs" />
+    <Compile Include="Drawing\GLArray.cs" />
+    <Compile Include="Drawing\LineVAO.cs" />
+    <Compile Include="Drawing\GenericVAO.cs" />
+    <Compile Include="Drawing\GLEnableCap.cs" />
+    <Compile Include="Drawing\KnobState.cs" />
+    <Compile Include="Drawing\Models.cs" />
+    <Compile Include="Drawing\LineVertex.cs" />
+    <Compile Include="Drawing\MsaaFbo.cs" />
+    <Compile Include="Drawing\SafeFrameBuffer.cs" />
+    <Compile Include="Drawing\Shader.cs" />
+    <Compile Include="Drawing\Shaders.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Rendering\GameDrawingMatrix.cs" />
+    <Compile Include="Rendering\GameRenderer.cs" />
+    <Compile Include="Rendering\LineColorRenderer.cs" />
+    <Compile Include="Rendering\LineAccelRenderer.cs" />
+    <Compile Include="Rendering\WellRenderer.cs" />
+    <Compile Include="Rendering\LineRenderer.cs" />
+    <Compile Include="Rendering\LineDecorator.cs" />
+    <Compile Include="Rendering\RiderRenderer.cs" />
+    <Compile Include="Rendering\SimulationRenderer.cs" />
+    <Compile Include="Rendering\StaticRenderer.cs" />
+    <Compile Include="Rendering\TrackRenderer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\Lines\SelectionState.cs" />
+    <Compile Include="Game\Lines\GameLine.cs" />
+    <Compile Include="Game\Lines\LineTrigger.cs" />
+    <Compile Include="Game\Lines\LineType.cs" />
+    <Compile Include="Game\Lines\RedLine.cs" />
+    <Compile Include="Game\Lines\SceneryLine.cs" />
+    <Compile Include="Game\Lines\StandardLine.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\Camera\ICamera.cs" />
+    <Compile Include="Game\Camera\PredictiveCamera.cs" />
+    <Compile Include="Game\Camera\SoftCamera.cs" />
+    <Compile Include="Game\Camera\ClampCamera.cs" />
+    <Compile Include="Game\Camera\CameraBoundingBox.cs" />
+    <Compile Include="Game\Camera\CameraEntry.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\EditorCell.cs" />
+    <Compile Include="Game\EditorGrid.cs" />
+    <Compile Include="Game\FPSCounter.cs" />
+    <Compile Include="Game\GameScheduler.cs" />
+    <Compile Include="Game\HitTestManager.cs" />
+    <Compile Include="Game\RiderFrame.cs" />
+    <Compile Include="Game\Track.cs" />
+    <Compile Include="Game\Timeline.cs" />
+    <Compile Include="Game\Timeline.Engine.cs" />
+    <Compile Include="Game\TrackReader.cs" />
+    <Compile Include="Game\TrackWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\Physics\Bone.cs" />
+    <Compile Include="Game\Physics\CellLocation.cs" />
+    <Compile Include="Game\Physics\GridPoint.cs" />
+    <Compile Include="Game\Physics\ImmutablePointCollection.cs" />
+    <Compile Include="Game\Physics\SimulationGridOverlay.cs" />
+    <Compile Include="Game\Physics\RiderConstants.cs" />
+    <Compile Include="Game\Physics\Rider.cs" />
+    <Compile Include="Game\Physics\SimulationCell.cs" />
+    <Compile Include="Game\Physics\LineContainer.cs" />
+    <Compile Include="Game\Physics\SimulationGrid.cs" />
+    <Compile Include="Game\Physics\ISimulationGrid.cs" />
+    <Compile Include="Game\Physics\SimulationGridStatic.cs" />
+    <Compile Include="Game\Physics\SimulationPoint.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Tools\CurrentTools.cs" />
+    <Compile Include="Tools\EraserTool.cs" />
+    <Compile Include="Tools\HandTool.cs" />
+    <Compile Include="Tools\BezierTool.cs" />
+    <Compile Include="Tools\LineTool.cs" />
+    <Compile Include="Tools\MoveTool.cs" />
+    <Compile Include="Tools\SmoothPencilTool.cs" />
+    <Compile Include="Tools\SelectTool.cs" />
+    <Compile Include="Tools\LineSelection.cs" />
+    <Compile Include="Tools\PencilTool.cs" />
+    <Compile Include="Tools\SharedSwatches.cs" />
+    <Compile Include="Tools\Tool.cs" />
+    <Compile Include="Tools\Swatch.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IO\ffmpeg\FFMPEG.cs" />
+    <Compile Include="IO\ffmpeg\FFMPEGParameters.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IO\BigEndianReader.cs" />
+    <Compile Include="IO\BigEndianWriter.cs" />
+    <Compile Include="IO\SOL\Amf0.cs" />
+    <Compile Include="IO\SOL\Amf0Object.cs" />
+    <Compile Include="IO\SOL\sol_track.cs" />
+    <Compile Include="IO\SOL\SOLFile.cs" />
+    <Compile Include="IO\SOLLoader.cs" />
+    <Compile Include="IO\SOLWriter.cs" />
+    <Compile Include="IO\TrackIO.cs" />
+    <Compile Include="IO\TrackFeatures.cs" />
+    <Compile Include="IO\TrackMetadata.cs" />
+    <Compile Include="IO\TrackRecorder.cs" />
+    <Compile Include="IO\TrackSave.cs" />
+    <Compile Include="IO\TRKLoader.cs" />
+    <Compile Include="IO\TRKWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IO\json\JSONLoader.cs" />
+    <Compile Include="IO\json\JSONWriter.cs" />
+    <Compile Include="IO\json\line_json.cs" />
+    <Compile Include="IO\json\LZString.cs" />
+    <Compile Include="IO\json\track_json.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LRL\Coordinates.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Dialogs\ChangelogWindow.cs" />
+    <Compile Include="UI\Dialogs\ScreenshotWindow.cs" />
+    <Compile Include="UI\Dialogs\GeneratorWindow.cs" />
+    <Compile Include="UI\Dialogs\TriggerWindow.cs" />
+    <Compile Include="UI\PlatformImpl.cs" />
+    <Compile Include="UI\Hotkey.cs" />
+    <Compile Include="UI\Fonts.cs" />
+    <Compile Include="UI\InputUtils.cs" />
+    <Compile Include="UI\Keybinding.cs" />
+    <Compile Include="UI\KeyConflict.cs" />
+    <Compile Include="UI\GwenHelper.cs" />
+    <Compile Include="UI\UndoManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Dialogs\LoadWindow.cs" />
+    <Compile Include="UI\Dialogs\GameMenuWindow.cs" />
+    <Compile Include="UI\Dialogs\FFmpegDownloadWindow.cs" />
+    <Compile Include="UI\Dialogs\DialogBase.cs" />
+    <Compile Include="UI\Dialogs\PreferencesWindow.cs" />
+    <Compile Include="UI\Dialogs\ExportWindow.cs" />
+    <Compile Include="UI\Dialogs\LineWindow.cs" />
+    <Compile Include="UI\Dialogs\SaveWindow.cs" />
+    <Compile Include="UI\Dialogs\TrackInfoWindow.cs" />
+    <Compile Include="UI\Dialogs\RebindHotkeyWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Widgets\WidgetContainer.cs" />
+    <Compile Include="UI\Widgets\HotkeyWidget.cs" />
+    <Compile Include="UI\Widgets\TrackLabel.cs" />
+    <Compile Include="UI\Widgets\Sprite.cs" />
+    <Compile Include="UI\Widgets\LoadingSprite.cs" />
+    <Compile Include="UI\Widgets\TrackInfoBar.cs" />
+    <Compile Include="UI\Widgets\RightInfoBar.cs" />
+    <Compile Include="UI\Widgets\ColorSwatch.cs" />
+    <Compile Include="UI\Widgets\SwatchColorButton.cs" />
+    <Compile Include="UI\Widgets\TimelineWidget.cs" />
+    <Compile Include="UI\Widgets\ImageButton.cs" />
+    <Compile Include="UI\Widgets\Toolbar.cs" />
+    <Compile Include="UI\Widgets\Playhead.cs" />
+    <Compile Include="UI\Widgets\PlayheadMarker.cs" />
+    <Compile Include="UI\Widgets\ZoomSlider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Utils\Angle.cs" />
+    <Compile Include="Utils\Benchmark.cs" />
+    <Compile Include="Utils\AutoArray.cs" />
+    <Compile Include="Utils\DoubleRect.cs" />
+    <Compile Include="Utils\Constants.cs" />
+    <Compile Include="Utils\AsyncTask.cs" />
+    <Compile Include="Utils\FloatRect.cs" />
+    <Compile Include="Utils\ResourceSync.cs" />
+    <Compile Include="Utils\Line.cs" />
+    <Compile Include="Utils\Turtle.cs" />
+    <Compile Include="Utils\Utility.cs" />
+    <Compile Include="Utils\RectLRTB.cs" />
+    <Compile Include="Utils\ErrorLog.cs" />
+    <Compile Include="Utils\Settings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NVorbis, Version=0.8.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NVorbis.0.8.5.0\lib\NVorbis.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.IO.Compression.dll" />
+    <Reference Include="System.IO.Compression.FileSystem.dll" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.4.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.4.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="Utf8Json">
+      <HintPath>Utf8Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\beep.wav" />
+    <EmbeddedResource Include="Resources\DefaultColors.xml" />
+    <EmbeddedResource Include="Resources\DefaultSkin.png" />
+    <EmbeddedResource Include="Resources\icon.ico" />
+    <EmbeddedResource Include="Resources\loading.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\icons\swatch.png" />
+    <EmbeddedResource Include="Resources\icons\erasertool.png" />
+    <EmbeddedResource Include="Resources\icons\fast-forward.png" />
+    <EmbeddedResource Include="Resources\icons\flag.png" />
+    <EmbeddedResource Include="Resources\icons\flag_invalid.png" />
+    <EmbeddedResource Include="Resources\icons\movetool.png" />
+    <EmbeddedResource Include="Resources\icons\linetool.png" />
+    <EmbeddedResource Include="Resources\icons\menu.png" />
+    <EmbeddedResource Include="Resources\icons\pantool.png" />
+    <EmbeddedResource Include="Resources\icons\pause.png" />
+    <EmbeddedResource Include="Resources\icons\penciltool.png" />
+    <EmbeddedResource Include="Resources\icons\play.png" />
+    <EmbeddedResource Include="Resources\icons\rewind.png" />
+    <EmbeddedResource Include="Resources\icons\smoothpenciltool.png" />
+    <EmbeddedResource Include="Resources\icons\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ux\flagmarker.png" />
+    <EmbeddedResource Include="Resources\ux\playheadmarker.png" />
+    <EmbeddedResource Include="Resources\ux\cameraneedreset.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\cursors\closed_move_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\hand_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\eraser_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\line_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\move_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\pencil_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\select_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_bdiag_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_fdiag_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_ver_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_hor_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\default_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_all_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\zoom_32px.png" />
+    <EmbeddedResource Include="Resources\cursors\ibeam_32px.png" />
+
+    <EmbeddedResource Include="Resources\cursors\closed_move_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\hand_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\eraser_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\line_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\move_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\pencil_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\select_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_bdiag_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_fdiag_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_ver_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_hor_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\default_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_all_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\zoom_64px.png" />
+    <EmbeddedResource Include="Resources\cursors\ibeam_64px.png" />
+
+    <EmbeddedResource Include="Resources\cursors\closed_move_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\hand_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\eraser_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\line_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\move_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\pencil_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\select_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_bdiag_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_fdiag_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_ver_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_hor_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\default_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_all_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\zoom_96px.png" />
+    <EmbeddedResource Include="Resources\cursors\ibeam_96px.png" />
+
+    <EmbeddedResource Include="Resources\cursors\closed_move_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\hand_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\eraser_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\line_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\move_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\pencil_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\select_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_bdiag_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_fdiag_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_ver_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_hor_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\default_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\size_all_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\zoom_128px.png" />
+    <EmbeddedResource Include="Resources\cursors\ibeam_128px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\rider\body.png" />
+    <EmbeddedResource Include="Resources\rider\bodydead.png" />
+    <EmbeddedResource Include="Resources\rider\sled.png" />
+    <EmbeddedResource Include="Resources\rider\brokensled.png" />
+    <EmbeddedResource Include="Resources\rider\arm.png" />
+    <EmbeddedResource Include="Resources\rider\leg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\fonts\liberation_sans_15_0.png" />
+    <EmbeddedResource Include="Resources\fonts\liberation_sans_15.fnt" />
+    <EmbeddedResource Include="Resources\fonts\liberation_sans_15_bold_0.png" />
+    <EmbeddedResource Include="Resources\fonts\liberation_sans_15_bold.fnt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\shaders\simline.vert" />
+    <EmbeddedResource Include="Resources\shaders\simline.frag" />
+    <EmbeddedResource Include="Resources\shaders\rider.vert" />
+    <EmbeddedResource Include="Resources\shaders\rider.frag" />
+    <EmbeddedResource Include="Resources\shaders\floatgrid.frag" />
+    <EmbeddedResource Include="Resources\shaders\floatgrid.vert" />
+    <EmbeddedResource Include="Resources\shaders\simgrid.frag" />
+    <EmbeddedResource Include="Resources\shaders\simgrid.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\OpenTK.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>OpenTK.dll.config</Link>
+    </None>
+    <None Include="..\lib\gwen-lra\Gwen\bin\Gwen.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Gwen.pdb</Link>
+    </None>
+    <None Include="..\lib\gwen-lra\Gwen.Renderer.OpenTK\bin\Gwen.Renderer.OpenTK.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Gwen.Renderer.OpenTK.pdb</Link>
+    </None>
+    <None Include="openal32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\gwen-lra\Gwen\Gwen.csproj">
+      <Project>{ADDA2F43-96C0-497F-8216-29C67ABC9806}</Project>
+      <Name>Gwen</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\gwen-lra\Gwen.Renderer.OpenTK\Gwen.Renderer.OpenTK.csproj">
+      <Project>{41650C82-D630-4E5C-845A-F1513C8FDC99}</Project>
+      <Name>Gwen.Renderer.OpenTK</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\icons\beziertool.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

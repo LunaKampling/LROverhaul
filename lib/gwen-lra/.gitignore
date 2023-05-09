@@ -1,0 +1,8 @@
+*.xml
+*.dll
+*.pdb
+*.exe
+**/obj
+**/bin
+**/packages
+*.userprefs
