@@ -1,3 +1,4 @@
+using linerider.Utils;
 using System;
 using System.Collections.Generic;
 namespace linerider.IO.json
@@ -33,12 +34,12 @@ namespace linerider.IO.json
         public string creator { get; set; }
         public string description { get; set; }
         public float startZoom { get; set; }
-        public int bgR { get; set; }
-        public int bgG { get; set; }
-        public int bgB { get; set; }
-        public int lineR { get; set; }
-        public int lineG { get; set; }
-        public int lineB { get; set; }
+        public int bgR { get; set; } = (int) Math.Round(255f * Constants.ColorOffwhite.R);
+        public int bgG { get; set; } = (int) Math.Round(255f * Constants.ColorOffwhite.G);
+        public int bgB { get; set; } = (int) Math.Round(255f * Constants.ColorOffwhite.B);
+        public int lineR { get; set; } = (int) Math.Round(255f * Constants.DefaultLineColor.R);
+        public int lineG { get; set; } = (int) Math.Round(255f * Constants.DefaultLineColor.G);
+        public int lineB { get; set; } = (int) Math.Round(255f * Constants.DefaultLineColor.B);
         public bool zeroStart { get; set; }
         public float yGravity = 1; //Default grav
         public float xGravity = 0; //Default grav
