@@ -35,15 +35,20 @@ namespace linerider.Utils
         public static readonly string TracksDirectory = Program.UserDirectory + TracksFolderName + System.IO.Path.DirectorySeparatorChar;
         public const string TracksFolderName = "Tracks";
         public const string DefaultTrackName = "<untitled>";
+
         public const float DefaultZoom = 4;
         public const int PhysicsRate = 40;
         public static bool ScaleCamera = true;
         public const double MinimumZoom = 0.1;
         public const float MaxZoom = 24;
         public const float MaxSuperZoom = 200;
-        public const int MaxFrames = 40 * 60 * 60 * 3;// 3 hours of frames
+        public const int MaxFrames = 40 * 60 * 60 * 3; // 3 hours of frames
         public static Color DefaultKnobColor => Settings.NightMode
         ? Color.FromArgb(ColorNightMode.ToArgb())
         : Color.FromArgb(ColorWhite.ToArgb());
+
+        public static readonly string GithubPageHeader = "https://github.com/LunaKampling/LROverhaul";
+        public static readonly string GithubRawHeader = "https://raw.githubusercontent.com/LunaKampling/LROverhaul";
+        public static readonly string FfmpegHelperHeader = "https://github.com/jealouscloud/lra-ffmpeg/releases/download/ffmpeg4.0-x64/ffmpeg-";
     }
 }
