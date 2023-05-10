@@ -30,6 +30,7 @@ using Gwen.Skin;
 using Gwen.Controls;
 using Gwen;
 using Color = System.Drawing.Color;
+using linerider.Utils;
 
 namespace linerider
 {
@@ -239,7 +240,7 @@ namespace linerider
                 {
                     try
                     {
-                        OpenUrl(@"https://github.com/RatherBeLunar/LRA-Community-Edition/releases/latest");
+                        OpenUrl($"{Constants.GithubPageHeader}/releases/latest");
                     }
                     catch
                     {
