@@ -164,7 +164,7 @@ namespace linerider.UI
             };
             _generator.Clicked += (o, e) =>
             {
-                Debug.WriteLine("Generator Click");
+                _canvas.ShowGeneratorWindow(new OpenTK.Vector2d(e.X, e.Y));
             };
             _menu.Clicked += (o, e) =>
             {
