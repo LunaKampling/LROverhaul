@@ -23,11 +23,11 @@ namespace linerider.UI
             get
             {
                 if (OpenTK.Configuration.RunningOnMacOS)
-                    return "https://github.com/jealouscloud/lra-ffmpeg/releases/download/ffmpeg4.0-x64/ffmpeg-mac.zip";
+                    return $"{Constants.FfmpegHelperHeader}-mac.zip";
                 else if (OpenTK.Configuration.RunningOnWindows)
-                    return "https://github.com/jealouscloud/lra-ffmpeg/releases/download/ffmpeg4.0-x64/ffmpeg-win.zip";
+                    return $"{Constants.FfmpegHelperHeader}-win.zip";
                 else if (OpenTK.Configuration.RunningOnUnix)
-                    return "https://github.com/jealouscloud/lra-ffmpeg/releases/download/ffmpeg4.0-x64/ffmpeg-linux.zip";
+                    return $"{Constants.FfmpegHelperHeader}-linux.zip";
                 return null;
             }
         }

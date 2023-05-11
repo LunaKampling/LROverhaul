@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Utils;
 using OpenTK;
 using System;
 using System.Diagnostics;
@@ -190,31 +191,31 @@ namespace linerider
             //    return;
             //if (Settings.CheckForUpdates)
             //{
-                // new System.Threading.Thread(() =>
-                // {
-                //    try
-                //    {
-                //        using (WebClient wc = new WebClient())
-                //        {
-                //            string currentversion = wc.DownloadString("https://raw.githubusercontent.com/RatherBeLunar/LRA-Community-Edition/master/version");
-                //            var idx = currentversion.IndexOfAny(new char[] { '\r', '\n' });
-                //            if (idx != -1)
-                //            {
-                //                currentversion = currentversion.Remove(idx);
-                //            }
-                //            if (currentversion != Version && currentversion.Length > 0)
-                //            {
-                //                NewVersion = currentversion;
-                //            }
-                //        }
-                //    }
-                //    catch
-                //    {
-                //    }
-                //})
-                //{
-                //    IsBackground = true
-                //}.Start();
+            //    new System.Threading.Thread(() =>
+            //    {
+            //        try
+            //        {
+            //            using (WebClient wc = new WebClient())
+            //            {
+            //                string currentversion = wc.DownloadString($"{Constants.GithubRawHeader}/master/version");
+            //                var idx = currentversion.IndexOfAny(new char[] { '\r', '\n' });
+            //                if (idx != -1)
+            //                {
+            //                    currentversion = currentversion.Remove(idx);
+            //                }
+            //                if (currentversion != Version && currentversion.Length > 0)
+            //                {
+            //                    NewVersion = currentversion;
+            //                }
+            //            }
+            //        }
+            //        catch
+            //        {
+            //        }
+            //    })
+            //    {
+            //        IsBackground = true
+            //    }.Start();
             //}
         }
         public static int GetWindowWidth()
