@@ -495,6 +495,13 @@ namespace linerider
                 return GetBitmap("icons.swatch.png");
             }
         }
+        internal static System.Drawing.Bitmap generator_icon
+        {
+            get
+            {
+                return GetBitmap("icons.smoothpenciltool.png");
+            }
+        }
         #endregion
         #region ux
         internal static System.Drawing.Bitmap camera_need_reset
