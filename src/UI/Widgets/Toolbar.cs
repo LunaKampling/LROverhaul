@@ -40,6 +40,7 @@ namespace linerider.UI
         private ImageButton _pause;
         private ImageButton _stop;
         private ImageButton _flag;
+        private ImageButton _generator;
         private ImageButton _menu;
         private ColorSwatch _swatch;
         private ControlBase _buttoncontainer;
@@ -81,6 +82,7 @@ namespace linerider.UI
             _pause = CreateTool(GameResources.pause, "Pause (Space)");
             _stop = CreateTool(GameResources.stop_icon, "Stop (U)");
             _flag = CreateTool(GameResources.flag_icon, "Flag (I)");
+            _generator = CreateTool(GameResources.generator_icon, "Generator (G)");
             _menu = CreateTool(GameResources.menu_icon, "Options");
 
             _smpenbtn.IsHidden = true;
@@ -159,6 +161,10 @@ namespace linerider.UI
                 _editor.TogglePause();
                 _pause.IsHidden = true;
                 _start.IsHidden = false;
+            };
+            _generator.Clicked += (o, e) =>
+            {
+                _canvas.ShowGeneratorWindow(new OpenTK.Vector2d(e.X, e.Y));
             };
             _menu.Clicked += (o, e) =>
             {
