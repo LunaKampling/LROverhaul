@@ -1,3 +1,3 @@
 # Changelogs folder
 
-This folder contains the previous changelogs for LRTran!
+This folder contains the changelogs for past LRA variations!
