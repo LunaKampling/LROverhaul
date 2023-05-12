@@ -499,7 +499,7 @@ namespace linerider
         {
             get
             {
-                return GetBitmap("icons.smoothpenciltool.png");
+                return GetBitmap("icons.generator.png");
             }
         }
         #endregion

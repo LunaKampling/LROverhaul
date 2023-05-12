@@ -317,7 +317,6 @@
     <EmbeddedResource Include="Resources\cursors\size_all_32px.png" />
     <EmbeddedResource Include="Resources\cursors\zoom_32px.png" />
     <EmbeddedResource Include="Resources\cursors\ibeam_32px.png" />
-
     <EmbeddedResource Include="Resources\cursors\closed_move_64px.png" />
     <EmbeddedResource Include="Resources\cursors\hand_64px.png" />
     <EmbeddedResource Include="Resources\cursors\eraser_64px.png" />
@@ -333,7 +332,6 @@
     <EmbeddedResource Include="Resources\cursors\size_all_64px.png" />
     <EmbeddedResource Include="Resources\cursors\zoom_64px.png" />
     <EmbeddedResource Include="Resources\cursors\ibeam_64px.png" />
-
     <EmbeddedResource Include="Resources\cursors\closed_move_96px.png" />
     <EmbeddedResource Include="Resources\cursors\hand_96px.png" />
     <EmbeddedResource Include="Resources\cursors\eraser_96px.png" />
@@ -349,7 +347,6 @@
     <EmbeddedResource Include="Resources\cursors\size_all_96px.png" />
     <EmbeddedResource Include="Resources\cursors\zoom_96px.png" />
     <EmbeddedResource Include="Resources\cursors\ibeam_96px.png" />
-
     <EmbeddedResource Include="Resources\cursors\closed_move_128px.png" />
     <EmbeddedResource Include="Resources\cursors\hand_128px.png" />
     <EmbeddedResource Include="Resources\cursors\eraser_128px.png" />
@@ -421,6 +418,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\icons\beziertool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\icons\generator.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
