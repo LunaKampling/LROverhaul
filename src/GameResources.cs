@@ -40,8 +40,8 @@ namespace linerider
             screensize = 1;
             _px = "_" + (screensize * 32).ToString() + "px";
 
-            Debug.WriteLine(_px);
-            Debug.WriteLine(screensize);
+            //Debug.WriteLine(_px);
+            //Debug.WriteLine(screensize);
 
             if (Assembly == null)
             {
