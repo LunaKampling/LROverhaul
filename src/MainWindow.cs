@@ -207,19 +207,19 @@ namespace linerider
                     GameRenderer.DrawFloatGrid();
                 }
 
-                if ((InputUtils.Check(Hotkey.DrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawCollisionGrid)
+                if ((InputUtils.Check(Hotkey.PreferenceDrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawCollisionGrid)
                 {
                     GameRenderer.DbgDrawGrid();
                 }
 
-                if ((InputUtils.Check(Hotkey.DrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawAGWs)
+                if ((InputUtils.Check(Hotkey.PreferenceDrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawAGWs)
                 {
                     GameRenderer.DrawAGWs();
                 }
 
                 Track.Render(blend);
 
-                if ((InputUtils.Check(Hotkey.DrawDebugCamera) && !TrackRecorder.Recording) || Settings.DrawCamera)
+                if ((InputUtils.Check(Hotkey.PreferenceDrawDebugCamera) && !TrackRecorder.Recording) || Settings.DrawCamera)
                 {
                     GameRenderer.DbgDrawCamera();
                 }

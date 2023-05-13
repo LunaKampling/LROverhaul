@@ -84,8 +84,8 @@ namespace linerider.UI
             AddBinding(editorTable, "Toggle Advanced Visuals", Hotkey.PreferenceAllCheckboxSettings);
             AddBinding(editorTable, "Toggle Rider Visibility", Hotkey.PreferenceInvisibleRider);
             AddBinding(editorTable, "Toggle Track Overlay", Hotkey.ToolToggleOverlay);
-            AddBinding(editorTable, "Toggle Debug Grid", Hotkey.DrawDebugGrid);
-            AddBinding(editorTable, "Toggle Debug Camera", Hotkey.DrawDebugCamera);
+            AddBinding(editorTable, "Toggle Debug Grid", Hotkey.PreferenceDrawDebugGrid);
+            AddBinding(editorTable, "Toggle Debug Camera", Hotkey.PreferenceDrawDebugCamera);
 
             AddBinding(editorTable, "Remove Newest Line", Hotkey.EditorRemoveLatestLine);
             AddBinding(editorTable, "Undo Last Action", Hotkey.EditorUndo);

@@ -64,9 +64,12 @@ namespace linerider.UI
         PlaybackForward,
         PlaybackBackward,
         PlaybackResetCamera,
+
         PreferenceOnionSkinning,
         PreferenceAllCheckboxSettings,
         PreferenceInvisibleRider,
+        PreferenceDrawDebugGrid,
+        PreferenceDrawDebugCamera,
 
         PreferencesWindow,
         GameMenuWindow,
@@ -76,8 +79,6 @@ namespace linerider.UI
         SaveAsWindow,
         TriggerMenuWindow,
         LineGeneratorWindow,
-        DrawDebugGrid,
-        DrawDebugCamera,
 
         PlayButtonIgnoreFlag,
 
