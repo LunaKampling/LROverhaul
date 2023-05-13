@@ -83,6 +83,8 @@ namespace linerider.UI
             AddBinding(editortable, "Focus Last Line", Hotkey.EditorFocusLastLine);
             AddBinding(editortable, "Remove Newest Line", Hotkey.EditorRemoveLatestLine);
             AddBinding(editortable, "Toggle Track Overlay", Hotkey.ToolToggleOverlay);
+            AddBinding(editortable, "Undo Last Action", Hotkey.EditorUndo);
+            AddBinding(editortable, "Redo Last Undo Action", Hotkey.EditorRedo);
 
 
             var tool = _kbtree.Add("Tool", 150);

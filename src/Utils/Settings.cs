@@ -323,6 +323,10 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.ToolSelectBothJoints, new Keybinding(KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.LineToolFlipLine, new Keybinding(KeyModifiers.Shift));
             SetupDefaultKeybind(Hotkey.EditorUndo, new Keybinding(Key.Z, KeyModifiers.Control));
+            
+            SetupDefaultKeybind(Hotkey.EditorRedo,
+                new Keybinding(Key.Y, KeyModifiers.Control),
+                new Keybinding(Key.Z, KeyModifiers.Control | KeyModifiers.Shift));
 
             SetupDefaultKeybind(Hotkey.CopyX0, new Keybinding(Key.Keypad0, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.CopyY0, new Keybinding(Key.Keypad0, KeyModifiers.Control));
@@ -344,10 +348,6 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.CopyY8, new Keybinding(Key.Keypad8, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.CopyX9, new Keybinding(Key.Keypad9, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.CopyY9, new Keybinding(Key.Keypad9, KeyModifiers.Control));
-
-            SetupDefaultKeybind(Hotkey.EditorRedo,
-                new Keybinding(Key.Y, KeyModifiers.Control),
-                new Keybinding(Key.Z, KeyModifiers.Control | KeyModifiers.Shift));
 
             SetupDefaultKeybind(Hotkey.PlaybackStartIgnoreFlag, new Keybinding(Key.Y, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.PlaybackStartGhostFlag, new Keybinding(Key.I, KeyModifiers.Shift));
