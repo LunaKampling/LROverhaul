@@ -111,6 +111,12 @@ namespace linerider.UI
             AddBinding(selecttoolTable, "Cut", Hotkey.ToolCut);
             AddBinding(selecttoolTable, "Paste", Hotkey.ToolPaste);
             AddBinding(selecttoolTable, "Delete Selection", Hotkey.ToolDelete);
+            AddBinding(selecttoolTable, "Convert Selection (B)", Hotkey.ToolSwitchBlue,
+                "Convert all selected lines to blue lines");
+            AddBinding(selecttoolTable, "Convert Selection (R)", Hotkey.ToolSwitchRed,
+                "Convert all selected lines to red lines");
+            AddBinding(selecttoolTable, "Convert Selection (G)", Hotkey.ToolSwitchGreen,
+                "Convert all selected lines to green lines");
 
             var playbackTable = _kbtree.Add("Playback", 150);
             AddBinding(playbackTable, "Toggle Flag", Hotkey.PlaybackFlag);
