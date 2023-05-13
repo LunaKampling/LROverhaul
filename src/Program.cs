@@ -37,7 +37,7 @@ namespace linerider
 #endif
         public static string BinariesFolder = "bin";
         public readonly static CultureInfo Culture = new CultureInfo("en-US");
-        public static string Version = "LRL Cleanup Update 1.5.0.2";
+        public static string Version = "1.5.0.2";
         public static string TestVersion = "a";
         public static string NewVersion = null;
         public static readonly string WindowTitle = "Line Rider Advanced - Community || " + Version + TestVersion;
