@@ -894,10 +894,10 @@ namespace linerider
             var size = (Screen.PrimaryScreen.Bounds.Width / 1600 < Screen.PrimaryScreen.Bounds.Height / 1080) ? (Screen.PrimaryScreen.Bounds.Width / 1600) : (Screen.PrimaryScreen.Bounds.Height / 1080);
             if (size < 1) { size = 1; };
             Cursors[name] = new MouseCursor(hotx, hoty, image.Width, image.Height, data.Scan0);
-            Debug.WriteLine(Cursors[name]);
-            Debug.WriteLine(size);
-            Debug.WriteLine(image.Width);
-            Debug.WriteLine(image.Width * size / 4);
+            //Debug.WriteLine(Cursors[name]);
+            //Debug.WriteLine(size);
+            //Debug.WriteLine(image.Width);
+            //Debug.WriteLine(image.Width * size / 4);
             image.UnlockBits(data);
         }
         private void RegisterHotkeys()
