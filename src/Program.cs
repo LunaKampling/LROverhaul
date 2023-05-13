@@ -187,36 +187,36 @@ namespace linerider
         }
         public static void UpdateCheck()
         {
-            //if (TestVersion.Contains("closed"))
-            //    return;
-            //if (Settings.CheckForUpdates)
-            //{
-            //    new System.Threading.Thread(() =>
-            //    {
-            //        try
-            //        {
-            //            using (WebClient wc = new WebClient())
-            //            {
-            //                string currentversion = wc.DownloadString($"{Constants.GithubRawHeader}/master/version");
-            //                var idx = currentversion.IndexOfAny(new char[] { '\r', '\n' });
-            //                if (idx != -1)
-            //                {
-            //                    currentversion = currentversion.Remove(idx);
-            //                }
-            //                if (currentversion != Version && currentversion.Length > 0)
-            //                {
-            //                    NewVersion = currentversion;
-            //                }
-            //            }
-            //        }
-            //        catch
-            //        {
-            //        }
-            //    })
-            //    {
-            //        IsBackground = true
-            //    }.Start();
-            //}
+            if (TestVersion.Contains("closed"))
+                return;
+            if (Settings.CheckForUpdates)
+            {
+                new System.Threading.Thread(() =>
+                {
+                    try
+                    {
+                        using (WebClient wc = new WebClient())
+                        {
+                            string currentversion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version");
+                            var idx = currentversion.IndexOfAny(new char[] { '\r', '\n' });
+                            if (idx != -1)
+                            {
+                                currentversion = currentversion.Remove(idx);
+                            }
+                            if (currentversion != Version && currentversion.Length > 0)
+                            {
+                                NewVersion = currentversion;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                    }
+                })
+                {
+                    IsBackground = true
+                }.Start();
+            }
         }
         public static int GetWindowWidth()
         {
