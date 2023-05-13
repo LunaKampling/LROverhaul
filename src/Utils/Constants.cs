@@ -48,7 +48,7 @@ namespace linerider.Utils
         : Color.FromArgb(ColorWhite.ToArgb());
 
         public static readonly string GithubPageHeader = "https://github.com/LunaKampling/LROverhaul";
-        public static readonly string GithubRawHeader = "https://raw.githubusercontent.com/LunaKampling/LROverhaul";
+        public static readonly string GithubApiHeader = "https://api.github.com/repos/LunaKampling/LROverhaul";
         public static readonly string FfmpegHelperHeader = "https://github.com/jealouscloud/lra-ffmpeg/releases/download/ffmpeg4.0-x64/ffmpeg";
     }
 }

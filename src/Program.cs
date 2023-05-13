@@ -197,7 +197,7 @@ namespace linerider
                     {
                         using (WebClient wc = new WebClient())
                         {
-                            string currentversion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version");
+                            string currentversion = wc.DownloadString($"{Constants.GithubApiHeader}/releases");
                             var idx = currentversion.IndexOfAny(new char[] { '\r', '\n' });
                             if (idx != -1)
                             {
