@@ -141,6 +141,7 @@ namespace linerider.UI
             AddBinding(menuTable, "Open Track Properties", Hotkey.TrackPropertiesWindow);
             AddBinding(menuTable, "Load Track", Hotkey.LoadWindow);
             AddBinding(menuTable, "Open Trigger Menu", Hotkey.TriggerMenuWindow);
+            AddBinding(menuTable, "Open Generator Window", Hotkey.LineGeneratorWindow);
 
             var coordinateTable = _kbtree.Add("Clipboard Bindings", 150);
             AddBinding(coordinateTable, "CopyX0", Hotkey.CopyX0);
