@@ -40,7 +40,7 @@ namespace linerider
         public static string Version = "1.5.0.2";
         public static string TestVersion = "a";
         public static string NewVersion = null;
-        public static readonly string WindowTitle = "Line Rider Advanced - Community || " + Version + TestVersion;
+        public static readonly string WindowTitle = "Line Rider Overhaul || " + Version + TestVersion;
         public static Random Random;
         private static bool _crashed;
         private static MainWindow glGame;
