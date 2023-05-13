@@ -1551,6 +1551,28 @@ namespace linerider
             },
             null,
             repeat: false);
+
+            InputUtils.RegisterHotkey(Hotkey.ToolSwitchBlue, () => !Track.Playing &&
+            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            {
+                Debug.WriteLine("Switch to blue");
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolSwitchRed, () => !Track.Playing &&
+            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            {
+                Debug.WriteLine("Switch to red");
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolSwitchGreen, () => !Track.Playing &&
+            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            {
+                Debug.WriteLine("Switch to green");
+            },
+            null,
+            repeat: false);
         }
         public void setScarfColor(int index, int color, byte opacity)
         {
