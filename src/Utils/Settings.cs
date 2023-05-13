@@ -408,7 +408,6 @@ namespace linerider
 
             SetupDefaultKeybind(Hotkey.TriggerMenuWindow, new Keybinding(Key.P));
             SetupDefaultKeybind(Hotkey.SaveAsWindow, new Keybinding(Key.S, KeyModifiers.Control | KeyModifiers.Shift));
-            SetupDefaultKeybind(Hotkey.LineGeneratorWindow, new Keybinding(Key.G));
             SetupDefaultKeybind(Hotkey.PreferenceDrawDebugCamera, new Keybinding(Key.Period));
             SetupDefaultKeybind(Hotkey.PreferenceDrawDebugGrid, new Keybinding(Key.Comma));
         }
