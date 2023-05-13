@@ -1080,7 +1080,7 @@ namespace linerider
                 Track.Invalidate();
             });
 
-            InputUtils.RegisterHotkey(Hotkey.InvisibleRider, () => true, () =>
+            InputUtils.RegisterHotkey(Hotkey.PreferenceInvisibleRider, () => true, () =>
             {
                 Settings.InvisibleRider = !Settings.InvisibleRider;
                 Settings.Save();

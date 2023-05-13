@@ -66,7 +66,7 @@ namespace linerider.UI
         PlaybackResetCamera,
         PreferenceOnionSkinning,
         PreferenceAllCheckboxSettings,
-        InvisibleRider,
+        PreferenceInvisibleRider,
 
         PreferencesWindow,
         GameMenuWindow,

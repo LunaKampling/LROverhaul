@@ -381,7 +381,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.TrackPropertiesWindow, new Keybinding(Key.T, KeyModifiers.Control));
 
             SetupDefaultKeybind(Hotkey.PreferenceAllCheckboxSettings, new Keybinding(Key.O, KeyModifiers.Shift | KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.InvisibleRider, new Keybinding(Key.I, KeyModifiers.Shift | KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.PreferenceInvisibleRider, new Keybinding(Key.I, KeyModifiers.Shift | KeyModifiers.Alt));
 
             SetupDefaultKeybind(Hotkey.PreferenceOnionSkinning, new Keybinding(Key.O, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
