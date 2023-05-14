@@ -1555,21 +1555,24 @@ namespace linerider
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchBlue, () => !Track.Playing &&
             CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
             {
-                Debug.WriteLine("Switch to blue");
+                CurrentTools.SelectTool.SwitchLineType(LineType.Blue);
+                Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchRed, () => !Track.Playing &&
             CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
             {
-                Debug.WriteLine("Switch to red");
+                CurrentTools.SelectTool.SwitchLineType(LineType.Red);
+                Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchGreen, () => !Track.Playing &&
             CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
             {
-                Debug.WriteLine("Switch to green");
+                CurrentTools.SelectTool.SwitchLineType(LineType.Scenery);
+                Invalidate();
             },
             null,
             repeat: false);

@@ -9,7 +9,9 @@ using linerider.Game;
 using linerider.Rendering;
 using linerider.Drawing;
 using System.Drawing;
-using linerider.UI; 
+using linerider.UI;
+using System.Diagnostics;
+using static linerider.Settings;
 
 namespace linerider.Tools
 {
@@ -72,6 +74,7 @@ namespace linerider.Tools
         private bool _rotating = false;
         private bool _nodetop = false;
         private bool _nodeleft = false;
+        private bool _changemade = false;
 
         public List<LineSelection> GetLineSelections()
         {
@@ -498,6 +501,87 @@ namespace linerider.Tools
                 game.Track.NotifyTrackChanged();
             }
         }
+        public void SwitchLineType(LineType lineType)
+        {
+            if (Active && !_drawingbox && _selection.Count > 0)
+            {
+                foreach (var selected in _selection)
+                {
+                    if(selected.line.Type != lineType)
+                    {
+                        ChangeSelectedLine(selected.line, lineType);
+                    }
+                }
+            }
+        }
+        private void ChangeSelectedLine(GameLine line, LineType newLineType)
+        {
+            using (var trk = game.Track.CreateTrackWriter())
+            {
+                RedLine redCpy = null;
+                StandardLine blueCpy = null;
+                LineType origLineType = line.Type;
+
+                if (origLineType == LineType.Blue && newLineType == LineType.Red)
+                {
+                    redCpy = RedLine.CloneFromBlue((StandardLine) line);
+                    game.Track._renderer.RedrawLine(line);
+                    game.Track._renderer.AddLine(redCpy);
+                }
+                else if (origLineType == LineType.Red && newLineType == LineType.Blue)
+                {
+                    game.Track._renderer.RemoveLine(line);
+                    blueCpy = StandardLine.CloneFromRed((RedLine)line);
+                    game.Track._renderer.AddLine(blueCpy);
+                }
+                else
+                {
+                    redCpy = (RedLine)line.Clone();
+                }
+
+                if (redCpy != null)
+                {
+                    redCpy.Multiplier = 1;
+                }
+
+                StandardLine cpy = redCpy != null ? redCpy : blueCpy;
+
+                UpdateLine(trk, line, cpy);
+            }
+        }
+        private void UpdateLine(TrackWriter trk, GameLine current, GameLine replacement)
+        {
+            MakingChange();
+
+            if (replacement is StandardLine stl)
+            {
+                stl.CalculateConstants();
+            }
+
+            trk.ReplaceLine(current, replacement);
+
+            game.Track.NotifyTrackChanged();
+            game.Track.Invalidate();
+
+            FinishChange();
+        }
+        private void MakingChange()
+        {
+            if (!_changemade)
+            {
+                game.Track.UndoManager.BeginAction();
+                _changemade = true;
+            }
+        }
+        private void FinishChange()
+        {
+            if (_changemade)
+            {
+                game.Track.UndoManager.EndAction();
+                _changemade = false;
+            }
+        }
+
         private void StartAddSelection(Vector2d gamepos)
         {
             _movingselection = false;
