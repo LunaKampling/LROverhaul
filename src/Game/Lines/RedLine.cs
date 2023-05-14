@@ -118,13 +118,16 @@ namespace linerider.Game
             newLine.CalculateConstants();
             return newLine;
         }
-        public static RedLine CloneFromGreen(SceneryLine sceneryLine)
+        public static new RedLine CloneFromGreen(SceneryLine sceneryLine)
         {
             RedLine newLine = new RedLine()
             {
                 ID = sceneryLine.ID,
+                Extension = Ext.None,
+                inv = false,
                 Position = sceneryLine.Position,
                 Position2 = sceneryLine.Position2,
+                Trigger = null,
                 _multiplier = 1
             };
             newLine.CalculateConstants();

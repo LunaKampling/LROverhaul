@@ -192,8 +192,11 @@ namespace linerider.Game
             StandardLine newLine = new StandardLine()
             {
                 ID = sceneryLine.ID,
+                Extension = Ext.None,
+                inv = false,
                 Position = sceneryLine.Position,
-                Position2 = sceneryLine.Position2
+                Position2 = sceneryLine.Position2,
+                Trigger = null,
             };
             newLine.CalculateConstants();
             return newLine;
