@@ -504,13 +504,16 @@ namespace linerider.Tools
         public void SwitchLineType(LineType lineType)
         {
             if (!Active || _drawingbox || _selection.Count == 0) return;
-            
+
+            game.Track.UndoManager.BeginAction();
             foreach (var selected in _selection)
             {
                 if (selected.line.Type == lineType) continue;
                 
                 selected.line = ChangeSelectedLine(selected.line, lineType);
             }
+            game.Track.UndoManager.EndAction();
+            game.Track.NotifyTrackChanged();
         }
         private GameLine ChangeSelectedLine(GameLine line, LineType newLineType)
         {
@@ -580,35 +583,12 @@ namespace linerider.Tools
         }
         private void UpdateLine(TrackWriter trk, GameLine current, GameLine replacement)
         {
-            MakingChange();
-
             if (replacement is StandardLine stl)
             {
                 stl.CalculateConstants();
             }
 
             trk.ReplaceLine(current, replacement);
-
-            game.Track.NotifyTrackChanged();
-            game.Track.Invalidate();
-
-            FinishChange();
-        }
-        private void MakingChange()
-        {
-            if (!_changemade)
-            {
-                game.Track.UndoManager.BeginAction();
-                _changemade = true;
-            }
-        }
-        private void FinishChange()
-        {
-            if (_changemade)
-            {
-                game.Track.UndoManager.EndAction();
-                _changemade = false;
-            }
         }
 
         private void StartAddSelection(Vector2d gamepos)
