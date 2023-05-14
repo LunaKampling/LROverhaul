@@ -61,7 +61,7 @@ namespace linerider.Tools
         {
             line = Line;
             clone = line.Clone();
-            joint1 = line.Position == snapjoint;
+            joint1 = line.Position1 == snapjoint;
             joint2 = line.Position2 == snapjoint;
             snapped = new List<LineSelection>();
         }

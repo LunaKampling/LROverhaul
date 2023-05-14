@@ -1432,7 +1432,7 @@ namespace linerider
                     var l = trk.GetOldestLine();
                     if (l != null)
                     {
-                        Track.Camera.SetFrameCenter(l.Position);
+                        Track.Camera.SetFrameCenter(l.Position1);
                         Invalidate();
                     }
                 }
@@ -1444,7 +1444,7 @@ namespace linerider
                     var l = trk.GetNewestLine();
                     if (l != null)
                     {
-                        Track.Camera.SetFrameCenter(l.Position);
+                        Track.Camera.SetFrameCenter(l.Position1);
                         Invalidate();
                     }
                 }

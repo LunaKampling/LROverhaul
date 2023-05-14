@@ -50,7 +50,7 @@ namespace linerider
         }
         public static List<CellLocation> GetGridPositions(StandardLine line, int gridversion)
         {
-            return GetGridPositions(line.Position, line.Position2, gridversion);
+            return GetGridPositions(line.Position1, line.Position2, gridversion);
         }
         public static List<CellLocation> GetGridPositions(Vector2d linestart, Vector2d lineend, int gridversion)
         {

@@ -405,9 +405,9 @@ namespace linerider.Tools
                     GameRenderer.RenderRoundedRectangle(_drawbox, color, 2f / game.Track.Zoom);
                 if (_hoverline != null)
                 {
-                    GameRenderer.RenderRoundedLine(_hoverline.Position, _hoverline.Position2, Color.FromArgb(127, Constants.DefaultKnobColor), (_hoverline.Width * 2 * 0.8f));
+                    GameRenderer.RenderRoundedLine(_hoverline.Position1, _hoverline.Position2, Color.FromArgb(127, Constants.DefaultKnobColor), (_hoverline.Width * 2 * 0.8f));
 
-                    GameRenderer.DrawKnob(_hoverline.Position, _snapknob1, false, _hoverline.Width, _snapknob1 && !_snapknob2 ? 1 : 0);
+                    GameRenderer.DrawKnob(_hoverline.Position1, _snapknob1, false, _hoverline.Width, _snapknob1 && !_snapknob2 ? 1 : 0);
                     GameRenderer.DrawKnob(_hoverline.Position2, _snapknob2, false, _hoverline.Width, _snapknob2 && !_snapknob1 ? 1 : 0);
                 }
             }
@@ -485,7 +485,7 @@ namespace linerider.Tools
                     {
                         var add = line.Clone();
                         add.ID = GameLine.UninitializedID;
-                        add.Position += diff;
+                        add.Position1 += diff;
                         add.Position2 += diff;
                         if (add is StandardLine stl)
                             stl.CalculateConstants();
@@ -710,12 +710,12 @@ namespace linerider.Tools
             if (selected == null || selected.Count == 0)
                 return DoubleRect.Empty;
             var ret = DoubleRect.Empty;
-            Vector2d tl = selected[0].line.Position;
-            Vector2d br = selected[0].line.Position;
+            Vector2d tl = selected[0].line.Position1;
+            Vector2d br = selected[0].line.Position1;
             for (int i = 0; i < selected.Count; i++)
             {
                 var sel = selected[i].line;
-                var p1 = sel.Position;
+                var p1 = sel.Position1;
                 var p2 = sel.Position2;
                 tl.X = Math.Min(tl.X, Math.Min(p1.X, p2.X));
                 tl.Y = Math.Min(tl.Y, Math.Min(p1.Y, p2.Y));
@@ -729,12 +729,12 @@ namespace linerider.Tools
             if (selected == null || selected.Count == 0)
                 return DoubleRect.Empty;
             var ret = DoubleRect.Empty;
-            Vector2d tl = selected[0].line.Position;
-            Vector2d br = selected[0].line.Position;
+            Vector2d tl = selected[0].line.Position1;
+            Vector2d br = selected[0].line.Position1;
             for (int i = 0; i < selected.Count; i++)
             {
                 var sel = selected[i].line;
-                var p1 = sel.Position;
+                var p1 = sel.Position1;
                 var p2 = sel.Position2;
                 tl.X = Math.Min(tl.X, Math.Min(p1.X, p2.X) - sel.Width);
                 tl.Y = Math.Min(tl.Y, Math.Min(p1.Y, p2.Y) - sel.Width);
@@ -754,7 +754,7 @@ namespace linerider.Tools
                 {
                     if (!_selectedlines.Contains(line.ID))
                     {
-                        var closer = Utility.CloserPoint(snap, line.Position, line.Position2);
+                        var closer = Utility.CloserPoint(snap, line.Position1, line.Position2);
                         var diff = closer - snap;
                         var dist = diff.Length;
                         if (distance == -1 || dist < distance)
@@ -767,7 +767,7 @@ namespace linerider.Tools
             }
             if (_snapknob1)
             {
-                var snap1 = _snapline.Position + movediff;
+                var snap1 = _snapline.Position1 + movediff;
                 var lines1 = LineEndsInRadius(trk, snap1, SnapRadius);
                 checklines(lines1, snap1);
             }
@@ -800,7 +800,7 @@ namespace linerider.Tools
                     foreach (var selected in _selection)
                     {
                         var scalar1 = Vector2d.Divide(
-                            selected.clone.Position - _startselectionedges.Vector,
+                            selected.clone.Position1 - _startselectionedges.Vector,
                             _startselectionedges.Size);
 
                         var scalar2 = Vector2d.Divide(
@@ -831,7 +831,7 @@ namespace linerider.Tools
 
                         trk.MoveLine(
                             selected.line,
-                            selected.clone.Position + p1,
+                            selected.clone.Position1 + p1,
                             selected.clone.Position2 + p2);
                     }
                     _selectionbox = GetBoxFromSelected(_selection);
@@ -865,7 +865,7 @@ namespace linerider.Tools
                         anglediff = new Angle(Math.Round(anglediff.Degrees / Settings.Editor.XySnapDegrees) * Settings.Editor.XySnapDegrees);
                     foreach (var selected in _selection)
                     {
-                        Vector2d p1 = Utility.Rotate(selected.clone.Position, center, anglediff);
+                        Vector2d p1 = Utility.Rotate(selected.clone.Position1, center, anglediff);
                         Vector2d p2 = Utility.Rotate(selected.clone.Position2, center, anglediff);
                         trk.MoveLine(selected.line, p1, p2);
                     }
@@ -916,7 +916,7 @@ namespace linerider.Tools
                         trk.DisableUndo();
                         trk.MoveLine(
                             selected.line,
-                            selected.clone.Position + movediff,
+                            selected.clone.Position1 + movediff,
                             selected.clone.Position2 + movediff);
                     }
                     game.Track.NotifyTrackChanged();

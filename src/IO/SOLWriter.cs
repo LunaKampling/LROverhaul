@@ -96,8 +96,8 @@ namespace linerider.IO
                 var stl = line as StandardLine;
                 var lineobj = new Amf0Object(counter++);
                 var linedata = new List<Amf0Object>();
-                linedata.Add(new Amf0Object(0, line.Position.X));
-                linedata.Add(new Amf0Object(1, line.Position.Y));
+                linedata.Add(new Amf0Object(0, line.Position1.X));
+                linedata.Add(new Amf0Object(1, line.Position1.Y));
                 linedata.Add(new Amf0Object(2, line.Position2.X));
                 linedata.Add(new Amf0Object(3, line.Position2.Y));
                 linedata.Add(new Amf0Object(4, stl != null ? (int)((StandardLine)line).Extension : 0));

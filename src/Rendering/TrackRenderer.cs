@@ -351,7 +351,7 @@ namespace linerider.Rendering
                 }
             }
             var lineverts = LineRenderer.CreateTrackLine(
-                line.Position,
+                line.Position1,
                 line.Position2,
                 2 * line.Width,
                 color,

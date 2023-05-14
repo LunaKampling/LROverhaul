@@ -35,15 +35,15 @@ namespace linerider.Game
         }
         public SceneryLine(Vector2d p1, Vector2d p2) 
         {
-            Position = p1;
+            Position1 = p1;
             Position2 = p2;
         }
         public override string ToString()
         {
             return "{" +
                 "\"type\":2," +
-                $"\"x1\":{Position.X}," +
-                $"\"y1\":{Position.Y}," +
+                $"\"x1\":{Position1.X}," +
+                $"\"y1\":{Position1.Y}," +
                 $"\"x2\":{Position2.X}," +
                 $"\"y2\":{Position2.Y}," +
                 $"\"width\":{Width}" +
@@ -51,7 +51,7 @@ namespace linerider.Game
         }
         public override GameLine Clone()
         {
-            return new SceneryLine(Position, Position2)
+            return new SceneryLine(Position1, Position2)
             {
                 ID = ID,
                 Width = Width
@@ -62,7 +62,7 @@ namespace linerider.Game
             SceneryLine newLine = new SceneryLine()
             {
                 ID = standardLine.ID,
-                Position = standardLine.Position,
+                Position1 = standardLine.Position1,
                 Position2 = standardLine.Position2,
                 Width = 1
             };
@@ -73,7 +73,7 @@ namespace linerider.Game
             SceneryLine newLine = new SceneryLine()
             {
                 ID = redLine.ID,
-                Position = redLine.Position,
+                Position1 = redLine.Position1,
                 Position2 = redLine.Position2,
                 Width = 1
             };

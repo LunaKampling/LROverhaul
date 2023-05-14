@@ -170,7 +170,7 @@ namespace linerider.Utils
         }
         public static Angle FromLine(Line line)
         {
-            return FromVector(line.Position2 - line.Position);
+            return FromVector(line.Position2 - line.Position1);
         }
 
         public static Angle FromVector(Vector2 p1)

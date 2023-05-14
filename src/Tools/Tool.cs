@@ -148,10 +148,10 @@ namespace linerider.Tools
         protected bool IsLineSnappedByKnob(TrackReader trk, Vector2d point, GameLine line, out bool knob1)
         {
             var rad = SnapRadius;
-            var closer = Utility.CloserPoint(point, line.Position, line.Position2);
+            var closer = Utility.CloserPoint(point, line.Position1, line.Position2);
             if ((point - closer).Length - line.Width < rad)
             {
-                knob1 = closer == line.Position;
+                knob1 = closer == line.Position1;
                 return true;
             }
 
@@ -187,9 +187,9 @@ namespace linerider.Tools
                 if (ends.Contains(line))
                     continue;
                 double lnradius = line.Width;
-                var angle = Angle.FromLine(line.Position, line.Position2);
+                var angle = Angle.FromLine(line.Position1, line.Position2);
                 var rect = Utility.GetThickLine(
-                    line.Position,
+                    line.Position1,
                     line.Position2,
                     angle,
                     lnradius * 2);
@@ -236,7 +236,7 @@ namespace linerider.Tools
             if (Swatch.Selected != LineType.Scenery)
             {
                 if (snapstart)
-                    SnapLineEnd(trk, added, added.Position);
+                    SnapLineEnd(trk, added, added.Position1);
                 if (snapend)
                     SnapLineEnd(trk, added, added.Position2);
             }
@@ -265,9 +265,9 @@ namespace linerider.Tools
             {
                 if (lines.ContainsKey(line.ID))
                     continue;
-                var angle = Angle.FromLine(line.Position, line.Position2);
+                var angle = Angle.FromLine(line.Position1, line.Position2);
                 var rect = Utility.GetThickLine(
-                    line.Position,
+                    line.Position1,
                     line.Position2,
                     angle,
                     line.Width * 2);
@@ -308,7 +308,7 @@ namespace linerider.Tools
             SortedList<double, List<GameLine>> ret = new SortedList<double, List<GameLine>>();
             foreach (var line in lines)
             {
-                var p1 = (point - line.Position).Length;
+                var p1 = (point - line.Position1).Length;
                 var p2 = (point - line.Position2).Length;
                 var closer = Math.Min(p1, p2);
                 if (closer - line.Width < rad)
@@ -375,7 +375,7 @@ namespace linerider.Tools
             const int attemptCount = 500;
             int offset = game.Track.Offset;
             var lastFrame = timeline.GetFrame(offset - 1);
-            bool usingjoint1 = line.Position == movejoint;
+            bool usingjoint1 = line.Position1 == movejoint;
             Random rnd = new Random();
             rnd.NextDouble(); //Call this once to make sure the RNG is fully shuffled (just in case initial seeds correlate a bit)
 
@@ -391,14 +391,14 @@ namespace linerider.Tools
                     jointPos.Y = movejoint.Y + shiftDist * rnd.NextDouble();
 
                     if (usingjoint1)
-                        newLine.Position = jointPos;
+                        newLine.Position1 = jointPos;
                     else
                         newLine.Position2 = jointPos;
 
                     using (var trk = game.Track.CreateTrackWriter())
                     {
                         trk.DisableUndo();
-                        trk.MoveLine(currentLine, newLine.Position, newLine.Position2, false);
+                        trk.MoveLine(currentLine, newLine.Position1, newLine.Position2, false);
                         currentLine = newLine;
                     }
 
@@ -407,14 +407,14 @@ namespace linerider.Tools
                     if (!thisFrame.SledBroken)
                     {
                         using (var trk = game.Track.CreateTrackWriter())
-                            trk.MoveLine(currentLine, line.Position, line.Position2, false);
+                            trk.MoveLine(currentLine, line.Position1, line.Position2, false);
                         return newLine;
                     }
 
                 }
 
                 using (var trk = game.Track.CreateTrackWriter())
-                    trk.MoveLine(currentLine, line.Position, line.Position2, false);
+                    trk.MoveLine(currentLine, line.Position1, line.Position2, false);
             }
             return line;
         }
@@ -425,7 +425,7 @@ namespace linerider.Tools
             const int attemptCount = 500;
             int offset = game.Track.Offset;
             var lastFrame = timeline.GetFrame(offset - 1);
-            bool usingjoint1 = line.Position == movejoint;
+            bool usingjoint1 = line.Position1 == movejoint;
             double lastPos = 0.0;
             if (!lastFrame.Crashed)
             {
@@ -440,15 +440,15 @@ namespace linerider.Tools
                     jointPos.X = movejoint.X + shiftDist * rnd.NextDouble();
                     jointPos.Y = movejoint.Y + shiftDist * rnd.NextDouble();
                     if (usingjoint1)
-                        newLine.Position = jointPos;
+                        newLine.Position1 = jointPos;
                     else
                         newLine.Position2 = jointPos;
 
                     using (var trk = game.Track.CreateTrackWriter())
                     {
                         trk.DisableUndo();
-                        Console.WriteLine("MOVING LINE " + oldLine.Position.ToString() + " TO " + newLine.Position.ToString());
-                        trk.MoveLine(currentLine, newLine.Position, newLine.Position2, false);
+                        Console.WriteLine("MOVING LINE " + oldLine.Position1.ToString() + " TO " + newLine.Position1.ToString());
+                        trk.MoveLine(currentLine, newLine.Position1, newLine.Position2, false);
                         currentLine = newLine;
                     }
 
@@ -470,17 +470,17 @@ namespace linerider.Tools
                         if (i > 500)
                             Console.WriteLine("SLED SURVIVED! " + i.ToString());
                         using (var trk = game.Track.CreateTrackWriter())
-                            trk.MoveLine(currentLine, line.Position, line.Position2, false);
+                            trk.MoveLine(currentLine, line.Position1, line.Position2, false);
                         currentLine = line;
                         return newLine;
                     }
                     if (usingjoint1)
-                        line.Position = movejoint;
+                        line.Position1 = movejoint;
                     else
                         line.Position2 = movejoint;
                     Console.WriteLine("ABOUT TO DIE?");
                     using (var trk = game.Track.CreateTrackWriter())
-                        trk.MoveLine(currentLine, line.Position, line.Position2, false);
+                        trk.MoveLine(currentLine, line.Position1, line.Position2, false);
                     currentLine = line;
                     Console.WriteLine("DEAD?");
                 }
@@ -505,7 +505,7 @@ namespace linerider.Tools
             }
             var snap = lines[0];
             snapped = true;
-            return Utility.CloserPoint(point, snap.Position, snap.Position2);
+            return Utility.CloserPoint(point, snap.Position1, snap.Position2);
         }
         /// <summary>
         /// Snaps the point specified in endpoint of line to another line if within snapradius
@@ -516,7 +516,7 @@ namespace linerider.Tools
             Vector2d snap;
             bool snapped = GetSnapPoint(
                 trk,
-                line.Position,
+                line.Position1,
                 line.Position2,
                 endpoint,
                 ignore,
@@ -525,12 +525,12 @@ namespace linerider.Tools
 
             if (!snapped)
             {
-                GetSnapPoint_Grid(line.Position, line.Position2, endpoint, out snap);
+                GetSnapPoint_Grid(line.Position1, line.Position2, endpoint, out snap);
             }
 
             if (snap == endpoint)
                 return;
-            if (line.Position == endpoint)
+            if (line.Position1 == endpoint)
             {
                 // don't snap to the same point.
                 if (line.Position2 != snap)
@@ -539,8 +539,8 @@ namespace linerider.Tools
             else if (line.Position2 == endpoint)
             {
                 // don't snap to the same point.
-                if (line.Position != snap)
-                    trk.MoveLine(line, line.Position, snap);
+                if (line.Position1 != snap)
+                    trk.MoveLine(line, line.Position1, snap);
             }
         }
         /// <summary>
@@ -565,7 +565,7 @@ namespace linerider.Tools
                     if (ignorescenery && curr is SceneryLine)
                         continue;//phys lines dont wanna snap to scenery
 
-                    var snap = Utility.CloserPoint(endpoint, curr.Position, curr.Position2);
+                    var snap = Utility.CloserPoint(endpoint, curr.Position1, curr.Position2);
                     if (position1 == endpoint)
                     {
                         // don't snap to the same point.

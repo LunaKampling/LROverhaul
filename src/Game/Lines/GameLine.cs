@@ -36,7 +36,7 @@ namespace linerider.Game
         /// </summary>
         public virtual Vector2d Start
         {
-            get { return Position; }
+            get { return Position1; }
         }
         /// <summary>
         /// "Right"

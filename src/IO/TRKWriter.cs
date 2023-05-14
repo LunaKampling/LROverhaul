@@ -116,8 +116,8 @@ namespace linerider.IO
                         }
                     }
 
-                    bw.Write(line.Position.X);
-                    bw.Write(line.Position.Y);
+                    bw.Write(line.Position1.X);
+                    bw.Write(line.Position1.Y);
                     bw.Write(line.Position2.X);
                     bw.Write(line.Position2.Y);
                 }

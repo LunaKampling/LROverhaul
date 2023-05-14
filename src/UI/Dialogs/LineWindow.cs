@@ -220,15 +220,15 @@ namespace linerider.UI
                     foreach (var l in multi)
                     {
                         var cpy = (StandardLine)l.Clone();
-                        cpy.Position = l.Position2;
-                        cpy.Position2 = l.Position;
+                        cpy.Position1 = l.Position2;
+                        cpy.Position2 = l.Position1;
                         cpy.inv = accelinverse.IsChecked;
                         UpdateLine(trk, l, cpy);
                     }
 
                     var owner = (StandardLine)_ownerline.Clone();
-                    owner.Position = _ownerline.Position2;
-                    owner.Position2 = _ownerline.Position;
+                    owner.Position1 = _ownerline.Position2;
+                    owner.Position2 = _ownerline.Position1;
                     owner.inv = accelinverse.IsChecked;
                     UpdateOwnerLine(trk, owner);
                 }
@@ -362,7 +362,7 @@ namespace linerider.UI
                 var newPos = Utility.AngleLock(cpy.Start, posEstimate, angle);
                 if (lineIsInverted) //Inverted line
                 {
-                    cpy.Position = newPos;
+                    cpy.Position1 = newPos;
                 }
                 else
                 {
@@ -374,7 +374,7 @@ namespace linerider.UI
                 foreach (var line in multilines)
                 {
                     var copy = line.Clone();
-                    copy.Position = cpy.Position;
+                    copy.Position1 = cpy.Position1;
                     copy.Position2 = cpy.Position2;
                     UpdateLine(trk, line, copy);
                 }
@@ -388,8 +388,8 @@ namespace linerider.UI
                 var cpy = _ownerline.Clone();
                 var angle = Angle.FromVector(cpy.GetVector()).Radians;
 
-                var x2 = cpy.Position.X + (length * Math.Cos(angle));
-                var y2 = cpy.Position.Y + (length * Math.Sin(angle));
+                var x2 = cpy.Position1.X + (length * Math.Cos(angle));
+                var y2 = cpy.Position1.Y + (length * Math.Sin(angle));
                 
                 var newPos = new Vector2d(x2, y2);
                 cpy.Position2 = newPos;
@@ -505,12 +505,12 @@ namespace linerider.UI
             using (var trk = _editor.CreateTrackReader())
             {
                 var owner = (StandardLine)_ownerline;
-                var lines = trk.GetLinesInRect(new Utils.DoubleRect(owner.Position, new Vector2d(1, 1)), false);
+                var lines = trk.GetLinesInRect(new Utils.DoubleRect(owner.Position1, new Vector2d(1, 1)), false);
                 foreach (var red in lines)
                 {
                     if (
                         red is StandardLine stl &&
-                        red.Position == owner.Position &&
+                        red.Position1 == owner.Position1 &&
                         red.Position2 == owner.Position2 &&
                         (includeowner || red.ID != owner.ID))
                     {
@@ -543,9 +543,9 @@ namespace linerider.UI
                     {
                         StandardLine newLine;
                         if (owner is RedLine)
-                            newLine = new RedLine(owner.Position, owner.Position2, owner.inv) { Multiplier = ((RedLine)owner).Multiplier };
+                            newLine = new RedLine(owner.Position1, owner.Position2, owner.inv) { Multiplier = ((RedLine)owner).Multiplier };
                         else
-                            newLine = new StandardLine(owner.Position, owner.Position2, owner.inv);
+                            newLine = new StandardLine(owner.Position1, owner.Position2, owner.inv);
                         newLine.CalculateConstants();
                         trk.AddLine(newLine);
                     }

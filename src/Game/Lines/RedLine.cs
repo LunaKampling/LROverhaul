@@ -53,8 +53,8 @@ namespace linerider.Game
         {
             return "{" +
                 "\"type\":0," +
-                $"\"x1\":{Position.X}," +
-                $"\"y1\":{Position.Y}," +
+                $"\"x1\":{Position1.X}," +
+                $"\"y1\":{Position1.Y}," +
                 $"\"x2\":{Position2.X}," +
                 $"\"y2\":{Position2.Y}," +
                 $"\"flipped\":{inv}" +
@@ -100,7 +100,7 @@ namespace linerider.Game
                 Extension = Extension,
                 ExtensionRatio = ExtensionRatio,
                 inv = inv,
-                Position = Position,
+                Position1 = Position1,
                 Position2 = Position2,
                 Trigger = trigger,
                 _acc = _acc,
@@ -124,7 +124,7 @@ namespace linerider.Game
                 ID = standardLine.ID,
                 Extension = standardLine.Extension,
                 inv = standardLine.inv,
-                Position = standardLine.Position,
+                Position1 = standardLine.Position1,
                 Position2 = standardLine.Position2,
                 Trigger = trigger,
                 _multiplier = 1
@@ -139,7 +139,7 @@ namespace linerider.Game
                 ID = sceneryLine.ID,
                 Extension = Ext.None,
                 inv = false,
-                Position = sceneryLine.Position,
+                Position1 = sceneryLine.Position1,
                 Position2 = sceneryLine.Position2,
                 Trigger = null,
                 _multiplier = 1

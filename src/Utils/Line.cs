@@ -25,7 +25,7 @@ namespace linerider.Utils
 {
     public class Line
     {
-        public Vector2d Position;
+        public Vector2d Position1;
         public Vector2d Position2;
 
         protected Line()
@@ -33,7 +33,7 @@ namespace linerider.Utils
         }
         public Line(Vector2d p1, Vector2d p2)
         {
-            Position = p1;
+            Position1 = p1;
             Position2 = p2;
         }
         public static Line FromAngle(Vector2d p1, Angle angle, double length)
@@ -48,16 +48,16 @@ namespace linerider.Utils
         }
         public double GetLength()
         {
-            return (Position2 - Position).Length;
+            return (Position2 - Position1).Length;
         }
         public Vector2d GetVector()
         {
-            return (Position2 - Position);
+            return (Position2 - Position1);
         }
 
         public static bool DoesLineIntersectRect(Line l1, DoubleRect rect)
         {
-            Vector2d ps1 = l1.Position;
+            Vector2d ps1 = l1.Position1;
             Vector2d pe1 = l1.Position2;
             if (rect.Contains(ps1.X, ps1.Y) || rect.Contains(pe1.X, pe1.Y))
                 return true;
