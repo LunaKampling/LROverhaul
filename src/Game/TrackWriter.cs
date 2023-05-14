@@ -190,24 +190,34 @@ namespace linerider
                 throw new Exception("can only replace lines with the same id");
             RegisterUndoAction(oldline, newline);
 
-            if (newline.Type != LineType.Scenery)
+            if (oldline != null)
             {
-                var std = oldline as StandardLine;
-                if (std != null)
+                SaveCells(oldline.Position1, oldline.Position2);
+                SaveCells(newline.Position1, newline.Position2);
+                if (_updateextensions)
                 {
-                    SaveCells(oldline.Position1, oldline.Position2);
-                    SaveCells(newline.Position1, newline.Position2);
-                    if (_updateextensions)
-                        RemoveExtensions(std);
-                    var newstd = (StandardLine)newline;
-                    using (Track.Grid.Sync.AcquireWrite())
+                    if(oldline.Type != LineType.Scenery)
                     {
-                        // this could be a moveline, i think.
-                        Track.Grid.RemoveLine(std);
-                        Track.Grid.AddLine(newstd);
+                        RemoveExtensions((StandardLine)oldline);
                     }
-                    if (_updateextensions)
-                        AddExtensions(newstd);
+                }
+                using (Track.Grid.Sync.AcquireWrite())
+                {
+                    if(oldline.Type != LineType.Scenery)
+                    {
+                        Track.Grid.RemoveLine((StandardLine)oldline);
+                    }
+                    if(newline.Type != LineType.Scenery)
+                    {
+                        Track.Grid.AddLine((StandardLine)newline);
+                    }
+                }
+                if (_updateextensions)
+                {
+                    if(newline.Type != LineType.Scenery)
+                    {
+                        AddExtensions((StandardLine)newline);
+                    }
                 }
             }
 
