@@ -86,7 +86,19 @@ namespace linerider.Game
             CalculateConstants();
             Extension = Ext.None;
         }
-
+        public override string ToString()
+        {
+            return "{" +
+                "\"type\":0," +
+                $"\"x1\":{Position.X}," +
+                $"\"y1\":{Position.Y}," +
+                $"\"x2\":{Position2.X}," +
+                $"\"y2\":{Position2.Y}," +
+                $"\"flipped\":{inv}" +
+                $"\"leftExtended\":{Extension == Ext.Left || Extension == Ext.Both}" +
+                $"\"rightExtended\":{Extension == Ext.Right || Extension == Ext.Both}" +
+                "}";
+        }
         /// <summary>
         /// Calculates the line constants, needs called if a point changes.
         /// </summary>

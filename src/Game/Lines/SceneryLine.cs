@@ -38,6 +38,17 @@ namespace linerider.Game
             Position = p1;
             Position2 = p2;
         }
+        public override string ToString()
+        {
+            return "{" +
+                "\"type\":2," +
+                $"\"x1\":{Position.X}," +
+                $"\"y1\":{Position.Y}," +
+                $"\"x2\":{Position2.X}," +
+                $"\"y2\":{Position2.Y}," +
+                $"\"width\":{Width}" +
+                "}";
+        }
         public override GameLine Clone()
         {
             return new SceneryLine(Position, Position2)

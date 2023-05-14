@@ -46,21 +46,6 @@ namespace linerider.Game
             get { return Position2; }
         }
 
-        public override string ToString()
-        {
-            return "ID: " +
-                ID +
-                " {" +
-                Math.Round(Position.X, 1) +
-                ", " +
-                Math.Round(Position.Y, 1) +
-                "}, {" +
-                Math.Round(Position2.X) +
-                ", " +
-                Math.Round(Position2.Y) +
-                "}";
-        }
-
         public override int GetHashCode()
         {
             return ID;
