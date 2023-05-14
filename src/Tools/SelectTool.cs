@@ -509,34 +509,59 @@ namespace linerider.Tools
                 {
                     if(selected.line.Type != lineType)
                     {
-                        ChangeSelectedLine(selected.line, lineType);
+                        selected.line = ChangeSelectedLine(selected.line, lineType);
                     }
                 }
             }
         }
-        private void ChangeSelectedLine(GameLine line, LineType newLineType)
+        private GameLine ChangeSelectedLine(GameLine line, LineType newLineType)
         {
             using (var trk = game.Track.CreateTrackWriter())
             {
                 RedLine redCpy = null;
                 StandardLine blueCpy = null;
+                SceneryLine greenCpy = null;
                 LineType origLineType = line.Type;
 
-                if (origLineType == LineType.Blue && newLineType == LineType.Red)
+                switch (newLineType)
                 {
-                    redCpy = RedLine.CloneFromBlue((StandardLine) line);
-                    game.Track._renderer.RedrawLine(line);
-                    game.Track._renderer.AddLine(redCpy);
-                }
-                else if (origLineType == LineType.Red && newLineType == LineType.Blue)
-                {
-                    game.Track._renderer.RemoveLine(line);
-                    blueCpy = StandardLine.CloneFromRed((RedLine)line);
-                    game.Track._renderer.AddLine(blueCpy);
-                }
-                else
-                {
-                    redCpy = (RedLine)line.Clone();
+                    case LineType.Red:
+                    {
+                        redCpy = origLineType == LineType.Blue ?
+                            RedLine.CloneFromBlue((StandardLine)line) :
+                            RedLine.CloneFromGreen((SceneryLine)line) ;
+
+                        game.Track._renderer.RemoveLine(line);
+                        game.Track._renderer.AddLine(redCpy);
+
+                        break;
+                    }
+                    case LineType.Blue:
+                    {
+                        blueCpy = origLineType == LineType.Scenery ?
+                            StandardLine.CloneFromGreen((SceneryLine)line) :
+                            StandardLine.CloneFromRed((RedLine)line);
+
+                        game.Track._renderer.RemoveLine(line);
+                        game.Track._renderer.AddLine(blueCpy);
+
+                        break;
+                    }
+                    case LineType.Scenery:
+                    {
+                        greenCpy = origLineType == LineType.Red ?
+                            SceneryLine.CloneFromRed((RedLine)line) :
+                            SceneryLine.CloneFromBlue((StandardLine)line);
+
+                        game.Track._renderer.RemoveLine(line);
+                        game.Track._renderer.AddLine(greenCpy);
+
+                        break;
+                    }
+                    default:
+                    {
+                        throw new Exception("Invalid Line Type");
+                    }
                 }
 
                 if (redCpy != null)
@@ -544,9 +569,20 @@ namespace linerider.Tools
                     redCpy.Multiplier = 1;
                 }
 
-                StandardLine cpy = redCpy != null ? redCpy : blueCpy;
+                GameLine cpy;
+                if(redCpy != null)
+                {
+                    cpy = redCpy;
+                } else if (blueCpy != null)
+                {
+                    cpy = blueCpy;
+                } else
+                {
+                    cpy = greenCpy;
+                }
 
                 UpdateLine(trk, line, cpy);
+                return cpy;
             }
         }
         private void UpdateLine(TrackWriter trk, GameLine current, GameLine replacement)

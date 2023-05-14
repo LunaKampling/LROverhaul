@@ -30,6 +30,9 @@ namespace linerider.Game
             }
         }
         public override System.Drawing.Color Color => Settings.Lines.SceneryLine;
+        protected SceneryLine()
+        {
+        }
         public SceneryLine(Vector2d p1, Vector2d p2) 
         {
             Position = p1;
@@ -42,6 +45,28 @@ namespace linerider.Game
                 ID = ID,
                 Width = Width
             };
+        }
+        public static SceneryLine CloneFromBlue(StandardLine standardLine)
+        {
+            SceneryLine newLine = new SceneryLine()
+            {
+                ID = standardLine.ID,
+                Position = standardLine.Position,
+                Position2 = standardLine.Position2,
+                Width = 1
+            };
+            return newLine;
+        }
+        public static SceneryLine CloneFromRed(RedLine redLine)
+        {
+            SceneryLine newLine = new SceneryLine()
+            {
+                ID = redLine.ID,
+                Position = redLine.Position,
+                Position2 = redLine.Position2,
+                Width = 1
+            };
+            return newLine;
         }
     }
 }
