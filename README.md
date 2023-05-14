@@ -1,10 +1,10 @@
 # About
-Line Rider Overhual, abbreviated as LROverhaul, is a fork of https://github.com/jealouscloud/linerider-advanced; "An open source spiritual successor to the flash game Line Rider 6.2 with lots of new features."
+Line Rider Overhual, abbreviated as LROverhaul, is a fork of [Line Rider Advanced](https://github.com/jealouscloud/linerider-advanced); "An open source spiritual successor to the flash game Line Rider 6.2 with lots of new features."
 
 This project's goal is to unify the best features from several existing forks of the original Line Rider Advanced all into one version. Once this version is caught up with all others, we, the contributors, will aim to continue development of new features in this repo as opposed to branching off into new forks again.
 
 # Instructions
-You can download the latest version from https://github.com/LunaKampling/LROverhaul/releases/tag/Initial
+You can download the latest version from [here](https://github.com/LunaKampling/LROverhaul/releases/tag/Initial).
 ## Windows
 If you can't run the application, you probably need to install [.net 4.6](https://www.microsoft.com/en-us/download/details.aspx?id=48130) which is a requirement for running all Line Rider Advanced forks.
 ## Mac/Linux
@@ -18,7 +18,7 @@ You will need the [mono framework](http://www.mono-project.com/download/stable/)
 * Custom scarves on a rider png -> [/Examples/Riders/Bosh-Custom-Scarf-On-Png-Example/README.md](https://github.com/LunaKampling/LROverhaul/tree/master/Examples/Riders/Bosh-Custom-Scarf-On-Png-Example/README.md)
 
 # Issues
-We are tracking the development, bug reports and feature requests on (Trello)[https://trello.com/invite/b/qu4SvIr6/ATTI0ac1327b122a1cf4d1084b9d7b8acb0dB9177B71/lrl-cleanup-update]. If whatever you wish to report isn't present there, just add it :>
+We are tracking the development, bug reports and feature requests on [Trello](https://trello.com/invite/b/qu4SvIr6/ATTI0ac1327b122a1cf4d1084b9d7b8acb0dB9177B71/lrl-cleanup-update). If whatever you wish to report isn't present there, just add it :>
 
 # Build
 First extract the source code and download [gwen-lra](https://github.com/jealouscloud/gwen-lra/tree/dbe3e84568b163f3e20cd876672fc1b3b0e40873)'s source code and extract it to the /lib/gwen-lra/ folder
