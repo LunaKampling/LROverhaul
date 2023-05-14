@@ -202,6 +202,8 @@ namespace linerider
             KeybindConflicts[Hotkey.ToolCut] = KeyConflicts.SelectTool;
             KeybindConflicts[Hotkey.ToolPaste] = KeyConflicts.SelectTool;
             KeybindConflicts[Hotkey.ToolDelete] = KeyConflicts.SelectTool;
+            KeybindConflicts[Hotkey.ToolCopyValues] = KeyConflicts.SelectTool;
+            KeybindConflicts[Hotkey.ToolPasteValues] = KeyConflicts.SelectTool;
             KeybindConflicts[Hotkey.ToolSwitchRed] = KeyConflicts.SelectTool;
             KeybindConflicts[Hotkey.ToolSwitchGreen] = KeyConflicts.SelectTool;
             KeybindConflicts[Hotkey.ToolSwitchBlue] = KeyConflicts.SelectTool;
@@ -402,6 +404,8 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.ToolCut, new Keybinding(Key.X, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.ToolPaste, new Keybinding(Key.V, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.ToolDelete, new Keybinding(Key.Delete));
+            SetupDefaultKeybind(Hotkey.ToolCopyValues, new Keybinding(Key.C, KeyModifiers.Shift | KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.ToolPasteValues, new Keybinding(Key.V, KeyModifiers.Shift | KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.ToolSwitchBlue, new Keybinding(Key.Number1, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.ToolSwitchRed, new Keybinding(Key.Number2, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.ToolSwitchGreen, new Keybinding(Key.Number3, KeyModifiers.Alt));

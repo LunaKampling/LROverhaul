@@ -1551,7 +1551,26 @@ namespace linerider
             },
             null,
             repeat: false);
-
+            InputUtils.RegisterHotkey(Hotkey.ToolCopyValues, () => !Track.Playing &&
+            (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
+            CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
+            {
+                Debug.WriteLine("Copy Values");
+                //CurrentTools.SelectTool.CopyValues();
+                Invalidate();
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolPasteValues, () => !Track.Playing &&
+            (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
+            CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
+            {
+                Debug.WriteLine("Paste Values");
+                //CurrentTools.SelectTool.PasteValues();
+                Invalidate();
+            },
+            null,
+            repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchBlue, () => !Track.Playing &&
             CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
             {

@@ -111,6 +111,8 @@ namespace linerider.UI
             AddBinding(selecttoolTable, "Cut", Hotkey.ToolCut);
             AddBinding(selecttoolTable, "Paste", Hotkey.ToolPaste);
             AddBinding(selecttoolTable, "Delete Selection", Hotkey.ToolDelete);
+            AddBinding(selecttoolTable, "Copy Selection Values", Hotkey.ToolCopyValues);
+            AddBinding(selecttoolTable, "Paste Selection Values", Hotkey.ToolPasteValues);
             AddBinding(selecttoolTable, "Convert Selection (B)", Hotkey.ToolSwitchBlue,
                 "Convert all selected lines to blue lines");
             AddBinding(selecttoolTable, "Convert Selection (R)", Hotkey.ToolSwitchRed,

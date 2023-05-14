@@ -40,6 +40,8 @@ namespace linerider.UI
         ToolCut,
         ToolPaste,
         ToolDelete,
+        ToolCopyValues,
+        ToolPasteValues,
         ToolSwitchRed,
         ToolSwitchGreen,
         ToolSwitchBlue,
