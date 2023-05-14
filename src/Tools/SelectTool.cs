@@ -503,15 +503,13 @@ namespace linerider.Tools
         }
         public void SwitchLineType(LineType lineType)
         {
-            if (Active && !_drawingbox && _selection.Count > 0)
+            if (!Active || _drawingbox || _selection.Count == 0) return;
+            
+            foreach (var selected in _selection)
             {
-                foreach (var selected in _selection)
-                {
-                    if(selected.line.Type != lineType)
-                    {
-                        selected.line = ChangeSelectedLine(selected.line, lineType);
-                    }
-                }
+                if (selected.line.Type == lineType) continue;
+                
+                selected.line = ChangeSelectedLine(selected.line, lineType);
             }
         }
         private GameLine ChangeSelectedLine(GameLine line, LineType newLineType)
@@ -529,7 +527,7 @@ namespace linerider.Tools
                     {
                         redCpy = origLineType == LineType.Blue ?
                             RedLine.CloneFromBlue((StandardLine)line) :
-                            RedLine.CloneFromGreen((SceneryLine)line) ;
+                            RedLine.CloneFromGreen((SceneryLine)line);
 
                         game.Track._renderer.RemoveLine(line);
                         game.Track._renderer.AddLine(redCpy);
@@ -562,11 +560,6 @@ namespace linerider.Tools
                     {
                         throw new Exception("Invalid Line Type");
                     }
-                }
-
-                if (redCpy != null)
-                {
-                    redCpy.Multiplier = 1;
                 }
 
                 GameLine cpy;
