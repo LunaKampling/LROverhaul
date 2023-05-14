@@ -57,27 +57,5 @@ namespace linerider.Game
                 Width = Width
             };
         }
-        public static SceneryLine CloneFromBlue(StandardLine standardLine)
-        {
-            SceneryLine newLine = new SceneryLine()
-            {
-                ID = standardLine.ID,
-                Position1 = standardLine.Position1,
-                Position2 = standardLine.Position2,
-                Width = 1
-            };
-            return newLine;
-        }
-        public static SceneryLine CloneFromRed(RedLine redLine)
-        {
-            SceneryLine newLine = new SceneryLine()
-            {
-                ID = redLine.ID,
-                Position1 = redLine.Position1,
-                Position2 = redLine.Position2,
-                Width = 1
-            };
-            return newLine;
-        }
     }
 }

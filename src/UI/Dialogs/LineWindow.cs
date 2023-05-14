@@ -282,7 +282,7 @@ namespace linerider.UI
             {
                 var id = new NumberProperty(lineProp)
                 {
-                    Min = 0,
+                    Min = int.MinValue + 1,
                     Max = int.MaxValue - 1,
                     NumberValue = _ownerline.ID,
                     OnlyWholeNumbers = true,

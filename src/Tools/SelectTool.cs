@@ -74,7 +74,6 @@ namespace linerider.Tools
         private bool _rotating = false;
         private bool _nodetop = false;
         private bool _nodeleft = false;
-        private bool _changemade = false;
 
         public List<LineSelection> GetLineSelections()
         {
@@ -503,94 +502,8 @@ namespace linerider.Tools
         }
         public void SwitchLineType(LineType lineType)
         {
-            if (!Active || _drawingbox || _selection.Count == 0) return;
 
-            game.Track.UndoManager.BeginAction();
-            foreach (var selected in _selection)
-            {
-                if (selected.line.Type == lineType) continue;
-                
-                selected.line = ChangeSelectedLine(selected.line, lineType);
-            }
-            game.Track.UndoManager.EndAction();
-            game.Track.NotifyTrackChanged();
         }
-        private GameLine ChangeSelectedLine(GameLine line, LineType newLineType)
-        {
-            using (var trk = game.Track.CreateTrackWriter())
-            {
-                RedLine redCpy = null;
-                StandardLine blueCpy = null;
-                SceneryLine greenCpy = null;
-                LineType origLineType = line.Type;
-
-                switch (newLineType)
-                {
-                    case LineType.Red:
-                    {
-                        redCpy = origLineType == LineType.Blue ?
-                            RedLine.CloneFromBlue((StandardLine)line) :
-                            RedLine.CloneFromGreen((SceneryLine)line);
-
-                        game.Track._renderer.RemoveLine(line);
-                        game.Track._renderer.AddLine(redCpy);
-
-                        break;
-                    }
-                    case LineType.Blue:
-                    {
-                        blueCpy = origLineType == LineType.Scenery ?
-                            StandardLine.CloneFromGreen((SceneryLine)line) :
-                            StandardLine.CloneFromRed((RedLine)line);
-
-                        game.Track._renderer.RemoveLine(line);
-                        game.Track._renderer.AddLine(blueCpy);
-
-                        break;
-                    }
-                    case LineType.Scenery:
-                    {
-                        greenCpy = origLineType == LineType.Red ?
-                            SceneryLine.CloneFromRed((RedLine)line) :
-                            SceneryLine.CloneFromBlue((StandardLine)line);
-
-                        game.Track._renderer.RemoveLine(line);
-                        game.Track._renderer.AddLine(greenCpy);
-
-                        break;
-                    }
-                    default:
-                    {
-                        throw new Exception("Invalid Line Type");
-                    }
-                }
-
-                GameLine cpy;
-                if(redCpy != null)
-                {
-                    cpy = redCpy;
-                } else if (blueCpy != null)
-                {
-                    cpy = blueCpy;
-                } else
-                {
-                    cpy = greenCpy;
-                }
-
-                UpdateLine(trk, line, cpy);
-                return cpy;
-            }
-        }
-        private void UpdateLine(TrackWriter trk, GameLine current, GameLine replacement)
-        {
-            if (replacement is StandardLine stl)
-            {
-                stl.CalculateConstants();
-            }
-
-            trk.ReplaceLine(current, replacement);
-        }
-
         private void StartAddSelection(Vector2d gamepos)
         {
             _movingselection = false;

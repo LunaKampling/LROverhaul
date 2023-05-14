@@ -155,6 +155,7 @@ namespace linerider
                     SceneryLines++;
                     break;
             }
+            //Debug.WriteLine("Before Assert: " + line.ID);
             Debug.Assert(
                 !LineLookup.ContainsKey(line.ID),
                 "Lines occupying the same ID -- really bad");

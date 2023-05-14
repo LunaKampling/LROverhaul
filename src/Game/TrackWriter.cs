@@ -190,35 +190,22 @@ namespace linerider
                 throw new Exception("can only replace lines with the same id");
             RegisterUndoAction(oldline, newline);
 
-            if (oldline != null)
+            var std = oldline as StandardLine;
+            if (std != null)
             {
                 SaveCells(oldline.Position1, oldline.Position2);
                 SaveCells(newline.Position1, newline.Position2);
                 if (_updateextensions)
-                {
-                    if(oldline.Type != LineType.Scenery)
-                    {
-                        RemoveExtensions((StandardLine)oldline);
-                    }
-                }
+                    RemoveExtensions(std);
+                var newstd = (StandardLine)newline;
                 using (Track.Grid.Sync.AcquireWrite())
                 {
-                    if(oldline.Type != LineType.Scenery)
-                    {
-                        Track.Grid.RemoveLine((StandardLine)oldline);
-                    }
-                    if(newline.Type != LineType.Scenery)
-                    {
-                        Track.Grid.AddLine((StandardLine)newline);
-                    }
+                    // this could be a moveline, i think.
+                    Track.Grid.RemoveLine(std);
+                    Track.Grid.AddLine(newstd);
                 }
                 if (_updateextensions)
-                {
-                    if(newline.Type != LineType.Scenery)
-                    {
-                        AddExtensions((StandardLine)newline);
-                    }
-                }
+                    AddExtensions(newstd);
             }
 
             _editorcells.RemoveLine(oldline);

@@ -132,20 +132,5 @@ namespace linerider.Game
             newLine.CalculateConstants();
             return newLine;
         }
-        public static new RedLine CloneFromGreen(SceneryLine sceneryLine)
-        {
-            RedLine newLine = new RedLine()
-            {
-                ID = sceneryLine.ID,
-                Extension = Ext.None,
-                inv = false,
-                Position1 = sceneryLine.Position1,
-                Position2 = sceneryLine.Position2,
-                Trigger = null,
-                _multiplier = 1
-            };
-            newLine.CalculateConstants();
-            return newLine;
-        }
     }
 }
