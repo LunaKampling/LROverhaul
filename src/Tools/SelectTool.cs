@@ -500,9 +500,53 @@ namespace linerider.Tools
                 game.Track.NotifyTrackChanged();
             }
         }
-        public void SwitchLineType(LineType lineType)
+        public void SwitchLineType(LineType type)
         {
+            if (!Active || _drawingbox || _selection.Count == 0) return;
 
+            using (var trk = game.Track.CreateTrackWriter())
+            {
+                game.Track.UndoManager.BeginAction();
+
+                foreach (var selected in _selectedlines)
+                {
+                    GameLine line = trk.Track.LineLookup[selected];
+                    line.SelectionState = SelectionState.None;
+                    trk.RemoveLine(line);
+
+                    GameLine cpy = null;
+                    switch (type)
+                    {
+                        case LineType.Blue:
+                            cpy = new StandardLine(line.Start, line.End);
+                            break;
+
+                        case LineType.Red:
+                            cpy = new RedLine(line.Start, line.End)
+                            { Multiplier = 1 };
+                            break;
+
+                        case LineType.Scenery:
+                            cpy = new SceneryLine(line.Start, line.End)
+                            { Width = 1 };
+                            break;
+                        default:
+                            throw new Exception("Unknown line type");
+                    }
+
+                    if (cpy is StandardLine stl)
+                        stl.CalculateConstants();
+
+                    trk.AddLine(cpy);
+                }
+
+                _selection.Clear();
+                _selectedlines.Clear();
+                Stop();
+
+                game.Track.UndoManager.EndAction();
+                trk.NotifyTrackChanged();
+            }
         }
         private void StartAddSelection(Vector2d gamepos)
         {
