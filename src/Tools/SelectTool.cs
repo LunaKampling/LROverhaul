@@ -510,9 +510,14 @@ namespace linerider.Tools
 
             StringBuilder lineArray = new StringBuilder("[");
 
-            for(int i = 0; i < _selection.Count; i++)
+            Vector2d offset = GetCopyOrigin();
+
+            for (int i = 0; i < _selection.Count; i++)
             {
-                lineArray.Append(_selection[i].line.ToString());
+                GameLine line = _selection[i].line.Clone();
+                line.Position1 -= offset;
+                line.Position2 -= offset;
+                lineArray.Append(line.ToString());
 
                 if(i < _selection.Count - 1)
                 {
