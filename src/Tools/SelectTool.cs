@@ -466,8 +466,12 @@ namespace linerider.Tools
         }
         public void Paste()
         {
-            if (_copybuffer.Count == 0) return;
-      
+            PasteFromBuffer(_copybuffer);
+        }
+        private void PasteFromBuffer(List<GameLine> buffer)
+        {
+            if (buffer.Count == 0) return;
+
             Stop(false);
             var pasteorigin = GetCopyOrigin();
             var diff = pasteorigin - _copyorigin;
@@ -480,7 +484,7 @@ namespace linerider.Tools
             using (var trk = game.Track.CreateTrackWriter())
             {
                 game.Track.UndoManager.BeginAction();
-                foreach (var line in _copybuffer)
+                foreach (var line in buffer)
                 {
                     var add = line.Clone();
                     add.ID = GameLine.UninitializedID;
@@ -516,6 +520,19 @@ namespace linerider.Tools
             }
 
             Clipboard.SetText(lineArray.ToString() + "]");
+        }
+        public void PasteValues()
+        {
+            string lineArray = Clipboard.GetText();
+            List<GameLine> lineList = ParseJson(lineArray);
+
+            if (lineList is null) return;
+
+            PasteFromBuffer(lineList);
+        }
+        private List<GameLine> ParseJson(string lineArray)
+        {
+            return _copybuffer;
         }
         public void SwitchLineType(LineType type)
         {
