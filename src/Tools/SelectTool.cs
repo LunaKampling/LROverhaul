@@ -15,6 +15,7 @@ using System.Diagnostics;
 using static linerider.Settings;
 using System.Windows.Forms;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace linerider.Tools
 {
