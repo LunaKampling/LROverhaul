@@ -425,79 +425,84 @@ namespace linerider.Tools
         }
         public void Delete()
         {
-            if (Active && !_drawingbox && _selection.Count > 0)
+            if (!Active || _drawingbox || _selection.Count == 0) return;
+
+            using (var trk = game.Track.CreateTrackWriter())
             {
-                using (var trk = game.Track.CreateTrackWriter())
+                game.Track.UndoManager.BeginAction();
+                foreach (var selected in _selectedlines)
                 {
-                    game.Track.UndoManager.BeginAction();
-                    foreach (var selected in _selectedlines)
-                    {
-                        var line = trk.Track.LineLookup[selected];
-                        line.SelectionState = SelectionState.None;
-                        trk.RemoveLine(line);
-                    }
-                    game.Track.UndoManager.EndAction();
-                    trk.NotifyTrackChanged();
+                    var line = trk.Track.LineLookup[selected];
+                    line.SelectionState = SelectionState.None;
+                    trk.RemoveLine(line);
                 }
-                _selection.Clear();
-                _selectedlines.Clear();
-                Stop();
+                game.Track.UndoManager.EndAction();
+                trk.NotifyTrackChanged();
             }
+            _selection.Clear();
+            _selectedlines.Clear();
+            Stop();
         }
         public void Cut()
         {
-            if (Active && !_drawingbox && _selection.Count > 0)
-            {
-                Copy();
-                Delete();
-            }
+            if (!Active || _drawingbox || _selection.Count == 0) return;
+
+            Copy();
+            Delete();
         }
         public void Copy()
         {
+            if (!Active || _drawingbox || _selection.Count == 0) return;
             _copybuffer.Clear();
-            if (Active && !_drawingbox && _selection.Count > 0)
+            
+            foreach (var selected in _selection)
             {
-                foreach (var selected in _selection)
-                {
-                    _copybuffer.Add(selected.line.Clone());
-                }
-                _copyorigin = GetCopyOrigin();
+                _copybuffer.Add(selected.line.Clone());
             }
+            _copyorigin = GetCopyOrigin();
         }
         public void Paste()
         {
-            if (_copybuffer.Count != 0)
+            if (_copybuffer.Count == 0) return;
+      
+            Stop(false);
+            var pasteorigin = GetCopyOrigin();
+            var diff = pasteorigin - _copyorigin;
+            Unselect();
+            Active = true;
+            if (CurrentTools.SelectedTool != this)
             {
-                Stop(false);
-                var pasteorigin = GetCopyOrigin();
-                var diff = pasteorigin - _copyorigin;
-                Unselect();
-                Active = true;
-                if (CurrentTools.SelectedTool != this)
+                CurrentTools.SetTool(this);
+            }
+            using (var trk = game.Track.CreateTrackWriter())
+            {
+                game.Track.UndoManager.BeginAction();
+                foreach (var line in _copybuffer)
                 {
-                    CurrentTools.SetTool(this);
+                    var add = line.Clone();
+                    add.ID = GameLine.UninitializedID;
+                    add.Position1 += diff;
+                    add.Position2 += diff;
+                    if (add is StandardLine stl)
+                        stl.CalculateConstants();
+                    add.SelectionState = SelectionState.Selected;
+                    trk.AddLine(add);
+                    var selectinfo = new LineSelection(add, true, null);
+                    _selection.Add(selectinfo);
+                    _selectedlines.Add(add.ID);
                 }
-                using (var trk = game.Track.CreateTrackWriter())
-                {
-                    game.Track.UndoManager.BeginAction();
-                    foreach (var line in _copybuffer)
-                    {
-                        var add = line.Clone();
-                        add.ID = GameLine.UninitializedID;
-                        add.Position1 += diff;
-                        add.Position2 += diff;
-                        if (add is StandardLine stl)
-                            stl.CalculateConstants();
-                        add.SelectionState = SelectionState.Selected;
-                        trk.AddLine(add);
-                        var selectinfo = new LineSelection(add, true, null);
-                        _selection.Add(selectinfo);
-                        _selectedlines.Add(add.ID);
-                    }
-                    game.Track.UndoManager.EndAction();
-                }
-                _selectionbox = GetBoxFromSelected(_selection);
-                game.Track.NotifyTrackChanged();
+                game.Track.UndoManager.EndAction();
+            }
+            _selectionbox = GetBoxFromSelected(_selection);
+            game.Track.NotifyTrackChanged();
+        }
+        public void CopyValues()
+        {
+            if (!Active || _drawingbox || _selection.Count == 0) return;
+
+            foreach (var selected in _selection)
+            {
+                Debug.WriteLine(selected.line.ToString());
             }
         }
         public void SwitchLineType(LineType type)
