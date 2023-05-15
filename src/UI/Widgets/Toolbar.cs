@@ -258,6 +258,7 @@ namespace linerider.UI
             btn.SetImage(image);
             btn.SetSize(size*32, size*32);
             btn.Tooltip = tooltip;
+            btn.Margin = new Margin(3, 0, 3, 0);
             return btn;
         }
     }
