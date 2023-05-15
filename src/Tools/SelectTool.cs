@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace linerider.Tools
 {
@@ -80,6 +81,7 @@ namespace linerider.Tools
         private bool _nodetop = false;
         private bool _nodeleft = false;
         private string _notifymessage = "";
+        private CancellationTokenSource _cancellationTokenSource;
 
         public List<LineSelection> GetLineSelections()
         {
@@ -601,11 +603,26 @@ namespace linerider.Tools
                 return null;
             }
         }
-        private async void Notify(string message)
+        private void Notify(string message)
         {
+            if (_cancellationTokenSource != null)
+            {
+                _cancellationTokenSource.Cancel();
+            }
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = _cancellationTokenSource.Token;
+
             _notifymessage = message;
-            await Task.Delay(2000);
-            _notifymessage = "";
+
+            ThreadPool.QueueUserWorkItem(state =>
+            {
+                Thread.Sleep(5000);
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    _notifymessage = string.Empty;
+                }
+            }, cancellationToken);
         }
         public void SwitchLineType(LineType type)
         {
