@@ -150,7 +150,8 @@ namespace linerider.Tools
                     using (var trk = game.Track.CreateTrackWriter())
                     {
                         game.Track.UndoManager.BeginAction();
-                        var added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap);
+                        var added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
+                            Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                         game.Track.UndoManager.EndAction();
                         if (added is StandardLine)
                         {
