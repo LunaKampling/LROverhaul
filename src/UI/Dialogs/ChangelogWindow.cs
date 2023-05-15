@@ -28,7 +28,7 @@ namespace linerider.UI
                 "*Toolbar buttons should be upscaled by now \n \n" +
                 "*Note: Bezier and Remount still need fixing \n" +
                 "*New selection mechanics have been tested, though if you happen to somehow crash \n" +
-                "the program, report it on the Trello page. Of course also send your log file." 
+                "the program, report it on the Trello page. Of course also send your log file."; 
 
 
             ControlBase bottomcontainer = new ControlBase(this)
