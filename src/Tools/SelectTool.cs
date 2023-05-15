@@ -512,7 +512,6 @@ namespace linerider.Tools
             _selectionbox = GetBoxFromSelected(_selection);
             game.Track.NotifyTrackChanged();
         }
-        //TODO: Add pop-up indicating successful copy/fail to paste
         public void CopyValues()
         {
             if (!Active || _drawingbox || _selection.Count == 0) return;
@@ -632,36 +631,15 @@ namespace linerider.Tools
             {
                 game.Track.UndoManager.BeginAction();
 
+                List<GameLine> buffer = new List<GameLine>();
+
                 foreach (var selected in _selectedlines)
                 {
                     GameLine line = trk.Track.LineLookup[selected];
                     line.SelectionState = SelectionState.None;
                     trk.RemoveLine(line);
 
-                    GameLine newLine = null;
-                    switch (type)
-                    {
-                        case LineType.Blue:
-                            newLine = new StandardLine(line.Start, line.End);
-                            break;
-
-                        case LineType.Red:
-                            newLine = new RedLine(line.Start, line.End)
-                            { Multiplier = 1 };
-                            break;
-
-                        case LineType.Scenery:
-                            newLine = new SceneryLine(line.Start, line.End)
-                            { Width = 1 };
-                            break;
-                        default:
-                            throw new Exception("Unknown line type");
-                    }
-
-                    if (newLine is StandardLine stl)
-                        stl.CalculateConstants();
-
-                    trk.AddLine(newLine);
+                    buffer.Add(CreateLine(trk, line.Start, line.End, false, false, false, type));
                 }
 
                 _selection.Clear();
