@@ -16,8 +16,6 @@ using static linerider.Settings;
 using System.Windows.Forms;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace linerider.Tools
 {
@@ -80,8 +78,6 @@ namespace linerider.Tools
         private bool _rotating = false;
         private bool _nodetop = false;
         private bool _nodeleft = false;
-        private string _notifymessage = "";
-        private CancellationTokenSource _cancellationTokenSource;
 
         public List<LineSelection> GetLineSelections()
         {
@@ -90,10 +86,6 @@ namespace linerider.Tools
         public List<LineSelection> GetLineSelectionsInBox()
         {
             return _boxselection;
-        }
-        public string NotifyMessage()
-        {
-            return _notifymessage;
         }
         public void CancelSelection()
         {
@@ -529,8 +521,8 @@ namespace linerider.Tools
             }
 
             Clipboard.SetText(lineArray.ToString() + "]");
-
-            Notify("Copied!");
+            
+            game.Track.Notify("Copied!");
         }
         public void PasteValues()
         {
@@ -598,30 +590,9 @@ namespace linerider.Tools
             }
             catch
             {
-                Notify("Failed to Paste");
+                game.Track.Notify("Failed to Paste");
                 return null;
             }
-        }
-        private void Notify(string message)
-        {
-            if (_cancellationTokenSource != null)
-            {
-                _cancellationTokenSource.Cancel();
-            }
-
-            _cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken cancellationToken = _cancellationTokenSource.Token;
-
-            _notifymessage = message;
-
-            ThreadPool.QueueUserWorkItem(state =>
-            {
-                Thread.Sleep(5000);
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    _notifymessage = string.Empty;
-                }
-            }, cancellationToken);
         }
         public void SwitchLineType(LineType type)
         {

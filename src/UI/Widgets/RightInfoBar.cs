@@ -49,6 +49,7 @@ namespace linerider.UI
             _fpslabel.IsHidden = rec && !Settings.Recording.ShowFps;
             _riderspeedlabel.IsHidden = rec && !Settings.Recording.ShowPpf;
             _playbackratelabel.IsHidden = rec || _editor.Scheduler.UpdatesPerSecond == 40;
+            _notifylabel.IsHidden = rec;
             _usercamerasprite.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
             _iconpanel.IsHidden = _usercamerasprite.IsHidden;
         }
@@ -87,7 +88,7 @@ namespace linerider.UI
                 Alignment = Pos.Right | Pos.CenterV,
                 TextRequest = (o, currenttext) =>
                 {
-                    return CurrentTools.SelectTool.NotifyMessage();
+                    return _editor.CurrentNotifyMessage;
                 },
                 Margin = new Margin(0, 0, 5, 0)
             };
