@@ -18,22 +18,18 @@ namespace linerider.UI
             AutoSizeToContents = true;
 
             var changelogText =
-                "11/29/2022 \n" +    
-                    "*Fixed a bug with night mode not rendering properly \n" +
-                    "*Fixed a bug with toolbar appearing too small on higher resolution screens \n" +
-                    "*Fixed a bug with Numpad number hotkeys appearing the same as normal numbers \n" +
-                    "*Temporarily disabled Check for Updates \n" +
-                    "\n" +
-                    "*Note: Toolbar buttons are still 32px x 32px. \n*For high resolution screens this will appear as low-res. \n*Working on upscaling them as of this changelog \n" +
-                    "\n" +
-                "11/27/2022 \n" + 
-                    "*Removed Discord Integration \n" +
-                    "*Added Smooth Pencil. Activated by re-activating the pencil tool when active \n" +
-                    "*Smooth Pencil is fully customizable in preferenceswindow. Go nuts! \n" +
-                    "*Cleaned up parts of preferenceswindow \n" +
-                    "*Added Coordinate Menu. Hotkeys to copy to clipboard are Ctrl/Alt + Numpad \n" +
-                    "\n" +
-                    "*Note: Remount and Bezier tool have yet to be fixed \n";
+                "5/15/2023 \n" +
+                "*Change line type based on selection! Alt + 1/2/3 to change the line type \n" +
+                "*Copy line data to your clipboard! Ctrl+shift+c/v to copy/paste line data \n" +
+                "*Generators now contain a button within the top bar UI \n" +
+                "*.json files no longer make the background for exports 000000FF (Black)  \n" +
+                "*A few links have been changed to now point to the LROverhaul GitHub page \n" +
+                "*General hotkey changes \n" +
+                "*Toolbar buttons should be upscaled by now \n \n" +
+                "*Note: Bezier and Remount still need fixing \n" +
+                "*New selection mechanics have been tested, though if you happen to somehow crash \n" +
+                "the program, report it on the Trello page. Of course also send your log file." 
+
 
             ControlBase bottomcontainer = new ControlBase(this)
             {
