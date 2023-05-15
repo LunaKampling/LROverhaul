@@ -1,5 +1,5 @@
 # About
-Line Rider Overhual, abbreviated as LROverhaul, is a fork of [Line Rider Advanced](https://github.com/jealouscloud/linerider-advanced); "An open source spiritual successor to the flash game Line Rider 6.2 with lots of new features."
+Line Rider Overhaul, abbreviated as LROverhaul, is a fork of [Line Rider Advanced](https://github.com/jealouscloud/linerider-advanced); "An open source spiritual successor to the flash game Line Rider 6.2 with lots of new features."
 
 This project's goal is to unify the best features from several existing forks of the original Line Rider Advanced all into one version. Once this version is caught up with all others, we, the contributors, will aim to continue development of new features in this repo as opposed to branching off into new forks again.
 
@@ -10,12 +10,15 @@ If you can't run the application, you probably need to install [.net 4.6](https:
 ## Mac/Linux
 You will need the [mono framework](http://www.mono-project.com/download/stable/) installed in order to run all Line Rider Advanded forks.
 
-# LRA:CE Features
-* Discord activity support (Aka little stats when you click your user)
+# Features
 * Custom scarves from a .txt file in /LRA/Scarves -> [/Examples/Scarves/README.md](https://github.com/LunaKampling/LROverhaul/tree/master/Examples/Scarves/README.md)
 * Custom amount of scarf segments
 * Custom riders in /LRA/Riders -> [/Examples/Riders/README.md](https://github.com/LunaKampling/LROverhaul/tree/master/Examples/Riders/README.md)
 * Custom scarves on a rider png -> [/Examples/Riders/Bosh-Custom-Scarf-On-Png-Example/README.md](https://github.com/LunaKampling/LROverhaul/tree/master/Examples/Riders/Bosh-Custom-Scarf-On-Png-Example/README.md)
+* Iteration-based contact point coordinate viewer
+* Custom background and line color (Not infinite colors yet!)
+* Copy paste preservation of line data to transfer between tracks
+* Ability to change line type of a selection
 
 # Issues
 We are tracking the development, bug reports and feature requests on [Trello](https://trello.com/invite/b/qu4SvIr6/ATTI0ac1327b122a1cf4d1084b9d7b8acb0dB9177B71/lrl-cleanup-update). If whatever you wish to report isn't present there, just add it :>
@@ -34,7 +37,6 @@ This project uses binaries, sources, or modified sources from the following libr
 * NVorbis https://github.com/ioctlLR/NVorbis
 * gwen-dotnet https://code.google.com/archive/p/gwen-dotnet/
 * OpenTK https://github.com/opentk/opentk
-* Discord Game SDK https://discord.com/
 * Newtonsoft Json.NET https://github.com/JamesNK/Newtonsoft.Json
 
 You can find their license info in LICENSES.txt
