@@ -550,32 +550,24 @@ namespace linerider.Tools
 
                     Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
                     Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
+                    bool flipped = inner.ContainsKey("flipped") ? (bool) inner["flipped"] : false;
+                    bool left = inner.ContainsKey("leftExtended") ? (bool) inner["leftExtended"] : false;
+                    bool right = inner.ContainsKey("rightExtended") ? (bool) inner["rightExtended"] : false;
+                    StandardLine.Ext extension =
+                        left && right ? StandardLine.Ext.Both :
+                        left ? StandardLine.Ext.Left :
+                        right ? StandardLine.Ext.Right :
+                        StandardLine.Ext.None;
                     switch ((int) inner["type"])
                     {
                         case 0:
                         {
-                            bool flipped = (bool)inner["flipped"];
-                            bool left = (bool)inner["leftExtended"];
-                            bool right = (bool)inner["rightExtended"];
-                            StandardLine.Ext extension =
-                                left && right ? StandardLine.Ext.Both :
-                                left ? StandardLine.Ext.Left :
-                                right ? StandardLine.Ext.Right :
-                                StandardLine.Ext.None;
                             newLine = new StandardLine(pos1, pos2, flipped)
                             { Extension = extension };
                             break;
                         }
                         case 1:
                         {
-                            bool flipped = (bool)inner["flipped"];
-                            bool left = (bool)inner["leftExtended"];
-                            bool right = (bool)inner["rightExtended"];
-                            StandardLine.Ext extension =
-                                left && right ? StandardLine.Ext.Both :
-                                left ? StandardLine.Ext.Left :
-                                right ? StandardLine.Ext.Right :
-                                StandardLine.Ext.None;
                             int multiplier = inner.ContainsKey("multiplier") ? (int)inner["multiplier"] : 1;
                             newLine = new RedLine(pos1, pos2)
                             { Multiplier = multiplier };
