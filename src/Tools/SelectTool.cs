@@ -15,7 +15,7 @@ using System.Diagnostics;
 using static linerider.Settings;
 using System.Windows.Forms;
 using System.Text;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace linerider.Tools
 {
@@ -504,6 +504,7 @@ namespace linerider.Tools
             _selectionbox = GetBoxFromSelected(_selection);
             game.Track.NotifyTrackChanged();
         }
+        //TODO: Add pop-up indicating successful copy/fail to paste
         public void CopyValues()
         {
             if (!Active || _drawingbox || _selection.Count == 0) return;
@@ -521,6 +522,8 @@ namespace linerider.Tools
             }
 
             Clipboard.SetText(lineArray.ToString() + "]");
+
+            Debug.WriteLine("Copied!");
         }
         public void PasteValues()
         {
@@ -533,7 +536,72 @@ namespace linerider.Tools
         }
         private List<GameLine> ParseJson(string lineArray)
         {
-            return _copybuffer;
+            try
+            {
+                JArray parsedLineArray = JArray.Parse(lineArray);
+
+                List<GameLine> deserializedLines = new List<GameLine>();
+
+                foreach (JToken line in parsedLineArray)
+                {
+                    JObject inner = line.Value<JObject>();
+
+                    GameLine newLine = null;
+
+                    Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
+                    Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
+                    switch ((int) inner["type"])
+                    {
+                        case 0:
+                        {
+                            bool flipped = (bool)inner["flipped"];
+                            bool left = (bool)inner["leftExtended"];
+                            bool right = (bool)inner["rightExtended"];
+                            StandardLine.Ext extension =
+                                left && right ? StandardLine.Ext.Both :
+                                left ? StandardLine.Ext.Left :
+                                right ? StandardLine.Ext.Right :
+                                StandardLine.Ext.None;
+                            newLine = new StandardLine(pos1, pos2, flipped)
+                            { Extension = extension };
+                            break;
+                        }
+                        case 1:
+                        {
+                            bool flipped = (bool)inner["flipped"];
+                            bool left = (bool)inner["leftExtended"];
+                            bool right = (bool)inner["rightExtended"];
+                            StandardLine.Ext extension =
+                                left && right ? StandardLine.Ext.Both :
+                                left ? StandardLine.Ext.Left :
+                                right ? StandardLine.Ext.Right :
+                                StandardLine.Ext.None;
+                            int multiplier = inner.ContainsKey("multiplier") ? (int)inner["multiplier"] : 1;
+                            newLine = new RedLine(pos1, pos2)
+                            { Multiplier = multiplier };
+                            break;
+                        }
+                        case 2:
+                        {
+                            float width = inner.ContainsKey("width") ? (float)inner["width"] : 1f;
+                            newLine = new SceneryLine(pos1, pos2)
+                            { Width = width };
+                            break;
+                        }
+                        default:
+                            throw new Exception("Unknown line type");
+                    }
+
+                    deserializedLines.Add(newLine);
+                }
+
+                return deserializedLines;
+            }
+            catch
+            {
+                Debug.WriteLine("Failed to paste.");
+                return null;
+            }
         }
         public void SwitchLineType(LineType type)
         {
@@ -549,30 +617,30 @@ namespace linerider.Tools
                     line.SelectionState = SelectionState.None;
                     trk.RemoveLine(line);
 
-                    GameLine cpy = null;
+                    GameLine newLine = null;
                     switch (type)
                     {
                         case LineType.Blue:
-                            cpy = new StandardLine(line.Start, line.End);
+                            newLine = new StandardLine(line.Start, line.End);
                             break;
 
                         case LineType.Red:
-                            cpy = new RedLine(line.Start, line.End)
+                            newLine = new RedLine(line.Start, line.End)
                             { Multiplier = 1 };
                             break;
 
                         case LineType.Scenery:
-                            cpy = new SceneryLine(line.Start, line.End)
+                            newLine = new SceneryLine(line.Start, line.End)
                             { Width = 1 };
                             break;
                         default:
                             throw new Exception("Unknown line type");
                     }
 
-                    if (cpy is StandardLine stl)
+                    if (newLine is StandardLine stl)
                         stl.CalculateConstants();
 
-                    trk.AddLine(cpy);
+                    trk.AddLine(newLine);
                 }
 
                 _selection.Clear();
