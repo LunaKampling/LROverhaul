@@ -94,9 +94,9 @@ namespace linerider.Game
                 $"\"y1\":{Position1.Y}," +
                 $"\"x2\":{Position2.X}," +
                 $"\"y2\":{Position2.Y}," +
-                $"\"flipped\":{inv}" +
-                $"\"leftExtended\":{Extension == Ext.Left || Extension == Ext.Both}" +
-                $"\"rightExtended\":{Extension == Ext.Right || Extension == Ext.Both}" +
+                $"\"flipped\":{(inv ? "true" : "false")}," +
+                $"\"leftExtended\":{(Extension == Ext.Left || Extension == Ext.Both ? "true" : "false")}," +
+                $"\"rightExtended\":{(Extension == Ext.Right || Extension == Ext.Both ? "true" : "false")}" +
                 "}";
         }
         /// <summary>

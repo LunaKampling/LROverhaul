@@ -9,9 +9,12 @@ using linerider.Game;
 using linerider.Rendering;
 using linerider.Drawing;
 using System.Drawing;
+using System.Windows;
 using linerider.UI;
 using System.Diagnostics;
 using static linerider.Settings;
+using System.Windows.Forms;
+using System.Text;
 
 namespace linerider.Tools
 {
@@ -500,10 +503,19 @@ namespace linerider.Tools
         {
             if (!Active || _drawingbox || _selection.Count == 0) return;
 
-            foreach (var selected in _selection)
+            StringBuilder lineArray = new StringBuilder("[");
+
+            for(int i = 0; i < _selection.Count; i++)
             {
-                Debug.WriteLine(selected.line.ToString());
+                lineArray.Append(_selection[i].line.ToString());
+
+                if(i < _selection.Count - 1)
+                {
+                    lineArray.Append(",");
+                }
             }
+
+            Clipboard.SetText(lineArray.ToString() + "]");
         }
         public void SwitchLineType(LineType type)
         {

@@ -1555,8 +1555,7 @@ namespace linerider
             (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
             CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
             {
-                Debug.WriteLine("Copy Values");
-                //CurrentTools.SelectTool.CopyValues();
+                CurrentTools.SelectTool.CopyValues();
                 Invalidate();
             },
             null,
