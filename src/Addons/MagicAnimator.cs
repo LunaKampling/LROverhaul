@@ -64,7 +64,7 @@ namespace linerider.Addons
             foreach (LineSelection selection in selectedLines)
             {
                 GameLine selectedLine = selection.line;
-                Vector2d p1 = selectedLine.Position;
+                Vector2d p1 = selectedLine.Position1;
                 Vector2d p2 = selectedLine.Position2;
 
                 Vector2d diff1 = Vector2d.Subtract(p1, currentFrameExpectedPos);

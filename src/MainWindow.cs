@@ -207,19 +207,19 @@ namespace linerider
                     GameRenderer.DrawFloatGrid();
                 }
 
-                if ((InputUtils.Check(Hotkey.DrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawCollisionGrid)
+                if ((InputUtils.Check(Hotkey.PreferenceDrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawCollisionGrid)
                 {
                     GameRenderer.DbgDrawGrid();
                 }
 
-                if ((InputUtils.Check(Hotkey.DrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawAGWs)
+                if ((InputUtils.Check(Hotkey.PreferenceDrawDebugGrid) && !TrackRecorder.Recording) || Settings.DrawAGWs)
                 {
                     GameRenderer.DrawAGWs();
                 }
 
                 Track.Render(blend);
 
-                if ((InputUtils.Check(Hotkey.DrawDebugCamera) && !TrackRecorder.Recording) || Settings.DrawCamera)
+                if ((InputUtils.Check(Hotkey.PreferenceDrawDebugCamera) && !TrackRecorder.Recording) || Settings.DrawCamera)
                 {
                     GameRenderer.DbgDrawCamera();
                 }
@@ -1080,7 +1080,7 @@ namespace linerider
                 Track.Invalidate();
             });
 
-            InputUtils.RegisterHotkey(Hotkey.InvisibleRider, () => true, () =>
+            InputUtils.RegisterHotkey(Hotkey.PreferenceInvisibleRider, () => true, () =>
             {
                 Settings.InvisibleRider = !Settings.InvisibleRider;
                 Settings.Save();
@@ -1432,7 +1432,7 @@ namespace linerider
                     var l = trk.GetOldestLine();
                     if (l != null)
                     {
-                        Track.Camera.SetFrameCenter(l.Position);
+                        Track.Camera.SetFrameCenter(l.Position1);
                         Invalidate();
                     }
                 }
@@ -1444,7 +1444,7 @@ namespace linerider
                     var l = trk.GetNewestLine();
                     if (l != null)
                     {
-                        Track.Camera.SetFrameCenter(l.Position);
+                        Track.Camera.SetFrameCenter(l.Position1);
                         Invalidate();
                     }
                 }
@@ -1547,6 +1547,48 @@ namespace linerider
             CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
             {
                 CurrentTools.SelectTool.Delete();
+                Invalidate();
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolCopyValues, () => !Track.Playing &&
+            (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
+            CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
+            {
+                CurrentTools.SelectTool.CopyValues();
+                Invalidate();
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolPasteValues, () => !Track.Playing &&
+            (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
+            CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
+            {
+                CurrentTools.SelectTool.PasteValues();
+                Invalidate();
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolSwitchBlue, () => !Track.Playing &&
+            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            {
+                CurrentTools.SelectTool.SwitchLineType(LineType.Blue);
+                Invalidate();
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolSwitchRed, () => !Track.Playing &&
+            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            {
+                CurrentTools.SelectTool.SwitchLineType(LineType.Red);
+                Invalidate();
+            },
+            null,
+            repeat: false);
+            InputUtils.RegisterHotkey(Hotkey.ToolSwitchGreen, () => !Track.Playing &&
+            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            {
+                CurrentTools.SelectTool.SwitchLineType(LineType.Scenery);
                 Invalidate();
             },
             null,

@@ -31,6 +31,7 @@ namespace linerider.UI
         private TrackLabel _fpslabel;
         private TrackLabel _playbackratelabel;
         private TrackLabel _riderspeedlabel;
+        private TrackLabel _notifylabel;
         private Panel _iconpanel;
         private Sprite _usercamerasprite;
         private Stopwatch _fpswatch = new Stopwatch();
@@ -80,7 +81,16 @@ namespace linerider.UI
                 },
                 Margin = new Margin(0, 0, 5, 0)
             };
-
+            _notifylabel = new TrackLabel(this)
+            {
+                Dock = Dock.Top,
+                Alignment = Pos.Right | Pos.CenterV,
+                TextRequest = (o, currenttext) =>
+                {
+                    return CurrentTools.SelectTool.NotifyMessage();
+                },
+                Margin = new Margin(0, 0, 5, 0)
+            };
             _riderspeedlabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,

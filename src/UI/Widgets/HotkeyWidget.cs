@@ -60,105 +60,118 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            var editortable = _kbtree.Add("Editor", 150);
-            AddBinding(editortable, "Pencil Tool", Hotkey.EditorPencilTool);
-            AddBinding(editortable, "Line Tool", Hotkey.EditorLineTool);
-            AddBinding(editortable, "Eraser", Hotkey.EditorEraserTool);
-            AddBinding(editortable, "Select Tool", Hotkey.EditorSelectTool);
-            AddBinding(editortable, "Hand Tool", Hotkey.EditorPanTool);
-            AddBinding(editortable, "Quick Pan", Hotkey.EditorQuickPan);
-            AddBinding(editortable, "Drag Canvas", Hotkey.EditorDragCanvas);
-            AddBinding(editortable, "Move Start Point", Hotkey.EditorMoveStart,
+            var editorTable = _kbtree.Add("Editor", 150);
+            AddBinding(editorTable, "Pencil Tool", Hotkey.EditorPencilTool);
+            AddBinding(editorTable, "Line Tool", Hotkey.EditorLineTool);
+            AddBinding(editorTable, "Eraser", Hotkey.EditorEraserTool);
+            AddBinding(editorTable, "Select Tool", Hotkey.EditorSelectTool);
+            AddBinding(editorTable, "Hand Tool", Hotkey.EditorPanTool);
+            AddBinding(editorTable, "Quick Pan", Hotkey.EditorQuickPan);
+            AddBinding(editorTable, "Drag Canvas", Hotkey.EditorDragCanvas);
+            AddBinding(editorTable, "Swatch Color Blue", Hotkey.EditorToolColor1);
+            AddBinding(editorTable, "Swatch Color Red", Hotkey.EditorToolColor2);
+            AddBinding(editorTable, "Swatch Color Green", Hotkey.EditorToolColor3);
+            AddBinding(editorTable, "Cycle Tool Setting", Hotkey.EditorCycleToolSetting);
+
+            AddBinding(editorTable, "Move Start Point", Hotkey.EditorMoveStart,
                 "Hold and click the rider to move him");
-            AddBinding(editortable, "Swatch Color Blue", Hotkey.EditorToolColor1);
-            AddBinding(editortable, "Swatch Color Red", Hotkey.EditorToolColor2);
-            AddBinding(editortable, "Swatch Color Green", Hotkey.EditorToolColor3);
-            AddBinding(editortable, "Cycle Tool Setting", Hotkey.EditorCycleToolSetting);
-            AddBinding(editortable, "Toggle Onion Skinning", Hotkey.PreferenceOnionSkinning);
-            AddBinding(editortable, "Toggle Advanced Visuals", Hotkey.PreferenceAllCheckboxSettings);
-            AddBinding(editortable, "Toggle Rider Visibility", Hotkey.InvisibleRider);
-            AddBinding(editortable, "Focus on Rider", Hotkey.EditorFocusRider);
-            AddBinding(editortable, "Focus on Flag", Hotkey.EditorFocusFlag);
-            AddBinding(editortable, "Focus First Line", Hotkey.EditorFocusStart);
-            AddBinding(editortable, "Focus Last Line", Hotkey.EditorFocusLastLine);
-            AddBinding(editortable, "Remove Newest Line", Hotkey.EditorRemoveLatestLine);
-            AddBinding(editortable, "Toggle Track Overlay", Hotkey.ToolToggleOverlay);
+            AddBinding(editorTable, "Focus on Rider", Hotkey.EditorFocusRider);
+            AddBinding(editorTable, "Focus on Flag", Hotkey.EditorFocusFlag);
+            AddBinding(editorTable, "Focus First Line", Hotkey.EditorFocusStart);
+            AddBinding(editorTable, "Focus Last Line", Hotkey.EditorFocusLastLine);
 
+            AddBinding(editorTable, "Toggle Onion Skinning", Hotkey.PreferenceOnionSkinning);
+            AddBinding(editorTable, "Toggle Advanced Visuals", Hotkey.PreferenceAllCheckboxSettings);
+            AddBinding(editorTable, "Toggle Rider Visibility", Hotkey.PreferenceInvisibleRider);
+            AddBinding(editorTable, "Toggle Track Overlay", Hotkey.ToolToggleOverlay);
+            AddBinding(editorTable, "Toggle Debug Grid", Hotkey.PreferenceDrawDebugGrid);
+            AddBinding(editorTable, "Toggle Debug Camera", Hotkey.PreferenceDrawDebugCamera);
 
-            var tool = _kbtree.Add("Tool", 150);
-            AddBinding(tool, "Line Angle Snap", Hotkey.ToolXYSnap);
-            AddBinding(tool, "Toggle Line Snap", Hotkey.ToolToggleSnap);
-            AddBinding(tool, "Flip Line", Hotkey.LineToolFlipLine,
+            AddBinding(editorTable, "Remove Newest Line", Hotkey.EditorRemoveLatestLine);
+            AddBinding(editorTable, "Undo Last Action", Hotkey.EditorUndo);
+            AddBinding(editorTable, "Redo Last Undo Action", Hotkey.EditorRedo);
+
+            var toolTable = _kbtree.Add("Tool", 150);
+            AddBinding(toolTable, "Line Angle Snap", Hotkey.ToolXYSnap);
+            AddBinding(toolTable, "Toggle Line Snap", Hotkey.ToolToggleSnap);
+            AddBinding(toolTable, "Flip Line", Hotkey.LineToolFlipLine,
                 "Hold before drawing a new line");
 
-            var selecttool = _kbtree.Add("Select Tool", 150);
-            AddBinding(selecttool, "Lock Angle", Hotkey.ToolAngleLock);
-            AddBinding(selecttool, "Move Whole Line", Hotkey.ToolSelectBothJoints);
-            AddBinding(selecttool, "Life Lock", Hotkey.ToolLifeLock,
+            var selecttoolTable = _kbtree.Add("Select Tool", 150);
+            AddBinding(selecttoolTable, "Lock Angle", Hotkey.ToolAngleLock);
+            AddBinding(selecttoolTable, "Move Whole Line", Hotkey.ToolSelectBothJoints);
+            AddBinding(selecttoolTable, "Life Lock", Hotkey.ToolLifeLock,
                 "While pressed moving the line will stop if the rider survives");
-            AddBinding(selecttool, "Move Along Axis", Hotkey.ToolAxisLock,
+            AddBinding(selecttoolTable, "Move Along Axis", Hotkey.ToolAxisLock,
                 "If you're moving a whole line,\nuse this to keep it on the same plane");
-            AddBinding(selecttool, "Move Along Right angle", Hotkey.ToolPerpendicularAxisLock,
+            AddBinding(selecttoolTable, "Move Along Right angle", Hotkey.ToolPerpendicularAxisLock,
             "If you're moving a whole line,\nuse this to keep perpendicular to its plane");
-            AddBinding(selecttool, "Lock Length", Hotkey.ToolLengthLock);
-            AddBinding(selecttool, "Copy Selection", Hotkey.ToolCopy);
-            AddBinding(selecttool, "Cut", Hotkey.ToolCut);
-            AddBinding(selecttool, "Paste", Hotkey.ToolPaste);
-            AddBinding(selecttool, "Delete Selection", Hotkey.ToolDelete);
+            AddBinding(selecttoolTable, "Lock Length", Hotkey.ToolLengthLock);
+            AddBinding(selecttoolTable, "Copy Selection", Hotkey.ToolCopy);
+            AddBinding(selecttoolTable, "Cut", Hotkey.ToolCut);
+            AddBinding(selecttoolTable, "Paste", Hotkey.ToolPaste);
+            AddBinding(selecttoolTable, "Delete Selection", Hotkey.ToolDelete);
+            AddBinding(selecttoolTable, "Copy Selection Values", Hotkey.ToolCopyValues);
+            AddBinding(selecttoolTable, "Paste Selection Values", Hotkey.ToolPasteValues);
+            AddBinding(selecttoolTable, "Convert Selection (B)", Hotkey.ToolSwitchBlue,
+                "Convert all selected lines to blue lines");
+            AddBinding(selecttoolTable, "Convert Selection (R)", Hotkey.ToolSwitchRed,
+                "Convert all selected lines to red lines");
+            AddBinding(selecttoolTable, "Convert Selection (G)", Hotkey.ToolSwitchGreen,
+                "Convert all selected lines to green lines");
 
-            var pbtable = _kbtree.Add("Playback", 150);
-            AddBinding(pbtable, "Toggle Flag", Hotkey.PlaybackFlag);
-            AddBinding(pbtable, "Reset Camera", Hotkey.PlaybackResetCamera);
-            AddBinding(pbtable, "Start Track", Hotkey.PlaybackStart);
-            AddBinding(pbtable, "Start Track before Flag", Hotkey.PlaybackStartIgnoreFlag);
-            AddBinding(pbtable, "Start Track in Slowmo", Hotkey.PlaybackStartSlowmo);
-            AddBinding(pbtable, "Stop Track", Hotkey.PlaybackStop);
-            AddBinding(pbtable, "Toggle Pause", Hotkey.PlaybackTogglePause);
-            AddBinding(pbtable, "Frame Next", Hotkey.PlaybackFrameNext);
-            AddBinding(pbtable, "Frame Previous", Hotkey.PlaybackFramePrev);
-            AddBinding(pbtable, "Iteration Next", Hotkey.PlaybackIterationNext);
-            AddBinding(pbtable, "Iteration Previous", Hotkey.PlaybackIterationPrev);
-            AddBinding(pbtable, "Hold -- Forward", Hotkey.PlaybackForward);
-            AddBinding(pbtable, "Hold -- Rewind", Hotkey.PlaybackBackward);
-            AddBinding(pbtable, "Increase Playback Rate", Hotkey.PlaybackSpeedUp);
-            AddBinding(pbtable, "Decrease Playback Rate", Hotkey.PlaybackSpeedDown);
-            AddBinding(pbtable, "Toggle Slowmo", Hotkey.PlaybackSlowmo);
-            AddBinding(pbtable, "Zoom In", Hotkey.PlaybackZoom);
-            AddBinding(pbtable, "Zoom Out", Hotkey.PlaybackUnzoom);
-            AddBinding(pbtable, "Play Button - Ignore Flag", Hotkey.PlayButtonIgnoreFlag);
+            var playbackTable = _kbtree.Add("Playback", 150);
+            AddBinding(playbackTable, "Toggle Flag", Hotkey.PlaybackFlag);
+            AddBinding(playbackTable, "Reset Camera", Hotkey.PlaybackResetCamera);
+            AddBinding(playbackTable, "Start Track", Hotkey.PlaybackStart);
+            AddBinding(playbackTable, "Start Track before Flag", Hotkey.PlaybackStartIgnoreFlag);
+            AddBinding(playbackTable, "Start Track in Slowmo", Hotkey.PlaybackStartSlowmo);
+            AddBinding(playbackTable, "Stop Track", Hotkey.PlaybackStop);
+            AddBinding(playbackTable, "Toggle Pause", Hotkey.PlaybackTogglePause);
+            AddBinding(playbackTable, "Frame Next", Hotkey.PlaybackFrameNext);
+            AddBinding(playbackTable, "Frame Previous", Hotkey.PlaybackFramePrev);
+            AddBinding(playbackTable, "Iteration Next", Hotkey.PlaybackIterationNext);
+            AddBinding(playbackTable, "Iteration Previous", Hotkey.PlaybackIterationPrev);
+            AddBinding(playbackTable, "Hold -- Forward", Hotkey.PlaybackForward);
+            AddBinding(playbackTable, "Hold -- Rewind", Hotkey.PlaybackBackward);
+            AddBinding(playbackTable, "Increase Playback Rate", Hotkey.PlaybackSpeedUp);
+            AddBinding(playbackTable, "Decrease Playback Rate", Hotkey.PlaybackSpeedDown);
+            AddBinding(playbackTable, "Toggle Slowmo", Hotkey.PlaybackSlowmo);
+            AddBinding(playbackTable, "Zoom In", Hotkey.PlaybackZoom);
+            AddBinding(playbackTable, "Zoom Out", Hotkey.PlaybackUnzoom);
+            AddBinding(playbackTable, "Play Button - Ignore Flag", Hotkey.PlayButtonIgnoreFlag);
 
-            var misctable = _kbtree.Add("Misc", 150);
-            AddBinding(misctable, "Quicksave", Hotkey.Quicksave);
-            AddBinding(misctable, "Save As Menu", Hotkey.SaveAsWindow);
-            AddBinding(misctable, "Open Preferences", Hotkey.PreferencesWindow);
-            AddBinding(misctable, "Open Game Menu", Hotkey.GameMenuWindow);
-            AddBinding(misctable, "Open Track Properties", Hotkey.TrackPropertiesWindow);
-            AddBinding(misctable, "Load Track", Hotkey.LoadWindow);
-            AddBinding(misctable, "Open Trigger Menu", Hotkey.TriggerMenuWindow);
-            AddBinding(misctable, "Show Debug Grid", Hotkey.DrawDebugGrid);
-            AddBinding(misctable, "Show Debug Camera", Hotkey.DrawDebugCamera);
+            var menuTable = _kbtree.Add("Menus", 150);
+            AddBinding(menuTable, "Quicksave", Hotkey.Quicksave);
+            AddBinding(menuTable, "Save As Menu", Hotkey.SaveAsWindow);
+            AddBinding(menuTable, "Open Preferences", Hotkey.PreferencesWindow);
+            AddBinding(menuTable, "Open Game Menu", Hotkey.GameMenuWindow);
+            AddBinding(menuTable, "Open Track Properties", Hotkey.TrackPropertiesWindow);
+            AddBinding(menuTable, "Load Track", Hotkey.LoadWindow);
+            AddBinding(menuTable, "Open Trigger Menu", Hotkey.TriggerMenuWindow);
+            AddBinding(menuTable, "Open Generator Window", Hotkey.LineGeneratorWindow);
 
-            var coordtable = _kbtree.Add("Clipboard Bindings", 150);
-            AddBinding(coordtable, "CopyX0", Hotkey.CopyX0);
-            AddBinding(coordtable, "CopyY0", Hotkey.CopyY0);
-            AddBinding(coordtable, "CopyX1", Hotkey.CopyX1);
-            AddBinding(coordtable, "CopyY1", Hotkey.CopyY1);
-            AddBinding(coordtable, "CopyX2", Hotkey.CopyX2);
-            AddBinding(coordtable, "CopyY2", Hotkey.CopyY2);
-            AddBinding(coordtable, "CopyX3", Hotkey.CopyX3);
-            AddBinding(coordtable, "CopyY3", Hotkey.CopyY3);
-            AddBinding(coordtable, "CopyX4", Hotkey.CopyX4);
-            AddBinding(coordtable, "CopyY4", Hotkey.CopyY4);
-            AddBinding(coordtable, "CopyX5", Hotkey.CopyX5);
-            AddBinding(coordtable, "CopyY5", Hotkey.CopyY5);
-            AddBinding(coordtable, "CopyX6", Hotkey.CopyX6);
-            AddBinding(coordtable, "CopyY6", Hotkey.CopyY6);
-            AddBinding(coordtable, "CopyX7", Hotkey.CopyX7);
-            AddBinding(coordtable, "CopyY7", Hotkey.CopyY7);
-            AddBinding(coordtable, "CopyX8", Hotkey.CopyX8);
-            AddBinding(coordtable, "CopyY8", Hotkey.CopyY8);
-            AddBinding(coordtable, "CopyX9", Hotkey.CopyX9);
-            AddBinding(coordtable, "CopyY9", Hotkey.CopyY9);
+            var coordinateTable = _kbtree.Add("Clipboard Bindings", 150);
+            AddBinding(coordinateTable, "CopyX0", Hotkey.CopyX0);
+            AddBinding(coordinateTable, "CopyY0", Hotkey.CopyY0);
+            AddBinding(coordinateTable, "CopyX1", Hotkey.CopyX1);
+            AddBinding(coordinateTable, "CopyY1", Hotkey.CopyY1);
+            AddBinding(coordinateTable, "CopyX2", Hotkey.CopyX2);
+            AddBinding(coordinateTable, "CopyY2", Hotkey.CopyY2);
+            AddBinding(coordinateTable, "CopyX3", Hotkey.CopyX3);
+            AddBinding(coordinateTable, "CopyY3", Hotkey.CopyY3);
+            AddBinding(coordinateTable, "CopyX4", Hotkey.CopyX4);
+            AddBinding(coordinateTable, "CopyY4", Hotkey.CopyY4);
+            AddBinding(coordinateTable, "CopyX5", Hotkey.CopyX5);
+            AddBinding(coordinateTable, "CopyY5", Hotkey.CopyY5);
+            AddBinding(coordinateTable, "CopyX6", Hotkey.CopyX6);
+            AddBinding(coordinateTable, "CopyY6", Hotkey.CopyY6);
+            AddBinding(coordinateTable, "CopyX7", Hotkey.CopyX7);
+            AddBinding(coordinateTable, "CopyY7", Hotkey.CopyY7);
+            AddBinding(coordinateTable, "CopyX8", Hotkey.CopyX8);
+            AddBinding(coordinateTable, "CopyY8", Hotkey.CopyY8);
+            AddBinding(coordinateTable, "CopyX9", Hotkey.CopyX9);
+            AddBinding(coordinateTable, "CopyY9", Hotkey.CopyY9);
             _kbtree.ExpandAll();
         }
         private List<Keybinding> FetchBinding(Hotkey hotkey)

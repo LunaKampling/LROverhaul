@@ -91,8 +91,8 @@ namespace linerider.Game
         }
         public void AddLine(GameLine line)
         {
-            var pts = GetPointsOnLine(line.Position.X / CellSize,
-                line.Position.Y / CellSize,
+            var pts = GetPointsOnLine(line.Position1.X / CellSize,
+                line.Position1.Y / CellSize,
                 line.Position2.X / CellSize,
                 line.Position2.Y / CellSize);
             using (Sync.AcquireWrite())
@@ -105,8 +105,8 @@ namespace linerider.Game
         }
         public void RemoveLine(GameLine line)
         {
-            var pts = GetPointsOnLine(line.Position.X / CellSize,
-                line.Position.Y / CellSize,
+            var pts = GetPointsOnLine(line.Position1.X / CellSize,
+                line.Position1.Y / CellSize,
                 line.Position2.X / CellSize,
                 line.Position2.Y / CellSize);
 

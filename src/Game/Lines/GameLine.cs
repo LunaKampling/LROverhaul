@@ -36,7 +36,7 @@ namespace linerider.Game
         /// </summary>
         public virtual Vector2d Start
         {
-            get { return Position; }
+            get { return Position1; }
         }
         /// <summary>
         /// "Right"
@@ -44,21 +44,6 @@ namespace linerider.Game
         public virtual Vector2d End
         {
             get { return Position2; }
-        }
-
-        public override string ToString()
-        {
-            return "ID: " +
-                ID +
-                " {" +
-                Math.Round(Position.X, 1) +
-                ", " +
-                Math.Round(Position.Y, 1) +
-                "}, {" +
-                Math.Round(Position2.X) +
-                ", " +
-                Math.Round(Position2.Y) +
-                "}";
         }
 
         public override int GetHashCode()

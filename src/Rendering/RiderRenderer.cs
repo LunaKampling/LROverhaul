@@ -41,7 +41,7 @@ namespace linerider.Rendering
                     Angle.FromVector(anchor.Momentum),
                     2);
                 _momentumvao.AddLine(
-                    GameDrawingMatrix.ScreenCoordD(line.Position),
+                    GameDrawingMatrix.ScreenCoordD(line.Position1),
                     GameDrawingMatrix.ScreenCoordD(line.Position2),
                     color,
                     GameDrawingMatrix.Scale / 2.5f);
@@ -434,7 +434,7 @@ namespace linerider.Rendering
                 scarfPart = (((i % scarfColors.Count)+(scarfColors.Count - 1)) % scarfColors.Count);
                 c = Utility.ColorToRGBA_LE(scarfColors[scarfPart], (byte)(scarfOpacity[scarfPart] * opacity));
 
-                var verts = DrawLine(lines[i].Position, lines[i].Position2, c, 2);
+                var verts = DrawLine(lines[i].Position1, lines[i].Position2, c, 2);
 
                 if (i != 0)
                 {

@@ -155,6 +155,7 @@ namespace linerider
                     SceneryLines++;
                     break;
             }
+            //Debug.WriteLine("Before Assert: " + line.ID);
             Debug.Assert(
                 !LineLookup.ContainsKey(line.ID),
                 "Lines occupying the same ID -- really bad");
@@ -197,9 +198,9 @@ namespace linerider
         }
         public void MoveLine(StandardLine line, Vector2d new1, Vector2d new2)
         {
-            var old = line.Position;
+            var old = line.Position1;
             var old2 = line.Position2;
-            line.Position = new1;
+            line.Position1 = new1;
             line.Position2 = new2;
             line.CalculateConstants();
             Grid.MoveLine(old, old2, line);

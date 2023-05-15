@@ -40,6 +40,11 @@ namespace linerider.UI
         ToolCut,
         ToolPaste,
         ToolDelete,
+        ToolCopyValues,
+        ToolPasteValues,
+        ToolSwitchRed,
+        ToolSwitchGreen,
+        ToolSwitchBlue,
         ToolAddSelection,
         ToolToggleSelection,
         ToolScaleAspectRatio,
@@ -64,9 +69,12 @@ namespace linerider.UI
         PlaybackForward,
         PlaybackBackward,
         PlaybackResetCamera,
+
         PreferenceOnionSkinning,
         PreferenceAllCheckboxSettings,
-        InvisibleRider,
+        PreferenceInvisibleRider,
+        PreferenceDrawDebugGrid,
+        PreferenceDrawDebugCamera,
 
         PreferencesWindow,
         GameMenuWindow,
@@ -76,8 +84,6 @@ namespace linerider.UI
         SaveAsWindow,
         TriggerMenuWindow,
         LineGeneratorWindow,
-        DrawDebugGrid,
-        DrawDebugCamera,
 
         PlayButtonIgnoreFlag,
 

@@ -57,14 +57,14 @@ namespace linerider.Game
         /// </summary>
         public override Vector2d Start
         {
-            get { return inv ? Position2 : Position; }
+            get { return inv ? Position2 : Position1; }
         }
         /// <summary>
         /// "Right" according to the inv field
         /// </summary>
         public override Vector2d End
         {
-            get { return inv ? Position : Position2; }
+            get { return inv ? Position1 : Position2; }
         }
         public override LineType Type
         {
@@ -80,19 +80,31 @@ namespace linerider.Game
         }
         public StandardLine(Vector2d p1, Vector2d p2, bool inv = false)
         {
-            Position = p1;
+            Position1 = p1;
             Position2 = p2;
             this.inv = inv;
             CalculateConstants();
             Extension = Ext.None;
         }
-
+        public override string ToString()
+        {
+            return "{" +
+                "\"type\":0," +
+                $"\"x1\":{Position1.X}," +
+                $"\"y1\":{Position1.Y}," +
+                $"\"x2\":{Position2.X}," +
+                $"\"y2\":{Position2.Y}," +
+                $"\"flipped\":{(inv ? "true" : "false")}," +
+                $"\"leftExtended\":{(Extension == Ext.Left || Extension == Ext.Both ? "true" : "false")}," +
+                $"\"rightExtended\":{(Extension == Ext.Right || Extension == Ext.Both ? "true" : "false")}" +
+                "}";
+        }
         /// <summary>
         /// Calculates the line constants, needs called if a point changes.
         /// </summary>
         public virtual void CalculateConstants()
         {
-            Difference = Position2 - Position;
+            Difference = Position2 - Position1;
             var sqrDistance = Difference.LengthSquared;
             DotScalar = (1 / sqrDistance);
             Distance = Math.Sqrt(sqrDistance);
@@ -106,7 +118,7 @@ namespace linerider.Game
         {
             if (Vector2d.Dot(p.Momentum, DiffNormal) > 0)
             {
-                var startDelta = p.Location - this.Position;
+                var startDelta = p.Location - this.Position1;
                 var disty = Vector2d.Dot(DiffNormal, startDelta);
                 if (disty > 0 && disty < StandardLine.Zone)
                 {
@@ -156,7 +168,7 @@ namespace linerider.Game
                 Extension = Extension,
                 ExtensionRatio = ExtensionRatio,
                 inv = inv,
-                Position = Position,
+                Position1 = Position1,
                 Position2 = Position2,
                 Trigger = trigger
             };
@@ -179,7 +191,7 @@ namespace linerider.Game
                 ID = standardLine.ID,
                 Extension = standardLine.Extension,
                 inv = standardLine.inv,
-                Position = standardLine.Position,
+                Position1 = standardLine.Position1,
                 Position2 = standardLine.Position2,
                 Trigger = trigger,
             };

@@ -49,6 +49,20 @@ namespace linerider.Game
         {
         }
         public RedLine(Vector2d p1, Vector2d p2, bool inv = false) : base(p1, p2, inv) { }
+        public override string ToString()
+        {
+            return "{" +
+                "\"type\":1," +
+                $"\"x1\":{Position1.X}," +
+                $"\"y1\":{Position1.Y}," +
+                $"\"x2\":{Position2.X}," +
+                $"\"y2\":{Position2.Y}," +
+                $"\"flipped\":{(inv ? "true" : "false")}," +
+                $"\"leftExtended\":{(Extension == Ext.Left || Extension == Ext.Both ? "true" : "false")}," +
+                $"\"rightExtended\":{(Extension == Ext.Right || Extension == Ext.Both ? "true" : "false")}," +
+                $"\"multiplier\":{Multiplier}" +
+                "}";
+        }
         public override void CalculateConstants()
         {
             base.CalculateConstants();
@@ -86,7 +100,7 @@ namespace linerider.Game
                 Extension = Extension,
                 ExtensionRatio = ExtensionRatio,
                 inv = inv,
-                Position = Position,
+                Position1 = Position1,
                 Position2 = Position2,
                 Trigger = trigger,
                 _acc = _acc,
@@ -110,7 +124,7 @@ namespace linerider.Game
                 ID = standardLine.ID,
                 Extension = standardLine.Extension,
                 inv = standardLine.inv,
-                Position = standardLine.Position,
+                Position1 = standardLine.Position1,
                 Position2 = standardLine.Position2,
                 Trigger = trigger,
                 _multiplier = 1

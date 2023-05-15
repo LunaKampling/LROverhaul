@@ -151,14 +151,14 @@ namespace linerider.Tools
                         {
                             var knobpos = Utility.CloserPoint(
                                 gamepos,
-                                line.Position,
+                                line.Position1,
                                 line.Position2);
                             _selection = new LineSelection(line, knobpos);
                             _hoverclick = true;
                             _hovertime.Restart();
                             foreach (var snap in LineEndsInRadius(trk, knobpos, 1))
                             {
-                                if ((snap.Position == knobpos ||
+                                if ((snap.Position1 == knobpos ||
                                     snap.Position2 == knobpos) &&
                                     snap != line)
                                 {
@@ -186,8 +186,8 @@ namespace linerider.Tools
                 {
                     trk.DisableUndo();
                     var joint1 = _selection.joint1
-                        ? _selection.clone.Position + (pos - _clickstart)
-                        : line.Position;
+                        ? _selection.clone.Position1 + (pos - _clickstart)
+                        : line.Position1;
                     var joint2 = _selection.joint2
                         ? _selection.clone.Position2 + (pos - _clickstart)
                         : line.Position2;
@@ -223,7 +223,7 @@ namespace linerider.Tools
                         var snapjoint = _selection.joint1 ? joint1 : joint2;
                         trk.MoveLine(
                             snap,
-                            sl.joint1 ? snapjoint : snap.Position,
+                            sl.joint1 ? snapjoint : snap.Position1,
                             sl.joint2 ? snapjoint : snap.Position2);
                     }
                 }
@@ -248,10 +248,10 @@ namespace linerider.Tools
                         {
                             var point = Utility.CloserPoint(
                                 gamepos,
-                                line.Position,
+                                line.Position1,
                                 line.Position2);
 
-                            var joint1 = point == line.Position;
+                            var joint1 = point == line.Position1;
 
                             if (_hoverline != oldhover ||
                             _hoverknobjoint1 != joint1 ||
@@ -343,7 +343,7 @@ namespace linerider.Tools
         private void DrawHover(GameLine line,
             bool knob1, bool knob2, bool selected = false)
         {
-            var start = line.Position;
+            var start = line.Position1;
             var end = line.Position2;
             var width = line.Width;
             var elapsed = _hovertime.ElapsedMilliseconds;
@@ -436,7 +436,7 @@ namespace linerider.Tools
                     {
                         angle.Degrees -= 90;
                     }
-                    joint1 = Utility.AngleLock(_selection.line.Position, joint1, angle);
+                    joint1 = Utility.AngleLock(_selection.line.Position1, joint1, angle);
                     joint2 = Utility.AngleLock(_selection.line.Position2, joint2, angle);
                     modified = true;
                 }
@@ -457,7 +457,7 @@ namespace linerider.Tools
                 }
                 if (UI.InputUtils.Check(Hotkey.ToolLengthLock))
                 {
-                    var currentdelta = _selection.line.Position2 - _selection.line.Position;
+                    var currentdelta = _selection.line.Position2 - _selection.line.Position1;
                     end = Utility.LengthLock(start, end, currentdelta.Length);
                     modified = true;
                 }
@@ -495,11 +495,11 @@ namespace linerider.Tools
             }
             if (_selection.joint2)
             {
-                j2snapped = GetSnapPoint(trk, line.Position, joint2, joint2,
+                j2snapped = GetSnapPoint(trk, line.Position1, joint2, joint2,
                     ignoreids, out snapj2, ignorescenery);
 
                 if (!j2snapped)
-                    j2snapped = GetSnapPoint_Grid(line.Position, joint2, joint2, out snapj2);
+                    j2snapped = GetSnapPoint_Grid(line.Position1, joint2, joint2, out snapj2);
             }
             if (_selection.BothJoints)
             {

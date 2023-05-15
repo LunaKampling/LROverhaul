@@ -80,7 +80,7 @@ namespace linerider.Rendering
             var slant = new Vector2d(
                 line.DiffNormal.X > 0 ? Math.Ceiling(line.DiffNormal.X) : Math.Floor(line.DiffNormal.X),
                 line.DiffNormal.Y > 0 ? Math.Ceiling(line.DiffNormal.Y) : Math.Floor(line.DiffNormal.Y));
-            return LineRenderer.CreateTrackLine(line.Position + slant, line.Position2 + slant, 2, Utility.ColorToRGBA_LE(color));
+            return LineRenderer.CreateTrackLine(line.Position1 + slant, line.Position2 + slant, 2, Utility.ColorToRGBA_LE(color));
         }
     }
 }

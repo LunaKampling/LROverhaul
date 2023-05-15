@@ -162,8 +162,8 @@ namespace linerider.IO
             {
                 var conv = Convert.ToInt32(startlineprop, CultureInfo.InvariantCulture);
                 startline = new List<Amf0Object>();
-                startline.Add(new Amf0Object { data = lineslist[conv].Position.X });
-                startline.Add(new Amf0Object { data = lineslist[conv].Position.Y - 50 * 0.5 });
+                startline.Add(new Amf0Object { data = lineslist[conv].Position1.X });
+                startline.Add(new Amf0Object { data = lineslist[conv].Position1.Y - 50 * 0.5 });
             }
             ret.StartOffset = new Vector2d(
                 Convert.ToDouble(startline[0].data, CultureInfo.InvariantCulture),

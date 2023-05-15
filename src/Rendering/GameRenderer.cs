@@ -537,7 +537,7 @@ namespace linerider.Rendering
                                 var d = std.Difference * std.ExtensionRatio;
                                 if (std.Extension.HasFlag(StandardLine.Ext.Left))
                                 {
-                                    RenderRoundedLine(std.Position - d, std.Position, Color.Red, 1);
+                                    RenderRoundedLine(std.Position1 - d, std.Position1, Color.Red, 1);
                                 }
                                 if (std.Extension.HasFlag(StandardLine.Ext.Right))
                                 {

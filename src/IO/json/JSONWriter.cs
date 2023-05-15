@@ -64,8 +64,8 @@ namespace linerider.IO
                         break;
                 }
                 jline.id = line.ID;
-                jline.x1 = line.Position.X;
-                jline.y1 = line.Position.Y;
+                jline.x1 = line.Position1.X;
+                jline.y1 = line.Position1.Y;
                 jline.x2 = line.Position2.X;
                 jline.y2 = line.Position2.Y;
                 if (line is StandardLine stl)

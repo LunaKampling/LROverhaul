@@ -132,7 +132,7 @@ namespace linerider
         public void AddLine(GameLine line)
         {
             if (line is StandardLine)
-                SaveCells(line.Position, line.Position2);
+                SaveCells(line.Position1, line.Position2);
 
             Track.AddLine(line);
             _editorcells.AddLine(line);
@@ -152,13 +152,13 @@ namespace linerider
             Vector2d pos2,
             bool render = true)
         {
-            if (line.Position != pos1 || line.Position2 != pos2)
+            if (line.Position1 != pos1 || line.Position2 != pos2)
             {
                 var clone = line.Clone();
                 var std = line as StandardLine;
                 if (std != null)
                 {
-                    SaveCells(line.Position, line.Position2);
+                    SaveCells(line.Position1, line.Position2);
                     SaveCells(pos1, pos2);
                     if (_updateextensions)
                         RemoveExtensions(std);
@@ -168,7 +168,7 @@ namespace linerider
                 }
                 else
                 {
-                    line.Position = pos1;
+                    line.Position1 = pos1;
                     line.Position2 = pos2;
                 }
                 _editorcells.RemoveLine(clone);
@@ -193,8 +193,8 @@ namespace linerider
             var std = oldline as StandardLine;
             if (std != null)
             {
-                SaveCells(oldline.Position, oldline.Position2);
-                SaveCells(newline.Position, newline.Position2);
+                SaveCells(oldline.Position1, oldline.Position2);
+                SaveCells(newline.Position1, newline.Position2);
                 if (_updateextensions)
                     RemoveExtensions(std);
                 var newstd = (StandardLine)newline;
@@ -232,7 +232,7 @@ namespace linerider
         {
             if (line is StandardLine std)
             {
-                SaveCells(line.Position, line.Position2);
+                SaveCells(line.Position1, line.Position2);
                 if (_updateextensions)
                     RemoveExtensions(std);
             }
@@ -252,7 +252,7 @@ namespace linerider
         private SimulationCell GetPairs(StandardLine input)
         {
             var list = new SimulationCell();
-            var c1 = _editorcells.GetCellFromPoint(input.Position);
+            var c1 = _editorcells.GetCellFromPoint(input.Position1);
             var c2 = _editorcells.GetCellFromPoint(input.Position2);
             var cells = new LineContainer<GameLine>[]
             {
@@ -312,10 +312,10 @@ namespace linerider
                     var clone = connected.Clone();
                     if (!changemade)
                     {
-                        SaveCells(input.Position, input.Position);
+                        SaveCells(input.Position1, input.Position1);
                         changemade = true;
                     }
-                    SaveCells(connected.Position, connected.Position);
+                    SaveCells(connected.Position1, connected.Position1);
 
                     var inputflag = (startlink ^ input.inv)
                         ? StandardLine.Ext.Left
