@@ -16,6 +16,7 @@ using static linerider.Settings;
 using System.Windows.Forms;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace linerider.Tools
 {
@@ -78,6 +79,7 @@ namespace linerider.Tools
         private bool _rotating = false;
         private bool _nodetop = false;
         private bool _nodeleft = false;
+        private string _notifymessage = "";
 
         public List<LineSelection> GetLineSelections()
         {
@@ -86,6 +88,10 @@ namespace linerider.Tools
         public List<LineSelection> GetLineSelectionsInBox()
         {
             return _boxselection;
+        }
+        public string NotifyMessage()
+        {
+            return _notifymessage;
         }
         public void CancelSelection()
         {
@@ -523,7 +529,7 @@ namespace linerider.Tools
 
             Clipboard.SetText(lineArray.ToString() + "]");
 
-            Debug.WriteLine("Copied!");
+            Notify("Copied!");
         }
         public void PasteValues()
         {
@@ -591,9 +597,15 @@ namespace linerider.Tools
             }
             catch
             {
-                Debug.WriteLine("Failed to paste.");
+                Notify("Failed to Paste");
                 return null;
             }
+        }
+        private async void Notify(string message)
+        {
+            _notifymessage = message;
+            await Task.Delay(2000);
+            _notifymessage = "";
         }
         public void SwitchLineType(LineType type)
         {
