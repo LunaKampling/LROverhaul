@@ -35,6 +35,7 @@ This project uses binaries, sources, or modified sources from the following libr
 * gwen-dotnet https://code.google.com/archive/p/gwen-dotnet/
 * OpenTK https://github.com/opentk/opentk
 * Discord Game SDK https://discord.com/
+* Newtonsoft Json.NET https://github.com/JamesNK/Newtonsoft.Json
 
 You can find their license info in LICENSES.txt
 
