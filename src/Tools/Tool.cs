@@ -206,10 +206,13 @@ namespace linerider.Tools
             Vector2d end,
             bool inv,
             bool snapstart,
-            bool snapend)
+            bool snapend,
+            LineType type,
+            int multiplier = 1,
+            float width = 1f)
         {
-            GameLine added = null;
-            switch (Swatch.Selected)
+            GameLine added;
+            switch (type)
             {
                 case LineType.Blue:
                     added = new StandardLine(start, end, inv);
@@ -217,23 +220,24 @@ namespace linerider.Tools
 
                 case LineType.Red:
                     var red = new RedLine(start, end, inv)
-                    { Multiplier = Swatch.RedMultiplier };
+                    { Multiplier = multiplier };
                     red.CalculateConstants();//multiplier needs to be recalculated
                     added = red;
                     break;
 
                 case LineType.Scenery:
                     added = new SceneryLine(start, end)
-                    { Width = Swatch.GreenMultiplier };
+                    { Width = width };
                     break;
 
                 default: //In case no swatch is chosen select blue and make a blue line
                     added = new StandardLine(start, end, inv);
                     Swatch.Selected = LineType.Blue;
+                    type = LineType.Blue;
                     break;
             }
             trk.AddLine(added);
-            if (Swatch.Selected != LineType.Scenery)
+            if (type != LineType.Scenery)
             {
                 if (snapstart)
                     SnapLineEnd(trk, added, added.Position1);

@@ -309,7 +309,8 @@ namespace linerider.Tools
                     Vector2d _end = (Vector2d)curvePoints[i];
                     if ((_end - _start).Length >= MINIMUM_LINE)
                     {
-                        var added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap);
+                        var added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
+                            Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                         workingLines.Add(added);
                     }
                 }

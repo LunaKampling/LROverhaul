@@ -16,7 +16,6 @@ using static linerider.Settings;
 using System.Windows.Forms;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
 
 namespace linerider.Tools
 {
@@ -79,7 +78,6 @@ namespace linerider.Tools
         private bool _rotating = false;
         private bool _nodetop = false;
         private bool _nodeleft = false;
-        private string _notifymessage = "";
 
         public List<LineSelection> GetLineSelections()
         {
@@ -88,10 +86,6 @@ namespace linerider.Tools
         public List<LineSelection> GetLineSelectionsInBox()
         {
             return _boxselection;
-        }
-        public string NotifyMessage()
-        {
-            return _notifymessage;
         }
         public void CancelSelection()
         {
@@ -510,16 +504,20 @@ namespace linerider.Tools
             _selectionbox = GetBoxFromSelected(_selection);
             game.Track.NotifyTrackChanged();
         }
-        //TODO: Add pop-up indicating successful copy/fail to paste
         public void CopyValues()
         {
             if (!Active || _drawingbox || _selection.Count == 0) return;
 
             StringBuilder lineArray = new StringBuilder("[");
 
-            for(int i = 0; i < _selection.Count; i++)
+            Vector2d offset = GetCopyOrigin();
+
+            for (int i = 0; i < _selection.Count; i++)
             {
-                lineArray.Append(_selection[i].line.ToString());
+                GameLine line = _selection[i].line.Clone();
+                line.Position1 -= offset;
+                line.Position2 -= offset;
+                lineArray.Append(line.ToString());
 
                 if(i < _selection.Count - 1)
                 {
@@ -528,8 +526,8 @@ namespace linerider.Tools
             }
 
             Clipboard.SetText(lineArray.ToString() + "]");
-
-            Notify("Copied!");
+            
+            game.Track.Notify("Copied!");
         }
         public void PasteValues()
         {
@@ -597,15 +595,9 @@ namespace linerider.Tools
             }
             catch
             {
-                Notify("Failed to Paste");
+                game.Track.Notify("Failed to Paste");
                 return null;
             }
-        }
-        private async void Notify(string message)
-        {
-            _notifymessage = message;
-            await Task.Delay(2000);
-            _notifymessage = "";
         }
         public void SwitchLineType(LineType type)
         {
@@ -615,36 +607,15 @@ namespace linerider.Tools
             {
                 game.Track.UndoManager.BeginAction();
 
+                List<GameLine> buffer = new List<GameLine>();
+
                 foreach (var selected in _selectedlines)
                 {
                     GameLine line = trk.Track.LineLookup[selected];
                     line.SelectionState = SelectionState.None;
                     trk.RemoveLine(line);
 
-                    GameLine newLine = null;
-                    switch (type)
-                    {
-                        case LineType.Blue:
-                            newLine = new StandardLine(line.Start, line.End);
-                            break;
-
-                        case LineType.Red:
-                            newLine = new RedLine(line.Start, line.End)
-                            { Multiplier = 1 };
-                            break;
-
-                        case LineType.Scenery:
-                            newLine = new SceneryLine(line.Start, line.End)
-                            { Width = 1 };
-                            break;
-                        default:
-                            throw new Exception("Unknown line type");
-                    }
-
-                    if (newLine is StandardLine stl)
-                        stl.CalculateConstants();
-
-                    trk.AddLine(newLine);
+                    buffer.Add(CreateLine(trk, line.Start, line.End, false, false, false, type));
                 }
 
                 _selection.Clear();

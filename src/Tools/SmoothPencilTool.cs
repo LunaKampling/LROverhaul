@@ -130,7 +130,8 @@ namespace linerider.Tools
                 using (var trk = game.Track.CreateTrackWriter())
                 {
                     _end = _start + _diff / Settings.SmoothPencil.smoothStabilizer;
-                    var added = CreateLine(trk, _start, _end, _addflip, Snapped, false);
+                    var added = CreateLine(trk, _start, _end, _addflip, Snapped, false,
+                        Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                     _start = _end;
                     if (added is StandardLine)
                     {

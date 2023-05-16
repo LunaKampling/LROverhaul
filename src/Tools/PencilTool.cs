@@ -127,7 +127,8 @@ namespace linerider.Tools
             _drawn = true;
             using (var trk = game.Track.CreateTrackWriter())
             {
-                var added = CreateLine(trk, _start, _end, _addflip, Snapped, false);
+                var added = CreateLine(trk, _start, _end, _addflip, Snapped, false,
+                    Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                 if (added is StandardLine)
                 {
                     game.Track.NotifyTrackChanged();

@@ -54,6 +54,8 @@ namespace linerider
         private float _zoom = Constants.DefaultZoom;
         private EditorGrid _cells = new EditorGrid();
         private bool _invalidated = false;
+        private string _currentnotifymessage = "";
+        private CancellationTokenSource _cancellationTokenSource;
 
 
         public readonly GameScheduler Scheduler = new GameScheduler();
@@ -367,6 +369,13 @@ namespace linerider
                 if (IterationsOffset > 6 || IterationsOffset < 0)
                     throw new Exception("iteration num out of range");
                 _iteration = value;
+            }
+        }
+        public string CurrentNotifyMessage
+        {
+            get
+            {
+                return _currentnotifymessage;
             }
         }
         /// <summary>
@@ -930,6 +939,28 @@ namespace linerider
         public Track getTrack()
         {
             return _track;
+        }
+
+        public void Notify(string message)
+        {
+            if (_cancellationTokenSource != null)
+            {
+                _cancellationTokenSource.Cancel();
+            }
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = _cancellationTokenSource.Token;
+
+            _currentnotifymessage = message;
+
+            ThreadPool.QueueUserWorkItem(state =>
+            {
+                Thread.Sleep(5000);
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    _currentnotifymessage = string.Empty;
+                }
+            }, cancellationToken);
         }
     }
 }
