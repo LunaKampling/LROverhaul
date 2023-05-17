@@ -739,12 +739,12 @@ namespace linerider.UI
             {
                 using (var trk = _editor.CreateTrackWriter())
                 {
-                    var triggers = trk.Triggers;
+                    List<GameTrigger> toadd = new List<GameTrigger>();
 
                     foreach (var oldtrigger in _triggers_copy)
                     {
                         bool match = false;
-                        foreach (var newtrigger in triggers)
+                        foreach (var newtrigger in trk.Triggers)
                         {
                             if (oldtrigger.CompareTo(newtrigger))
                             {
@@ -753,10 +753,41 @@ namespace linerider.UI
                         }
                         if (!match)
                         {
-                            _editor.Timeline.TriggerChanged(oldtrigger, oldtrigger);
+                            toadd.Add(oldtrigger);
                         }
                     }
-                    trk.Triggers = _triggers_copy;
+
+                    foreach (GameTrigger trigger in toadd)
+                    {
+                        trk.Triggers.Add(trigger);
+                        _editor.Timeline.TriggerChanged(trigger, trigger);
+                        UpdateFrame();
+                    }
+
+                    List<GameTrigger> toremove = new List<GameTrigger>();
+
+                    foreach (var newtrigger in trk.Triggers)
+                    {
+                        bool match = false;
+                        foreach (var oldtrigger in _triggers_copy)
+                        {
+                            if (oldtrigger.CompareTo(newtrigger))
+                            {
+                                match = true;
+                            }
+                        }
+                        if (!match)
+                        {
+                            toremove.Add(newtrigger);
+                        }
+                    }
+
+                    foreach (GameTrigger trigger in toremove)
+                    {
+                        trk.Triggers.Remove(trigger);
+                        _editor.Timeline.TriggerChanged(trigger, trigger);
+                        UpdateFrame();
+                    }
                 }
                 _changemade = false;
             }
