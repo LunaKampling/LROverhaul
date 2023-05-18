@@ -893,26 +893,35 @@ namespace linerider.UI
         }
         private void PopulateRiderSettings(ControlBase parent)
         {
-            var scarfSettingPanel = GwenHelper.CreateHeaderPanel(parent, "Scarf Settings");
-            var riderSettingPanel = GwenHelper.CreateHeaderPanel(parent, "Rider Settings");
+            string manualUrl = $"{Constants.GithubPageHeader}/tree/main/Examples";
+            Panel scarfSettingPanel = GwenHelper.CreateHeaderPanel(parent, "Scarf Settings");
+            Panel riderSettingPanel = GwenHelper.CreateHeaderPanel(parent, "Rider Settings");
 
             ComboBox scarfCombobox = GwenHelper.CreateLabeledCombobox(scarfSettingPanel, "Selected Scarf:");
             scarfCombobox.AddItem("Default", "*default*", "*default*");
-            string[] scarfPaths = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\LRA\\Scarves");
-            for (int i = 0; i < scarfPaths.Length; i++)
+            string[] scarfPaths = Directory.GetFiles(Path.Combine(Program.UserDirectory, "Scarves"));
+            foreach (string scarfPath in scarfPaths)
             {
-                string scarfNames = Path.GetFileName(scarfPaths[i]);
-                scarfCombobox.AddItem(scarfNames, scarfNames, scarfNames);
+                string ext = Path.GetExtension(scarfPath).ToLower();
+                string scarfFilename = Path.GetFileName(scarfPath);
+                string scarfName;
+
+                if (ext == ".txt" || ext == ".png")
+                    scarfName = Path.GetFileNameWithoutExtension(scarfPath);
+                else
+                    scarfName = Path.GetFileName(scarfPath);
+
+                scarfCombobox.AddItem(scarfName, scarfFilename, scarfFilename);
             }
 
             scarfCombobox.ItemSelected += (o, e) =>
             {
                 Settings.SelectedScarf = (String)e.SelectedItem.UserData;
-                Debug.WriteLine("Selected Scarf: \"" + Settings.SelectedScarf + "\"");
+                Debug.WriteLine($"Selected Scarf: \"{Settings.SelectedScarf}\"");
                 Settings.Save();
             };
 
-            var scarfSegments = new Spinner(parent)
+            Spinner scarfSegments = new Spinner(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -925,7 +934,7 @@ namespace linerider.UI
             };
             GwenHelper.CreateLabeledControl(scarfSettingPanel, "Scarf Segments (Needs Restart)", scarfSegments);
 
-            var multiScarfAmount = new Spinner(parent)
+            Spinner multiScarfAmount = new Spinner(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -938,7 +947,7 @@ namespace linerider.UI
             };
             GwenHelper.CreateLabeledControl(scarfSettingPanel, "Multi-Scarf Amount (Needs Restart)", multiScarfAmount);
 
-            var multiScarfSegments = new Spinner(parent)
+            Spinner multiScarfSegments = new Spinner(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -951,30 +960,32 @@ namespace linerider.UI
             };
             GwenHelper.CreateLabeledControl(scarfSettingPanel, "Multi-Scarf Segments (Needs Restart)", multiScarfSegments);
 
-            var showid = GwenHelper.AddCheckbox(scarfSettingPanel, "Apply Custom Scarf to Rider png", Settings.customScarfOnPng, (o, e) =>
-            {
-                Settings.customScarfOnPng = ((Checkbox)o).IsChecked;
-                Settings.Save();
-            });
             ComboBox boshSkinCombobox = GwenHelper.CreateLabeledCombobox(riderSettingPanel, "Selected Rider:");
             boshSkinCombobox.AddItem("Default", "*default*", "*default*");
-
-
-            string[] riderPaths = Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/LRA/Riders");
-            for (int i = 0; i < riderPaths.Length; i++)
+            string[] riderPaths = Directory.GetDirectories(Path.Combine(Program.UserDirectory, "Riders"));
+            foreach (string riderPath in riderPaths)
             {
-                String riderNames = Path.GetFileName(riderPaths[i]);
-                boshSkinCombobox.AddItem(riderNames, riderNames, riderNames);
+                string riderName = Path.GetFileName(riderPath);
+                boshSkinCombobox.AddItem(riderName, riderName, riderName);
             }
             boshSkinCombobox.ItemSelected += (o, e) =>
             {
-                Settings.SelectedBoshSkin = (String)e.SelectedItem.UserData; ;
-                Debug.WriteLine("Selected rider Skin: \"" + Settings.SelectedBoshSkin + "\"");
+                Settings.SelectedBoshSkin = (String)e.SelectedItem.UserData;
+                Debug.WriteLine($"Selected rider Skin: \"{Settings.SelectedBoshSkin}\"");
                 Settings.Save();
             };
 
             scarfCombobox.SelectByUserData(Settings.SelectedScarf);
             boshSkinCombobox.SelectByUserData(Settings.SelectedBoshSkin);
+
+            Button openManual = new Button(parent)
+            {
+                Dock = Dock.Top,
+                Text = "Open customization manual (GitHub)",
+                Alignment = Pos.CenterH | Pos.CenterV,
+                Margin = new Margin(10, 10, 10, 0),
+            };
+            openManual.Clicked += (o, e) => GameCanvas.OpenUrl(manualUrl);
         }
         private void PopulateRBLSettings(ControlBase parent)
         {

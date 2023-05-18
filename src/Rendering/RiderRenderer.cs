@@ -7,14 +7,20 @@ using OpenTK;
 using linerider.Drawing;
 using linerider.Utils;
 using linerider.Game;
-using System.Diagnostics;
+using linerider.Drawing.RiderModel;
 
 namespace linerider.Rendering
 {
     public class RiderRenderer
     {
-        public List<int> scarfColors = new List<int>();
-        public List<byte> scarfOpacity = new List<byte>();
+        public List<int> scarfColors
+        {
+            get => ScarfColors.GetColorList();
+        }
+        public List<byte> scarfOpacity
+        {
+            get => ScarfColors.GetOpacityList();
+        }
 
         private AutoArray<RiderVertex> Array = new AutoArray<RiderVertex>(500);
         public float Scale = 1.0f;
@@ -152,8 +158,8 @@ namespace linerider.Rendering
                 DrawLine(
                     points[RiderConstants.BodyHandRight].Location,
                     points[RiderConstants.SledTR].Location,
-                    ChangeOpacity(Color.Black, opacity),
-                    0.1f);
+                    ChangeOpacity(Models.RopeColor, opacity),
+                    Models.RopeThickness);
 
             if (rider.SledBroken)
             {
@@ -161,11 +167,11 @@ namespace linerider.Rendering
                 var tail = points[RiderConstants.SledBL].Location - points[RiderConstants.SledTL].Location;
                 if ((nose.X * tail.Y) - (nose.Y * tail.X) < 0)
                 {
-                    var olduv = Models.BrokenSledUV;
+                    var olduv = Models.SledBrokenUV;
                     //we're upside down
                     DrawTexture(
-                        Tex.BrokenSled,
-                        Models.BrokenSledRect,
+                        Tex.SledBroken,
+                        Models.SledBrokenRect,
                         FloatRect.FromLRTB(
                             olduv.Left,
                             olduv.Right,
@@ -177,9 +183,9 @@ namespace linerider.Rendering
                 else
                 {
                     DrawTexture(
-                        Tex.BrokenSled,
-                        Models.BrokenSledRect,
-                        Models.BrokenSledUV,
+                        Tex.SledBroken,
+                        Models.SledBrokenRect,
+                        Models.SledBrokenUV,
                         points[RiderConstants.SledTL].Location,
                         points[RiderConstants.SledTR].Location,
                         opacity);
@@ -218,7 +224,7 @@ namespace linerider.Rendering
                 DrawTexture(
                     Tex.BodyDead,
                     Models.BodyRect,
-                    Models.DeadBodyUV,
+                    Models.BodyDeadUV,
                     points[RiderConstants.BodyButt].Location,
                     points[RiderConstants.BodyShoulder].Location,
                     opacity);
@@ -227,8 +233,8 @@ namespace linerider.Rendering
                 DrawLine(
                     points[RiderConstants.BodyHandLeft].Location,
                     points[RiderConstants.SledTR].Location,
-                    ChangeOpacity(Color.Black, opacity),
-                    0.1f);
+                    ChangeOpacity(Models.RopeColor, opacity),
+                    Models.RopeThickness);
 
             DrawTexture(
                 Tex.Arm,
@@ -278,14 +284,14 @@ namespace linerider.Rendering
             GL.ActiveTexture(TextureUnit.Texture4);
             GL.BindTexture(TextureTarget.Texture2D, Models.SledTexture);
             GL.ActiveTexture(TextureUnit.Texture5);
-            GL.BindTexture(TextureTarget.Texture2D, Models.BrokenSledTexture);
+            GL.BindTexture(TextureTarget.Texture2D, Models.SledBrokenTexture);
 
             GL.Uniform1(_shader.GetUniform("u_bodytex"), 0);
             GL.Uniform1(_shader.GetUniform("u_bodydeadtex"), 1);
             GL.Uniform1(_shader.GetUniform("u_armtex"), 2);
             GL.Uniform1(_shader.GetUniform("u_legtex"), 3);
             GL.Uniform1(_shader.GetUniform("u_sledtex"), 4);
-            GL.Uniform1(_shader.GetUniform("u_brokensledtex"), 5);
+            GL.Uniform1(_shader.GetUniform("u_sledbrokentex"), 5);
 
         }
         public void DrawLines()
@@ -482,7 +488,7 @@ namespace linerider.Rendering
             Arm = 3,
             Leg = 4,
             Sled = 5,
-            BrokenSled = 6,
+            SledBroken = 6,
         }
         /// <summary>
         /// A vertex meant for the simulation line shader

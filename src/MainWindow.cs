@@ -49,6 +49,7 @@ using System.Linq;
 using System.Configuration;
 using linerider.Addons;
 using linerider.LRL;
+using linerider.Drawing.RiderModel;
 
 namespace linerider
 {
@@ -58,7 +59,6 @@ namespace linerider
         public String currentScarf = null; //What the current scarf it to compare it to the settings
         public bool scarfNeedsUpdate = true; //If the scarf needs a update 
         public String currentBoshSkin = null; //What the current rider skin is to to compare it to the settings
-        public bool editBoshPng = Settings.customScarfOnPng; //Local copy of customScarfOnPng to check back
 
         public Dictionary<string, MouseCursor> Cursors = new Dictionary<string, MouseCursor>();
         public MsaaFbo MSAABuffer;
@@ -285,45 +285,35 @@ namespace linerider
             {
                 Canvas.ShowChangelog();
                 firstGameUpdate = false;
-                removeAllScarfColors(); //Remove default white scarf
-                reloadRiderModel();
+                ScarfColors.RemoveAll(); //Remove default white scarf
+                ReloadRiderModel();
             }
             //Debug.WriteLine(Track.Name);
             //Update bosh skin if needed
             if (currentBoshSkin != Settings.SelectedBoshSkin)
             {
-                reloadRiderModel();
-                removeAllScarfColors();
-                updateScarf();
+                ScarfColors.Reload();
+                ReloadRiderModel();
                 currentBoshSkin = Settings.SelectedBoshSkin;
-                editBoshPng = Settings.customScarfOnPng;
             }
             //Update scarf if needed
-            if ((scarfNeedsUpdate || (currentScarf != Settings.SelectedScarf)) || ((Settings.customScarfOnPng == false) && (editBoshPng)))
+            if ((scarfNeedsUpdate || (currentScarf != Settings.SelectedScarf)))
             {
                 currentScarf = Settings.SelectedScarf;
-                removeAllScarfColors();
-                updateScarf();
+                ScarfColors.Reload();
                 scarfNeedsUpdate = false;
-                editBoshPng = Settings.customScarfOnPng;
-                if (Settings.customScarfOnPng) { reloadRiderModel(); }
+                ReloadRiderModel();
 
-                while (getScarfColorList().Count() < Settings.ScarfSegments)
+                while (ScarfColors.Count() < Settings.ScarfSegments)
                 {
-                    getScarfColorList().AddRange(getScarfColorList());
-                    getScarfOpacityList().AddRange(getScarfOpacityList());
+                    ScarfColors.GetColorList().AddRange(ScarfColors.GetColorList());
+                    ScarfColors.GetOpacityList().AddRange(ScarfColors.GetOpacityList());
                 }
 
                 for (int i = 1; i < Settings.multiScarfAmount; i++)
                 {
-                    insertScarfColor(0x0000FF, 0x00, ((i * Settings.multiScarfSegments)) + (i - 1) - (1 + i));
+                    ScarfColors.Insert(0x0000FF, 0x00, ((i * Settings.multiScarfSegments)) + (i - 1) - (1 + i));
                 }
-            }
-            //If edits to the png is toggled update the rider
-            if (editBoshPng != Settings.customScarfOnPng)
-            {
-                reloadRiderModel();
-                editBoshPng = Settings.customScarfOnPng;
             }
 
             //Regular code starts here
@@ -371,91 +361,38 @@ namespace linerider
             }
         }
 
-        public void reloadRiderModel()
+        public void ReloadRiderModel()
         {
-            if (Settings.SelectedBoshSkin == null) { Models.LoadModels(); return; }
+            bool isDefaultSkin = Settings.SelectedBoshSkin == null || Settings.SelectedBoshSkin.Equals("*default*");
+            Resources riderRes = new ResourcesDefault();
 
-            Bitmap bodyPNG = null;
-            Bitmap bodyDeadPNG = null;
+            if (!isDefaultSkin)
+                riderRes = new ResourcesCustom(Settings.SelectedBoshSkin);
 
             try
             {
-                if (Settings.customScarfOnPng && !Settings.SelectedBoshSkin.Equals("*default*"))
-                {
-                    bodyPNG = new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/body.png");
-                    bodyDeadPNG = new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/bodydead.png");
-                    Bitmap palettePNG = new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/palette.png");
-                    var scarfColorList = getScarfColorList();
-                    if (scarfColorList.Count == 0) { Models.LoadModels(); return; }
-                    for (int i = 0; i < palettePNG.Width; i++)
-                    {
-                        Color colorToChange = palettePNG.GetPixel(i, 0);
-                        colorToChange = Color.FromArgb(255, colorToChange.R, colorToChange.G, colorToChange.B);
-
-                        Color newScarfColor = Color.FromArgb(scarfColorList[i % scarfColorList.Count]);
-                        newScarfColor = Color.FromArgb(255, newScarfColor); //Add 255 alpha
-
-                        for (int x = 0; x < bodyPNG.Width; x++)
-                        {
-                            for (int y = 0; y < bodyPNG.Height; y++)
-                            {
-                                Color aliveColor = bodyPNG.GetPixel(x, y);
-                                if (aliveColor.Equals(colorToChange))
-                                {
-                                    bodyPNG.SetPixel(x, y, newScarfColor);
-                                }
-                                Color deadColor = bodyDeadPNG.GetPixel(x, y);
-                                if (deadColor.Equals(colorToChange))
-                                {
-                                    bodyDeadPNG.SetPixel(x, y, newScarfColor);
-                                }
-                            }//for y
-                        }//for x
-                    }//for each (i)
-                    shiftScarfColors((scarfColorList.Count * palettePNG.Width) - palettePNG.Width);
-                }//if
+                riderRes.Load();
             }
-            catch (Exception e) { Debug.WriteLine(e); Models.LoadModels(); }
-
-            if (Settings.SelectedBoshSkin == "*default*") { Models.LoadModels(); return; }
-
-            try
+            catch (Exception e)
             {
-                if (bodyPNG == null) { bodyPNG = new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/body.png"); }
-                if (bodyDeadPNG == null) { bodyDeadPNG = new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/bodydead.png"); }
-
-                Models.LoadModels(
-                    bodyPNG,
-                    bodyDeadPNG,
-                    new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/sled.png"),
-                    new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/brokensled.png"),
-                    new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/arm.png"),
-                    new Bitmap(Program.UserDirectory + "/Riders/" + Settings.SelectedBoshSkin + "/leg.png"));
-            }
-            catch (Exception e) { Debug.WriteLine(e); Models.LoadModels(); }
-        }
-
-        public void updateScarf()
-        {
-            string scarfLocation = Program.UserDirectory + "/Scarves/" + Settings.SelectedScarf;
-            try
-            {
-                if ((Settings.SelectedScarf != "*default*") && (File.ReadLines(scarfLocation).First() == "#LRTran Scarf File"))
+                if (e is IOException || e is ArgumentException)
                 {
-                    string[] lines = File.ReadAllLines(scarfLocation);
-                    for (int i = 1; i < lines.Length; i++)
-                    {
-                        //Debug.WriteLine(lines[i]);
-                        int color = Convert.ToInt32(lines[i].Substring(0, lines[i].IndexOf(",")), 16);
-                        byte opacity = Convert.ToByte(lines[i].Substring(lines[i].IndexOf(" ") + 1), 16);
-                        //Debug.WriteLine("Color: " + color);
-                        //Debug.WriteLine("Opacity: " + opacity);
-                        addScarfColor(color, opacity);
-                    }
+                    Debug.WriteLine(e);
+                    riderRes = new ResourcesDefault();
+                    riderRes.Load();
                 }
-                else { addScarfColor(0xff6464, 0xff); /*Default Color 1*/ addScarfColor(0xD10101, 0xff); /*Default Color 2*/}
+                else
+                {
+                    throw;
+                }
             }
-            catch { addScarfColor(0xff6464, 0xff); /*Default Color 1*/ addScarfColor(0xD10101, 0xff); /*Default Color 2*/}
+
+            ModelLoader loader = new ModelLoaderDynamic();
+
+            if (riderRes.Legacy)
+                loader = new ModelLoaderLegacy();
+
+            loader.Load(riderRes);
         }
         //Used to be static
         public void Invalidate()
@@ -519,7 +456,7 @@ namespace linerider
             _input = new Gwen.Input.OpenTK(this);
             _input.Initialize(Canvas);
             Canvas.ShouldDrawBackground = false;
-            Models.LoadModels();
+            // Models.LoadModels();
 
             AddCursor("pencil", GameResources.cursor_pencil, 8 * GameResources.screensize, 24 * GameResources.screensize);
             AddCursor("line", GameResources.cursor_line, 15 * GameResources.screensize, 15 * GameResources.screensize);

@@ -47,6 +47,16 @@
     <Compile Include="Addons\LineGenerator\GeneratorType.cs" />
     <Compile Include="Addons\LineGenerator\CircleGenerator.cs" />
     <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
+    <Compile Include="Drawing\RiderModel\Filenames.cs" />
+    <Compile Include="Drawing\RiderModel\ModelLoader.cs" />
+    <Compile Include="Drawing\RiderModel\ModelLoaderLegacy.cs" />
+    <Compile Include="Drawing\RiderModel\RegionsCache.cs" />
+    <Compile Include="Drawing\RiderModel\ModelLoaderDynamic.cs" />
+    <Compile Include="Drawing\RiderModel\Resources.cs" />
+    <Compile Include="Drawing\RiderModel\ResourcesCustom.cs" />
+    <Compile Include="Drawing\RiderModel\ResourcesDefault.cs" />
+    <Compile Include="Drawing\RiderModel\ScarfColors.cs" />
+    <Compile Include="Drawing\RiderModel\ScarfLoader.cs" />
     <Compile Include="Game\TriggerType.cs" />
     <Compile Include="Game\GameTrigger.cs" />
     <Compile Include="IO\json\RiderData.cs" />
@@ -76,7 +86,7 @@
     <Compile Include="Drawing\GenericVAO.cs" />
     <Compile Include="Drawing\GLEnableCap.cs" />
     <Compile Include="Drawing\KnobState.cs" />
-    <Compile Include="Drawing\Models.cs" />
+    <Compile Include="Drawing\RiderModel\Models.cs" />
     <Compile Include="Drawing\LineVertex.cs" />
     <Compile Include="Drawing\MsaaFbo.cs" />
     <Compile Include="Drawing\SafeFrameBuffer.cs" />
@@ -370,9 +380,11 @@
     <EmbeddedResource Include="Resources\rider\body.png" />
     <EmbeddedResource Include="Resources\rider\bodydead.png" />
     <EmbeddedResource Include="Resources\rider\sled.png" />
-    <EmbeddedResource Include="Resources\rider\brokensled.png" />
+    <EmbeddedResource Include="Resources\rider\sledbroken.png" />
     <EmbeddedResource Include="Resources\rider\arm.png" />
     <EmbeddedResource Include="Resources\rider\leg.png" />
+    <EmbeddedResource Include="Resources\rider\rope.png" />
+    <EmbeddedResource Include="Resources\rider\.regions" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\fonts\liberation_sans_15_0.png" />
