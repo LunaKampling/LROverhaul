@@ -17,7 +17,7 @@ namespace linerider.UI
         private Label _error;
         private MainWindow _game;
         private const string howto = "You are about to export your track as a video file. Make sure the end of the track is marked by a flag. " +
-            "It will be located in your line rider user directory (Documents/LRA/Renders).\r\n" +
+            "It will be located in your line rider user directory (Documents/LRA/Renders).\n" +
             "Please allow some minutes depending on your computer speed. " +
             "The window will become unresponsive during this time.\n\n" +
             "After recording, a console window may open to encode the video. " +
