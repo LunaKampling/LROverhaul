@@ -1009,20 +1009,14 @@ namespace linerider
 
             InputUtils.RegisterHotkey(Hotkey.PreferenceAllCheckboxSettings, () => true, () =>
             {
-                if (Settings.Editor.DrawContactPoints || Settings.Editor.MomentumVectors || Settings.Editor.HitTest || Settings.Editor.RenderGravityWells)
-                {
-                    Settings.Editor.DrawContactPoints = false;
-                    Settings.Editor.MomentumVectors = false;
-                    Settings.Editor.HitTest = false;
-                    Settings.Editor.RenderGravityWells = false;
-                }
-                else
-                {
-                    Settings.Editor.DrawContactPoints = true;
-                    Settings.Editor.MomentumVectors = true;
-                    Settings.Editor.HitTest = true;
-                    Settings.Editor.RenderGravityWells = true;
-                }
+                bool newState = !(Settings.Editor.DrawContactPoints || Settings.Editor.MomentumVectors
+                    || Settings.Editor.HitTest || Settings.Editor.RenderGravityWells);
+
+                Settings.Editor.DrawContactPoints = newState;
+                Settings.Editor.MomentumVectors = newState;
+                Settings.Editor.HitTest = newState;
+                Settings.Editor.RenderGravityWells = newState;
+
                 Settings.Save();
                 Track.Invalidate();
             });
