@@ -30,7 +30,7 @@ namespace linerider.UI
         private bool _wasdraggingoffset = false;
         private PlayheadMarker _flagmarker;
         private PlayheadMarker _endslider;
-        private int _maxviewed = MinimumFrames;
+        private int _maxviewed = 40 * 30;
         public int MaxViewed
         {
             get
