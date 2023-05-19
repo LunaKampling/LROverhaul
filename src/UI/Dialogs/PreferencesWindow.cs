@@ -589,6 +589,22 @@ namespace linerider.UI
                 Settings.Save();
             };
             smooth.Tooltip = "Interpolates frames from the base\nphysics rate of 40 frames/second\nup to 60 frames/second";
+
+            var other = GwenHelper.CreateHeaderPanel(parent, "Other");
+
+            var timelinelength = new Spinner(parent)
+            {
+                Min = 1,
+                Max = 600,
+                Value = Settings.DefaultTimelineLength,
+            };
+            timelinelength.ValueChanged += (o, e) =>
+            {
+                Settings.DefaultTimelineLength = (int)((Spinner)o).Value;
+                Settings.Save();
+            };
+            var timelinelengthbar = GwenHelper.CreateLabeledControl(other, "Default Timeline Length (Seconds)", timelinelength);
+            timelinelengthbar.Tooltip = "Timeline length on game startup";
         }
         private void PopulateOverlay(ControlBase parent)
         {

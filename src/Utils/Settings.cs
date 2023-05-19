@@ -136,6 +136,7 @@ namespace linerider
         public static bool ScreenshotResIndependentZoom;
 
         public static float ScrollSensitivity;
+        public static int DefaultTimelineLength;
         public static int SettingsPane;
         public static bool MuteAudio;
         public static bool PreviewMode;
@@ -284,6 +285,7 @@ namespace linerider
             ScreenshotShowHitTest = false;
             ScreenshotResIndependentZoom = true;
 
+            DefaultTimelineLength = 30;
             ScrollSensitivity = 1;
             SettingsPane = 0;
             MuteAudio = false;
@@ -593,6 +595,7 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
 
             LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
+            LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
             LoadInt(GetSetting(lines, nameof(SettingsPane)), ref SettingsPane);
@@ -724,6 +727,7 @@ namespace linerider
                 MakeSetting(nameof(ScreenshotShowHitTest), ScreenshotShowHitTest.ToString(Program.Culture)),
                 MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture)),
 
+                MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),
                 MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture)),
