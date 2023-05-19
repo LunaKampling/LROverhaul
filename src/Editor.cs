@@ -32,6 +32,7 @@ using linerider.Audio;
 using linerider.Utils;
 using linerider.IO;
 using linerider.LRL;
+using System.Drawing;
 
 namespace linerider
 {
@@ -485,8 +486,31 @@ namespace linerider
         {
             if (Math.Abs(percent) < 0.00001)
                 return;
+
+            // 0.2 => 1.2; -0.2 => 0.83
+            float percentNormalized = percent >= 0 ? percent + 1 : 1 / (1 - percent);
+
             UseUserZoom = true;
-            Zoom = _zoom + (_zoom * percent);
+            Zoom = _zoom * percentNormalized;
+        }
+        public void ZoomBy(float percent, Point centerPos)
+        {
+            ZoomBy(percent);
+
+            bool isAtZoomLimit = Zoom == Settings.Local.MaxZoom || Zoom == (float)Constants.MinimumZoom;
+
+            if (Math.Abs(percent) < 0.00001 || isAtZoomLimit)
+                return;
+
+            // Uh, somehow it fixes negative values
+            if (percent < 0)
+                percent *= 1 / (1 - percent);
+
+            Vector2d pos = Camera.GetCenter();
+
+            pos.X += (centerPos.X * 2 - game.Width) * percent / (Zoom * 2);
+            pos.Y += (centerPos.Y * 2 - game.Height) * percent / (Zoom * 2);
+            Camera.SetFrameCenter(pos);
         }
         /// <summary>
         /// Function to be called after updating the playback buffer

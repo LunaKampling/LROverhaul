@@ -686,9 +686,10 @@ namespace linerider
                     UpdateCursor();
                     return;
                 }
-                var delta = (float.IsNaN(e.DeltaPrecise) ? e.Delta : e.DeltaPrecise);
-                delta *= Settings.ScrollSensitivity;
-                Track.ZoomBy(delta / 6);
+                float delta = (float.IsNaN(e.DeltaPrecise) ? e.Delta : e.DeltaPrecise) * Settings.ScrollSensitivity;
+                Point cursorPos = new Point(e.X, e.Y);
+                Track.ZoomBy(delta / 6, cursorPos);
+
                 UpdateCursor();
             }
             catch (Exception ex)
