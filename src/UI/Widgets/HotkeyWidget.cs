@@ -86,6 +86,7 @@ namespace linerider.UI
             AddBinding(editorTable, "Toggle Track Overlay", Hotkey.ToolToggleOverlay);
             AddBinding(editorTable, "Toggle Debug Grid", Hotkey.PreferenceDrawDebugGrid);
             AddBinding(editorTable, "Toggle Debug Camera", Hotkey.PreferenceDrawDebugCamera);
+            AddBinding(editorTable, "Toggle Preview Mode", Hotkey.TogglePreviewMode);
 
             AddBinding(editorTable, "Remove Newest Line", Hotkey.EditorRemoveLatestLine);
             AddBinding(editorTable, "Undo Last Action", Hotkey.EditorUndo);

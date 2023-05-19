@@ -998,6 +998,15 @@ namespace linerider
                 Settings.Save();
                 Track.Invalidate();
             });
+
+            InputUtils.RegisterHotkey(Hotkey.TogglePreviewMode, () => true, () =>
+            {
+                Settings.PreviewMode = !Settings.PreviewMode;
+
+                Settings.Save();
+                Track.Invalidate();
+            });
+
             InputUtils.RegisterHotkey(Hotkey.PreferenceAllCheckboxSettings, () => true, () =>
             {
                 if (Settings.Editor.DrawContactPoints || Settings.Editor.MomentumVectors || Settings.Editor.HitTest || Settings.Editor.RenderGravityWells)
