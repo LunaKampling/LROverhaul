@@ -117,13 +117,14 @@ namespace linerider.IO
                 _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 3];// 3 bytes per pixel
                 game.Title = Program.WindowTitle + " [Capturing Screenshot]";
                 game.ProcessEvents();
-                
+
+                string date = DateTime.UtcNow.ToString("yyyy-MM-dd hh.mm.ss");
                 string filename;
 
-                if(game.Track.Name == Constants.DefaultTrackName)
-                    filename = Program.UserDirectory + "Untitled Track" + ".png";
+                if (game.Track.Name == Constants.DefaultTrackName)
+                    filename = $"{Program.UserDirectory}Untitled Track {date}.png";
                 else
-                    filename = Program.UserDirectory + game.Track.Name + ".png";
+                    filename = $"{Program.UserDirectory}{game.Track.Name} {date}.png";
 
                 var recmodesave = Settings.Local.RecordingMode;
                 Settings.Local.RecordingMode = true;
