@@ -113,7 +113,7 @@ namespace linerider.IO
             {
                 ret[TrackFeatures.songinfo] = true;
             }
-            
+
             if (trk.Remount)
             {
                 ret[TrackFeatures.remount] = true;
@@ -139,6 +139,7 @@ namespace linerider.IO
             if (Path.GetFileName(relativefilename) != relativefilename ||
                 Path.IsPathRooted(relativefilename))
                 return false;
+
             try
             {
                 //the ctor checks validity pretty well
@@ -153,14 +154,6 @@ namespace linerider.IO
             catch
             {
                 return false;
-            }
-            var invalidchars = Path.GetInvalidFileNameChars();
-            for (var i = 0; i < relativefilename.Length; i++)
-            {
-                if (invalidchars.Contains(relativefilename[i]))
-                {
-                    return false;
-                }
             }
 
             return true;
@@ -332,7 +325,7 @@ namespace linerider.IO
         public static void CreateAutosave(Track track)
         {
             var dir = GetTrackDirectory(track);
-            if (track.Name.Equals("*")|| track.Name.Equals("<untitled>")) { dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;}
+            if (track.Name.Equals("*") || track.Name.Equals("<untitled>")) { dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar; }
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
@@ -410,7 +403,7 @@ namespace linerider.IO
             {
                 dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
             }
-            
+
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
