@@ -364,6 +364,8 @@ namespace linerider.UI
             });
             if (Settings.SmoothCamera)
             {
+                round.IsDisabled = true;
+
                 if (Settings.PredictiveCamera)
                     predictive.Select();
                 else
