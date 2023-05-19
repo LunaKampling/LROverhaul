@@ -559,6 +559,21 @@ namespace linerider
             }
             else
             {
+                switch (Settings.PlaybackZoomType)
+                {
+                    case 0://default
+                        UseUserZoom = false;
+                        Zoom = Timeline.GetFrameZoom(Offset);
+                        break;
+                    case 1://current
+                        UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
+                        break;
+                    case 2://specific
+                        UseUserZoom = true;
+                        Zoom = Settings.PlaybackZoomValue;
+                        break;
+                }
+
                 UpdateCamera();
             }
             Invalidate();
