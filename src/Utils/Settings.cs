@@ -47,6 +47,8 @@ namespace linerider
             public static bool ShowPpf = true;
             public static bool ShowHitTest = false;
             public static bool EnableColorTriggers = true;
+            public static int RecordingWidth = 0;
+            public static int RecordingHeight = 0;
             public static bool ResIndZoom = true; //Use resolution-independent zoom based on window size when recording
         }
         public static class Local
@@ -113,13 +115,26 @@ namespace linerider
         public static bool RoundLegacyCamera;
         public static bool SmoothPlayback = false;
         public static bool CheckForUpdates;
-        public static bool Record1080p;
+
+        public static string RecordResolution;
         public static bool RecordSmooth;
         public static bool RecordMusic;
-        public static int RecordingWidth;
-        public static int RecordingHeight;
+        public static bool RecordShowPpf;
+        public static bool RecordShowFps;
+        public static bool RecordShowTools;
+        public static bool RecordShowHitTest;
+        public static bool RecordShowColorTriggers;
+        public static bool RecordResIndependentZoom;
+
+        public static bool ScreenshotLockRatio;
         public static int ScreenshotWidth;
         public static int ScreenshotHeight;
+        public static bool ScreenshotShowPpf;
+        public static bool ScreenshotShowFps;
+        public static bool ScreenshotShowTools;
+        public static bool ScreenshotShowHitTest;
+        public static bool ScreenshotResIndependentZoom;
+
         public static float ScrollSensitivity;
         public static int SettingsPane;
         public static bool MuteAudio;
@@ -249,13 +264,26 @@ namespace linerider
             RoundLegacyCamera = true;
             SmoothPlayback = true;
             CheckForUpdates = true;
-            Record1080p = false;
+
+            RecordResolution = "720p";
             RecordSmooth = true;
             RecordMusic = true;
-            RecordingWidth = 1280;
-            RecordingHeight = 720;
+            RecordShowPpf = true;
+            RecordShowFps = true;
+            RecordShowTools = false;
+            RecordShowHitTest = false;
+            RecordShowColorTriggers = true;
+            RecordResIndependentZoom = true;
+
+            ScreenshotLockRatio = false;
             ScreenshotWidth = 1280;
             ScreenshotHeight = 720;
+            ScreenshotShowPpf = true;
+            ScreenshotShowFps = true;
+            ScreenshotShowTools = false;
+            ScreenshotShowHitTest = false;
+            ScreenshotResIndependentZoom = true;
+
             ScrollSensitivity = 1;
             SettingsPane = 0;
             MuteAudio = false;
@@ -533,13 +561,26 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(CheckForUpdates)), ref CheckForUpdates);
             LoadBool(GetSetting(lines, nameof(SmoothPlayback)), ref SmoothPlayback);
             LoadBool(GetSetting(lines, nameof(RoundLegacyCamera)), ref RoundLegacyCamera);
-            LoadBool(GetSetting(lines, nameof(Record1080p)), ref Record1080p);
+
+            RecordResolution = GetSetting(lines, nameof(RecordResolution));
             LoadBool(GetSetting(lines, nameof(RecordSmooth)), ref RecordSmooth);
             LoadBool(GetSetting(lines, nameof(RecordMusic)), ref RecordMusic);
-            LoadInt(GetSetting(lines, nameof(RecordingWidth)), ref RecordingWidth);
-            LoadInt(GetSetting(lines, nameof(RecordingHeight)), ref RecordingHeight);
+            LoadBool(GetSetting(lines, nameof(RecordShowPpf)), ref RecordShowPpf);
+            LoadBool(GetSetting(lines, nameof(RecordShowFps)), ref RecordShowFps);
+            LoadBool(GetSetting(lines, nameof(RecordShowTools)), ref RecordShowTools);
+            LoadBool(GetSetting(lines, nameof(RecordShowHitTest)), ref RecordShowHitTest);
+            LoadBool(GetSetting(lines, nameof(RecordShowColorTriggers)), ref RecordShowColorTriggers);
+            LoadBool(GetSetting(lines, nameof(RecordResIndependentZoom)), ref RecordResIndependentZoom);
+
+            LoadBool(GetSetting(lines, nameof(ScreenshotLockRatio)), ref ScreenshotLockRatio);
             LoadInt(GetSetting(lines, nameof(ScreenshotWidth)), ref ScreenshotWidth);
             LoadInt(GetSetting(lines, nameof(ScreenshotHeight)), ref ScreenshotHeight);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowPpf)), ref ScreenshotShowPpf);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowFps)), ref ScreenshotShowFps);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowTools)), ref ScreenshotShowTools);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowHitTest)), ref ScreenshotShowHitTest);
+            LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
+
             LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
@@ -637,13 +678,26 @@ namespace linerider
             config += "\r\n" + MakeSetting(nameof(PlaybackZoomType), PlaybackZoomType.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(PlaybackZoomValue), PlaybackZoomValue.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(RoundLegacyCamera), RoundLegacyCamera.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Record1080p), Record1080p.ToString(Program.Culture));
+
+            config += "\r\n" + MakeSetting(nameof(RecordResolution), RecordResolution);
             config += "\r\n" + MakeSetting(nameof(RecordSmooth), RecordSmooth.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(RecordMusic), RecordMusic.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(RecordingWidth), RecordingWidth.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(RecordingHeight), RecordingHeight.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(RecordShowPpf), RecordShowPpf.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(RecordShowFps), RecordShowFps.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(RecordShowTools), RecordShowTools.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(RecordShowHitTest), RecordShowHitTest.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(RecordShowColorTriggers), RecordShowColorTriggers.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(RecordResIndependentZoom), RecordResIndependentZoom.ToString(Program.Culture));
+
+            config += "\r\n" + MakeSetting(nameof(ScreenshotLockRatio), ScreenshotLockRatio.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(ScreenshotWidth), ScreenshotWidth.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(ScreenshotHeight), ScreenshotHeight.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(ScreenshotShowPpf), ScreenshotShowPpf.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(ScreenshotShowFps), ScreenshotShowFps.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(ScreenshotShowTools), ScreenshotShowTools.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(ScreenshotShowHitTest), ScreenshotShowHitTest.ToString(Program.Culture));
+            config += "\r\n" + MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture));
+
             config += "\r\n" + MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture));

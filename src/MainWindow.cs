@@ -72,7 +72,7 @@ namespace linerider
             {
                 if (TrackRecorder.Recording)
                 {
-                    return new Size(Settings.RecordingWidth, Settings.RecordingHeight);
+                    return new Size(Settings.Recording.RecordingWidth, Settings.Recording.RecordingHeight);
                 }
                 else if (TrackRecorder.RecordingScreenshot)
                 {

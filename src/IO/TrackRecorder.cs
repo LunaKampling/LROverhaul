@@ -154,14 +154,15 @@ namespace linerider.IO
         {
             var flag = game.Track.GetFlag();
             if (flag == null) return;
-            var resolution = new Size(Settings.RecordingWidth, Settings.RecordingHeight);
+            var resolution = new Size(Settings.Recording.RecordingWidth, Settings.Recording.RecordingHeight);
             var oldsize = game.RenderSize;
             var oldZoomMultiplier = Settings.ZoomMultiplier;
             var oldHitTest = Settings.Editor.HitTest;
             var invalid = false;
 
-            if(Settings.Recording.ResIndZoom)
-                Settings.ZoomMultiplier *= game.ClientSize.Width > game.ClientSize.Height * 16 / 9 ? (float)Settings.RecordingWidth / (float)game.ClientSize.Width : (float)Settings.RecordingHeight / (float)game.ClientSize.Height;
+            if (Settings.Recording.ResIndZoom)
+                Settings.ZoomMultiplier *= game.ClientSize.Width > game.ClientSize.Height * 16 / 9 ? (float)Settings.Recording.RecordingWidth / (float)game.ClientSize.Width : (float)Settings.Recording.RecordingHeight / (float)game.ClientSize.Height;
+
             Settings.Editor.HitTest = Settings.Recording.ShowHitTest;
             game.Canvas.Scale = Settings.ZoomMultiplier /oldZoomMultiplier; //Divide just in case anyone modifies the zoom multiplier to not be 1
 
