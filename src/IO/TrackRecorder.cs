@@ -122,9 +122,9 @@ namespace linerider.IO
                 string filename;
 
                 if (game.Track.Name == Constants.DefaultTrackName)
-                    filename = $"{Program.UserDirectory}Untitled Track {date}.png";
+                    filename = $"{Constants.RendersDirectory}Untitled Track {date}.png";
                 else
-                    filename = $"{Program.UserDirectory}{game.Track.Name} {date}.png";
+                    filename = $"{Constants.RendersDirectory}{game.Track.Name} {date}.png";
 
                 var recmodesave = Settings.Local.RecordingMode;
                 Settings.Local.RecordingMode = true;
@@ -214,14 +214,14 @@ namespace linerider.IO
                     string errormessage = "An unknown error occured during recording.";
                     game.Title = Program.WindowTitle + " [Recording | Hold ESC to cancel]";
                     game.ProcessEvents();
-                    var filename = Program.UserDirectory + game.Track.Name + ".mp4";
+                    string filename = Constants.RendersDirectory + game.Track.Name + ".mp4";
                     var flagbackup = flag;
                     var hardexit = false;
                     var recmodesave = Settings.Local.RecordingMode;
                     Settings.Local.RecordingMode = true;
                     game.Track.StartIgnoreFlag();
                     game.Render();
-                    var dir = Program.UserDirectory + game.Track.Name + "_rec";
+                    string dir = Constants.RendersDirectory + game.Track.Name + "_rec";
                     if (!Directory.Exists(dir))
                     {
                         Directory.CreateDirectory(dir);

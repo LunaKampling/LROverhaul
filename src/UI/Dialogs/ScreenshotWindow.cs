@@ -16,8 +16,8 @@ namespace linerider.UI
         private RichLabel _descriptionlabel;
         private Label _error;
         private MainWindow _game;
-        private const string howto = "You are about to export a capture of this current track." +
-            "It will be located in your line rider user directory (Documents/LRA).\r\n" +
+        private const string howto = "You are about to export a capture of this current track.\n" +
+            "It will be located in your line rider user directory (Documents/LRA/Renders).\n\n" +
             "This may take a few seconds for very high-resolution captures." +
             "The window will become unresponsive during this time.\n\n" +
             "If the image fails to record properly, try a smaller resolution.";
