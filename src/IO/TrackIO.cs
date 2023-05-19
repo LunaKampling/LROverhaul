@@ -124,9 +124,20 @@ namespace linerider.IO
         /// Checks a relative filename for validity
         public static bool CheckValidFilename(string relativefilename)
         {
+            if (relativefilename.Length == 0)
+                return false;
+
+            var invalidchars = Path.GetInvalidFileNameChars();
+            for (var i = 0; i < relativefilename.Length; i++)
+            {
+                if (invalidchars.Contains(relativefilename[i]))
+                {
+                    return false;
+                }
+            }
+
             if (Path.GetFileName(relativefilename) != relativefilename ||
-                Path.IsPathRooted(relativefilename) ||
-                relativefilename.Length == 0)
+                Path.IsPathRooted(relativefilename))
                 return false;
             try
             {
