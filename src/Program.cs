@@ -158,6 +158,8 @@ namespace linerider
                 Directory.CreateDirectory(UserDirectory + "Riders");
             if (!Directory.Exists(UserDirectory + "Scarves"))
                 Directory.CreateDirectory(UserDirectory + "Scarves");
+            if (!Directory.Exists(UserDirectory + "Renders"))
+                Directory.CreateDirectory(UserDirectory + "Renders");
 
             Random = new Random();
             GameResources.Init();

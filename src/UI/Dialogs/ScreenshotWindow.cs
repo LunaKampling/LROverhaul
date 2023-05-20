@@ -16,13 +16,12 @@ namespace linerider.UI
         private RichLabel _descriptionlabel;
         private Label _error;
         private MainWindow _game;
-        private const string howto = "You are about to export a capture of this current track." +
-            "It will be located in your line rider user directory (Documents/LRA).\r\n" +
+        private const string howto = "You are about to export a capture of this current track.\n" +
+            "It will be located in your line rider user directory (Documents/LRA/Renders).\n\n" +
             "This may take a few seconds for very high-resolution captures." +
             "The window will become unresponsive during this time.\n\n" +
             "If the image fails to record properly, try a smaller resolution.";
 
-        private bool lockRatio = false;
         private int lockW, lockH; //The width & height when fixed aspect ratio was enabled
 
         public ScreenshotWindow(GameCanvas parent, Editor editor, MainWindow window) : base(parent, editor)
@@ -95,12 +94,12 @@ namespace linerider.UI
             var lockratiocheck = AddPropertyCheckbox(
                table,
                "Lock Aspect Ratio",
-               lockRatio);
+               Settings.ScreenshotLockRatio);
 
             lockratiocheck.ValueChanged += (o, e) =>
             {
-                lockRatio = lockratiocheck.IsChecked;
-                if (lockRatio)
+                Settings.ScreenshotLockRatio = lockratiocheck.IsChecked;
+                if (Settings.ScreenshotLockRatio)
                 {
                     lockW = Settings.ScreenshotWidth;
                     lockH = Settings.ScreenshotHeight;
@@ -128,21 +127,21 @@ namespace linerider.UI
             width.ValueChanged += (o, e) =>
             {
                 Settings.ScreenshotWidth = (int)width.NumberValue;
-                if (lockRatio)
+                if (Settings.ScreenshotLockRatio)
                 {
-                    lockRatio = false; //Setting this to false prevents the height value trying to update the width value again
+                    Settings.ScreenshotLockRatio = false; //Setting this to false prevents the height value trying to update the width value again
                     height.NumberValue = Settings.ScreenshotWidth * lockH / lockW;
-                    lockRatio = true;
+                    Settings.ScreenshotLockRatio = true;
                 }
             };
             height.ValueChanged += (o, e) =>
             {
                 Settings.ScreenshotHeight = (int)height.NumberValue;
-                if (lockRatio)
+                if (Settings.ScreenshotLockRatio)
                 {
-                    lockRatio = false;
+                    Settings.ScreenshotLockRatio = false;
                     width.NumberValue = Settings.ScreenshotHeight * lockW / lockH;
-                    lockRatio = true;
+                    Settings.ScreenshotLockRatio = true;
                 }
             };
 
@@ -150,23 +149,28 @@ namespace linerider.UI
             var ppf = AddPropertyCheckbox(
                 table,
                 "Show P/f",
-                Settings.Recording.ShowPpf);
+                Settings.ScreenshotShowPpf);
+            ppf.ValueChanged += (o, e) => { Settings.ScreenshotShowPpf = ppf.IsChecked; Settings.Save(); };
             var fps = AddPropertyCheckbox(
                 table,
                 "Show FPS",
-                Settings.Recording.ShowFps);
+                Settings.ScreenshotShowFps);
+            fps.ValueChanged += (o, e) => { Settings.ScreenshotShowFps = fps.IsChecked; Settings.Save(); };
             var tools = AddPropertyCheckbox(
                 table,
                 "Show Tools",
-                Settings.Recording.ShowTools);
+                Settings.ScreenshotShowTools);
+            tools.ValueChanged += (o, e) => { Settings.ScreenshotShowTools = tools.IsChecked; Settings.Save(); };
             var hitTest = AddPropertyCheckbox(
                table,
                "Show Hit Test",
-               Settings.Editor.HitTest);
+               Settings.ScreenshotShowHitTest);
+            hitTest.ValueChanged += (o, e) => { Settings.ScreenshotShowHitTest = hitTest.IsChecked; Settings.Save(); };
             var resIndZoom = AddPropertyCheckbox(
                 table,
                 "Res-Independent Zoom",
-                Settings.Recording.ResIndZoom);
+                Settings.ScreenshotResIndependentZoom);
+            resIndZoom.ValueChanged += (o, e) => { Settings.ScreenshotResIndependentZoom = resIndZoom.IsChecked; Settings.Save(); };
             proptree.ExpandAll();
             Button Cancel = new Button(bottomrow)
             {
@@ -195,20 +199,6 @@ namespace linerider.UI
                     Settings.Save();
                     Record();
                 };
-        }
-        private bool CheckRecord()
-        {
-            if (_editor.GetFlag() == null)
-            {
-                SetError("No flag detected. Place one at the end of the track\nso the recorder knows where to stop.");
-                return false;
-            }
-            else if (_editor.Name == Utils.Constants.DefaultTrackName)
-            {
-                SetError("Please save your track before recording.");
-                return false;
-            }
-            return true;
         }
         private void Record()
         {

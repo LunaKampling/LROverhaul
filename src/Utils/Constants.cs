@@ -33,6 +33,8 @@ namespace linerider.Utils
 
         public static Color MomentumVectorColor = Color.Red;
         public static readonly string TracksDirectory = Program.UserDirectory + TracksFolderName + System.IO.Path.DirectorySeparatorChar;
+        public static readonly string RendersDirectory = Program.UserDirectory + RendersFolderName + System.IO.Path.DirectorySeparatorChar;
+        public const string RendersFolderName = "Renders";
         public const string TracksFolderName = "Tracks";
         public const string DefaultTrackName = "<untitled>";
 

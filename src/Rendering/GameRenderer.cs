@@ -241,14 +241,14 @@ namespace linerider.Rendering
                 GameDrawingMatrix.Exit();
             }
         }
-        public static void RenderPoints(List<Vector2d> points, Color color, float nodeSize)
+        public static void RenderPoints(List<Vector2d> points, Color color, float nodeSize, float thickness)
         {
             for (int i = 0; i < points.Count; i++)
             {
                 if (i == 0 || i == points.Count - 1)
                 {
                     DoubleRect rect = new DoubleRect(points[i].X - nodeSize, points[i].Y - nodeSize, nodeSize * 2, nodeSize * 2);
-                    RenderRoundedRectangle(rect, color, 1);
+                    RenderRoundedRectangle(rect, color, thickness);
                 }
                 else
                 {
@@ -270,14 +270,14 @@ namespace linerider.Rendering
             GL.End();
             GameDrawingMatrix.Exit();
         }
-        public static void RenderPoints(List<Vector2d> points, BezierCurve curve, Color color, float nodeSize)
+        public static void RenderPoints(List<Vector2d> points, BezierCurve curve, Color color, float nodeSize, float thickness)
         {
             for (int i = 0; i < points.Count; i++)
             {
                 if (i == 0 || i == points.Count - 1)
                 {
                     DoubleRect rect = new DoubleRect(points[i].X - nodeSize, points[i].Y - nodeSize, nodeSize * 2, nodeSize * 2);
-                    RenderRoundedRectangle(rect, color, 1);
+                    RenderRoundedRectangle(rect, color, thickness);
                 }
                 else
                 {

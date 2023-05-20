@@ -109,6 +109,7 @@ namespace linerider.UI
                     return e;
                 },
                 Margin = new Margin(0, 0, 5, 0),
+                Text = "0.00 P/f",
                 UserData = 0.0,
             };
             _playbackratelabel = new TrackLabel(this)

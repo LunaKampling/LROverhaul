@@ -364,6 +364,8 @@ namespace linerider.UI
             });
             if (Settings.SmoothCamera)
             {
+                round.IsDisabled = true;
+
                 if (Settings.PredictiveCamera)
                     predictive.Select();
                 else
@@ -589,18 +591,37 @@ namespace linerider.UI
                 Settings.Save();
             };
             smooth.Tooltip = "Interpolates frames from the base\nphysics rate of 40 frames/second\nup to 60 frames/second";
+
+            var other = GwenHelper.CreateHeaderPanel(parent, "Other");
+
+            var timelinelength = new Spinner(parent)
+            {
+                Min = 1,
+                Max = 600,
+                Value = Settings.DefaultTimelineLength,
+            };
+            timelinelength.ValueChanged += (o, e) =>
+            {
+                Settings.DefaultTimelineLength = (int)((Spinner)o).Value;
+                Settings.Save();
+            };
+            var timelinelengthbar = GwenHelper.CreateLabeledControl(other, "Default Timeline Length (Seconds)", timelinelength);
+            timelinelengthbar.Tooltip = "Timeline length on game startup";
         }
         private void PopulateOverlay(ControlBase parent)
         {
-            var offset = new Spinner(null)
+            ControlBase offsetbase = null;
+            ControlBase fixedbase = null;
+
+            var offsetspinner = new Spinner(null)
             {
                 Min = -999,
                 Max = 999,
                 Value = Settings.Local.TrackOverlayOffset,
             };
-            offset.ValueChanged += (o, e) =>
+            offsetspinner.ValueChanged += (o, e) =>
             {
-                Settings.Local.TrackOverlayOffset = (int)offset.Value;
+                Settings.Local.TrackOverlayOffset = (int)offsetspinner.Value;
             };
             var fixedspinner = new Spinner(null)
             {
@@ -612,24 +633,26 @@ namespace linerider.UI
             {
                 Settings.Local.TrackOverlayFixedFrame = (int)fixedspinner.Value;
             };
-            void updatedisabled()
+            void updatestate()
             {
-                offset.IsDisabled = Settings.Local.TrackOverlayFixed;
-                fixedspinner.IsDisabled = !Settings.Local.TrackOverlayFixed;
+                offsetspinner.IsDisabled = !Settings.Local.TrackOverlay;
+                fixedspinner.IsDisabled = !Settings.Local.TrackOverlay;
+                offsetbase.IsHidden = Settings.Local.TrackOverlayFixed;
+                fixedbase.IsHidden = !Settings.Local.TrackOverlayFixed;
             }
             var enabled = GwenHelper.AddCheckbox(parent, "Enabled", Settings.Local.TrackOverlay, (o, e) =>
             {
                 Settings.Local.TrackOverlay = ((Checkbox)o).IsChecked;
-                updatedisabled();
+                updatestate();
             });
             GwenHelper.AddCheckbox(parent, "Fixed Frame", Settings.Local.TrackOverlayFixed, (o, e) =>
             {
                 Settings.Local.TrackOverlayFixed = ((Checkbox)o).IsChecked;
-                updatedisabled();
+                updatestate();
             });
-            GwenHelper.CreateLabeledControl(parent, "Frame Offset", offset);
-            GwenHelper.CreateLabeledControl(parent, "Frame ID", fixedspinner);
-            updatedisabled();
+            offsetbase = GwenHelper.CreateLabeledControl(parent, "Frame Offset", offsetspinner);
+            fixedbase = GwenHelper.CreateLabeledControl(parent, "Frame ID", fixedspinner);
+            updatestate();
             enabled.Tooltip = "Display an onion skin of the track\nat a specified offset for animation";
         }
         private void PopulateTools(ControlBase parent)

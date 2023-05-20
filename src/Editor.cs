@@ -32,6 +32,7 @@ using linerider.Audio;
 using linerider.Utils;
 using linerider.IO;
 using linerider.LRL;
+using System.Drawing;
 
 namespace linerider
 {
@@ -68,10 +69,7 @@ namespace linerider
         private bool _paused = false;
         public float Zoom
         {
-            get
-            {
-                return _zoom * Settings.ZoomMultiplier;
-            }
+            get => _zoom * Settings.ZoomMultiplier;
             set
             {
                 _zoom = (float)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Local.MaxZoom);
@@ -80,21 +78,12 @@ namespace linerider
         }
         public float BaseZoom //Zoom without the multiplier
         {
-            get
-            {
-                return _zoom;
-            }
+            get => _zoom;
         }
         public Song Song
         {
-            get
-            {
-                return _track.Song;
-            }
-            set
-            {
-                _track.Song = value;
-            }
+            get => _track.Song;
+            set => _track.Song = value;
         }
         public ICamera Camera { get; private set; }
         public int LineCount => _track.Lines.Count;
@@ -103,17 +92,11 @@ namespace linerider
         public int GreenLines => _track.SceneryLines;
         public int TrackChanges
         {
-            get
-            {
-                return Math.Abs(UndoManager.ActionCount - _prevSaveUndoPos);
-            }
+            get => Math.Abs(UndoManager.ActionCount - _prevSaveUndoPos);
         }
         public float StartZoom
         {
-            get
-            {
-                return _track.StartZoom;
-            }
+            get => _track.StartZoom;
             set
             {
                 if (_track.StartZoom != value)
@@ -127,10 +110,7 @@ namespace linerider
         }
         public float YGravity
         {
-            get
-            {
-                return _track.YGravity;
-            }
+            get => _track.YGravity;
             set
             {
                 if (_track.YGravity != value)
@@ -144,10 +124,7 @@ namespace linerider
         }
         public float XGravity
         {
-            get
-            {
-                return _track.XGravity;
-            }
+            get => _track.XGravity;
             set
             {
                 if (_track.XGravity != value)
@@ -162,10 +139,7 @@ namespace linerider
 
         public double GravityWellSize
         {
-            get
-            {
-                return _track.GravityWellSize;
-            }
+            get => _track.GravityWellSize;
             set
             {
                 if (_track.GravityWellSize != value)
@@ -180,14 +154,11 @@ namespace linerider
         }
         public bool NeedsDraw
         {
-            get
-            {
-                return _renderer.RequiresUpdate || _refreshtrack || _renderriderinvalid || _invalidated;
-            }
+            get =>  _renderer.RequiresUpdate || _refreshtrack || _renderriderinvalid || _invalidated;
         }
         public bool ZeroStart
         {
-            get { return _track.ZeroStart; }
+            get => _track.ZeroStart;
             set
 
             {
@@ -201,7 +172,7 @@ namespace linerider
         }
         public bool frictionless
         {
-            get { return _track.frictionless; }
+            get => _track.frictionless;
             set
 
             {
@@ -215,7 +186,7 @@ namespace linerider
         }
         public bool UseRemount
         {
-            get { return _track.Remount; }
+            get => _track.Remount;
             set
 
             {
@@ -229,7 +200,7 @@ namespace linerider
         }
         public int StartingBGColorR
         {
-            get { return _track.BGColorR; }
+            get => _track.BGColorR; 
             set
 
             {
@@ -243,7 +214,7 @@ namespace linerider
         }
         public int StartingBGColorG
         {
-            get { return _track.BGColorG; }
+            get => _track.BGColorG;
             set
 
             {
@@ -257,7 +228,7 @@ namespace linerider
         }
         public int StartingBGColorB
         {
-            get { return _track.BGColorB; }
+            get => _track.BGColorB;
             set
 
             {
@@ -271,7 +242,7 @@ namespace linerider
         }
         public int StartingLineColorR
         {
-            get { return _track.LineColorR; }
+            get => _track.LineColorR;
             set
 
             {
@@ -285,7 +256,7 @@ namespace linerider
         }
         public int StartingLineColorG
         {
-            get { return _track.LineColorG; }
+            get => _track.LineColorG;
             set
 
             {
@@ -299,7 +270,7 @@ namespace linerider
         }
         public int StartingLineColorB
         {
-            get { return _track.LineColorB; }
+            get => _track.LineColorB;
             set
 
             {
@@ -325,25 +296,16 @@ namespace linerider
         }
         public Rider RenderRider
         {
-            get
-            {
-                return RenderRiderInfo.State;
-            }
+            get => RenderRiderInfo.State;
         }
         public string Name
         {
-            get
-            {
-                return _track.Name;
-            }
+            get => _track.Name;
         }
 
         public bool Paused
         {
-            get
-            {
-                return _paused;
-            }
+            get => _paused;
             private set
             {
                 if (value == _paused)
@@ -360,10 +322,7 @@ namespace linerider
         /// </summary>
         public int IterationsOffset
         {
-            get
-            {
-                return _iteration;
-            }
+            get => _iteration;
             set
             {
                 if (IterationsOffset > 6 || IterationsOffset < 0)
@@ -373,10 +332,7 @@ namespace linerider
         }
         public string CurrentNotifyMessage
         {
-            get
-            {
-                return _currentnotifymessage;
-            }
+            get => _currentnotifymessage;
         }
         /// <summary>
         /// The current number of frames since start (incl flag)
@@ -485,8 +441,31 @@ namespace linerider
         {
             if (Math.Abs(percent) < 0.00001)
                 return;
+
+            // 0.2 => 1.2; -0.2 => 0.83
+            float percentNormalized = percent >= 0 ? percent + 1 : 1 / (1 - percent);
+
             UseUserZoom = true;
-            Zoom = _zoom + (_zoom * percent);
+            Zoom = _zoom * percentNormalized;
+        }
+        public void ZoomBy(float percent, Point centerPos)
+        {
+            ZoomBy(percent);
+
+            bool isAtZoomLimit = Zoom == Settings.Local.MaxZoom || Zoom == (float)Constants.MinimumZoom;
+
+            if (Math.Abs(percent) < 0.00001 || isAtZoomLimit)
+                return;
+
+            // Uh, somehow it fixes negative values
+            if (percent < 0)
+                percent *= 1 / (1 - percent);
+
+            Vector2d pos = Camera.GetCenter();
+
+            pos.X += (centerPos.X * 2 - game.Width) * percent / (Zoom * 2);
+            pos.Y += (centerPos.Y * 2 - game.Height) * percent / (Zoom * 2);
+            Camera.SetFrameCenter(pos);
         }
         /// <summary>
         /// Function to be called after updating the playback buffer
@@ -580,6 +559,21 @@ namespace linerider
             }
             else
             {
+                switch (Settings.PlaybackZoomType)
+                {
+                    case 0://default
+                        UseUserZoom = false;
+                        Zoom = Timeline.GetFrameZoom(Offset);
+                        break;
+                    case 1://current
+                        UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
+                        break;
+                    case 2://specific
+                        UseUserZoom = true;
+                        Zoom = Settings.PlaybackZoomValue;
+                        break;
+                }
+
                 UpdateCamera();
             }
             Invalidate();

@@ -117,13 +117,14 @@ namespace linerider.IO
                 _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 3];// 3 bytes per pixel
                 game.Title = Program.WindowTitle + " [Capturing Screenshot]";
                 game.ProcessEvents();
-                
+
+                string date = DateTime.UtcNow.ToString("yyyy-MM-dd hh.mm.ss");
                 string filename;
 
-                if(game.Track.Name == Constants.DefaultTrackName)
-                    filename = Program.UserDirectory + "Untitled Track" + ".png";
+                if (game.Track.Name == Constants.DefaultTrackName)
+                    filename = $"{Constants.RendersDirectory}Untitled Track {date}.png";
                 else
-                    filename = Program.UserDirectory + game.Track.Name + ".png";
+                    filename = $"{Constants.RendersDirectory}{game.Track.Name} {date}.png";
 
                 var recmodesave = Settings.Local.RecordingMode;
                 Settings.Local.RecordingMode = true;
@@ -153,14 +154,15 @@ namespace linerider.IO
         {
             var flag = game.Track.GetFlag();
             if (flag == null) return;
-            var resolution = new Size(Settings.RecordingWidth, Settings.RecordingHeight);
+            var resolution = new Size(Settings.Recording.RecordingWidth, Settings.Recording.RecordingHeight);
             var oldsize = game.RenderSize;
             var oldZoomMultiplier = Settings.ZoomMultiplier;
             var oldHitTest = Settings.Editor.HitTest;
             var invalid = false;
 
-            if(Settings.Recording.ResIndZoom)
-                Settings.ZoomMultiplier *= game.ClientSize.Width > game.ClientSize.Height * 16 / 9 ? (float)Settings.RecordingWidth / (float)game.ClientSize.Width : (float)Settings.RecordingHeight / (float)game.ClientSize.Height;
+            if (Settings.Recording.ResIndZoom)
+                Settings.ZoomMultiplier *= game.ClientSize.Width > game.ClientSize.Height * 16 / 9 ? (float)Settings.Recording.RecordingWidth / (float)game.ClientSize.Width : (float)Settings.Recording.RecordingHeight / (float)game.ClientSize.Height;
+
             Settings.Editor.HitTest = Settings.Recording.ShowHitTest;
             game.Canvas.Scale = Settings.ZoomMultiplier /oldZoomMultiplier; //Divide just in case anyone modifies the zoom multiplier to not be 1
 
@@ -213,14 +215,14 @@ namespace linerider.IO
                     string errormessage = "An unknown error occured during recording.";
                     game.Title = Program.WindowTitle + " [Recording | Hold ESC to cancel]";
                     game.ProcessEvents();
-                    var filename = Program.UserDirectory + game.Track.Name + ".mp4";
+                    string filename = Constants.RendersDirectory + game.Track.Name + ".mp4";
                     var flagbackup = flag;
                     var hardexit = false;
                     var recmodesave = Settings.Local.RecordingMode;
                     Settings.Local.RecordingMode = true;
                     game.Track.StartIgnoreFlag();
                     game.Render();
-                    var dir = Program.UserDirectory + game.Track.Name + "_rec";
+                    string dir = Constants.RendersDirectory + game.Track.Name + "_rec";
                     if (!Directory.Exists(dir))
                     {
                         Directory.CreateDirectory(dir);

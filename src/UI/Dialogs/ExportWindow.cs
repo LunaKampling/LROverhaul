@@ -17,7 +17,7 @@ namespace linerider.UI
         private Label _error;
         private MainWindow _game;
         private const string howto = "You are about to export your track as a video file. Make sure the end of the track is marked by a flag. " +
-            "It will be located in your line rider user directory (Documents/LRA).\r\n" +
+            "It will be located in your line rider user directory (Documents/LRA/Renders).\n" +
             "Please allow some minutes depending on your computer speed. " +
             "The window will become unresponsive during this time.\n\n" +
             "After recording, a console window may open to encode the video. " +
@@ -106,46 +106,58 @@ namespace linerider.UI
             {
                 qualitycb.AddItem(item.Key);
             }
-            
+            qualitycb.SetValue(Settings.RecordResolution);
+            qualitycb.ValueChanged += (o, e) => { Settings.RecordResolution = qualitycb.Value; Settings.Save(); };
+
             table.Add("Quality", qualitycb);
 
             var smoothcheck = AddPropertyCheckbox(
                 table,
                 "Smooth Playback",
                 Settings.RecordSmooth);
+            smoothcheck.ValueChanged += (o, e) => { Settings.RecordSmooth = smoothcheck.IsChecked; Settings.Save(); };
+
             var music = AddPropertyCheckbox(
                 table,
                 "Save Music",
-                !Settings.MuteAudio && Settings.RecordMusic);
+                Settings.MuteAudio ? false : Settings.RecordMusic);
             if (Settings.MuteAudio)
             {
                 music.Disable();
             }
+            music.ValueChanged += (o, e) => { Settings.RecordMusic = music.IsChecked; Settings.Save(); };
+
             table = proptree.Add("Overlay settings", 150);
             var ppf = AddPropertyCheckbox(
                 table,
                 "Show P/f",
-                Settings.Recording.ShowPpf);
+                Settings.RecordShowPpf);
+            ppf.ValueChanged += (o, e) => { Settings.RecordShowPpf = ppf.IsChecked; Settings.Save(); };
             var fps = AddPropertyCheckbox(
                 table,
                 "Show FPS",
-                Settings.Recording.ShowFps);
+                Settings.RecordShowFps);
+            fps.ValueChanged += (o, e) => { Settings.RecordShowFps = fps.IsChecked; Settings.Save(); };
             var tools = AddPropertyCheckbox(
                 table,
                 "Show Tools",
-                Settings.Recording.ShowTools);
+                Settings.RecordShowTools);
+            tools.ValueChanged += (o, e) => { Settings.RecordShowTools = tools.IsChecked; Settings.Save(); };
             var hitTest = AddPropertyCheckbox(
                table,
                "Show Hit Test",
-               Settings.Editor.HitTest);
+               Settings.RecordShowHitTest);
+            hitTest.ValueChanged += (o, e) => { Settings.RecordShowHitTest = hitTest.IsChecked; Settings.Save(); };
             var colorTriggers = AddPropertyCheckbox(
                 table,
                 "Enable Color Triggers",
-                Settings.Recording.EnableColorTriggers);
+                Settings.RecordShowColorTriggers);
+            colorTriggers.ValueChanged += (o, e) => { Settings.RecordShowColorTriggers = colorTriggers.IsChecked; Settings.Save(); };
             var resIndZoom = AddPropertyCheckbox(
                 table,
                 "Res-Independent Zoom",
-                Settings.Recording.ResIndZoom);
+                Settings.RecordResIndependentZoom);
+            resIndZoom.ValueChanged += (o, e) => { Settings.RecordResIndependentZoom = resIndZoom.IsChecked; Settings.Save(); };
             proptree.ExpandAll();
             Button Cancel = new Button(bottomrow)
             {
@@ -185,8 +197,8 @@ namespace linerider.UI
                     try
                     {
                         var size = resolutions[qualitycb.SelectedItem.Text];
-                        Settings.RecordingWidth = size.Width;
-                        Settings.RecordingHeight = size.Height;
+                        Settings.Recording.RecordingWidth = size.Width;
+                        Settings.Recording.RecordingHeight = size.Height;
                     }
                     catch (KeyNotFoundException)
                     {

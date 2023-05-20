@@ -62,6 +62,7 @@ namespace linerider.UI
         private GameTrigger _trigger_copy = null;
         private bool _changemade = false;
         private bool _closing = false;
+        private bool _shouldrevertpreview = false;
         public TriggerWindow(GameCanvas parent, Editor editor)
         : base(parent, editor)
         {
@@ -80,6 +81,8 @@ namespace linerider.UI
             ToggleDisable(true);
             MinimumSize = new Size(250, MinimumSize.Height);
             DisableResizing();
+            _shouldrevertpreview = !Settings.PreviewMode;
+            Settings.PreviewMode = true;
 
         }
         protected override void CloseButtonPressed(
@@ -89,6 +92,8 @@ namespace linerider.UI
             if (_closing || !_changemade)
             {
                 _closing = true;
+                if (_shouldrevertpreview)
+                    Settings.PreviewMode = false;
                 base.CloseButtonPressed(control, args);
             }
             else
@@ -101,6 +106,8 @@ namespace linerider.UI
             if (_closing || !_changemade)
             {
                 _closing = true;
+                if (_shouldrevertpreview)
+                    Settings.PreviewMode = false;
                 return base.Close();
             }
             else

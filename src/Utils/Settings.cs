@@ -47,6 +47,8 @@ namespace linerider
             public static bool ShowPpf = true;
             public static bool ShowHitTest = false;
             public static bool EnableColorTriggers = true;
+            public static int RecordingWidth = 0;
+            public static int RecordingHeight = 0;
             public static bool ResIndZoom = true; //Use resolution-independent zoom based on window size when recording
         }
         public static class Local
@@ -113,14 +115,28 @@ namespace linerider
         public static bool RoundLegacyCamera;
         public static bool SmoothPlayback = false;
         public static bool CheckForUpdates;
-        public static bool Record1080p;
+
+        public static string RecordResolution;
         public static bool RecordSmooth;
         public static bool RecordMusic;
-        public static int RecordingWidth;
-        public static int RecordingHeight;
+        public static bool RecordShowPpf;
+        public static bool RecordShowFps;
+        public static bool RecordShowTools;
+        public static bool RecordShowHitTest;
+        public static bool RecordShowColorTriggers;
+        public static bool RecordResIndependentZoom;
+
+        public static bool ScreenshotLockRatio;
         public static int ScreenshotWidth;
         public static int ScreenshotHeight;
+        public static bool ScreenshotShowPpf;
+        public static bool ScreenshotShowFps;
+        public static bool ScreenshotShowTools;
+        public static bool ScreenshotShowHitTest;
+        public static bool ScreenshotResIndependentZoom;
+
         public static float ScrollSensitivity;
+        public static int DefaultTimelineLength;
         public static int SettingsPane;
         public static bool MuteAudio;
         public static bool PreviewMode;
@@ -249,13 +265,27 @@ namespace linerider
             RoundLegacyCamera = true;
             SmoothPlayback = true;
             CheckForUpdates = true;
-            Record1080p = false;
+
+            RecordResolution = "720p";
             RecordSmooth = true;
             RecordMusic = true;
-            RecordingWidth = 1280;
-            RecordingHeight = 720;
+            RecordShowPpf = true;
+            RecordShowFps = true;
+            RecordShowTools = false;
+            RecordShowHitTest = false;
+            RecordShowColorTriggers = true;
+            RecordResIndependentZoom = true;
+
+            ScreenshotLockRatio = false;
             ScreenshotWidth = 1280;
             ScreenshotHeight = 720;
+            ScreenshotShowPpf = true;
+            ScreenshotShowFps = true;
+            ScreenshotShowTools = false;
+            ScreenshotShowHitTest = false;
+            ScreenshotResIndependentZoom = true;
+
+            DefaultTimelineLength = 30;
             ScrollSensitivity = 1;
             SettingsPane = 0;
             MuteAudio = false;
@@ -387,6 +417,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.PreferenceInvisibleRider, new Keybinding(Key.I, KeyModifiers.Shift | KeyModifiers.Alt));
 
             SetupDefaultKeybind(Hotkey.PreferenceOnionSkinning, new Keybinding(Key.O, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.TogglePreviewMode, new Keybinding(Key.U, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
             SetupDefaultKeybind(Hotkey.Quicksave, new Keybinding(Key.S, KeyModifiers.Control));
 
@@ -513,14 +544,24 @@ namespace linerider
             try
             {
                 if (!File.Exists(Program.UserDirectory + "settings-LRT.conf"))
-                {
                     Save();
-                }
+
                 lines = File.ReadAllLines(Program.UserDirectory + "settings-LRT.conf");
             }
-            catch
-            {
-            }
+            catch { }
+
+            LoadMainSettings(lines);
+            LoadAddonSettings(lines);
+            LoadKeybinds(lines);
+
+            var lasttrack = GetSetting(lines, nameof(LastSelectedTrack));
+            if (File.Exists(lasttrack) && lasttrack.StartsWith(Constants.TracksDirectory))
+                LastSelectedTrack = lasttrack;
+
+            Volume = MathHelper.Clamp(Settings.Volume, 0, 100);
+        }
+        public static void LoadMainSettings(string[] lines)
+        {
             LoadInt(GetSetting(lines, nameof(PlaybackZoomType)), ref PlaybackZoomType);
             LoadFloat(GetSetting(lines, nameof(PlaybackZoomValue)), ref PlaybackZoomValue);
             LoadFloat(GetSetting(lines, nameof(Volume)), ref Volume);
@@ -533,14 +574,28 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(CheckForUpdates)), ref CheckForUpdates);
             LoadBool(GetSetting(lines, nameof(SmoothPlayback)), ref SmoothPlayback);
             LoadBool(GetSetting(lines, nameof(RoundLegacyCamera)), ref RoundLegacyCamera);
-            LoadBool(GetSetting(lines, nameof(Record1080p)), ref Record1080p);
+
+            RecordResolution = GetSetting(lines, nameof(RecordResolution));
             LoadBool(GetSetting(lines, nameof(RecordSmooth)), ref RecordSmooth);
             LoadBool(GetSetting(lines, nameof(RecordMusic)), ref RecordMusic);
-            LoadInt(GetSetting(lines, nameof(RecordingWidth)), ref RecordingWidth);
-            LoadInt(GetSetting(lines, nameof(RecordingHeight)), ref RecordingHeight);
+            LoadBool(GetSetting(lines, nameof(RecordShowPpf)), ref RecordShowPpf);
+            LoadBool(GetSetting(lines, nameof(RecordShowFps)), ref RecordShowFps);
+            LoadBool(GetSetting(lines, nameof(RecordShowTools)), ref RecordShowTools);
+            LoadBool(GetSetting(lines, nameof(RecordShowHitTest)), ref RecordShowHitTest);
+            LoadBool(GetSetting(lines, nameof(RecordShowColorTriggers)), ref RecordShowColorTriggers);
+            LoadBool(GetSetting(lines, nameof(RecordResIndependentZoom)), ref RecordResIndependentZoom);
+
+            LoadBool(GetSetting(lines, nameof(ScreenshotLockRatio)), ref ScreenshotLockRatio);
             LoadInt(GetSetting(lines, nameof(ScreenshotWidth)), ref ScreenshotWidth);
             LoadInt(GetSetting(lines, nameof(ScreenshotHeight)), ref ScreenshotHeight);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowPpf)), ref ScreenshotShowPpf);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowFps)), ref ScreenshotShowFps);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowTools)), ref ScreenshotShowTools);
+            LoadBool(GetSetting(lines, nameof(ScreenshotShowHitTest)), ref ScreenshotShowHitTest);
+            LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
+
             LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
+            LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
             LoadInt(GetSetting(lines, nameof(SettingsPane)), ref SettingsPane);
@@ -596,23 +651,6 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(InvisibleRider)), ref InvisibleRider);
             if (multiScarfSegments == 0) { multiScarfSegments++; }
             if (ScarfSegments == 0) { ScarfSegments++; }
-            LoadAddonSettings(lines);
-
-
-            var lasttrack = GetSetting(lines, nameof(LastSelectedTrack));
-            if (File.Exists(lasttrack) && lasttrack.StartsWith(Constants.TracksDirectory))
-            {
-                LastSelectedTrack = lasttrack;
-            }
-            foreach (Hotkey hk in Enum.GetValues(typeof(Hotkey)))
-            {
-                if (hk == Hotkey.None)
-                    continue;
-                LoadKeybinding(lines, hk);
-            }
-
-            Volume = MathHelper.Clamp(Settings.Volume, 0, 100);
-            LoadDefaultKeybindings();
         }
         public static void LoadAddonSettings(string[] lines)
         {
@@ -622,84 +660,150 @@ namespace linerider
             LoadFloat(GetSetting(lines, nameof(animationRelativeVelX)), ref animationRelativeVelX);
             LoadFloat(GetSetting(lines, nameof(animationRelativeVelY)), ref animationRelativeVelY);
         }
+        public static void LoadKeybinds(string[] lines)
+        {
+            foreach (Hotkey hk in Enum.GetValues(typeof(Hotkey)))
+            {
+                if (hk == Hotkey.None)
+                    continue;
+                LoadKeybinding(lines, hk);
+            }
+
+            LoadDefaultKeybindings();
+        }
 
         public static void Save()
         {
-            string config = MakeSetting(nameof(LastSelectedTrack), LastSelectedTrack);
-            config += "\r\n" + MakeSetting(nameof(Volume), Volume.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SuperZoom), SuperZoom.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(WhiteBG), WhiteBG.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(NightMode), NightMode.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SmoothCamera), SmoothCamera.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(PredictiveCamera), PredictiveCamera.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(CheckForUpdates), CheckForUpdates.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SmoothPlayback), SmoothPlayback.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(PlaybackZoomType), PlaybackZoomType.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(PlaybackZoomValue), PlaybackZoomValue.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(RoundLegacyCamera), RoundLegacyCamera.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Record1080p), Record1080p.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(RecordSmooth), RecordSmooth.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(RecordMusic), RecordMusic.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(RecordingWidth), RecordingWidth.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(RecordingHeight), RecordingHeight.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(ScreenshotWidth), ScreenshotWidth.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(ScreenshotHeight), ScreenshotHeight.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.LifeLockNoOrange), Editor.LifeLockNoOrange.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SettingsPane), SettingsPane.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(MuteAudio), MuteAudio.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.HitTest), Editor.HitTest.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.SnapNewLines), Editor.SnapNewLines.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.SnapMoveLine), Editor.SnapMoveLine.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.SnapToGrid), Editor.SnapToGrid.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.ForceXySnap), Editor.ForceXySnap.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.XySnapDegrees), Editor.XySnapDegrees.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.MomentumVectors), Editor.MomentumVectors.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.RenderGravityWells), Editor.RenderGravityWells.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.DrawContactPoints), Editor.DrawContactPoints.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(PreviewMode), PreviewMode.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SlowmoSpeed), SlowmoSpeed.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(DefaultPlayback), DefaultPlayback.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(ColorPlayback), ColorPlayback.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(OnionSkinning), OnionSkinning.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(PastOnionSkins), PastOnionSkins.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(FutureOnionSkins), FutureOnionSkins.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.ShowLineAngle), Editor.ShowLineAngle.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.ShowLineLength), Editor.ShowLineLength.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Editor.ShowLineID), Editor.ShowLineID.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SelectedScarf), SelectedScarf);
-            config += "\r\n" + MakeSetting(nameof(ScarfSegments), ScarfSegments.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SelectedBoshSkin), SelectedBoshSkin);
-            config += "\r\n" + MakeSetting(nameof(showChangelog), showChangelog.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(multiScarfSegments), multiScarfSegments.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(multiScarfAmount), multiScarfAmount.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(autosaveChanges), autosaveChanges.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(autosaveMinutes), autosaveMinutes.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(mainWindowWidth), mainWindowWidth.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(mainWindowHeight), mainWindowHeight.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(DefaultSaveFormat), DefaultSaveFormat);
-            config += "\r\n" + MakeSetting(nameof(DefaultAutosaveFormat), DefaultAutosaveFormat);
-            config += "\r\n" + MakeSetting(nameof(DefaultQuicksaveFormat), DefaultQuicksaveFormat);
-            config += "\r\n" + MakeSetting(nameof(DefaultCrashBackupFormat), DefaultCrashBackupFormat);
-            config += "\r\n" + MakeSetting(nameof(DrawCollisionGrid), DrawCollisionGrid.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(DrawAGWs), DrawAGWs.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(DrawFloatGrid), DrawFloatGrid.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(DrawCamera), DrawCamera.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(ZoomMultiplier), ZoomMultiplier.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Lines.DefaultLine), SaveColor(Lines.DefaultLine));
-            config += "\r\n" + MakeSetting(nameof(Lines.DefaultNightLine), SaveColor(Lines.DefaultNightLine));
-            config += "\r\n" + MakeSetting(nameof(Lines.AccelerationLine), SaveColor(Lines.AccelerationLine));
-            config += "\r\n" + MakeSetting(nameof(Lines.SceneryLine), SaveColor(Lines.SceneryLine));
-            config += "\r\n" + MakeSetting(nameof(Lines.StandardLine), SaveColor(Lines.StandardLine));
-            config += "\r\n" + MakeSetting(nameof(Bezier.Resolution), Bezier.Resolution.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Bezier.NodeSize), Bezier.NodeSize.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(Bezier.Mode), Bezier.Mode.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SmoothPencil.smoothStabilizer), SmoothPencil.smoothStabilizer.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(SmoothPencil.smoothUpdateSpeed), SmoothPencil.smoothUpdateSpeed.ToString(Program.Culture));
-            config += "\r\n" + MakeSetting(nameof(InvisibleRider), InvisibleRider.ToString(Program.Culture));
-            config = SaveAddonSettings(config);
+            Debouncer.Debounce("Settings.Save", () =>
+            {
+                List<string> lines = new List<string>();
+
+                lines.AddRange(BuildMainSettingsList());
+                lines.AddRange(BuildAddonSettingsList());
+                lines.AddRange(BuildKeybindsList());
+
+                try
+                {
+                    string content = string.Join("\r\n", lines);
+                    File.WriteAllText(Program.UserDirectory + "settings-LRT.conf", content);
+                }
+                catch { }
+            }, 1000);
+        }
+
+        private static List<string> BuildMainSettingsList()
+        {
+            List<string> lines = new List<string>
+            {
+                MakeSetting(nameof(LastSelectedTrack), LastSelectedTrack),
+                MakeSetting(nameof(Volume), Volume.ToString(Program.Culture)),
+                MakeSetting(nameof(SuperZoom), SuperZoom.ToString(Program.Culture)),
+                MakeSetting(nameof(WhiteBG), WhiteBG.ToString(Program.Culture)),
+                MakeSetting(nameof(NightMode), NightMode.ToString(Program.Culture)),
+                MakeSetting(nameof(SmoothCamera), SmoothCamera.ToString(Program.Culture)),
+                MakeSetting(nameof(PredictiveCamera), PredictiveCamera.ToString(Program.Culture)),
+                MakeSetting(nameof(CheckForUpdates), CheckForUpdates.ToString(Program.Culture)),
+                MakeSetting(nameof(SmoothPlayback), SmoothPlayback.ToString(Program.Culture)),
+                MakeSetting(nameof(PlaybackZoomType), PlaybackZoomType.ToString(Program.Culture)),
+                MakeSetting(nameof(PlaybackZoomValue), PlaybackZoomValue.ToString(Program.Culture)),
+                MakeSetting(nameof(RoundLegacyCamera), RoundLegacyCamera.ToString(Program.Culture)),
+
+                MakeSetting(nameof(RecordResolution), RecordResolution),
+                MakeSetting(nameof(RecordSmooth), RecordSmooth.ToString(Program.Culture)),
+                MakeSetting(nameof(RecordMusic), RecordMusic.ToString(Program.Culture)),
+                MakeSetting(nameof(RecordShowPpf), RecordShowPpf.ToString(Program.Culture)),
+                MakeSetting(nameof(RecordShowFps), RecordShowFps.ToString(Program.Culture)),
+                MakeSetting(nameof(RecordShowTools), RecordShowTools.ToString(Program.Culture)),
+                MakeSetting(nameof(RecordShowHitTest), RecordShowHitTest.ToString(Program.Culture)),
+                MakeSetting(nameof(RecordShowColorTriggers), RecordShowColorTriggers.ToString(Program.Culture)),
+                MakeSetting(nameof(RecordResIndependentZoom), RecordResIndependentZoom.ToString(Program.Culture)),
+
+                MakeSetting(nameof(ScreenshotLockRatio), ScreenshotLockRatio.ToString(Program.Culture)),
+                MakeSetting(nameof(ScreenshotWidth), ScreenshotWidth.ToString(Program.Culture)),
+                MakeSetting(nameof(ScreenshotHeight), ScreenshotHeight.ToString(Program.Culture)),
+                MakeSetting(nameof(ScreenshotShowPpf), ScreenshotShowPpf.ToString(Program.Culture)),
+                MakeSetting(nameof(ScreenshotShowFps), ScreenshotShowFps.ToString(Program.Culture)),
+                MakeSetting(nameof(ScreenshotShowTools), ScreenshotShowTools.ToString(Program.Culture)),
+                MakeSetting(nameof(ScreenshotShowHitTest), ScreenshotShowHitTest.ToString(Program.Culture)),
+                MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture)),
+
+                MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),
+                MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.LifeLockNoOrange), Editor.LifeLockNoOrange.ToString(Program.Culture)),
+                MakeSetting(nameof(SettingsPane), SettingsPane.ToString(Program.Culture)),
+                MakeSetting(nameof(MuteAudio), MuteAudio.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.HitTest), Editor.HitTest.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.SnapNewLines), Editor.SnapNewLines.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.SnapMoveLine), Editor.SnapMoveLine.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.SnapToGrid), Editor.SnapToGrid.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.ForceXySnap), Editor.ForceXySnap.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.XySnapDegrees), Editor.XySnapDegrees.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.MomentumVectors), Editor.MomentumVectors.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.RenderGravityWells), Editor.RenderGravityWells.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.DrawContactPoints), Editor.DrawContactPoints.ToString(Program.Culture)),
+                MakeSetting(nameof(PreviewMode), PreviewMode.ToString(Program.Culture)),
+                MakeSetting(nameof(SlowmoSpeed), SlowmoSpeed.ToString(Program.Culture)),
+                MakeSetting(nameof(DefaultPlayback), DefaultPlayback.ToString(Program.Culture)),
+                MakeSetting(nameof(ColorPlayback), ColorPlayback.ToString(Program.Culture)),
+                MakeSetting(nameof(OnionSkinning), OnionSkinning.ToString(Program.Culture)),
+                MakeSetting(nameof(PastOnionSkins), PastOnionSkins.ToString(Program.Culture)),
+                MakeSetting(nameof(FutureOnionSkins), FutureOnionSkins.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.ShowLineAngle), Editor.ShowLineAngle.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.ShowLineLength), Editor.ShowLineLength.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.ShowLineID), Editor.ShowLineID.ToString(Program.Culture)),
+                MakeSetting(nameof(SelectedScarf), SelectedScarf),
+                MakeSetting(nameof(ScarfSegments), ScarfSegments.ToString(Program.Culture)),
+                MakeSetting(nameof(SelectedBoshSkin), SelectedBoshSkin),
+                MakeSetting(nameof(showChangelog), showChangelog.ToString(Program.Culture)),
+                MakeSetting(nameof(multiScarfSegments), multiScarfSegments.ToString(Program.Culture)),
+                MakeSetting(nameof(multiScarfAmount), multiScarfAmount.ToString(Program.Culture)),
+                MakeSetting(nameof(autosaveChanges), autosaveChanges.ToString(Program.Culture)),
+                MakeSetting(nameof(autosaveMinutes), autosaveMinutes.ToString(Program.Culture)),
+                MakeSetting(nameof(mainWindowWidth), mainWindowWidth.ToString(Program.Culture)),
+                MakeSetting(nameof(mainWindowHeight), mainWindowHeight.ToString(Program.Culture)),
+                MakeSetting(nameof(DefaultSaveFormat), DefaultSaveFormat),
+                MakeSetting(nameof(DefaultAutosaveFormat), DefaultAutosaveFormat),
+                MakeSetting(nameof(DefaultQuicksaveFormat), DefaultQuicksaveFormat),
+                MakeSetting(nameof(DefaultCrashBackupFormat), DefaultCrashBackupFormat),
+                MakeSetting(nameof(DrawCollisionGrid), DrawCollisionGrid.ToString(Program.Culture)),
+                MakeSetting(nameof(DrawAGWs), DrawAGWs.ToString(Program.Culture)),
+                MakeSetting(nameof(DrawFloatGrid), DrawFloatGrid.ToString(Program.Culture)),
+                MakeSetting(nameof(DrawCamera), DrawCamera.ToString(Program.Culture)),
+                MakeSetting(nameof(ZoomMultiplier), ZoomMultiplier.ToString(Program.Culture)),
+                MakeSetting(nameof(Lines.DefaultLine), SaveColor(Lines.DefaultLine)),
+                MakeSetting(nameof(Lines.DefaultNightLine), SaveColor(Lines.DefaultNightLine)),
+                MakeSetting(nameof(Lines.AccelerationLine), SaveColor(Lines.AccelerationLine)),
+                MakeSetting(nameof(Lines.SceneryLine), SaveColor(Lines.SceneryLine)),
+                MakeSetting(nameof(Lines.StandardLine), SaveColor(Lines.StandardLine)),
+                MakeSetting(nameof(Bezier.Resolution), Bezier.Resolution.ToString(Program.Culture)),
+                MakeSetting(nameof(Bezier.NodeSize), Bezier.NodeSize.ToString(Program.Culture)),
+                MakeSetting(nameof(Bezier.Mode), Bezier.Mode.ToString(Program.Culture)),
+                MakeSetting(nameof(SmoothPencil.smoothStabilizer), SmoothPencil.smoothStabilizer.ToString(Program.Culture)),
+                MakeSetting(nameof(SmoothPencil.smoothUpdateSpeed), SmoothPencil.smoothUpdateSpeed.ToString(Program.Culture)),
+                MakeSetting(nameof(InvisibleRider), InvisibleRider.ToString(Program.Culture)),
+            };
+
+            return lines;
+        }
+        private static List<string> BuildAddonSettingsList()
+        {
+            List<string> lines = new List<string>
+            {
+                MakeSetting(nameof(velocityReferenceFrameAnimation), velocityReferenceFrameAnimation.ToString()),
+                MakeSetting(nameof(forwardLinesAsScenery), forwardLinesAsScenery.ToString()),
+                MakeSetting(nameof(recededLinesAsScenery), recededLinesAsScenery.ToString()),
+                MakeSetting(nameof(animationRelativeVelX), animationRelativeVelX.ToString()),
+                MakeSetting(nameof(animationRelativeVelY), animationRelativeVelY.ToString()),
+            };
+
+            return lines;
+        }
+        private static List<string> BuildKeybindsList()
+        {
+            List<string> lines = new List<string>();
+
             foreach (var binds in Keybinds)
             {
                 foreach (var bind in binds.Value)
@@ -723,26 +827,15 @@ namespace linerider
                                 keybind += "+";
                             keybind += bind.MouseButton.ToString();
                         }
-                        config += "\r\n" +
-                            MakeSetting(binds.Key.ToString(), $"[{keybind}]");
+
+                        lines.Add(MakeSetting(binds.Key.ToString(), $"[{keybind}]"));
                     }
                 }
             }
-            try
-            {
-                File.WriteAllText(Program.UserDirectory + "settings-LRT.conf", config);
-            }
-            catch { }
+
+            return lines;
         }
-        private static string SaveAddonSettings(string config)
-        {
-            config += "\r\n" + MakeSetting(nameof(velocityReferenceFrameAnimation), velocityReferenceFrameAnimation.ToString());
-            config += "\r\n" + MakeSetting(nameof(forwardLinesAsScenery), forwardLinesAsScenery.ToString());
-            config += "\r\n" + MakeSetting(nameof(recededLinesAsScenery), recededLinesAsScenery.ToString());
-            config += "\r\n" + MakeSetting(nameof(animationRelativeVelX), animationRelativeVelX.ToString());
-            config += "\r\n" + MakeSetting(nameof(animationRelativeVelY), animationRelativeVelY.ToString());
-            return config;
-        }
+
         private static void LoadKeybinding(string[] config, Hotkey hotkey)
         {
             if (KeybindConflicts[hotkey] == KeyConflicts.HardCoded)
