@@ -1,0 +1,21 @@
+#Line Rider Scarf Regions File
+#This file is auto-regenerated when png files are changed
+
+#File hashes
+regions.png;+St50L8QTntnXKES9olIxg==
+body.png;iDu7cI8v2g60WplR4LIWCA==
+bodydead.png;NGK7uDTw7EBbUOZDnqLOjw==
+
+#Body regions
+384, 341, 146, 73
+384, 268, 146, 73
+384, 195, 146, 73
+384, 122, 146, 73
+384, 49, 146, 73
+
+#Crashed body regions
+384, 341, 146, 73
+384, 268, 146, 73
+384, 195, 146, 73
+384, 122, 146, 73
+384, 49, 146, 73

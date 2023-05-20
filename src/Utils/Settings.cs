@@ -137,7 +137,6 @@ namespace linerider
         public static String SelectedScarf; //What custom scarf is selected
         public static int ScarfSegments; //How many scarf segments on restart
         public static String SelectedBoshSkin; //What bosh skin is selected
-        public static bool customScarfOnPng; //To replace colors in the png for a custom scarf
         public static bool showChangelog; //Show the changelog
         public static int multiScarfAmount; //How many scarves the rider has
         public static int multiScarfSegments; //How many segments a multi scarf has
@@ -270,7 +269,6 @@ namespace linerider
             ScarfSegments = 5;
             SelectedScarf = "*default*";
             SelectedBoshSkin = "*default*";
-            customScarfOnPng = false;
             showChangelog = true;
             multiScarfAmount = 1;
             multiScarfSegments = 5;
@@ -569,7 +567,6 @@ namespace linerider
             SelectedScarf = GetSetting(lines, nameof(SelectedScarf));
             LoadInt(GetSetting(lines, nameof(ScarfSegments)), ref ScarfSegments);
             SelectedBoshSkin = GetSetting(lines, nameof(SelectedBoshSkin));
-            LoadBool(GetSetting(lines, nameof(customScarfOnPng)), ref customScarfOnPng);
             LoadBool(GetSetting(lines, nameof(showChangelog)), ref showChangelog);
             LoadInt(GetSetting(lines, nameof(multiScarfSegments)), ref multiScarfSegments);
             LoadInt(GetSetting(lines, nameof(multiScarfAmount)), ref multiScarfAmount);
@@ -675,7 +672,6 @@ namespace linerider
             config += "\r\n" + MakeSetting(nameof(SelectedScarf), SelectedScarf);
             config += "\r\n" + MakeSetting(nameof(ScarfSegments), ScarfSegments.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(SelectedBoshSkin), SelectedBoshSkin);
-            config += "\r\n" + MakeSetting(nameof(customScarfOnPng), customScarfOnPng.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(showChangelog), showChangelog.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(multiScarfSegments), multiScarfSegments.ToString(Program.Culture));
             config += "\r\n" + MakeSetting(nameof(multiScarfAmount), multiScarfAmount.ToString(Program.Culture));

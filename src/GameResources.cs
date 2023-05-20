@@ -172,11 +172,11 @@ namespace linerider
                 return GetBitmap("rider.sled.png");
             }
         }
-        internal static Bitmap brokensled_img
+        internal static Bitmap sledbroken_img
         {
             get
             {
-                return GetBitmap("rider.brokensled.png");
+                return GetBitmap("rider.sledbroken.png");
             }
         }
         internal static Bitmap arm_img
@@ -205,6 +205,20 @@ namespace linerider
             get
             {
                 return GetBitmap("rider.bodydead.png");
+            }
+        }
+        internal static Bitmap rope_img
+        {
+            get
+            {
+                return GetBitmap("rider.rope.png");
+            }
+        }
+        internal static string regions_file
+        {
+            get
+            {
+                return GetString("rider..regions");
             }
         }
         #endregion
