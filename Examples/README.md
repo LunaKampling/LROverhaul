@@ -1,5 +1,5 @@
 # User folder
-Custom files can be placed in user directory which is a `Documents/LRA/` directory.
+Custom files can be placed in user directory which can be opened by clicking the `Menu -> Open User Directory` button or navigating the `Documents/LRA/` directory manually.
 
 # Custom scarves
 
