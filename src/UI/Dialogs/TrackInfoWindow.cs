@@ -271,7 +271,7 @@ namespace linerider.UI
 
             AddFeature(table, trackfeatures, "Red Multiplier", TrackFeatures.redmultiplier);
             AddFeature(table, trackfeatures, "Scenery Width", TrackFeatures.scenerywidth);
-            AddFeature(table, trackfeatures, "Track Triggers", TrackFeatures.ignorable_trigger);
+            AddFeature(table, trackfeatures, "Line Triggers", TrackFeatures.ignorable_trigger);
 
             table = _tree.Add("Physics Modifiers", 150);
             var remount = GwenHelper.AddPropertyCheckbox(table, "Remount", _editor.UseRemount);

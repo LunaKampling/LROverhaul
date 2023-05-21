@@ -109,6 +109,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
+                Margin = new Margin(0, 0, 0, 5),
             };
 
             ControlBase panel = new ControlBase(this)
@@ -122,11 +123,13 @@ namespace linerider.UI
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
+                Margin = new Margin(0, 5, 0, 0),
             };
 
             GeneratorOptions = new Panel(panel)
             {
-                Dock = Dock.Fill
+                Dock = Dock.Fill,
+                Padding = Padding.Five,
             };
 
             Button generate = new Button(bottom)
