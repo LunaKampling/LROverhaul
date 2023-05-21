@@ -1,6 +1,8 @@
 using System;
 using Gwen;
 using Gwen.Controls;
+using System.Drawing;
+
 namespace linerider.UI
 {
     public static class GwenHelper
@@ -38,6 +40,29 @@ namespace linerider.UI
                         Alignment = Pos.Left | Pos.CenterV,
                         Font = canvas.Fonts.DefaultBold,
                         Margin = new Margin(-10, 5, 0, 5)
+                    }
+                },
+                AutoSizeToContents = true,
+                Margin = new Margin(0, 0, 0, 10),
+                Padding = new Padding(10, 0, 0, 0),
+                ShouldDrawBackground = false
+            };
+            return panel;
+        }
+        public static Panel CreateHintLabel(ControlBase parent, string headertext)
+        {
+            Panel panel = new Panel(parent)
+            {
+                Dock = Dock.Top,
+                Children =
+                {
+                    new Label(parent)
+                    {
+                        TextColor = Color.Gray,
+                        Dock = Dock.Top,
+                        Text = headertext,
+                        Alignment = Pos.Left | Pos.CenterV,
+                        Margin = new Margin(-10, 5, 0, 0)
                     }
                 },
                 AutoSizeToContents = true,
