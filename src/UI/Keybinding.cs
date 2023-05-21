@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using OpenTK.Input;
 namespace linerider.UI
@@ -10,10 +8,7 @@ namespace linerider.UI
         public MouseButton MouseButton = (MouseButton)(-1);
         public Key Key
         {
-            get
-            {
-                return _key;
-            }
+            get => _key;
             set
             {
                 switch (value)
@@ -59,24 +54,15 @@ namespace linerider.UI
         }
         public bool UsesModifiers
         {
-            get
-            {
-                return Modifiers != (KeyModifiers)(0);
-            }
+            get => Modifiers != (KeyModifiers)(0);
         }
         public bool UsesKeys
         {
-            get
-            {
-                return Key != (Key)(-1);
-            }
+            get => Key != (Key)(-1);
         }
         public bool UsesMouse
         {
-            get
-            {
-                return MouseButton != (MouseButton)(-1);
-            }
+            get => MouseButton != (MouseButton)(-1);
         }
         public Keybinding()
         {
@@ -194,13 +180,17 @@ namespace linerider.UI
                 case Key.PageUp:
                 case Key.Insert:
                     return key.ToString();
-                case Key.BackSpace: return "Backspace";
+                case Key.BackSpace:
+                    return "Backspace";
                 case Key.RControl:
-                case Key.LControl: return "Control";
+                case Key.LControl:
+                    return "Control";
                 case Key.RAlt:
-                case Key.LAlt: return "Alt";
+                case Key.LAlt:
+                    return "Alt";
                 case Key.RShift:
-                case Key.LShift: return "Shift";
+                case Key.LShift:
+                    return "Shift";
                 case Key.BracketLeft:
                     return "[";
                 case Key.BracketRight:
