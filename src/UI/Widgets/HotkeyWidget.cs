@@ -188,7 +188,7 @@ namespace linerider.UI
             {
                 if (hkstring.Length != 0)
                 {
-                    hkstring += " | ";
+                    hkstring += ", ";
                 }
                 hkstring += hk[i].ToString();
             }
