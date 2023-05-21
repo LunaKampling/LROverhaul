@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+using System.Globalization;
 using OpenTK.Input;
 namespace linerider.UI
 {
@@ -9,10 +8,7 @@ namespace linerider.UI
         public MouseButton MouseButton = (MouseButton)(-1);
         public Key Key
         {
-            get
-            {
-                return _key;
-            }
+            get => _key;
             set
             {
                 switch (value)
@@ -58,24 +54,15 @@ namespace linerider.UI
         }
         public bool UsesModifiers
         {
-            get
-            {
-                return Modifiers != (KeyModifiers)(0);
-            }
+            get => Modifiers != (KeyModifiers)(0);
         }
         public bool UsesKeys
         {
-            get
-            {
-                return Key != (Key)(-1);
-            }
+            get => Key != (Key)(-1);
         }
         public bool UsesMouse
         {
-            get
-            {
-                return MouseButton != (MouseButton)(-1);
-            }
+            get => MouseButton != (MouseButton)(-1);
         }
         public Keybinding()
         {
@@ -111,14 +98,14 @@ namespace linerider.UI
         public override string ToString()
         {
             if (IsEmpty)
-                return "Undefined";
+                return "<unset>";
             string kb = "";
             int modifiers = 0;
             if (UsesModifiers)
             {
                 if (Modifiers.HasFlag(KeyModifiers.Control))
                 {
-                    kb += "ctrl";
+                    kb += "Ctrl";
                     modifiers++;
                 }
                 if (Modifiers.HasFlag(KeyModifiers.Shift))
@@ -127,7 +114,7 @@ namespace linerider.UI
                     {
                         kb += "+";
                     }
-                    kb += "shift";
+                    kb += "Shift";
                     modifiers++;
                 }
                 if (Modifiers.HasFlag(KeyModifiers.Alt))
@@ -136,7 +123,7 @@ namespace linerider.UI
                     {
                         kb += "+";
                     }
-                    kb += "alt";
+                    kb += "Alt";
                     modifiers++;
                 }
             }
@@ -144,7 +131,7 @@ namespace linerider.UI
             {
                 if (modifiers > 0)
                     kb += "+";
-                kb += KeyToString(Key).ToLower();
+                kb += CultureInfo.CurrentCulture.TextInfo.ToTitleCase(KeyToString(Key));
             }
             if (UsesMouse)
             {
@@ -160,16 +147,16 @@ namespace linerider.UI
             switch (MouseButton)
             {
                 case MouseButton.Left:
-                    return "mb1";
+                    return "<Left MButton>";
                 case MouseButton.Right:
-                    return "mb2";
+                    return "<Right MButton>";
                 case MouseButton.Middle:
-                    return "mb3";
+                    return "<Middle MButton>";
             }
             if (button >= MouseButton.Button1 && button <= MouseButton.Button9)
             {
                 int num = 4 + ((int)button - (int)MouseButton.Button1);
-                return "mb" + num;
+                return $"<Mouse Button #{num}>";
             }
             return button.ToString();
         }
@@ -193,13 +180,17 @@ namespace linerider.UI
                 case Key.PageUp:
                 case Key.Insert:
                     return key.ToString();
-                case Key.BackSpace: return "Backspace";
+                case Key.BackSpace:
+                    return "Backspace";
                 case Key.RControl:
-                case Key.LControl: return "Control";
+                case Key.LControl:
+                    return "Control";
                 case Key.RAlt:
-                case Key.LAlt: return "Alt";
+                case Key.LAlt:
+                    return "Alt";
                 case Key.RShift:
-                case Key.LShift: return "Shift";
+                case Key.LShift:
+                    return "Shift";
                 case Key.BracketLeft:
                     return "[";
                 case Key.BracketRight:
@@ -222,16 +213,6 @@ namespace linerider.UI
                     return "/";
                 case Key.BackSlash:
                     return "\\";
-                case Key.Keypad0: return "Keypad 0"; //avoids Key0 and Keypad0 from being written as the same thing
-                case Key.Keypad1: return "Keypad 1";
-                case Key.Keypad2: return "Keypad 2";
-                case Key.Keypad3: return "Keypad 3";
-                case Key.Keypad4: return "Keypad 4";
-                case Key.Keypad5: return "Keypad 5";
-                case Key.Keypad6: return "Keypad 6";
-                case Key.Keypad7: return "Keypad 7";
-                case Key.Keypad8: return "Keypad 8";
-                case Key.Keypad9: return "Keypad 9";
                 default:
                     var trans = TranslateChar(key);
                     if (trans == ' ')
@@ -245,6 +226,8 @@ namespace linerider.UI
                 return (char)('A' + ((int)key - (int)Key.A));
             if (key >= Key.Number0 && key <= Key.Number9)
                 return (char)('0' + ((int)key - (int)Key.Number0));
+            if (key >= Key.Keypad0 && key <= Key.Keypad9)
+                return (char)('0' + ((int)key - (int)Key.Keypad0));
             return ' ';
         }
     }
