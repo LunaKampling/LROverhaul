@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Input;
-using OpenTK.Graphics;
 using Gwen;
 using Gwen.Controls;
+
 namespace linerider.UI
 {
     public class HotkeyWidget : ControlBase
@@ -48,9 +45,7 @@ namespace linerider.UI
                         {
                             var prop = GetLabel(kb.Key);
                             if (prop != null)
-                            {
                                 prop.Value = CreateBindingText(kb.Key);
-                            }
                         }
                     }
                 };
@@ -60,7 +55,8 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            var editorTable = _kbtree.Add("Editor", 150);
+            var firstColWidth = 165;
+            var editorTable = _kbtree.Add("Editor", firstColWidth);
             AddBinding(editorTable, "Pencil Tool", Hotkey.EditorPencilTool);
             AddBinding(editorTable, "Line Tool", Hotkey.EditorLineTool);
             AddBinding(editorTable, "Eraser", Hotkey.EditorEraserTool);
@@ -92,13 +88,13 @@ namespace linerider.UI
             AddBinding(editorTable, "Undo Last Action", Hotkey.EditorUndo);
             AddBinding(editorTable, "Redo Last Undo Action", Hotkey.EditorRedo);
 
-            var toolTable = _kbtree.Add("Tool", 150);
+            var toolTable = _kbtree.Add("Tool", firstColWidth);
             AddBinding(toolTable, "Line Angle Snap", Hotkey.ToolXYSnap);
             AddBinding(toolTable, "Toggle Line Snap", Hotkey.ToolToggleSnap);
             AddBinding(toolTable, "Flip Line", Hotkey.LineToolFlipLine,
                 "Hold before drawing a new line");
 
-            var selecttoolTable = _kbtree.Add("Select Tool", 150);
+            var selecttoolTable = _kbtree.Add("Select Tool", firstColWidth);
             AddBinding(selecttoolTable, "Lock Angle", Hotkey.ToolAngleLock);
             AddBinding(selecttoolTable, "Move Whole Line", Hotkey.ToolSelectBothJoints);
             AddBinding(selecttoolTable, "Life Lock", Hotkey.ToolLifeLock,
@@ -121,7 +117,7 @@ namespace linerider.UI
             AddBinding(selecttoolTable, "Convert Selection (G)", Hotkey.ToolSwitchGreen,
                 "Convert all selected lines to green lines");
 
-            var playbackTable = _kbtree.Add("Playback", 150);
+            var playbackTable = _kbtree.Add("Playback", firstColWidth);
             AddBinding(playbackTable, "Toggle Flag", Hotkey.PlaybackFlag);
             AddBinding(playbackTable, "Reset Camera", Hotkey.PlaybackResetCamera);
             AddBinding(playbackTable, "Start Track", Hotkey.PlaybackStart);
@@ -142,7 +138,7 @@ namespace linerider.UI
             AddBinding(playbackTable, "Zoom Out", Hotkey.PlaybackUnzoom);
             AddBinding(playbackTable, "Play Button - Ignore Flag", Hotkey.PlayButtonIgnoreFlag);
 
-            var menuTable = _kbtree.Add("Menus", 150);
+            var menuTable = _kbtree.Add("Menus", firstColWidth);
             AddBinding(menuTable, "Quicksave", Hotkey.Quicksave);
             AddBinding(menuTable, "Save As Menu", Hotkey.SaveAsWindow);
             AddBinding(menuTable, "Open Preferences", Hotkey.PreferencesWindow);
@@ -152,7 +148,7 @@ namespace linerider.UI
             AddBinding(menuTable, "Open Trigger Menu", Hotkey.TriggerMenuWindow);
             AddBinding(menuTable, "Open Generator Window", Hotkey.LineGeneratorWindow);
 
-            var coordinateTable = _kbtree.Add("Clipboard Bindings", 150);
+            var coordinateTable = _kbtree.Add("Clipboard Bindings", firstColWidth);
             AddBinding(coordinateTable, "CopyX0", Hotkey.CopyX0);
             AddBinding(coordinateTable, "CopyY0", Hotkey.CopyY0);
             AddBinding(coordinateTable, "CopyX1", Hotkey.CopyX1);
@@ -181,7 +177,7 @@ namespace linerider.UI
                 Settings.Keybinds[hotkey] = new List<Keybinding>();
             var ret = Settings.Keybinds[hotkey];
             if (ret.Count == 0)
-                ret.Add(new Keybinding());//empty
+                ret.Add(new Keybinding()); // Empty
             return ret;
         }
         private string CreateBindingText(Hotkey hotkey)
@@ -207,6 +203,10 @@ namespace linerider.UI
                 Value = hkstring,
                 Name = hotkey.ToString(),
             };
+            if (tooltip != null)
+            {
+                label += " [?]";
+            }
             var row = table.Add(label, prop);
             if (tooltip != null)
             {
