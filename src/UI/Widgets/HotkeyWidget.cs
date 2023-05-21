@@ -171,18 +171,9 @@ namespace linerider.UI
             AddBinding(coordinateTable, "CopyY9", Hotkey.CopyY9);
             _kbtree.ExpandAll();
         }
-        private List<Keybinding> FetchBinding(Hotkey hotkey)
-        {
-            if (!Settings.Keybinds.ContainsKey(hotkey))
-                Settings.Keybinds[hotkey] = new List<Keybinding>();
-            var ret = Settings.Keybinds[hotkey];
-            if (ret.Count == 0)
-                ret.Add(new Keybinding()); // Empty
-            return ret;
-        }
         private string CreateBindingText(Hotkey hotkey)
         {
-            var hk = FetchBinding(hotkey);
+            var hk = Settings.FetchBinding(hotkey);
             string hkstring = "";
             for (int i = 0; i < hk.Count; i++)
             {
@@ -196,7 +187,7 @@ namespace linerider.UI
         }
         private void AddBinding(PropertyTable table, string label, Hotkey hotkey, string tooltip = null)
         {
-            var hk = FetchBinding(hotkey);
+            var hk = Settings.FetchBinding(hotkey);
             string hkstring = CreateBindingText(hotkey);
             LabelProperty prop = new LabelProperty(null)
             {

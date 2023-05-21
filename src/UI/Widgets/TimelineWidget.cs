@@ -62,11 +62,11 @@ namespace linerider.UI
                 MouseInputEnabled = false,
                 Dock = Dock.Top
             };
-            _speedincrease = CreateButton(_topbar, GameResources.fast_forward, "Increase Speed");
+            _speedincrease = CreateButton(_topbar, GameResources.fast_forward, "Increase Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedUp, true));
             _speedincrease.Clicked += (o, e) => _editor.PlaybackSpeedUp();
             _speedincrease.Dock = Dock.Right;
 
-            _speeddecrease = CreateButton(_topbar, GameResources.rewind, "Decrease Speed");
+            _speeddecrease = CreateButton(_topbar, GameResources.rewind, "Decrease Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedDown, true));
             _speeddecrease.Clicked += (o, e) => _editor.PlaybackSpeedDown();
             _speeddecrease.Dock = Dock.Left;
 

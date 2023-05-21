@@ -20,8 +20,6 @@ using System.Drawing;
 using Gwen;
 using Gwen.Controls;
 using linerider.Tools;
-using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace linerider.UI
 {
@@ -36,14 +34,15 @@ namespace linerider.UI
         private ImageButton _eraserbtn;
         private ImageButton _selectbtn;
         private ImageButton _handbtn;
-        private ImageButton _start;
-        private ImageButton _pause;
-        private ImageButton _stop;
-        private ImageButton _flag;
-        private ImageButton _generator;
-        private ImageButton _menu;
+        private ImageButton _startbtn;
+        private ImageButton _pausebtn;
+        private ImageButton _stopbtn;
+        private ImageButton _flagbtn;
+        private ImageButton _generatorbtn;
+        private ImageButton _menubtn;
         private ColorSwatch _swatch;
         private ControlBase _buttoncontainer;
+        private Menu _menu;
         private Editor _editor;
         private GameCanvas _canvas;
         public Toolbar(ControlBase parent, Editor editor) : base(parent)
@@ -54,6 +53,7 @@ namespace linerider.UI
             ShouldDrawBackground = true;
             _editor = editor;
             MakeButtons();
+            MakeMenu();
             SetupEvents();
             OnThink += Think;
         }
@@ -64,28 +64,61 @@ namespace linerider.UI
         }
         private void MakeButtons()
         {
+            int padSides = 5;
             _buttoncontainer = new ControlBase(this)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
+                Padding = new Padding(padSides, 0, padSides, 0),
             };
             _swatch = new ColorSwatch(this);
-            _swatch.Dock = Dock.Top;
-            _pencilbtn = CreateTool(GameResources.pencil_icon, "Pencil Tool (Q)\nRe-press to swap to Smooth Pencil");
-            _smpenbtn = CreateTool(GameResources.smoothpencil_icon, "Smooth Pencil Tool (Q)\nRe-press to swap to Pencil");
-            _linebtn = CreateTool(GameResources.line_icon, "Line Tool (W)");
-            _bezierbtn = CreateTool(GameResources.bezier_icon, "Bezier Tool");
-            _eraserbtn = CreateTool(GameResources.eraser_icon, "Eraser Tool (E)");
-            _selectbtn = CreateTool(GameResources.movetool_icon, "Select Tool (R)");
-            _handbtn = CreateTool(GameResources.pantool_icon, "Hand Tool (Shift+Space) (T)");
-            _start = CreateTool(GameResources.play_icon, "Start (Space) (Y)");
-            _pause = CreateTool(GameResources.pause, "Pause (Space)");
-            _stop = CreateTool(GameResources.stop_icon, "Stop (U)");
-            _flag = CreateTool(GameResources.flag_icon, "Flag (I)");
-            _generator = CreateTool(GameResources.generator_icon, "Generator (G)");
-            _menu = CreateTool(GameResources.menu_icon, "Options");
+            _swatch.Dock = Dock.Left;
+            _swatch.Padding = new Padding(padSides, 0, padSides, 0);
+            _pencilbtn = CreateTool(GameResources.pencil_icon, "Pencil Tool / Smooth Pencil", Hotkey.EditorPencilTool);
+            _smpenbtn = CreateTool(GameResources.smoothpencil_icon, "Smooth Pencil / Pencil Tool", Hotkey.EditorPencilTool);
+            _linebtn = CreateTool(GameResources.line_icon, "Line Tool", Hotkey.EditorLineTool);
+            _bezierbtn = CreateTool(GameResources.bezier_icon, "Bezier Tool", Hotkey.None);
+            _eraserbtn = CreateTool(GameResources.eraser_icon, "Eraser Tool", Hotkey.EditorEraserTool);
+            _selectbtn = CreateTool(GameResources.movetool_icon, "Select Tool", Hotkey.EditorSelectTool);
+            _handbtn = CreateTool(GameResources.pantool_icon, "Hand Tool", Hotkey.EditorPanTool);
+            _startbtn = CreateTool(GameResources.play_icon, "Start", Hotkey.PlaybackTogglePause);
+            _pausebtn = CreateTool(GameResources.pause, "Pause", Hotkey.PlaybackTogglePause);
+            _stopbtn = CreateTool(GameResources.stop_icon, "Stop", Hotkey.PlaybackStop);
+            _flagbtn = CreateTool(GameResources.flag_icon, "Flag", Hotkey.PlaybackFlag);
+            _generatorbtn = CreateTool(GameResources.generator_icon, "Generators", Hotkey.LineGeneratorWindow);
+            _menubtn = CreateTool(GameResources.menu_icon, "Options", Hotkey.None);
 
             _smpenbtn.IsHidden = true;
+        }
+        private void MakeMenu()
+        {
+            _menu = new Menu(_canvas)
+            {
+                IsHidden = true,
+            };
+
+            MenuItem saveAsItem = AddMenuItem("Save As...", Hotkey.SaveAsWindow);
+            MenuItem loadItem = AddMenuItem("Load...", Hotkey.LoadWindow);
+            MenuItem newItem = AddMenuItem("New");
+            _menu.AddDivider();
+            MenuItem preferencesItem = AddMenuItem("Preferences", Hotkey.PreferencesWindow);
+            MenuItem userDirItem = AddMenuItem("Open User Directory");
+            _menu.AddDivider();
+            MenuItem trackPropsItem = AddMenuItem("Track Properties", Hotkey.TrackPropertiesWindow);
+            MenuItem triggersItem = AddMenuItem("Triggers", Hotkey.TriggerMenuWindow);
+            _menu.AddDivider();
+            MenuItem exportItem = AddMenuItem("Export Video");
+            MenuItem screenshotItem = AddMenuItem("Capture Screen");
+
+            saveAsItem.Clicked += (o2, e2) => _canvas.ShowSaveDialog();
+            loadItem.Clicked += (o2, e2) => _canvas.ShowLoadDialog();
+            newItem.Clicked += (o2, e2) => NewTrack();
+            preferencesItem.Clicked += (o2, e2) => _canvas.ShowPreferencesDialog();
+            trackPropsItem.Clicked += (o2, e2) => _canvas.ShowTrackPropertiesDialog();
+            triggersItem.Clicked += (o2, e2) => _canvas.ShowTriggerWindow();
+            userDirItem.Clicked += (o2, e2) => GameCanvas.OpenUrl(Program.UserDirectory);
+            exportItem.Clicked += (o2, e2) => _canvas.ShowExportVideoWindow();
+            screenshotItem.Clicked += (o2, e2) => _canvas.ShowScreenCaptureWindow();
         }
         private void SetupEvents()
         {
@@ -122,15 +155,14 @@ namespace linerider.UI
             _selectbtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.MoveTool);
             _handbtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.HandTool);
             _bezierbtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.BezierTool);
-            _flag.Clicked += (o, e) =>
+            _flagbtn.Clicked += (o, e) =>
             {
                 _editor.Flag(_editor.Offset);
             };
-            // _pause.IsHidden = true;
-            _start.Clicked += (o, e) =>
+            _startbtn.Clicked += (o, e) =>
             {
                 CurrentTools.SelectedTool.Stop();
-                if (UI.InputUtils.Check(Hotkey.PlayButtonIgnoreFlag))
+                if (InputUtils.Check(Hotkey.PlayButtonIgnoreFlag))
                 {
                     _editor.StartIgnoreFlag();
                     _editor.Scheduler.DefaultSpeed();
@@ -147,82 +179,84 @@ namespace linerider.UI
                         _editor.Scheduler.DefaultSpeed();
                     }
                 }
-                _pause.IsHidden = false;
-                _start.IsHidden = true;
+                _pausebtn.IsHidden = false;
+                _startbtn.IsHidden = true;
             };
-            _stop.Clicked += (o, e) =>
+            _stopbtn.Clicked += (o, e) =>
             {
                 CurrentTools.SelectedTool.Stop();
                 _editor.Stop();
             };
-            _pause.Clicked += (o, e) =>
+            _pausebtn.Clicked += (o, e) =>
             {
                 CurrentTools.SelectedTool.Stop();
                 _editor.TogglePause();
-                _pause.IsHidden = true;
-                _start.IsHidden = false;
+                _pausebtn.IsHidden = true;
+                _startbtn.IsHidden = false;
             };
-            _generator.Clicked += (o, e) =>
+            _generatorbtn.Clicked += (o, e) =>
             {
                 _canvas.ShowGeneratorWindow(new OpenTK.Vector2d(e.X, e.Y));
             };
-            _menu.Clicked += (o, e) =>
+            _menubtn.Clicked += (o, e) =>
             {
-                Gwen.Controls.Menu menu = new Gwen.Controls.Menu(_canvas);
-                menu.AddItem("Save As...").Clicked += (o2, e2) => { _canvas.ShowSaveDialog(); };
-                menu.AddItem("Load").Clicked += (o2, e2) => { _canvas.ShowLoadDialog(); };
-                menu.AddItem("New").Clicked += (o2, e2) =>
-                {
-                    if (_editor.TrackChanges != 0)
-                    {
-                        var save = Gwen.Controls.MessageBox.Show(
-                            _canvas,
-                            "You are creating a new track.\nDo you want to save your current changes?",
-                            "Create New Track",
-                            Gwen.Controls.MessageBox.ButtonType.YesNoCancel);
-                        save.RenameButtonsYN("Save", "Discard", "Cancel");
-                        save.Dismissed += (o3, result) =>
-                          {
-                              switch (result)
-                              {
-                                  case Gwen.DialogResult.Yes:
-                                      _canvas.ShowSaveDialog();
-                                      break;
-                                  case Gwen.DialogResult.No:
-                                      NewTrack();
-                                      break;
-                              }
-                          };
-                    }
-                    else
-                    {
-                        var msg = Gwen.Controls.MessageBox.Show(
-                            _canvas,
-                            "Are you sure you want to create a new track?",
-                            "Create New Track",
-                            Gwen.Controls.MessageBox.ButtonType.OkCancel);
-                        msg.RenameButtons("Create");
-                        msg.Dismissed += (o3, result) =>
-                          {
-                              if (result == Gwen.DialogResult.OK)
-                              {
-                                  NewTrack();
-                              }
-                          };
-                    }
-                };
-                menu.AddItem("Preferences").Clicked += (o2, e2) => _canvas.ShowPreferencesDialog();
-                menu.AddItem("Track Properties").Clicked += (o2, e2) => _canvas.ShowTrackPropertiesDialog();
-                menu.AddItem("Triggers").Clicked += (o2, e2) => _canvas.ShowTriggerWindow();
-                menu.AddItem("Open User Directory").Clicked += (o2, e2) => GameCanvas.OpenUrl(Program.UserDirectory);
-                menu.AddItem("Export Video").Clicked += (o2, e2) => _canvas.ShowExportVideoWindow();
-                menu.AddItem("Capture Screen").Clicked += (o2, e2) => _canvas.ShowScreenCaptureWindow();
-                var canvaspos = LocalPosToCanvas(new Point(_menu.X, _menu.Y));
-                menu.SetPosition(canvaspos.X, canvaspos.Y + 32);
-                menu.Show();
+                Point canvaspos = LocalPosToCanvas(new Point(_menubtn.X, _menubtn.Y));
+                _menu.SetPosition(canvaspos.X, canvaspos.Y + _menubtn.Height);
+                _menu.Show();
             };
         }
+        private MenuItem AddMenuItem(string caption, Hotkey hotkey = Hotkey.None)
+        {
+            string hotkeyStr = Settings.HotkeyToString(hotkey);
+
+            // Gwen's hotkey field (accelerator) doesn't affect menu width
+            // (there's a "todo" comment there) so expanding menu this hacky way :(
+            if (hotkey != Hotkey.None)
+                caption += new string(' ', (int)Math.Round(hotkeyStr.Length * 2.5));
+
+            MenuItem item = _menu.AddItem(caption, string.Empty, hotkeyStr);
+
+            return item;
+        }
         private void NewTrack()
+        {
+            if (_editor.TrackChanges != 0)
+            {
+                var save = MessageBox.Show(
+                    _canvas,
+                    "You are creating a new track.\nDo you want to save your current changes?",
+                    "Create New Track",
+                    MessageBox.ButtonType.YesNoCancel);
+                save.RenameButtonsYN("Save", "Discard", "Cancel");
+                save.Dismissed += (o3, result) =>
+                {
+                    switch (result)
+                    {
+                        case DialogResult.Yes:
+                            _canvas.ShowSaveDialog();
+                            break;
+                        case DialogResult.No:
+                            SetNewTrack();
+                            break;
+                    }
+                };
+            }
+            else
+            {
+                var msg = MessageBox.Show(
+                    _canvas,
+                    "Are you sure you want to create a new track?",
+                    "Create New Track",
+                    MessageBox.ButtonType.OkCancel);
+                msg.RenameButtons("Create");
+                msg.Dismissed += (o3, result) =>
+                {
+                    if (result == DialogResult.OK)
+                        SetNewTrack();
+                };
+            }
+        }
+        private void SetNewTrack()
         {
             _editor.Stop();
             _editor.ChangeTrack(new Track() { Name = Utils.Constants.DefaultTrackName });
@@ -246,19 +280,20 @@ namespace linerider.UI
         public override void Think()
         {
             bool showplay = !_editor.Playing;
-            _pause.IsHidden = showplay;
-            _start.IsHidden = !showplay;
+            _pausebtn.IsHidden = showplay;
+            _startbtn.IsHidden = !showplay;
             base.Think();
         }
-        private ImageButton CreateTool(Bitmap image, string tooltip)
+        private ImageButton CreateTool(Bitmap image, string tooltip, Hotkey hotkey = Hotkey.None)
         {
-            var size = (Screen.PrimaryScreen.Bounds.Width / 1600 < Screen.PrimaryScreen.Bounds.Height / 1080) ? (Screen.PrimaryScreen.Bounds.Width / 1600) : (Screen.PrimaryScreen.Bounds.Height / 1080);
+            Rectangle ScreenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+            var size = (ScreenSize.Width / 1600 < ScreenSize.Height / 1080) ? (ScreenSize.Width / 1600) : (ScreenSize.Height / 1080);
             if (size < 1) { size = 1; };
             ImageButton btn = new ImageButton(_buttoncontainer);
             btn.Dock = Dock.Left;
             btn.SetImage(image);
             btn.SetSize(size*32, size*32);
-            btn.Tooltip = tooltip;
+            btn.Tooltip = tooltip + Settings.HotkeyToString(hotkey, true);
             btn.Margin = new Margin(3, 0, 3, 0);
             return btn;
         }

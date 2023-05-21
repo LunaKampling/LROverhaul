@@ -56,10 +56,7 @@ namespace linerider
             public static bool RecordingMode;
             public static float MaxZoom
             {
-                get
-                {
-                    return Settings.SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
-                }
+                get => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
             }
             public static bool TrackOverlay = false;
             public static bool TrackOverlayFixed = false;
@@ -509,17 +506,49 @@ namespace linerider
                 return;
             Keybinds[hotkey].Add(keybinding);
         }
+        public static List<Keybinding> FetchBinding(Hotkey hotkey)
+        {
+            if (!Keybinds.ContainsKey(hotkey))
+                Keybinds[hotkey] = new List<Keybinding>();
+            var ret = Keybinds[hotkey];
+            if (ret.Count == 0)
+                ret.Add(new Keybinding()); // Empty
+            return ret;
+        }
+        public static string HotkeyToString(Hotkey hotkey = Hotkey.None, bool addBrackets = false)
+        {
+            if (hotkey == Hotkey.None)
+                return string.Empty;
+            else
+            {
+                List<Keybinding> keybindings = FetchBinding(hotkey);
+                List<string> keys = new List<string>();
+
+                foreach (Keybinding keybinding in keybindings)
+                {
+                    if (!keybinding.IsEmpty)
+                        keys.Add(keybinding.ToString());
+                }
+
+                string keysStr = string.Join(", ", keys);
+
+                if (!string.IsNullOrEmpty(keysStr) && addBrackets)
+                    keysStr = $" ({keysStr})";
+
+                return keysStr;
+            }
+        }
         public static Hotkey CheckConflicts(Keybinding keybinding, Hotkey hotkey)
         {
             if (!keybinding.IsEmpty)
             {
-                var inputconflicts = Settings.KeybindConflicts[hotkey];
+                var inputconflicts = KeybindConflicts[hotkey];
                 if (inputconflicts == KeyConflicts.HardCoded)
                     return Hotkey.None;
-                foreach (var keybinds in Settings.Keybinds)
+                foreach (var keybinds in Keybinds)
                 {
                     var hk = keybinds.Key;
-                    var conflicts = Settings.KeybindConflicts[hk];
+                    var conflicts = KeybindConflicts[hk];
                     //if the conflicts is equal to or below inputconflicts
                     //then we can compare for conflict
                     //if conflicts is above inputconflicts, ignore
@@ -558,7 +587,7 @@ namespace linerider
             if (File.Exists(lasttrack) && lasttrack.StartsWith(Constants.TracksDirectory))
                 LastSelectedTrack = lasttrack;
 
-            Volume = MathHelper.Clamp(Settings.Volume, 0, 100);
+            Volume = MathHelper.Clamp(Volume, 0, 100);
         }
         public static void LoadMainSettings(string[] lines)
         {
