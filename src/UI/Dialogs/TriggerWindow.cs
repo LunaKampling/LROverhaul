@@ -390,7 +390,7 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.Zoom,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
                             ZoomTarget = 4,
                         };
 
@@ -400,7 +400,7 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.BGChange,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
                             backgroundRed = Settings.Colors.ExportBg.R,
                             backgroundGreen = Settings.Colors.ExportBg.G,
                             backgroundBlue = Settings.Colors.ExportBg.B,
@@ -411,7 +411,7 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.LineColor,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
                             lineRed = Settings.Colors.ExportLine.R,
                             lineGreen = Settings.Colors.ExportLine.G,
                             lineBlue = Settings.Colors.ExportLine.B,
@@ -422,7 +422,7 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.Zoom,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
                             ZoomTarget = 4,
                         };
                         break;
@@ -703,4 +703,4 @@ namespace linerider.UI
             }
         }
     }
-}
+}}

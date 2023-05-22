@@ -375,6 +375,20 @@ namespace linerider.UI
             };
             ControlBase timelinelengthbar = GwenHelper.CreateLabeledControl(otherGroup, "Default Timeline Length (Seconds)", timelinelength);
             timelinelengthbar.Tooltip = "Timeline length on game startup";
+
+            var triggerlength = new Spinner(parent)
+            {
+                Min = 1,
+                Max = int.MaxValue - 1,
+                Value = Settings.DefaultTriggerLength,
+            };
+            triggerlength.ValueChanged += (o, e) =>
+            {
+                Settings.DefaultTriggerLength = (int)((Spinner)o).Value;
+                Settings.Save();
+            };
+            var triggerlengthbar = GwenHelper.CreateLabeledControl(otherGroup, "Default Trigger Length (Frames)", triggerlength);
+            triggerlengthbar.Tooltip = "Length of new triggers\n40 frames = 1 second";
         }
         private void PopulateCamera(ControlBase parent)
         {
