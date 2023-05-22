@@ -33,17 +33,11 @@ namespace linerider.UI
         private readonly LineType _linetype;
         protected override Color CurrentColor
         {
-            get
-            {
-                return Settings.NightMode ? Color.White : Color.Black;
-            }
+            get => Settings.NightMode ? Color.White : Color.Black;
         }
         private bool Selected
         {
-            get
-            {
-                return CurrentTools.SelectedTool.Swatch.Selected == _linetype;
-            }
+            get => CurrentTools.SelectedTool.Swatch.Selected == _linetype;
         }
 
         public SwatchColorButton(ControlBase canvas, LineType linetype) : base(canvas)
@@ -64,13 +58,13 @@ namespace linerider.UI
             switch (_linetype)
             {
                 case LineType.Blue:
-                    _color = Utils.Constants.BlueLineColor;
+                    _color = Settings.Colors.StandardLine;
                     break;
                 case LineType.Red:
-                    _color = Utils.Constants.RedLineColor;
+                    _color = Settings.Colors.AccelerationLine;
                     break;
                 case LineType.Scenery:
-                    _color = Utils.Constants.SceneryLineColor;
+                    _color = Settings.Colors.SceneryLine;
                     break;
             }
 
