@@ -422,22 +422,19 @@ namespace linerider.Rendering
         }
         private void DrawScarf(Line[] lines, float opacity)
         {
-            if (scarfColors.Count==0) {
+            if (scarfColors.Count == 0)
                 scarfColors.Add(0xffffff);
-            }
             if (scarfOpacity.Count == 0)
-            {
-                scarfOpacity.Add((byte)0xff);
-            }
+                scarfOpacity.Add(0);
 
-            var c = Utility.ColorToRGBA_LE(0xD10101, (byte)(255 * opacity));    //Scarf color
-            var alt = Utility.ColorToRGBA_LE(0xff6464, (byte)(255 * opacity));  //Scarf color
-            var scarfPart = 0;
+            int c;
+            int alt;
+            int scarfPart;
 
             List<Vector2> altvectors = new List<Vector2>();
             for (int i = 0; i < lines.Length; i += 2)
             {
-                scarfPart = (((i % scarfColors.Count)+(scarfColors.Count - 1)) % scarfColors.Count);
+                scarfPart = ((i % scarfColors.Count)+(scarfColors.Count - 1)) % scarfColors.Count;
                 c = Utility.ColorToRGBA_LE(scarfColors[scarfPart], (byte)(scarfOpacity[scarfPart] * opacity));
 
                 var verts = DrawLine(lines[i].Position1, lines[i].Position2, c, 2);
