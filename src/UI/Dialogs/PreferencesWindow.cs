@@ -60,6 +60,7 @@ namespace linerider.UI
                     _editor.InitCamera();
                     _editor.RedrawAllLines();
                     Close();
+                    _canvas.ShowPreferencesDialog();
                 }
             };
         }
@@ -636,7 +637,7 @@ namespace linerider.UI
         }
         private void PopulateInterfaceGeneral(ControlBase parent)
         {
-            Panel generalGroup = GwenHelper.CreateHeaderPanel(parent, "General");
+            Panel generalGroup = GwenHelper.CreateHeaderPanel(parent, "Editor");
             GwenHelper.AddCheckbox(generalGroup, "Night Mode", Settings.NightMode, (o, e) =>
             {
                 Settings.NightMode = ((Checkbox)o).IsChecked;
