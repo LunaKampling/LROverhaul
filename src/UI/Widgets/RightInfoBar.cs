@@ -132,7 +132,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Right,
                 IsHidden = true,
-                Tooltip = "Click to Reset Camera\n(Default hotkey N)",
+                Tooltip = "Click to Reset Camera" + Settings.HotkeyToString(Hotkey.PlaybackResetCamera, true),
                 MouseInputEnabled = true,
                 TooltipDelay = 0,
             };
