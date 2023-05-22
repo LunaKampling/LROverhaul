@@ -1528,46 +1528,5 @@ namespace linerider
             null,
             repeat: false);
         }
-        public void setScarfColor(int index, int color, byte opacity)
-        {
-            Track._renderer._riderrenderer.scarfColors[index] = color;
-            Track._renderer._riderrenderer.scarfOpacity[index] = opacity;
-        }
-        public void addScarfColor(int color, byte opacity)
-        {
-            Track._renderer._riderrenderer.scarfColors.Add(color);
-            Track._renderer._riderrenderer.scarfOpacity.Add(opacity);
-        }
-        public void insertScarfColor(int color, byte opacity, int index)
-        {
-            Track._renderer._riderrenderer.scarfColors.Insert(index, color);
-            Track._renderer._riderrenderer.scarfOpacity.Insert(index, opacity);
-        }
-        public void removeScarfColor(int index)
-        {
-            Track._renderer._riderrenderer.scarfColors.RemoveAt(index);
-            Track._renderer._riderrenderer.scarfOpacity.RemoveAt(index);
-        }
-        public List<int> getScarfColorList()
-        {
-            return Track._renderer._riderrenderer.scarfColors;
-        }
-        public List<byte> getScarfOpacityList()
-        {
-            return Track._renderer._riderrenderer.scarfOpacity;
-        }
-        public void removeAllScarfColors()
-        {
-            Track._renderer._riderrenderer.scarfColors.Clear();
-            Track._renderer._riderrenderer.scarfOpacity.Clear();
-        }
-        public void shiftScarfColors(int shift) //Shifts scarf colors to the left
-        {
-            for (int i = 0; i < shift; i++)
-            {
-                insertScarfColor(getScarfColorList()[getScarfColorList().Count - 1], getScarfOpacityList()[getScarfOpacityList().Count - 1], 0);
-                removeScarfColor(getScarfColorList().Count - 1);
-            }
-        }
     }
 }

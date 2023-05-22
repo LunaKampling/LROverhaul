@@ -85,65 +85,9 @@ namespace linerider.Drawing.RiderModel
             foreach (ScarfSegment segment in segments)
                 Add(segment.Color, segment.Opacity);
         }
-        /*private static void SetFromFileOld(string filepath)
-        {
-            string fileHeader = File.ReadLines(filepath).First();
-            bool isLegacyFile = fileHeader == "#LRTran Scarf File";
-            bool isValidFile = fileHeader == "#Line Rider Scarf File";
-            if (!isValidFile && !isLegacyFile)
-                throw new Exception("Is not valid scarf file");
-
-            RemoveAll();
-
-            IEnumerable<string> lines = File.ReadAllLines(filepath).Skip(1);
-            foreach (string line in lines)
-            {
-                int color;
-                byte opacity;
-
-                if (isLegacyFile)
-                {
-                    color = Convert.ToInt32(line.Substring(0, line.IndexOf(",")), 16);
-                    opacity = Convert.ToByte(line.Substring(line.IndexOf(" ") + 1), 16);
-                }
-                else
-                {
-                    string colorRaw;
-                    string opacityRaw;
-
-                    if (line.Contains(',')) // Color + opacity
-                    {
-                        string[] parts = line.Split(',');
-                        colorRaw = parts[0].Trim();
-                        opacityRaw = parts[1].Trim();
-                    }
-                    else // Color only
-                    {
-                        colorRaw = line.Trim();
-                        opacityRaw = "255";
-                    }
-
-                    if (!colorRaw.StartsWith("0x"))
-                        colorRaw = $"0x{colorRaw}";
-
-                    if (opacityRaw.EndsWith("%")) // Convert "100%" to "256"
-                    {
-                        double precentage = double.Parse(opacityRaw.TrimEnd('%'));
-                        opacityRaw = Math.Round(precentage / 100 * 255 - 1).ToString();
-                    }
-
-                    color = Convert.ToInt32(colorRaw, 16);
-                    opacity = Convert.ToByte(opacityRaw);
-                }
-
-                Add(color, opacity);
-            }
-        }*/
         private static void SetDefault()
         {
             RemoveAll();
-            // Add(0xD10101, 0xFF);
-            // Add(0xFF6464, 0xFF);
             Add(0xB93332, 0xFF);
             Add(0xEF7A5D, 0xFF);
         }
