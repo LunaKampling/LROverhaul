@@ -122,7 +122,7 @@ namespace linerider.UI
                     string x = "";
                     if (rate.ToString() != "1")
                     {
-                        x = $"{rate}x";
+                        x = $"Sim Speed: {rate}x";
                     }
                     return x;
                 },
