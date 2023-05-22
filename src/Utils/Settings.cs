@@ -984,4 +984,4 @@ namespace linerider
             return String.Join(",", colorValues);
         }
     }
-}}
+}
