@@ -57,6 +57,26 @@ namespace linerider
                 GenerateBones();
             }
         }
+        public bool HasDefaultBackground
+        {
+            get
+            {
+                Color defaultColor = Settings.Colors.ExportBg;
+                return BGColorR == defaultColor.R &&
+                    BGColorG == defaultColor.G &&
+                    BGColorB == defaultColor.B;
+            }
+        }
+        public bool HasDefaultLineColor
+        {
+            get
+            {
+                Color defaultColor = Settings.Colors.ExportLine;
+                return LineColorR == defaultColor.R &&
+                    LineColorG == defaultColor.G &&
+                    LineColorB == defaultColor.B;
+            }
+        }
         public float StartZoom = Constants.DefaultZoom;
         public int SceneryLines { get; private set; }
         public int BlueLines { get; private set; }
@@ -64,12 +84,12 @@ namespace linerider
         public bool ZeroStart = false;
         public bool frictionless = false;
         public bool Remount = true;
-        public int BGColorR = 244; //offwhite
-        public int BGColorG = 245; //offwhite
-        public int BGColorB = 249; //offwhite
-        public int LineColorR = 0; //black
-        public int LineColorG = 0; //black
-        public int LineColorB = 0; //black
+        public int BGColorR = Settings.Colors.ExportBg.R;
+        public int BGColorG = Settings.Colors.ExportBg.G;
+        public int BGColorB = Settings.Colors.ExportBg.B;
+        public int LineColorR = Settings.Colors.ExportLine.R;
+        public int LineColorG = Settings.Colors.ExportLine.G;
+        public int LineColorB = Settings.Colors.ExportLine.B;
         public float YGravity = 1; //default gravity
         public float XGravity = 0; //default gravity
         public double GravityWellSize = 10; //Default Gravity Well Size

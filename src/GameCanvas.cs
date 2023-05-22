@@ -48,17 +48,8 @@ namespace linerider
         private MainWindow game;
         public PlatformImpl Platform;
         public bool Loading { get; set; }
-        public Color TextForeground
-        {
-            get
-            {
-                return Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
-            }
-        }
-        public bool IsModalOpen
-        {
-            get { return Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null; }
-        }
+        public Color TextForeground => Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
+        public bool IsModalOpen => Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null;
         private Tooltip _usertooltip;
         public bool Scrubbing => _timeline.Playhead.Held;
         public readonly Fonts Fonts;

@@ -29,7 +29,7 @@ namespace linerider.Game
                 return LineType.Scenery;
             }
         }
-        public override System.Drawing.Color Color => Settings.Lines.SceneryLine;
+        public override System.Drawing.Color Color => Settings.Colors.SceneryLine;
         protected SceneryLine()
         {
         }

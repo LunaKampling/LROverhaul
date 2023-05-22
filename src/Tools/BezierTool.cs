@@ -261,13 +261,13 @@ namespace linerider.Tools
             switch (Swatch.Selected)
             {
                 case LineType.Blue:
-                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Lines.StandardLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.StandardLine, nodeSize, nodeThickness);
                     break;
                 case LineType.Scenery:
-                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Lines.SceneryLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.SceneryLine, nodeSize, nodeThickness);
                     break;
                 case LineType.Red:
-                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Lines.AccelerationLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.AccelerationLine, nodeSize, nodeThickness);
                     break;
             }
         }
@@ -276,13 +276,13 @@ namespace linerider.Tools
             switch (Swatch.Selected)
             {
                 case LineType.Blue:
-                    GameRenderer.RenderPoints(controlPoints, Settings.Lines.StandardLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.StandardLine, nodeSize, nodeThickness);
                     break;
                 case LineType.Scenery:
-                    GameRenderer.RenderPoints(controlPoints, Settings.Lines.SceneryLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.SceneryLine, nodeSize, nodeThickness);
                     break;
                 case LineType.Red:
-                    GameRenderer.RenderPoints(controlPoints, Settings.Lines.AccelerationLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.AccelerationLine, nodeSize, nodeThickness);
                     break;
             }
         }

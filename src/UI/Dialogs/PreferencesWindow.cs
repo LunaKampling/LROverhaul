@@ -58,6 +58,7 @@ namespace linerider.UI
                     Settings.RestoreDefaultSettings();
                     Settings.Save();
                     _editor.InitCamera();
+                    _editor.RedrawAllLines();
                     Close();
                 }
             };
@@ -650,210 +651,77 @@ namespace linerider.UI
             {
                 Settings.Local.RecordingMode = ((Checkbox)o).IsChecked;
             });
-            Checkbox whitebg = GwenHelper.AddCheckbox(generalGroup, "Pure White Background", Settings.WhiteBG, (o, e) =>
-            {
-                Settings.WhiteBG = ((Checkbox)o).IsChecked;
-                Settings.Save();
-            });
         }
         private void PopulateColors(ControlBase parent)
         {
-            void SaveLines()
+            Panel editorColors = GwenHelper.CreateHeaderPanel(parent, "Editor");
+            GwenHelper.CreateLabeledColorInput(editorColors, "Background", Settings.Colors.EditorBg, (o, color) =>
             {
+                Settings.Colors.EditorBg = color.Value;
                 Settings.Save();
-                linerider.Rendering.GameRenderer.Game.Track.RedrawAllLines();
-            }
-
-            Panel colorsGroup = GwenHelper.CreateHeaderPanel(parent, "Line Color Customization");
-            Spinner defaultRed = new Spinner(colorsGroup)
+            });
+            GwenHelper.CreateLabeledColorInput(editorColors, "Lines", Settings.Colors.EditorLine, (o, color) =>
             {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.DefaultLine.R
-            };
-            defaultRed.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.DefaultLine = Color.FromArgb((int)((Spinner)o).Value, Settings.Lines.DefaultLine.G, Settings.Lines.DefaultLine.B);
+                Settings.Colors.EditorLine = color.Value;
                 Settings.Save();
-            };
+            });
 
-            Spinner defaultGreen = new Spinner(colorsGroup)
+            Panel nightColors = GwenHelper.CreateHeaderPanel(parent, "Editor (Night Mode)");
+            GwenHelper.CreateLabeledColorInput(nightColors, "Background", Settings.Colors.EditorNightBg, (o, color) =>
             {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.DefaultLine.G
-            };
-            defaultGreen.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.DefaultLine = Color.FromArgb(Settings.Lines.DefaultLine.R, (int)((Spinner)o).Value, Settings.Lines.DefaultLine.B);
+                Settings.Colors.EditorNightBg = color.Value;
                 Settings.Save();
-            };
-
-            Spinner defaultBlue = new Spinner(colorsGroup)
+            });
+            GwenHelper.CreateLabeledColorInput(nightColors, "Lines", Settings.Colors.EditorNightLine, (o, color) =>
             {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.DefaultLine.B
-            };
-            defaultBlue.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.DefaultLine = Color.FromArgb(Settings.Lines.DefaultLine.R, Settings.Lines.DefaultLine.G, (int)((Spinner)o).Value);
+                Settings.Colors.EditorNightLine = color.Value;
                 Settings.Save();
-            };
+            });
 
-            GwenHelper.CreateLabeledControl(parent, "Default line color (R,G,B)", new ControlBase[3] { defaultRed, defaultGreen, defaultBlue });
+            Panel exportColors = GwenHelper.CreateHeaderPanel(parent, "Export / Preview Mode");
+            GwenHelper.CreateLabeledColorInput(exportColors, "Background", Settings.Colors.ExportBg, (o, color) =>
+            {
+                bool isDefaultColor = _editor.HasDefaultTrackBackground;
 
-            Spinner nightRed = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.DefaultNightLine.R
-            };
-            nightRed.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.DefaultNightLine = Color.FromArgb((int)((Spinner)o).Value, Settings.Lines.DefaultNightLine.G, Settings.Lines.DefaultNightLine.B);
+                Settings.Colors.ExportBg = color.Value;
                 Settings.Save();
-            };
 
-            Spinner nightGreen = new Spinner(colorsGroup)
+                if (isDefaultColor)
+                    _editor.SetDefaultTrackColors();
+            });
+            GwenHelper.CreateLabeledColorInput(exportColors, "Lines", Settings.Colors.ExportLine, (o, color) =>
             {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.DefaultNightLine.G
-            };
-            nightGreen.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.DefaultNightLine = Color.FromArgb(Settings.Lines.DefaultNightLine.R, (int)((Spinner)o).Value, Settings.Lines.DefaultNightLine.B);
+                bool isDefaultColor = _editor.HasDefaultTrackLineColor;
+
+                Settings.Colors.ExportLine = color.Value;
                 Settings.Save();
-            };
 
-            Spinner nightBlue = new Spinner(colorsGroup)
+                if (isDefaultColor)
+                    _editor.SetDefaultTrackColors();
+            });
+
+            Panel lineTypesColors = GwenHelper.CreateHeaderPanel(parent, "Line types");
+            GwenHelper.CreateLabeledColorInput(lineTypesColors, "Standard", Settings.Colors.StandardLine, (o, color) =>
             {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.DefaultNightLine.B
-            };
-            nightBlue.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.DefaultNightLine = Color.FromArgb(Settings.Lines.DefaultNightLine.R, Settings.Lines.DefaultNightLine.G, (int)((Spinner)o).Value);
+                Settings.Colors.StandardLine = color.Value;
                 Settings.Save();
-            };
-
-            GwenHelper.CreateLabeledControl(parent, "Night line color (R,G,B)", new ControlBase[3] { nightRed, nightGreen, nightBlue });
-
-            Spinner accelRed = new Spinner(colorsGroup)
+                //_canvas.UpdateToolbarSwatchesColors();
+                _editor.RedrawAllLines();
+            });
+            GwenHelper.CreateLabeledColorInput(lineTypesColors, "Acceleration", Settings.Colors.AccelerationLine, (o, color) =>
             {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.AccelerationLine.R
-            };
-            accelRed.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.AccelerationLine = Color.FromArgb((int)((Spinner)o).Value, Settings.Lines.AccelerationLine.G, Settings.Lines.AccelerationLine.B);
-                SaveLines();
-            };
-
-            Spinner accelGreen = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.AccelerationLine.G
-            };
-            accelGreen.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.AccelerationLine = Color.FromArgb(Settings.Lines.AccelerationLine.R, (int)((Spinner)o).Value, Settings.Lines.AccelerationLine.B);
-                SaveLines();
-            };
-
-            Spinner accelBlue = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.AccelerationLine.B
-            };
-            accelBlue.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.AccelerationLine = Color.FromArgb(Settings.Lines.AccelerationLine.R, Settings.Lines.AccelerationLine.G, (int)((Spinner)o).Value);
-                SaveLines();
-            };
-
-            GwenHelper.CreateLabeledControl(parent, "Acceleration line color (R,G,B)", new ControlBase[3] { accelRed, accelGreen, accelBlue });
-
-            Spinner sceneryRed = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.SceneryLine.R
-            };
-            sceneryRed.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.SceneryLine = Color.FromArgb((int)((Spinner)o).Value, Settings.Lines.SceneryLine.G, Settings.Lines.SceneryLine.B);
+                Settings.Colors.AccelerationLine = color.Value;
                 Settings.Save();
-            };
-
-            Spinner sceneryGreen = new Spinner(colorsGroup)
+                //_canvas.UpdateToolbarSwatchesColors();
+                _editor.RedrawAllLines();
+            });
+            GwenHelper.CreateLabeledColorInput(lineTypesColors, "Scenery", Settings.Colors.SceneryLine, (o, color) =>
             {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.SceneryLine.G
-            };
-            sceneryGreen.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.SceneryLine = Color.FromArgb(Settings.Lines.SceneryLine.R, (int)((Spinner)o).Value, Settings.Lines.SceneryLine.B);
+                Settings.Colors.SceneryLine = color.Value;
                 Settings.Save();
-            };
-
-            Spinner sceneryBlue = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.SceneryLine.B
-            };
-            sceneryBlue.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.SceneryLine = Color.FromArgb(Settings.Lines.SceneryLine.R, Settings.Lines.SceneryLine.G, (int)((Spinner)o).Value);
-                Settings.Save();
-            };
-
-            GwenHelper.CreateLabeledControl(parent, "Scenery line color (R,G,B)", new ControlBase[3] { sceneryRed, sceneryGreen, sceneryBlue });
-
-            Spinner standardRed = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.StandardLine.R
-            };
-            standardRed.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.StandardLine = Color.FromArgb((int)((Spinner)o).Value, Settings.Lines.StandardLine.G, Settings.Lines.StandardLine.B);
-                SaveLines();
-            };
-
-            Spinner standardGreen = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.StandardLine.G
-            };
-            standardGreen.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.StandardLine = Color.FromArgb(Settings.Lines.StandardLine.R, (int)((Spinner)o).Value, Settings.Lines.StandardLine.B);
-                SaveLines();
-            };
-
-            Spinner standardBlue = new Spinner(colorsGroup)
-            {
-                Min = 0,
-                Max = 255,
-                Value = Settings.Lines.StandardLine.B
-            };
-            standardBlue.ValueChanged += (o, e) =>
-            {
-                Settings.Lines.StandardLine = Color.FromArgb(Settings.Lines.StandardLine.R, Settings.Lines.StandardLine.G, (int)((Spinner)o).Value);
-                SaveLines();
-            };
-
-            GwenHelper.CreateLabeledControl(parent, "Standard line color (R,G,B)", new ControlBase[3] { standardRed, standardGreen, standardBlue });
+                //_canvas.UpdateToolbarSwatchesColors();
+                _editor.RedrawAllLines();
+            });
         }
         private void PopulateRider(ControlBase parent)
         {

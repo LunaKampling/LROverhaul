@@ -73,7 +73,7 @@ namespace linerider.Game
                 return LineType.Blue;
             }
         }
-        public override System.Drawing.Color Color => Settings.Lines.StandardLine;
+        public override System.Drawing.Color Color => Settings.Colors.StandardLine;
 
         protected StandardLine()
         {

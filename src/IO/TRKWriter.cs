@@ -138,30 +138,16 @@ namespace linerider.IO
                 {
                     metadata.Add(TrackMetadata.gravitywellsize + "=" + trk.GravityWellSize.ToString(Program.Culture));
                 }
-                
-                if (trk.BGColorR != Color.FromArgb(Utils.Constants.ColorOffwhite.ToArgb()).R) 
+                if (!trk.HasDefaultBackground)
                 {
                     metadata.Add(TrackMetadata.bgcolorR + "=" + trk.BGColorR.ToString(Program.Culture));
-                }
-                if (trk.BGColorG != Color.FromArgb(Utils.Constants.ColorOffwhite.ToArgb()).G)
-                {
                     metadata.Add(TrackMetadata.bgcolorG + "=" + trk.BGColorG.ToString(Program.Culture));
-                }
-                if (trk.BGColorB != Color.FromArgb(Utils.Constants.ColorOffwhite.ToArgb()).B)
-                {
                     metadata.Add(TrackMetadata.bgcolorB + "=" + trk.BGColorB.ToString(Program.Culture));
                 }
-                
-                if (trk.LineColorR != Settings.Lines.DefaultLine.R)
+                if (!trk.HasDefaultLineColor)
                 {
                     metadata.Add(TrackMetadata.linecolorR + "=" + trk.LineColorR.ToString(Program.Culture));
-                }
-                if (trk.LineColorG != Settings.Lines.DefaultLine.G)
-                {
                     metadata.Add(TrackMetadata.linecolorG + "=" + trk.LineColorG.ToString(Program.Culture));
-                }
-                if (trk.LineColorB != Settings.Lines.DefaultLine.B)
-                {
                     metadata.Add(TrackMetadata.linecolorB + "=" + trk.LineColorB.ToString(Program.Culture));
                 }
 

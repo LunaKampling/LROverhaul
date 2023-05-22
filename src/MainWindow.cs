@@ -186,15 +186,8 @@ namespace linerider
                 }
                 else
                 {
-                    GL.ClearColor(Settings.NightMode ? Constants.ColorNightMode : (Settings.WhiteBG ? Constants.ColorWhite : Constants.ColorOffwhite));
-                    if (Settings.NightMode)
-                    {
-                        Constants.TriggerLineColorChange = Settings.Lines.DefaultNightLine;
-                    }
-                    else
-                    {
-                        Constants.TriggerLineColorChange = Settings.Lines.DefaultLine;
-                    }
+                    GL.ClearColor(Settings.NightMode ? Settings.Colors.EditorNightBg : Settings.Colors.EditorBg);
+                    Constants.TriggerLineColorChange = Settings.NightMode ? Settings.Colors.EditorNightLine : Settings.Colors.EditorLine;
                 }
 
                 MSAABuffer.Use(RenderSize.Width, RenderSize.Height);
