@@ -271,45 +271,30 @@ namespace linerider
         }
         public void GameUpdate()
         {
-            
-
-            //TODO: Put these not in the main loop and put them in reasonable places
+            // TODO: Put these not in the main loop and put them in reasonable places
             if (firstGameUpdate)
             {
                 Canvas.ShowChangelog();
                 firstGameUpdate = false;
-                ScarfColors.RemoveAll(); //Remove default white scarf
-                ReloadRiderModel();
+                ScarfColors.RemoveAll();
             }
-            //Debug.WriteLine(Track.Name);
-            //Update bosh skin if needed
-            if (currentBoshSkin != Settings.SelectedBoshSkin)
-            {
-                ScarfColors.Reload();
-                ReloadRiderModel();
+
+            // Update scarf or rider if needed
+            bool needUpdateRider = currentBoshSkin != Settings.SelectedBoshSkin;
+            bool needUpdateScarf = currentScarf != Settings.SelectedScarf;
+
+            if (needUpdateRider)
                 currentBoshSkin = Settings.SelectedBoshSkin;
-            }
-            //Update scarf if needed
-            if ((scarfNeedsUpdate || (currentScarf != Settings.SelectedScarf)))
-            {
+            if (needUpdateScarf)
                 currentScarf = Settings.SelectedScarf;
+
+            if (needUpdateRider || needUpdateScarf)
+            {
                 ScarfColors.Reload();
-                scarfNeedsUpdate = false;
                 ReloadRiderModel();
-
-                while (ScarfColors.Count() < Settings.ScarfSegments)
-                {
-                    ScarfColors.GetColorList().AddRange(ScarfColors.GetColorList());
-                    ScarfColors.GetOpacityList().AddRange(ScarfColors.GetOpacityList());
-                }
-
-                for (int i = 1; i < Settings.multiScarfAmount; i++)
-                {
-                    ScarfColors.Insert(0x0000FF, 0x00, ((i * Settings.multiScarfSegments)) + (i - 1) - (1 + i));
-                }
             }
 
-            //Regular code starts here
+            // Regular code starts here
             GameUpdateHandleInput();
             var updates = Track.Scheduler.UnqueueUpdates();
             if (updates > 0)
@@ -345,7 +330,7 @@ namespace linerider
             }
             AudioService.EnsureSync();
 
-            //LRL
+            // LRL
             Coordinates.CoordsUpdate();
 
             if (CurrentTools._selected == CurrentTools.SmoothPencilTool)

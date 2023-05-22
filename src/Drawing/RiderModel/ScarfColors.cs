@@ -73,6 +73,17 @@ namespace linerider.Drawing.RiderModel
             {
                 SetDefault();
             }
+
+            while (Count() < Settings.ScarfSegments)
+            {
+                GetColorList().AddRange(GetColorList());
+                GetOpacityList().AddRange(GetOpacityList());
+            }
+
+            for (int i = 1; i < Settings.multiScarfAmount; i++)
+            {
+                Insert(0x0000FF, 0x00, i * Settings.multiScarfSegments + (i - 1) - (1 + i));
+            }
         }
         private static void SetFromFile()
         {
