@@ -52,6 +52,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
+            Margin = new Margin(_canvas.ScreenEdgeSpacing, _canvas.ScreenEdgeSpacing, 0, 0);
             _title = new TrackLabel(this)
             {
                 Dock = Dock.Top,

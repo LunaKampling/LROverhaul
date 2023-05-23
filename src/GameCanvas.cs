@@ -37,6 +37,7 @@ namespace linerider
     public class GameCanvas : Canvas
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
+        public readonly int ScreenEdgeSpacing = 5;
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private RightInfoBar _infobar;

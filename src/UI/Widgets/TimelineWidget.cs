@@ -38,12 +38,15 @@ namespace linerider.UI
         public TimelineWidget(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
+
+            Margin margin = new Margin(_canvas.ScreenEdgeSpacing, 0, _canvas.ScreenEdgeSpacing, _canvas.ScreenEdgeSpacing);
+            margin += new Margin(50, 0, 50, 0);
+
             Dock = Dock.Bottom;
             _editor = editor;
-            Margin = new Margin(50, 0, 50, 0);
+            Margin = margin;
             AutoSizeToContents = true;
             MouseInputEnabled = false;
-            ShouldDrawBackground = true;
             Setup();
         }
         private void Setup()
@@ -53,7 +56,7 @@ namespace linerider.UI
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
-                Dock = Dock.Top
+                Dock = Dock.Top,
             };
             _topbar = new Panel(this)
             {

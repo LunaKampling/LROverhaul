@@ -50,12 +50,12 @@ namespace linerider.UI
             _canvas = (GameCanvas)parent.GetCanvas();
             MouseInputEnabled = false;
             AutoSizeToContents = true;
-            ShouldDrawBackground = true;
             _editor = editor;
             MakeButtons();
             MakeMenu();
             SetupEvents();
             OnThink += Think;
+            Padding = new Padding(0, _canvas.ScreenEdgeSpacing, 0, 0);
         }
         private void Think(object sender, EventArgs e)
         {

@@ -67,6 +67,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
+            Margin = new Margin(_canvas.ScreenEdgeSpacing, _canvas.ScreenEdgeSpacing, 0, 0);
             _iconpanel = new Panel(this)
             {
                 ShouldDrawBackground = false,
