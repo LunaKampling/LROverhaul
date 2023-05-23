@@ -31,8 +31,8 @@ namespace linerider.Utils
         public static Color ConstraintBreakColor = Color.FromArgb(0xE6, 0x7E, 0x00);
         public static Color ContactPointColor = Color.Cyan;
         public static Color ContactPointFakieColor = Color.Blue;
-
         public static Color MomentumVectorColor = Color.Red;
+
         public static readonly string TracksDirectory = Program.UserDirectory + TracksFolderName + System.IO.Path.DirectorySeparatorChar;
         public static readonly string RendersDirectory = Program.UserDirectory + RendersFolderName + System.IO.Path.DirectorySeparatorChar;
         public const string RendersFolderName = "Renders";
@@ -46,6 +46,7 @@ namespace linerider.Utils
         public const float MaxZoom = 24;
         public const float MaxSuperZoom = 200;
         public const int MaxFrames = 40 * 60 * 60 * 3; // 3 hours of frames
+        public const string InternalDefaultName = "*default*";
 
         public static Color CurrentBGColor
         {

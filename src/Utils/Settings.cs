@@ -302,8 +302,8 @@ namespace linerider
             PastOnionSkins = 10;
             FutureOnionSkins = 20;
             ScarfSegments = 5;
-            SelectedScarf = "*default*";
-            SelectedBoshSkin = "*default*";
+            SelectedScarf = Constants.InternalDefaultName;
+            SelectedBoshSkin = Constants.InternalDefaultName;
             showChangelog = true;
             multiScarfAmount = 1;
             multiScarfSegments = 5;
