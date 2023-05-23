@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using linerider.Utils;
+using Newtonsoft.Json.Linq;
 using OpenTK.Audio.OpenAL;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace linerider.Drawing.RiderModel
         }
         public static void Reload()
         {
-            bool isDefaultScarf = Settings.SelectedScarf.Equals("*default*");
+            bool isDefaultScarf = Settings.SelectedScarf.Equals(Constants.InternalDefaultName);
 
             try
             {

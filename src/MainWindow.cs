@@ -341,7 +341,7 @@ namespace linerider
 
         public void ReloadRiderModel()
         {
-            bool isDefaultSkin = Settings.SelectedBoshSkin == null || Settings.SelectedBoshSkin.Equals("*default*");
+            bool isDefaultSkin = Settings.SelectedBoshSkin == null || Settings.SelectedBoshSkin.Equals(Constants.InternalDefaultName);
             Resources riderRes = new ResourcesDefault();
 
             if (!isDefaultSkin)
