@@ -33,14 +33,8 @@ namespace linerider.UI
         {
             get
             {
-                if (Settings.NightMode)
-                {
-                    return Color.FromArgb(255,200,200,200);
-                }
-                else
-                {
-                    return Skin.Colors.Text.Foreground;
-                }
+                bool recording = Settings.PreviewMode || IO.TrackRecorder.Recording;
+                return recording ? Color.FromArgb(51, 51, 51) : Utils.Constants.CurrentLineColor;
             }
         }
         public TrackLabel(ControlBase parent) : base(parent)
