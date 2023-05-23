@@ -50,41 +50,11 @@ namespace linerider.Utils
 
         public static Color CurrentBGColor
         {
-            get
-            {
-                //if (Settings.PreviewMode || IO.TrackRecorder.Recording)
-                //{
-                //    return Color.FromArgb(TriggerBGColor.ToArgb());
-                //}
-                //else
-                if (Settings.NightMode)
-                {
-                    return Settings.Colors.EditorNightBg;
-                }
-                else
-                {
-                    return Settings.Colors.EditorBg;
-                }
-            }
+            get => Settings.NightMode ? Settings.Colors.EditorNightBg : Settings.Colors.EditorBg;
         }
         public static Color CurrentLineColor
         {
-            get
-            {
-                //if (Settings.PreviewMode || IO.TrackRecorder.Recording)
-                //{
-                //    return Color.FromArgb(TriggerLineColorChange.ToArgb());
-                //}
-                //else 
-                if (Settings.NightMode)
-                {
-                    return Settings.Colors.EditorNightLine;
-                }
-                else
-                {
-                    return Settings.Colors.EditorLine;
-                }
-            }
+            get => Settings.NightMode ? Settings.Colors.EditorNightLine : Settings.Colors.EditorLine;
         }
 
         public static readonly string GithubPageHeader = "https://github.com/LunaKampling/LROverhaul";
