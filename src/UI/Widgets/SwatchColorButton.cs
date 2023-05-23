@@ -28,7 +28,7 @@ namespace linerider.UI
 {
     public class SwatchColorButton : Gwen.Controls.Button
     {
-        private Color _color = Color.Black;
+        public Color color = Color.Black;
         private Texture m_texture;
         private readonly LineType _linetype;
         protected override Color CurrentColor
@@ -55,19 +55,6 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            switch (_linetype)
-            {
-                case LineType.Blue:
-                    _color = Settings.Colors.StandardLine;
-                    break;
-                case LineType.Red:
-                    _color = Settings.Colors.AccelerationLine;
-                    break;
-                case LineType.Scenery:
-                    _color = Settings.Colors.SceneryLine;
-                    break;
-            }
-
             TextRequest = (o, e) =>
              {
                  if (!Selected ||
@@ -123,7 +110,7 @@ namespace linerider.UI
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
-            skin.Renderer.DrawColor = Color.FromArgb(IsDepressed || Selected ? 64 : (IsHovered ? 128 : 255), _color);
+            skin.Renderer.DrawColor = Color.FromArgb(IsDepressed || Selected ? 64 : (IsHovered ? 128 : 255), color);
             var rect = RenderBounds;
             if (m_texture != null)
             {
