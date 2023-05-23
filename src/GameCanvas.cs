@@ -72,7 +72,7 @@ namespace linerider
         {
             //process recording junk
             var rec = Settings.Local.RecordingMode;
-            ZoomSlider.IsHidden = rec;
+            ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
             _timeline.IsHidden = rec;
             //

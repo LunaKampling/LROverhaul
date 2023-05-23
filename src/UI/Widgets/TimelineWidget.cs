@@ -57,10 +57,11 @@ namespace linerider.UI
             };
             _topbar = new Panel(this)
             {
-                AutoSizeToContents = true,
+                //AutoSizeToContents = true,
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
-                Dock = Dock.Top
+                Dock = Dock.Top,
+                Height = 32,
             };
             _speedincrease = CreateButton(_topbar, GameResources.fast_forward, "Increase Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedUp, true));
             _speedincrease.Clicked += (o, e) => _editor.PlaybackSpeedUp();
@@ -124,6 +125,13 @@ namespace linerider.UI
                 },
                 Alignment = Pos.Center,
             };
+        }
+        public override void Think()
+        {
+            _speeddecrease.IsHidden = !Settings.UIShowSpeedButtons;
+            _speedincrease.IsHidden = !Settings.UIShowSpeedButtons;
+
+            base.Think();
         }
         private void SetTextColor(object sender, int alpha)
         {

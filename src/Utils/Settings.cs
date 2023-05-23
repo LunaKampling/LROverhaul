@@ -135,9 +135,12 @@ namespace linerider
         public static bool ScreenshotShowHitTest;
         public static bool ScreenshotResIndependentZoom;
 
-        public static float ScrollSensitivity;
+        public static bool UIShowZoom;
+        public static bool UIShowSpeedButtons;
         public static int DefaultTimelineLength;
         public static int DefaultTriggerLength;
+
+        public static float ScrollSensitivity;
         public static int SettingsPane;
         public static bool MuteAudio;
         public static bool PreviewMode;
@@ -289,8 +292,11 @@ namespace linerider
             ScreenshotShowHitTest = false;
             ScreenshotResIndependentZoom = true;
 
+            UIShowZoom = true;
+            UIShowSpeedButtons = false;
             DefaultTimelineLength = 30;
             DefaultTriggerLength = 40;
+
             ScrollSensitivity = 1;
             SettingsPane = 0;
             MuteAudio = false;
@@ -630,9 +636,12 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(ScreenshotShowHitTest)), ref ScreenshotShowHitTest);
             LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
 
-            LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
             LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
             LoadInt(GetSetting(lines, nameof(DefaultTriggerLength)), ref DefaultTriggerLength);
+            LoadBool(GetSetting(lines, nameof(UIShowZoom)), ref UIShowZoom);
+            LoadBool(GetSetting(lines, nameof(UIShowSpeedButtons)), ref UIShowSpeedButtons);
+
+            LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
             LoadInt(GetSetting(lines, nameof(SettingsPane)), ref SettingsPane);
@@ -769,6 +778,9 @@ namespace linerider
 
                 MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultTriggerLength), DefaultTriggerLength.ToString(Program.Culture)),
+                MakeSetting(nameof(UIShowZoom), UIShowZoom.ToString(Program.Culture)),
+                MakeSetting(nameof(UIShowSpeedButtons), UIShowSpeedButtons.ToString(Program.Culture)),
+
                 MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture)),

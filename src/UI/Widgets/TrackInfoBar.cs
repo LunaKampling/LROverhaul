@@ -33,8 +33,10 @@ namespace linerider.UI
         private TrackLabel _linecount;
         private TrackLabel _selectioncount;
         private TrackLabel _ridercoordlabel;
+        private GameCanvas _canvas;
         public TrackInfoBar(ControlBase parent, Editor editor) : base(parent)
         {
+            _canvas = (GameCanvas)parent.GetCanvas();
             Dock = Dock.Left;
             _editor = editor;
             AutoSizeToContents = true;

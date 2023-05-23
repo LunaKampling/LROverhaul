@@ -651,7 +651,7 @@ namespace linerider.UI
         }
         private void PopulateInterfaceGeneral(ControlBase parent)
         {
-            Panel generalGroup = GwenHelper.CreateHeaderPanel(parent, "Editor");
+            Panel generalGroup = GwenHelper.CreateHeaderPanel(parent, "General");
             GwenHelper.AddCheckbox(generalGroup, "Night Mode", Settings.NightMode, (o, e) =>
             {
                 Settings.NightMode = ((Checkbox)o).IsChecked;
@@ -665,6 +665,18 @@ namespace linerider.UI
             Checkbox recording = GwenHelper.AddCheckbox(generalGroup, "Recording Mode", Settings.Local.RecordingMode, (o, e) =>
             {
                 Settings.Local.RecordingMode = ((Checkbox)o).IsChecked;
+            });
+
+            Panel uiGroup = GwenHelper.CreateHeaderPanel(parent, "UI");
+            GwenHelper.AddCheckbox(uiGroup, "Show Zoom Bar", Settings.UIShowZoom, (o, e) =>
+            {
+                Settings.UIShowZoom = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
+            GwenHelper.AddCheckbox(uiGroup, "Show Speed Control Buttons", Settings.UIShowSpeedButtons, (o, e) =>
+            {
+                Settings.UIShowSpeedButtons = ((Checkbox)o).IsChecked;
+                Settings.Save();
             });
         }
         private void PopulateColors(ControlBase parent)

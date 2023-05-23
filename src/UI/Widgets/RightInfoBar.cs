@@ -32,11 +32,22 @@ namespace linerider.UI
         private TrackLabel _playbackratelabel;
         private TrackLabel _riderspeedlabel;
         private TrackLabel _notifylabel;
+        private TrackLabel _zoomlabel;
         private Panel _iconpanel;
         private Sprite _usercamerasprite;
         private Stopwatch _fpswatch = new Stopwatch();
+        private double _zoomrounded
+        {
+            get
+            {
+                double zoom = _editor.Zoom;
+                return Math.Round(zoom, zoom > 100 ? 0 : zoom > 10 ? 1 : zoom > 1 ? 2 : 3);
+            }
+        }
+        private GameCanvas _canvas;
         public RightInfoBar(ControlBase parent, Editor editor) : base(parent)
         {
+            _canvas = (GameCanvas)parent.GetCanvas();
             Dock = Dock.Right;
             _editor = editor;
             AutoSizeToContents = true;
@@ -52,6 +63,7 @@ namespace linerider.UI
             _notifylabel.IsHidden = rec;
             _usercamerasprite.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
             _iconpanel.IsHidden = _usercamerasprite.IsHidden;
+            _zoomlabel.IsHidden = rec || Settings.UIShowZoom;
         }
         private void Setup()
         {
@@ -143,6 +155,17 @@ namespace linerider.UI
                 _editor.UpdateCamera();
             };
             _usercamerasprite.SetImage(GameResources.camera_need_reset);
+            _zoomlabel = new TrackLabel(this)
+            {
+                Dock = Dock.Top,
+                Alignment = Pos.Right | Pos.CenterV,
+                Margin = new Margin(0, 0, 5, 0),
+                TextRequest = (o, e) =>
+                {
+                    string text = $"Zoom: {_zoomrounded}x";
+                    return _editor.UseUserZoom ? $"{text} *" : text;
+                },
+            };
 
         }
     }
