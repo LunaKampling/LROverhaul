@@ -42,7 +42,7 @@ namespace linerider.UI
         {
             get
             {
-                double zoom = _editor.Zoom;
+                double zoom = _editor.BaseZoom;
                 return Math.Round(zoom, zoom > 100 ? 0 : zoom > 10 ? 1 : zoom > 1 ? 2 : 3);
             }
         }
