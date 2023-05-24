@@ -226,7 +226,7 @@
   <ItemGroup>
     <Compile Include="UI\Widgets\WidgetContainer.cs" />
     <Compile Include="UI\Widgets\HotkeyWidget.cs" />
-    <Compile Include="UI\Widgets\TrackLabel.cs" />
+    <Compile Include="UI\Components\TrackLabel.cs" />
     <Compile Include="UI\Widgets\Sprite.cs" />
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
     <Compile Include="UI\Widgets\TrackInfoBar.cs" />

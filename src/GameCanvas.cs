@@ -38,6 +38,7 @@ namespace linerider
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
         public readonly int ScreenEdgeSpacing = 5;
+        public readonly int WidgetSpacing = 3;
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private RightInfoBar _infobar;

@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using Gwen;
 using Gwen.Controls;
@@ -29,11 +28,15 @@ namespace linerider.UI
     public class TrackInfoBar : WidgetContainer
     {
         private Editor _editor;
+        private GameCanvas _canvas;
+        
         private TrackLabel _title;
+        private TrackLabel _autosavelabel;
+        private TrackLabel _changedlines;
         private TrackLabel _linecount;
         private TrackLabel _selectioncount;
         private TrackLabel _ridercoordlabel;
-        private GameCanvas _canvas;
+
         public TrackInfoBar(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
@@ -42,36 +45,70 @@ namespace linerider.UI
             AutoSizeToContents = true;
             Setup();
             OnThink += Think;
+            Padding = Padding.Five;
+            ShouldDrawBackground = false;
         }
         private void Think(object sender, EventArgs e)
         {
-            var rec = Settings.Local.RecordingMode;
+            bool rec = Settings.Local.RecordingMode;
+            int changes = _editor.TrackChanges;
+
             _title.IsHidden = rec;
+            _autosavelabel.IsHidden = rec || changes <= Settings.autosaveChanges;
+            _changedlines.IsHidden = rec || changes == 0;
             _linecount.IsHidden = rec;
+            _selectioncount.IsHidden = rec || GetSelectedLinesCount() == 0;
             _ridercoordlabel.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
         }
         private void Setup()
         {
             Margin = new Margin(_canvas.ScreenEdgeSpacing, _canvas.ScreenEdgeSpacing, 0, 0);
+
             _title = new TrackLabel(this)
             {
                 Dock = Dock.Top,
                 TextRequest = (o, current) =>
                 {
-                    return GetTitle();
-                }
+                    bool hasChanges = _editor.TrackChanges > 0;
+                    string name = hasChanges ? $"{_editor.Name} *" : _editor.Name;
+                    return name;
+                },
             };
+
+            _autosavelabel = new TrackLabel(this)
+            {
+                Dock = Dock.Top,
+                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                IsHidden = true,
+                Text = "Autosave enabled!",
+            };
+
+            _changedlines = new TrackLabel(this)
+            {
+                Dock = Dock.Top,
+                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                IsHidden = true,
+                TextRequest = (o, current) =>
+                {
+                    int changes = _editor.TrackChanges;
+                    string text = changes == 1 ? $"{changes} change" : $"{changes} changes";
+
+                    return text;
+                },
+                UserData = 0,
+            };
+
             _linecount = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, 5, 0, 0),
+                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
                 TextRequest = (o, current) =>
                 {
-                    var u = (int)_linecount.UserData;
+                    int u = (int)_linecount.UserData;
                     if (u != _editor.LineCount)
                     {
                         _linecount.UserData = _editor.LineCount;
-                        var lineCountText = "Lines: " + _editor.LineCount.ToString();
+                        string lineCountText = "Lines: " + _editor.LineCount.ToString();
                         return lineCountText;
                     }
                     return current;
@@ -79,44 +116,29 @@ namespace linerider.UI
                 UserData = 0,
                 Text = "Lines: 0",
             };
+
             _selectioncount = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, 5, 0, 0),
+                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
                 TextRequest = (o, current) =>
                 {
                     if (!_editor.Paused || TrackRecorder.Recording)
-                    {
                         return "";
-                    }
-                    var u = (int)_selectioncount.UserData;
-                    if (CurrentTools.SelectedTool == CurrentTools.SelectTool)
-                    {
-                        var linecount = ((SelectTool)(CurrentTools.SelectedTool)).GetLineSelectionsInBox().Count;
-                        if (linecount == 0) { linecount = ((SelectTool)(CurrentTools.SelectedTool)).GetLineSelections().Count; }
 
-                        if (u != linecount)
-                        {
-                            if (linecount > 0)
-                            {
-                                _selectioncount.UserData = linecount;
-                                return "Selected: " + linecount.ToString();
-                            }
-                            return "";
-                        }
-                    }
-                    return current;
+                    int linecount = GetSelectedLinesCount();
+                    return $"Selected: {linecount}";
                 },
-                UserData = 0,
             };
+
             _ridercoordlabel = new TrackLabel(this)
             {
                 Dock = Dock.Left,
-                Margin = new Margin(0, 5, 0, 0),
+                Margin = new Margin(0, _canvas.WidgetSpacing * 2, 0, 0),
                 TextRequest = (o, e) =>
                 {
-                    var x = "";
-                    for (var i = 0; i < Coordinates.CoordsData.Length; i++)
+                    string x = "";
+                    for (int i = 0; i < Coordinates.CoordsData.Length; i++)
                     {
                         x += Coordinates.CoordsData[i] + "\n";
                     }
@@ -125,27 +147,18 @@ namespace linerider.UI
                 UserData = 0.0,
             };
         }
-        private ImageButton CreateButton(Bitmap image, string tooltip)
+        private int GetSelectedLinesCount()
         {
-            ImageButton btn = new ImageButton(this);
-            btn.SetImage(image);
-            btn.SetSize(32, 32);
-            btn.Tooltip = tooltip;
-            return btn;
-        }
-        private string GetTitle()
-        {
-            string name = _editor.Name;
-            var changes = _editor.TrackChanges;
-            if (changes > 0)
+            if (CurrentTools.SelectedTool == CurrentTools.SelectTool)
             {
-                name += " (*)";
-                name += changes == 1 ? "\n" + (changes) + " change" : "\n" + (changes) + " changes";
+                SelectTool selectTool = (SelectTool)CurrentTools.SelectedTool;
+                int linecount = selectTool.GetLineSelectionsInBox().Count;
+                if (linecount == 0)
+                    linecount = selectTool.GetLineSelections().Count;
+
+                return linecount;
             }
-            if (changes > Settings.autosaveChanges) {
-                name += "\nAutosave enabled!";
-            }
-            return name;
+            return 0;
         }
     }
 }

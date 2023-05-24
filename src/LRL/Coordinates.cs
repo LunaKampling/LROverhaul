@@ -66,7 +66,7 @@ namespace linerider.LRL
                 CoordsX[i] = rider.Body[i].Location.X;
                 CoordsY[i] = rider.Body[i].Location.Y;
 
-                CoordsData[i] = ConPName[i] + " " + CoordsX[i].ToString("G17") + "X " + CoordsY[i].ToString("G17") + "Y";
+                CoordsData[i] = ConPName[i] + ": " + CoordsX[i].ToString("G17") + "X " + CoordsY[i].ToString("G17") + "Y";
             }
         }
         public static void SaveToClipboard()
