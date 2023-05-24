@@ -25,7 +25,7 @@ using linerider.LRL;
 
 namespace linerider.UI
 {
-    public class TrackInfoBar : WidgetContainer
+    public class InfoBarLeft : WidgetContainer
     {
         private Editor _editor;
         private GameCanvas _canvas;
@@ -37,7 +37,7 @@ namespace linerider.UI
         private TrackLabel _selectioncount;
         private TrackLabel _ridercoordlabel;
 
-        public TrackInfoBar(ControlBase parent, Editor editor) : base(parent)
+        public InfoBarLeft(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
             Dock = Dock.Left;

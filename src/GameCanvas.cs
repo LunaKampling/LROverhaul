@@ -41,8 +41,8 @@ namespace linerider
         public readonly int WidgetSpacing = 3;
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
-        private RightInfoBar _infobar;
-        private TrackInfoBar _trackinfobar;
+        private InfoBarRight _infobar;
+        private InfoBarLeft _trackinfobar;
         private ControlBase _topcontainer;
         private TimelineWidget _timeline;
         private Toolbar _toolbar;
@@ -122,8 +122,8 @@ namespace linerider
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
             };
-            _infobar = new RightInfoBar(_topcontainer, game.Track);
-            _trackinfobar = new TrackInfoBar(_topcontainer, game.Track);
+            _infobar = new InfoBarRight(_topcontainer, game.Track);
+            _trackinfobar = new InfoBarLeft(_topcontainer, game.Track);
         }
         private string GetTitle() //unused copy of get title?
         {

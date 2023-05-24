@@ -22,7 +22,7 @@ using Gwen.Controls;
 
 namespace linerider.UI
 {
-    public class RightInfoBar : WidgetContainer
+    public class InfoBarRight : WidgetContainer
     {
         private Editor _editor;
         private GameCanvas _canvas;
@@ -45,7 +45,7 @@ namespace linerider.UI
                 return Math.Round(zoom, zoom > 100 ? 0 : zoom > 10 ? 1 : zoom > 1 ? 2 : 3);
             }
         }
-        public RightInfoBar(ControlBase parent, Editor editor) : base(parent)
+        public InfoBarRight(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
             Dock = Dock.Right;
