@@ -408,7 +408,7 @@ namespace linerider.Tools
                     GameRenderer.RenderRoundedRectangle(_drawbox, color, 2f / game.Track.Zoom);
                 if (_hoverline != null)
                 {
-                    GameRenderer.RenderRoundedLine(_hoverline.Position1, _hoverline.Position2, Color.FromArgb(127, Constants.CurrentBGColor), (_hoverline.Width * 2 * 0.8f));
+                    GameRenderer.RenderRoundedLine(_hoverline.Position1, _hoverline.Position2, Color.FromArgb(127, Settings.Computed.BGColor), (_hoverline.Width * 2 * 0.8f));
 
                     GameRenderer.DrawKnob(_hoverline.Position1, _snapknob1, false, _hoverline.Width, _snapknob1 && !_snapknob2 ? 1 : 0);
                     GameRenderer.DrawKnob(_hoverline.Position2, _snapknob2, false, _hoverline.Width, _snapknob2 && !_snapknob1 ? 1 : 0);

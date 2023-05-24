@@ -186,8 +186,8 @@ namespace linerider
                 }
                 else
                 {
-                    GL.ClearColor(Settings.NightMode ? Settings.Colors.EditorNightBg : Settings.Colors.EditorBg);
-                    Constants.TriggerLineColorChange = Settings.NightMode ? Settings.Colors.EditorNightLine : Settings.Colors.EditorLine;
+                    GL.ClearColor(Settings.Computed.BGColor);
+                    Constants.TriggerLineColorChange = Settings.Computed.LineColor;
                 }
 
                 MSAABuffer.Use(RenderSize.Width, RenderSize.Height);

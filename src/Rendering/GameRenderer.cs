@@ -94,7 +94,7 @@ namespace linerider.Rendering
             float linewidth,
             float growratio)
         {
-            var knobdefault = Constants.CurrentBGColor;
+            var knobdefault = Settings.Computed.BGColor;
             var knobsize = (highlight ? (0.8f + (0.1f * growratio)) : 0.8f);
             var size = linewidth * 2 * knobsize;
             var color = knobdefault;

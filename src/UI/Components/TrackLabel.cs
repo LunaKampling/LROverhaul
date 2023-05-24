@@ -32,7 +32,7 @@ namespace linerider.UI
             get
             {
                 bool recording = Settings.PreviewMode || IO.TrackRecorder.Recording;
-                return recording ? Color.FromArgb(51, 51, 51) : Utils.Constants.CurrentLineColor;
+                return recording ? Color.FromArgb(51, 51, 51) : Settings.Computed.LineColor;
             }
         }
         public TrackLabel(ControlBase parent) : base(parent)

@@ -198,7 +198,7 @@ namespace linerider.Rendering
             GL.Uniform1(_shader.GetUniform("u_alphachannel"), 0);
             GL.Uniform1(_shader.GetUniform("u_overlay"), Overlay ? 1 : 0);
             GL.Uniform1(_shader.GetUniform("u_knobstate"), (int)KnobState);
-            GL.Uniform4(_shader.GetUniform("u_knobcolor"), Constants.CurrentBGColor);
+            GL.Uniform4(_shader.GetUniform("u_knobcolor"), Settings.Computed.BGColor);
 
         }
         public void Draw()

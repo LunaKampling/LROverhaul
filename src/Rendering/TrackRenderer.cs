@@ -103,8 +103,8 @@ namespace linerider.Rendering
                 }
                 else
                 {
-                    _sceneryvbo.OverrideColor = Settings.NightMode ? Settings.Colors.EditorNightLine : Settings.Colors.EditorLine;
-                    _physvbo.OverrideColor = Settings.NightMode ? Settings.Colors.EditorNightLine : Settings.Colors.EditorLine;
+                    _sceneryvbo.OverrideColor = Settings.Computed.LineColor;
+                    _physvbo.OverrideColor = Settings.Computed.LineColor;
                 }
 
                 if (options.LineColors)

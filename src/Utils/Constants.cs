@@ -1,6 +1,6 @@
-using System;
 using System.Drawing;
 using OpenTK.Graphics;
+
 namespace linerider.Utils
 {
     static class Constants
@@ -47,15 +47,6 @@ namespace linerider.Utils
         public const float MaxSuperZoom = 200;
         public const int MaxFrames = 40 * 60 * 60 * 3; // 3 hours of frames
         public const string InternalDefaultName = "*default*";
-
-        public static Color CurrentBGColor
-        {
-            get => Settings.NightMode ? Settings.Colors.EditorNightBg : Settings.Colors.EditorBg;
-        }
-        public static Color CurrentLineColor
-        {
-            get => Settings.NightMode ? Settings.Colors.EditorNightLine : Settings.Colors.EditorLine;
-        }
 
         public static readonly string GithubPageHeader = "https://github.com/LunaKampling/LROverhaul";
         public static readonly string GithubRawHeader = "https://raw.githubusercontent.com/LunaKampling/LROverhaul";

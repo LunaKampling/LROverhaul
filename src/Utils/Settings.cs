@@ -153,7 +153,7 @@ namespace linerider
 
         public static float ZoomMultiplier; //A constant multiplier for the zoom
 
-        //LRTran settings
+        // LRTran settings
         public static String SelectedScarf; //What custom scarf is selected
         public static int ScarfSegments; //How many scarf segments on restart
         public static String SelectedBoshSkin; //What bosh skin is selected
@@ -185,8 +185,22 @@ namespace linerider
         public static Dictionary<Hotkey, List<Keybinding>> Keybinds = new Dictionary<Hotkey, List<Keybinding>>();
         private static Dictionary<Hotkey, List<Keybinding>> DefaultKeybinds = new Dictionary<Hotkey, List<Keybinding>>();
 
-        //Malizma Addon Settings
+        // Malizma Addon Settings
         public static bool InvisibleRider;
+
+        // Computed settings
+        public static class Computed
+        {
+            public static Color BGColor
+            {
+                get => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
+            }
+            public static Color LineColor
+            {
+                get => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
+            }
+        }
+
         static Settings()
         {
             RestoreDefaultSettings();
@@ -636,10 +650,11 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(ScreenshotShowHitTest)), ref ScreenshotShowHitTest);
             LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
 
-            LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
-            LoadInt(GetSetting(lines, nameof(DefaultTriggerLength)), ref DefaultTriggerLength);
+            
             LoadBool(GetSetting(lines, nameof(UIShowZoom)), ref UIShowZoom);
             LoadBool(GetSetting(lines, nameof(UIShowSpeedButtons)), ref UIShowSpeedButtons);
+            LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
+            LoadInt(GetSetting(lines, nameof(DefaultTriggerLength)), ref DefaultTriggerLength);
 
             LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
@@ -776,10 +791,11 @@ namespace linerider
                 MakeSetting(nameof(ScreenshotShowHitTest), ScreenshotShowHitTest.ToString(Program.Culture)),
                 MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture)),
 
-                MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),
-                MakeSetting(nameof(DefaultTriggerLength), DefaultTriggerLength.ToString(Program.Culture)),
+                
                 MakeSetting(nameof(UIShowZoom), UIShowZoom.ToString(Program.Culture)),
                 MakeSetting(nameof(UIShowSpeedButtons), UIShowSpeedButtons.ToString(Program.Culture)),
+                MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),
+                MakeSetting(nameof(DefaultTriggerLength), DefaultTriggerLength.ToString(Program.Culture)),
 
                 MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
