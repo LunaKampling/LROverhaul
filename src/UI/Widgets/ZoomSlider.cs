@@ -41,7 +41,7 @@ namespace linerider.UI
             _tooltip.IsHidden = true;
             Positioner = (o) =>
             {
-                return new Point(Parent.Width - Width - _canvas.ScreenEdgeSpacing, Parent.Height - Height - 50 - _canvas.ScreenEdgeSpacing);
+                return new Point(Parent.Width - Width - _canvas.EdgeSpacing, Parent.Height - Height - 50 - _canvas.EdgeSpacing);
             };
             SetRange(Constants.MinimumZoom, Constants.MaxZoom);
             ValueChanged += (o, e) =>

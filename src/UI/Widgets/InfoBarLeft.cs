@@ -16,12 +16,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Drawing;
 using Gwen;
 using Gwen.Controls;
 using linerider.IO;
 using linerider.Tools;
-using linerider.LRL;
+using System.Linq;
 
 namespace linerider.UI
 {
@@ -35,18 +34,13 @@ namespace linerider.UI
         private TrackLabel _changedlines;
         private TrackLabel _linecount;
         private TrackLabel _selectioncount;
-        private TrackLabel _ridercoordlabel;
 
         public InfoBarLeft(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
-            Dock = Dock.Left;
             _editor = editor;
-            AutoSizeToContents = true;
-            Setup();
             OnThink += Think;
-            Padding = Padding.Five;
-            ShouldDrawBackground = false;
+            Setup();
         }
         private void Think(object sender, EventArgs e)
         {
@@ -58,11 +52,13 @@ namespace linerider.UI
             _changedlines.IsHidden = rec || changes == 0;
             _linecount.IsHidden = rec;
             _selectioncount.IsHidden = rec || GetSelectedLinesCount() == 0;
-            _ridercoordlabel.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
+
+            bool hasNoContent = Children.All(x => x.IsHidden);
+            ShouldDrawBackground = !hasNoContent;
         }
         private void Setup()
         {
-            Margin = new Margin(_canvas.ScreenEdgeSpacing, _canvas.ScreenEdgeSpacing, 0, 0);
+            Margin = new Margin(_canvas.EdgeSpacing, _canvas.EdgeSpacing, 0, 0);
 
             _title = new TrackLabel(this)
             {
@@ -129,22 +125,6 @@ namespace linerider.UI
                     int linecount = GetSelectedLinesCount();
                     return $"Selected: {linecount}";
                 },
-            };
-
-            _ridercoordlabel = new TrackLabel(this)
-            {
-                Dock = Dock.Left,
-                Margin = new Margin(0, _canvas.WidgetSpacing * 2, 0, 0),
-                TextRequest = (o, e) =>
-                {
-                    string x = "";
-                    for (int i = 0; i < Coordinates.CoordsData.Length; i++)
-                    {
-                        x += Coordinates.CoordsData[i] + "\n";
-                    }
-                    return x;
-                },
-                UserData = 0.0,
             };
         }
         private int GetSelectedLinesCount()

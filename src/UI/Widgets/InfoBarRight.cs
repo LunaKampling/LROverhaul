@@ -17,6 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
+using System.Linq;
 using Gwen;
 using Gwen.Controls;
 
@@ -48,13 +49,9 @@ namespace linerider.UI
         public InfoBarRight(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
-            Dock = Dock.Right;
             _editor = editor;
-            AutoSizeToContents = true;
-            ShouldDrawBackground = false;
-            Setup();
             OnThink += Think;
-            Padding = Padding.Five;
+            Setup();
         }
         private void Think(object sender, EventArgs e)
         {
@@ -67,10 +64,13 @@ namespace linerider.UI
 
             _usercamerasprite.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
             _iconpanel.IsHidden = _usercamerasprite.IsHidden;
+
+            bool hasNoContent = Children.All(x => x.IsHidden);
+            ShouldDrawBackground = !hasNoContent;
         }
         private void Setup()
         {
-            Margin = new Margin(0, _canvas.ScreenEdgeSpacing, _canvas.ScreenEdgeSpacing, 0);
+            Margin = new Margin(0, _canvas.EdgeSpacing, _canvas.EdgeSpacing, 0);
 
             _fpslabel = new TrackLabel(this)
             {

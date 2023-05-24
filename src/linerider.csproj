@@ -235,6 +235,7 @@
     <Compile Include="UI\Components\WidgetContainer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Widgets\InfoBarCoords.cs" />
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
     <Compile Include="UI\Widgets\InfoBarLeft.cs" />
     <Compile Include="UI\Widgets\InfoBarRight.cs" />
