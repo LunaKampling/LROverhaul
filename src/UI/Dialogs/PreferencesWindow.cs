@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using Gwen;
 using Gwen.Controls;
+using linerider.Drawing.RiderModel;
 using linerider.Utils;
 
 namespace linerider.UI
@@ -848,6 +849,18 @@ namespace linerider.UI
                 Margin = new Margin(10, 0, 10, 10),
             };
             openManualBtn.Clicked += (o, e) => GameCanvas.OpenUrl(manualUrl);
+
+            Button forceReloadBtn = new Button(parent)
+            {
+                Dock = Dock.Bottom,
+                Text = "Force reload rider and scarf",
+                Alignment = Pos.CenterH | Pos.CenterV,
+                Margin = new Margin(10, 0, 10, 10),
+            };
+            forceReloadBtn.Clicked += (o, e) =>
+            {
+                RiderLoader.ReloadAll();
+            };
         }
         private void PopulateKeybinds(ControlBase parent)
         {
