@@ -58,7 +58,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(_canvas.EdgeSpacing, _canvas.EdgeSpacing, 0, 0);
+            Margin = new Margin(_canvas.EdgesSpacing, _canvas.EdgesSpacing, 0, 0);
 
             _title = new TrackLabel(this)
             {
@@ -74,7 +74,7 @@ namespace linerider.UI
             _autosavelabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 IsHidden = true,
                 Text = "Autosave enabled!",
             };
@@ -82,7 +82,7 @@ namespace linerider.UI
             _changedlines = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 IsHidden = true,
                 TextRequest = (o, current) =>
                 {
@@ -97,7 +97,7 @@ namespace linerider.UI
             _linecount = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 TextRequest = (o, current) =>
                 {
                     int u = (int)_linecount.UserData;
@@ -116,7 +116,7 @@ namespace linerider.UI
             _selectioncount = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 TextRequest = (o, current) =>
                 {
                     if (!_editor.Paused || TrackRecorder.Recording)

@@ -33,7 +33,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(_canvas.EdgeSpacing, _canvas.EdgeSpacing, 0, 0);
+            Margin = new Margin(_canvas.EdgesSpacing, _canvas.EdgesSpacing, 0, 0);
 
             _ridercoordlabel = new TrackLabel(this)
             {

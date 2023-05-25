@@ -39,7 +39,7 @@ namespace linerider.UI
         {
             _canvas = (GameCanvas)parent.GetCanvas();
 
-            Margin margin = new Margin(_canvas.EdgeSpacing, 0, _canvas.EdgeSpacing, _canvas.EdgeSpacing);
+            Margin margin = new Margin(_canvas.EdgesSpacing, 0, _canvas.EdgesSpacing, _canvas.EdgesSpacing);
             margin += new Margin(50, 0, 50, 0);
 
             Dock = Dock.Bottom;
@@ -47,7 +47,10 @@ namespace linerider.UI
             Margin = margin;
             AutoSizeToContents = true;
             MouseInputEnabled = false;
+            ShouldDrawBackground = true;
             Setup();
+
+            Padding = new Padding(_canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing);
         }
         private void Setup()
         {

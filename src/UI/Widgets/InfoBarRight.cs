@@ -70,7 +70,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(0, _canvas.EdgeSpacing, _canvas.EdgeSpacing, 0);
+            Margin = new Margin(0, _canvas.EdgesSpacing, _canvas.EdgesSpacing, 0);
 
             _fpslabel = new TrackLabel(this)
             {
@@ -96,7 +96,7 @@ namespace linerider.UI
             _riderspeedlabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 Alignment = Pos.Right | Pos.CenterV,
                 TextRequest = (o, e) =>
                 {
@@ -118,7 +118,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
                     string text = $"Zoom: {_zoomrounded}x";
@@ -130,7 +130,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
                     double rate = Math.Round(_editor.Scheduler.UpdatesPerSecond / 40.0, 3);
@@ -142,7 +142,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 TextRequest = (o, currenttext) =>
                 {
                     return _editor.CurrentNotifyMessage;
@@ -155,7 +155,7 @@ namespace linerider.UI
                 Dock = Dock.Top,
                 Width = 32,
                 Height = 32,
-                Margin = new Margin(0, _canvas.WidgetSpacing, 0, 0),
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
             };
             _usercamerasprite = new Sprite(_iconpanel)
             {

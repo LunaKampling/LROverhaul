@@ -35,8 +35,8 @@ namespace linerider
     public class GameCanvas : Canvas
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
-        public readonly int EdgeSpacing = 5;
-        public readonly int WidgetSpacing = 3;
+        public readonly int EdgesSpacing = 5;
+        public readonly int InnerSpacing = 5;
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
@@ -99,14 +99,14 @@ namespace linerider
         }
         private void CreateUI()
         {
-            Padding infobarPadding = new Padding(EdgeSpacing, EdgeSpacing, EdgeSpacing, EdgeSpacing);
+            Padding infobarPadding = new Padding(InnerSpacing, InnerSpacing, InnerSpacing, InnerSpacing);
 
             _usertooltip = new Tooltip(this) { IsHidden = true };
             _loadingsprite = new LoadingSprite(this)
             {
                 Positioner = (o) =>
                 {
-                    return new System.Drawing.Point(
+                    return new Point(
                         Width - _loadingsprite.Width,
                         0);
                 },
@@ -114,7 +114,7 @@ namespace linerider
             _loadingsprite.SetImage(GameResources.loading);
             _toolbar = new Toolbar(this, game.Track)
             {
-                Y = EdgeSpacing,
+                Y = EdgesSpacing,
             };
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);
