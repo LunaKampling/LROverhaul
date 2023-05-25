@@ -56,9 +56,6 @@ namespace linerider
     public class MainWindow : OpenTK.GameWindow
     {
         public bool firstGameUpdate = true; //Run this only on the first update (probably a better way to do this, this is probably bad)
-        public String currentScarf = null; //What the current scarf it to compare it to the settings
-        public bool scarfNeedsUpdate = true; //If the scarf needs a update 
-        public String currentBoshSkin = null; //What the current rider skin is to to compare it to the settings
 
         public Dictionary<string, MouseCursor> Cursors = new Dictionary<string, MouseCursor>();
         public MsaaFbo MSAABuffer;
@@ -279,20 +276,8 @@ namespace linerider
                 ScarfColors.RemoveAll();
             }
 
-            // Update scarf or rider if needed
-            bool needUpdateRider = currentBoshSkin != Settings.SelectedBoshSkin;
-            bool needUpdateScarf = currentScarf != Settings.SelectedScarf;
-
-            if (needUpdateRider)
-                currentBoshSkin = Settings.SelectedBoshSkin;
-            if (needUpdateScarf)
-                currentScarf = Settings.SelectedScarf;
-
-            if (needUpdateRider || needUpdateScarf)
-            {
-                ScarfColors.Reload();
-                ReloadRiderModel();
-            }
+            // Check if scarf and rider model are actual
+            RiderLoader.Validate();
 
             // Regular code starts here
             GameUpdateHandleInput();
@@ -339,39 +324,6 @@ namespace linerider
             }
         }
 
-        public void ReloadRiderModel()
-        {
-            bool isDefaultSkin = Settings.SelectedBoshSkin == null || Settings.SelectedBoshSkin.Equals(Constants.InternalDefaultName);
-            Resources riderRes = new ResourcesDefault();
-
-            if (!isDefaultSkin)
-                riderRes = new ResourcesCustom(Settings.SelectedBoshSkin);
-
-            try
-            {
-                riderRes.Load();
-            }
-            catch (Exception e)
-            {
-                if (e is IOException || e is ArgumentException)
-                {
-                    Debug.WriteLine(e);
-                    riderRes = new ResourcesDefault();
-                    riderRes.Load();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            ModelLoader loader = new ModelLoaderDynamic();
-
-            if (riderRes.Legacy)
-                loader = new ModelLoaderLegacy();
-
-            loader.Load(riderRes);
-        }
         //Used to be static
         public void Invalidate()
         {

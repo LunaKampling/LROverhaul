@@ -14,7 +14,14 @@ namespace linerider.Drawing.RiderModel
     {
         private static List<int> Colors = new List<int>();
         private static List<byte> Opacity = new List<byte>();
-
+        public static List<int> GetColorList()
+        {
+            return Colors;
+        }
+        public static List<byte> GetOpacityList()
+        {
+            return Opacity;
+        }
         public static void Add(int color, byte opacity)
         {
             Colors.Add(color);
@@ -38,14 +45,6 @@ namespace linerider.Drawing.RiderModel
         {
             return Colors.Count();
         }
-        public static List<int> GetColorList()
-        {
-            return Colors;
-        }
-        public static List<byte> GetOpacityList()
-        {
-            return Opacity;
-        }
         public static void RemoveAll()
         {
             Colors.Clear();
@@ -59,49 +58,20 @@ namespace linerider.Drawing.RiderModel
                 Remove(Count() - 1);
             }
         }
-        public static void Reload()
+        public static void Normalize() // Make sure scarf is long enough
         {
-            bool isDefaultScarf = Settings.SelectedScarf.Equals(Constants.InternalDefaultName);
-
-            try
-            {
-                if (isDefaultScarf)
-                    SetDefault();
-                else
-                    SetFromFile();
-            }
-            catch
-            {
-                SetDefault();
-            }
-
             while (Count() < Settings.ScarfSegments)
             {
                 GetColorList().AddRange(GetColorList());
                 GetOpacityList().AddRange(GetOpacityList());
             }
-
-            for (int i = 1; i < Settings.multiScarfAmount; i++)
-            {
-                Insert(0x0000FF, 0x00, i * Settings.multiScarfSegments + (i - 1) - (1 + i));
-            }
         }
-        private static void SetFromFile()
-        {
-            string scarfLocation = Path.Combine(Program.UserDirectory, "Scarves", Settings.SelectedScarf);
-            ScarfLoader loader = new ScarfLoader(scarfLocation);
-
-            RemoveAll();
-
-            List<ScarfSegment> segments = loader.Load();
-            foreach (ScarfSegment segment in segments)
-                Add(segment.Color, segment.Opacity);
-        }
-        private static void SetDefault()
+        public static void SetDefault()
         {
             RemoveAll();
             Add(0xB93332, 0xFF);
             Add(0xEF7A5D, 0xFF);
+            Normalize();
         }
     }
 }

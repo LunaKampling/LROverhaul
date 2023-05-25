@@ -94,6 +94,7 @@
     <Compile Include="Drawing\RiderModel\ResourcesDefault.cs" />
     <Compile Include="Drawing\RiderModel\ScarfColors.cs" />
     <Compile Include="Drawing\RiderModel\ScarfLoader.cs" />
+    <Compile Include="Drawing\RiderModel\RiderLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Rendering\GameDrawingMatrix.cs" />
