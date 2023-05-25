@@ -32,6 +32,13 @@ namespace linerider.Drawing.RiderModel
         {
             ReloadScarf();
             ReloadModel();
+
+            // Make segments between multiple scarves invisible
+            for (int i = 1; i < Settings.multiScarfAmount; i++)
+            {
+                int index = i * Settings.multiScarfSegments + (i - 1) - (1 + i);
+                ScarfColors.Insert(0x0000FF, 0x00, index);
+            }
         }
         public static void ReloadScarf()
         {
@@ -60,12 +67,6 @@ namespace linerider.Drawing.RiderModel
             catch
             {
                 ScarfColors.SetDefault();
-            }
-
-            // ???
-            for (int i = 1; i < Settings.multiScarfAmount; i++)
-            {
-                ScarfColors.Insert(0x0000FF, 0x00, i * Settings.multiScarfSegments + (i - 1) - (1 + i));
             }
         }
         public static void ReloadModel()
