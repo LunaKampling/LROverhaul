@@ -27,7 +27,7 @@ namespace linerider.UI
     {
         private SwatchColorButton _btnblue;
         private SwatchColorButton _btnred;
-        private SwatchColorButton _btngreem;
+        private SwatchColorButton _btngreen;
         private Texture _swatchtexture;
         public ColorSwatch(ControlBase canvas) : base(canvas)
         {
@@ -38,10 +38,17 @@ namespace linerider.UI
         public override void Think()
         {
             base.Think();
-            var hide = !Tools.CurrentTools.SelectedTool.ShowSwatch;
+
+            bool hide = !Tools.CurrentTools.SelectedTool.ShowSwatch;
             foreach (var child in Children)
-            {
                 child.IsHidden = hide;
+
+            bool colorsChanged = _btnblue.color != Settings.Colors.StandardLine || _btnred.color != Settings.Colors.AccelerationLine || _btngreen.color != Settings.Colors.SceneryLine;
+            if (colorsChanged)
+            {
+                _btnblue.color = Settings.Colors.StandardLine;
+                _btnred.color = Settings.Colors.AccelerationLine;
+                _btngreen.color = Settings.Colors.SceneryLine;
             }
         }
         private SwatchColorButton AddButton(LineType lineType)
@@ -59,7 +66,7 @@ namespace linerider.UI
             _swatchtexture = Skin.Renderer.CreateTexture(GameResources.swatch);
             _btnblue = AddButton(LineType.Blue);
             _btnred = AddButton(LineType.Red);
-            _btngreem = AddButton(LineType.Scenery);
+            _btngreen = AddButton(LineType.Scenery);
         }
         public override void Dispose()
         {

@@ -17,15 +17,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
 
 namespace linerider.UI
 {
     /// <summary>
     /// Just a label that is intend to go on top of the track
-    /// It changes colors based on nightmode on/off
+    /// Its color inherits line color to stay visible on any background
     /// </summary>
     public class TrackLabel : Label
     {
@@ -33,18 +31,11 @@ namespace linerider.UI
         {
             get
             {
-                if (Settings.NightMode)
-                {
-                    return Color.FromArgb(255,200,200,200);
-                }
-                else
-                {
-                    return Skin.Colors.Text.Foreground;
-                }
+                bool recording = Settings.PreviewMode || IO.TrackRecorder.Recording;
+                return recording ? Color.FromArgb(51, 51, 51) : Settings.Computed.LineColor;
             }
         }
         public TrackLabel(ControlBase parent) : base(parent)
-        {
-        }
+        { }
     }
 }

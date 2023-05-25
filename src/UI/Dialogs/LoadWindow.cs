@@ -35,6 +35,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
+                ShouldDrawBackground = false,
                 Margin = new Margin(0, 5, 0, 0)
             };
 

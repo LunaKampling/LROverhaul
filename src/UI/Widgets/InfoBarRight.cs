@@ -17,58 +17,69 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
-using System.Drawing;
+using System.Linq;
 using Gwen;
 using Gwen.Controls;
-using linerider.LRL;
-using linerider.Tools;
 
 namespace linerider.UI
 {
-    public class RightInfoBar : WidgetContainer
+    public class InfoBarRight : WidgetContainer
     {
         private Editor _editor;
+        private GameCanvas _canvas;
+        private Stopwatch _fpswatch = new Stopwatch();
+
         private TrackLabel _fpslabel;
-        private TrackLabel _playbackratelabel;
         private TrackLabel _riderspeedlabel;
+        private TrackLabel _zoomlabel;
+        private TrackLabel _playbackratelabel;
         private TrackLabel _notifylabel;
+
         private Panel _iconpanel;
         private Sprite _usercamerasprite;
-        private Stopwatch _fpswatch = new Stopwatch();
-        public RightInfoBar(ControlBase parent, Editor editor) : base(parent)
+
+        private double _zoomrounded
         {
-            Dock = Dock.Right;
+            get
+            {
+                double zoom = _editor.BaseZoom;
+                return Math.Round(zoom, zoom > 100 ? 0 : zoom > 10 ? 1 : zoom > 1 ? 2 : 3);
+            }
+        }
+        public InfoBarRight(ControlBase parent, Editor editor) : base(parent)
+        {
+            _canvas = (GameCanvas)parent.GetCanvas();
             _editor = editor;
-            AutoSizeToContents = true;
-            Setup();
             OnThink += Think;
+            Setup();
         }
         private void Think(object sender, EventArgs e)
         {
-            var rec = Settings.Local.RecordingMode;
+            bool rec = Settings.Local.RecordingMode;
             _fpslabel.IsHidden = rec && !Settings.Recording.ShowFps;
             _riderspeedlabel.IsHidden = rec && !Settings.Recording.ShowPpf;
+            _zoomlabel.IsHidden = rec || Settings.UIShowZoom;
             _playbackratelabel.IsHidden = rec || _editor.Scheduler.UpdatesPerSecond == 40;
-            _notifylabel.IsHidden = rec;
+            _notifylabel.IsHidden = rec || string.IsNullOrEmpty(_editor.CurrentNotifyMessage);
+
             _usercamerasprite.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
             _iconpanel.IsHidden = _usercamerasprite.IsHidden;
+
+            bool hasNoContent = Children.All(x => x.IsHidden);
+            ShouldDrawBackground = !hasNoContent;
         }
         private void Setup()
         {
-            _iconpanel = new Panel(this)
-            {
-                ShouldDrawBackground = false,
-                Dock = Dock.Top,
-                Width = 32,
-                Height = 32,
-            };
+            Margin = new Margin(0, _canvas.EdgesSpacing, _canvas.EdgesSpacing, 0);
+
             _fpslabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
+                Margin = new Margin(0, 0, 0, 0),
                 Alignment = Pos.Right | Pos.CenterV,
                 TextRequest = (o, currenttext) =>
                 {
-                    var rec = Settings.Local.RecordingMode;
+                    bool rec = Settings.Local.RecordingMode;
                     if (rec && Settings.Recording.ShowFps)
                     {
                         return Settings.RecordSmooth ? "60 FPS" : "40 FPS";
@@ -80,59 +91,77 @@ namespace linerider.UI
                     }
                     return currenttext;
                 },
-                Margin = new Margin(0, 0, 5, 0)
             };
-            _notifylabel = new TrackLabel(this)
-            {
-                Dock = Dock.Top,
-                Alignment = Pos.Right | Pos.CenterV,
-                TextRequest = (o, currenttext) =>
-                {
-                    return _editor.CurrentNotifyMessage;
-                },
-                Margin = new Margin(0, 0, 5, 0)
-            };
+
             _riderspeedlabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 Alignment = Pos.Right | Pos.CenterV,
                 TextRequest = (o, e) =>
                 {
-                    var ppf = _editor.RenderRider.CalculateMomentum().Length;
-                    var n = (double)_riderspeedlabel.UserData;
-                    var roundppf = Math.Round(ppf, 2);
+                    double ppf = _editor.RenderRider.CalculateMomentum().Length;
+                    double n = (double)_riderspeedlabel.UserData;
                     if (n != ppf)
                     {
+                        double roundppf = Math.Round(ppf, 2);
                         _riderspeedlabel.UserData = roundppf;
                         return string.Format("{0:N2}", Math.Round(ppf, 2)) + " P/f";
                     }
                     return e;
                 },
-                Margin = new Margin(0, 0, 5, 0),
                 Text = "0.00 P/f",
                 UserData = 0.0,
             };
+
+            _zoomlabel = new TrackLabel(this)
+            {
+                Dock = Dock.Top,
+                Alignment = Pos.Right | Pos.CenterV,
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                TextRequest = (o, e) =>
+                {
+                    string text = $"Zoom: {_zoomrounded}x";
+                    return _editor.UseUserZoom ? $"{text} *" : text;
+                },
+            };
+
             _playbackratelabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
-                    var rate = Math.Round(_editor.Scheduler.UpdatesPerSecond / 40.0, 3);
-                    string x = "";
-                    if (rate.ToString() != "1")
-                    {
-                        x = $"{rate}x";
-                    }
-                    return x;
+                    double rate = Math.Round(_editor.Scheduler.UpdatesPerSecond / 40.0, 3);
+                    return rate == 1 ? "" : $"Sim Speed: {rate}x";
                 },
-                Margin = new Margin(0, 0, 5, 0),
+            };
+
+            _notifylabel = new TrackLabel(this)
+            {
+                Dock = Dock.Top,
+                Alignment = Pos.Right | Pos.CenterV,
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                TextRequest = (o, currenttext) =>
+                {
+                    return _editor.CurrentNotifyMessage;
+                },
+            };
+
+            _iconpanel = new Panel(this)
+            {
+                ShouldDrawBackground = false,
+                Dock = Dock.Top,
+                Width = 32,
+                Height = 32,
+                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
             };
             _usercamerasprite = new Sprite(_iconpanel)
             {
                 Dock = Dock.Right,
                 IsHidden = true,
-                Tooltip = "Click to Reset Camera\n(Default hotkey N)",
+                Tooltip = "Click to Reset Camera" + Settings.HotkeyToString(Hotkey.PlaybackResetCamera, true),
                 MouseInputEnabled = true,
                 TooltipDelay = 0,
             };

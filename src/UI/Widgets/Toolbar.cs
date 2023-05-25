@@ -56,6 +56,7 @@ namespace linerider.UI
             MakeMenu();
             SetupEvents();
             OnThink += Think;
+            Padding = new Padding(_canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing);
         }
         private void Think(object sender, EventArgs e)
         {
@@ -64,16 +65,14 @@ namespace linerider.UI
         }
         private void MakeButtons()
         {
-            int padSides = 5;
             _buttoncontainer = new ControlBase(this)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
-                Padding = new Padding(padSides, 0, padSides, 0),
             };
             _swatch = new ColorSwatch(this);
             _swatch.Dock = Dock.Left;
-            _swatch.Padding = new Padding(padSides, 0, padSides, 0);
+            _swatch.Padding = new Padding(0, _canvas.InnerSpacing, 0, 0);
             _pencilbtn = CreateTool(GameResources.pencil_icon, "Pencil Tool / Smooth Pencil", Hotkey.EditorPencilTool);
             _smpenbtn = CreateTool(GameResources.smoothpencil_icon, "Smooth Pencil / Pencil Tool", Hotkey.EditorPencilTool);
             _linebtn = CreateTool(GameResources.line_icon, "Line Tool", Hotkey.EditorLineTool);

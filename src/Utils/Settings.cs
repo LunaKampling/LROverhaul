@@ -81,13 +81,17 @@ namespace linerider
             public static bool ShowLineAngle;
             public static bool ShowLineID;
         }
-        public static class Lines
+        public static class Colors
         {
-            public static Color DefaultLine;
-            public static Color DefaultNightLine;
+            public static Color ExportBg;
+            public static Color EditorBg;
+            public static Color EditorNightBg;
+            public static Color ExportLine;
+            public static Color EditorLine;
+            public static Color EditorNightLine;
+            public static Color StandardLine;
             public static Color AccelerationLine;
             public static Color SceneryLine;
-            public static Color StandardLine;
         }
         public static class Bezier
         {
@@ -105,7 +109,6 @@ namespace linerider
         public static float PlaybackZoomValue;
         public static float Volume;
         public static bool SuperZoom;
-        public static bool WhiteBG;
         public static bool NightMode;
         public static bool SmoothCamera;
         public static bool PredictiveCamera;
@@ -132,8 +135,12 @@ namespace linerider
         public static bool ScreenshotShowHitTest;
         public static bool ScreenshotResIndependentZoom;
 
-        public static float ScrollSensitivity;
+        public static bool UIShowZoom;
+        public static bool UIShowSpeedButtons;
         public static int DefaultTimelineLength;
+        public static int DefaultTriggerLength;
+
+        public static float ScrollSensitivity;
         public static int SettingsPane;
         public static bool MuteAudio;
         public static bool PreviewMode;
@@ -146,7 +153,7 @@ namespace linerider
 
         public static float ZoomMultiplier; //A constant multiplier for the zoom
 
-        //LRTran settings
+        // LRTran settings
         public static String SelectedScarf; //What custom scarf is selected
         public static int ScarfSegments; //How many scarf segments on restart
         public static String SelectedBoshSkin; //What bosh skin is selected
@@ -178,8 +185,22 @@ namespace linerider
         public static Dictionary<Hotkey, List<Keybinding>> Keybinds = new Dictionary<Hotkey, List<Keybinding>>();
         private static Dictionary<Hotkey, List<Keybinding>> DefaultKeybinds = new Dictionary<Hotkey, List<Keybinding>>();
 
-        //Malizma Addon Settings
+        // Malizma Addon Settings
         public static bool InvisibleRider;
+
+        // Computed settings
+        public static class Computed
+        {
+            public static Color BGColor
+            {
+                get => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
+            }
+            public static Color LineColor
+            {
+                get => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
+            }
+        }
+
         static Settings()
         {
             RestoreDefaultSettings();
@@ -243,11 +264,15 @@ namespace linerider
             Editor.ShowLineLength = true;
             Editor.ShowLineAngle = true;
             Editor.ShowLineID = false;
-            Lines.DefaultLine = Constants.DefaultLineColor;
-            Lines.DefaultNightLine = Constants.DefaultNightLineColor;
-            Lines.AccelerationLine = Constants.RedLineColor;
-            Lines.SceneryLine = Constants.SceneryLineColor;
-            Lines.StandardLine = Constants.BlueLineColor;
+            Colors.ExportBg = Constants.BgExportColor;
+            Colors.EditorBg = Constants.BgEditorColor;
+            Colors.EditorNightBg = Constants.BgEditorNightColor;
+            Colors.ExportLine = Constants.ExportLineColor;
+            Colors.EditorLine = Constants.DefaultLineColor;
+            Colors.EditorNightLine = Constants.DefaultNightLineColor;
+            Colors.AccelerationLine = Constants.RedLineColor;
+            Colors.SceneryLine = Constants.SceneryLineColor;
+            Colors.StandardLine = Constants.BlueLineColor;
             Bezier.Resolution = 30;
             Bezier.NodeSize = 15;
             Bezier.Mode = (int) BezierMode.Direct;
@@ -255,7 +280,6 @@ namespace linerider
             PlaybackZoomValue = 4;
             Volume = 100;
             SuperZoom = false;
-            WhiteBG = false;
             NightMode = false;
             SmoothCamera = true;
             PredictiveCamera = false;
@@ -282,7 +306,11 @@ namespace linerider
             ScreenshotShowHitTest = false;
             ScreenshotResIndependentZoom = true;
 
+            UIShowZoom = true;
+            UIShowSpeedButtons = false;
             DefaultTimelineLength = 30;
+            DefaultTriggerLength = 40;
+
             ScrollSensitivity = 1;
             SettingsPane = 0;
             MuteAudio = false;
@@ -294,8 +322,8 @@ namespace linerider
             PastOnionSkins = 10;
             FutureOnionSkins = 20;
             ScarfSegments = 5;
-            SelectedScarf = "*default*";
-            SelectedBoshSkin = "*default*";
+            SelectedScarf = Constants.InternalDefaultName;
+            SelectedBoshSkin = Constants.InternalDefaultName;
             showChangelog = true;
             multiScarfAmount = 1;
             multiScarfSegments = 5;
@@ -596,7 +624,6 @@ namespace linerider
             LoadFloat(GetSetting(lines, nameof(Volume)), ref Volume);
             LoadFloat(GetSetting(lines, nameof(ScrollSensitivity)), ref ScrollSensitivity);
             LoadBool(GetSetting(lines, nameof(SuperZoom)), ref SuperZoom);
-            LoadBool(GetSetting(lines, nameof(WhiteBG)), ref WhiteBG);
             LoadBool(GetSetting(lines, nameof(NightMode)), ref NightMode);
             LoadBool(GetSetting(lines, nameof(SmoothCamera)), ref SmoothCamera);
             LoadBool(GetSetting(lines, nameof(PredictiveCamera)), ref PredictiveCamera);
@@ -623,8 +650,13 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(ScreenshotShowHitTest)), ref ScreenshotShowHitTest);
             LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
 
-            LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
+            
+            LoadBool(GetSetting(lines, nameof(UIShowZoom)), ref UIShowZoom);
+            LoadBool(GetSetting(lines, nameof(UIShowSpeedButtons)), ref UIShowSpeedButtons);
             LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
+            LoadInt(GetSetting(lines, nameof(DefaultTriggerLength)), ref DefaultTriggerLength);
+
+            LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
             LoadInt(GetSetting(lines, nameof(SettingsPane)), ref SettingsPane);
@@ -667,11 +699,15 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(DrawFloatGrid)), ref DrawFloatGrid);
             LoadBool(GetSetting(lines, nameof(DrawCamera)), ref DrawCamera);
             LoadFloat(GetSetting(lines, nameof(ZoomMultiplier)), ref ZoomMultiplier);
-            LoadColor(GetSetting(lines, nameof(Lines.DefaultLine)), ref Lines.DefaultLine);
-            LoadColor(GetSetting(lines, nameof(Lines.DefaultNightLine)), ref Lines.DefaultNightLine);
-            LoadColor(GetSetting(lines, nameof(Lines.AccelerationLine)), ref Lines.AccelerationLine);
-            LoadColor(GetSetting(lines, nameof(Lines.SceneryLine)), ref Lines.SceneryLine);
-            LoadColor(GetSetting(lines, nameof(Lines.StandardLine)), ref Lines.StandardLine);
+            LoadColor(GetSetting(lines, nameof(Colors.ExportBg)), ref Colors.ExportBg);
+            LoadColor(GetSetting(lines, nameof(Colors.EditorBg)), ref Colors.EditorBg);
+            LoadColor(GetSetting(lines, nameof(Colors.EditorNightBg)), ref Colors.EditorNightBg);
+            LoadColor(GetSetting(lines, nameof(Colors.ExportLine)), ref Colors.ExportLine);
+            LoadColor(GetSetting(lines, nameof(Colors.EditorLine)), ref Colors.EditorLine);
+            LoadColor(GetSetting(lines, nameof(Colors.EditorNightLine)), ref Colors.EditorNightLine);
+            LoadColor(GetSetting(lines, nameof(Colors.AccelerationLine)), ref Colors.AccelerationLine);
+            LoadColor(GetSetting(lines, nameof(Colors.SceneryLine)), ref Colors.SceneryLine);
+            LoadColor(GetSetting(lines, nameof(Colors.StandardLine)), ref Colors.StandardLine);
             LoadInt(GetSetting(lines, nameof(Bezier.Resolution)), ref Bezier.Resolution);
             LoadInt(GetSetting(lines, nameof(Bezier.NodeSize)), ref Bezier.NodeSize);
             LoadInt(GetSetting(lines, nameof(Bezier.Mode)), ref Bezier.Mode);
@@ -727,7 +763,6 @@ namespace linerider
                 MakeSetting(nameof(LastSelectedTrack), LastSelectedTrack),
                 MakeSetting(nameof(Volume), Volume.ToString(Program.Culture)),
                 MakeSetting(nameof(SuperZoom), SuperZoom.ToString(Program.Culture)),
-                MakeSetting(nameof(WhiteBG), WhiteBG.ToString(Program.Culture)),
                 MakeSetting(nameof(NightMode), NightMode.ToString(Program.Culture)),
                 MakeSetting(nameof(SmoothCamera), SmoothCamera.ToString(Program.Culture)),
                 MakeSetting(nameof(PredictiveCamera), PredictiveCamera.ToString(Program.Culture)),
@@ -756,7 +791,12 @@ namespace linerider
                 MakeSetting(nameof(ScreenshotShowHitTest), ScreenshotShowHitTest.ToString(Program.Culture)),
                 MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture)),
 
+                
+                MakeSetting(nameof(UIShowZoom), UIShowZoom.ToString(Program.Culture)),
+                MakeSetting(nameof(UIShowSpeedButtons), UIShowSpeedButtons.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),
+                MakeSetting(nameof(DefaultTriggerLength), DefaultTriggerLength.ToString(Program.Culture)),
+
                 MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture)),
@@ -801,11 +841,15 @@ namespace linerider
                 MakeSetting(nameof(DrawFloatGrid), DrawFloatGrid.ToString(Program.Culture)),
                 MakeSetting(nameof(DrawCamera), DrawCamera.ToString(Program.Culture)),
                 MakeSetting(nameof(ZoomMultiplier), ZoomMultiplier.ToString(Program.Culture)),
-                MakeSetting(nameof(Lines.DefaultLine), SaveColor(Lines.DefaultLine)),
-                MakeSetting(nameof(Lines.DefaultNightLine), SaveColor(Lines.DefaultNightLine)),
-                MakeSetting(nameof(Lines.AccelerationLine), SaveColor(Lines.AccelerationLine)),
-                MakeSetting(nameof(Lines.SceneryLine), SaveColor(Lines.SceneryLine)),
-                MakeSetting(nameof(Lines.StandardLine), SaveColor(Lines.StandardLine)),
+                MakeSetting(nameof(Colors.ExportBg), SaveColor(Colors.ExportBg)),
+                MakeSetting(nameof(Colors.EditorBg), SaveColor(Colors.EditorBg)),
+                MakeSetting(nameof(Colors.EditorNightBg), SaveColor(Colors.EditorNightBg)),
+                MakeSetting(nameof(Colors.ExportLine), SaveColor(Colors.ExportLine)),
+                MakeSetting(nameof(Colors.EditorLine), SaveColor(Colors.EditorLine)),
+                MakeSetting(nameof(Colors.EditorNightLine), SaveColor(Colors.EditorNightLine)),
+                MakeSetting(nameof(Colors.AccelerationLine), SaveColor(Colors.AccelerationLine)),
+                MakeSetting(nameof(Colors.SceneryLine), SaveColor(Colors.SceneryLine)),
+                MakeSetting(nameof(Colors.StandardLine), SaveColor(Colors.StandardLine)),
                 MakeSetting(nameof(Bezier.Resolution), Bezier.Resolution.ToString(Program.Culture)),
                 MakeSetting(nameof(Bezier.NodeSize), Bezier.NodeSize.ToString(Program.Culture)),
                 MakeSetting(nameof(Bezier.Mode), Bezier.Mode.ToString(Program.Culture)),

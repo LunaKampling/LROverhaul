@@ -72,7 +72,7 @@ namespace linerider.Rendering
             _scenerylines = new Dictionary<int, int>();
             _decorator = new LineDecorator();
             _physvbo = new LineRenderer(Shaders.LineShader);
-            _physvbo.OverrideColor = Settings.Lines.DefaultLine;
+            _physvbo.OverrideColor = Settings.Colors.ExportLine;
 
             _sceneryvbo = new LineRenderer(Shaders.LineShader);
             _sceneryvbo.OverrideColor = Color.Black;
@@ -103,13 +103,13 @@ namespace linerider.Rendering
                 }
                 else
                 {
-                    _sceneryvbo.OverrideColor = (Settings.NightMode ? Settings.Lines.DefaultNightLine : Settings.Lines.DefaultLine);
-                    _physvbo.OverrideColor = (Settings.NightMode ? Settings.Lines.DefaultNightLine : Settings.Lines.DefaultLine);
+                    _sceneryvbo.OverrideColor = Settings.Computed.LineColor;
+                    _physvbo.OverrideColor = Settings.Computed.LineColor;
                 }
 
                 if (options.LineColors)
                 {
-                    _sceneryvbo.OverrideColor = Settings.Lines.SceneryLine;
+                    _sceneryvbo.OverrideColor = Settings.Colors.SceneryLine;
                     _sceneryvbo.OverridePriority = 1;
                     _physvbo.OverridePriority = 1;
                 }

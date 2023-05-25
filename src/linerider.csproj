@@ -47,16 +47,6 @@
     <Compile Include="Addons\LineGenerator\GeneratorType.cs" />
     <Compile Include="Addons\LineGenerator\CircleGenerator.cs" />
     <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
-    <Compile Include="Drawing\RiderModel\Filenames.cs" />
-    <Compile Include="Drawing\RiderModel\ModelLoader.cs" />
-    <Compile Include="Drawing\RiderModel\ModelLoaderLegacy.cs" />
-    <Compile Include="Drawing\RiderModel\RegionsCache.cs" />
-    <Compile Include="Drawing\RiderModel\ModelLoaderDynamic.cs" />
-    <Compile Include="Drawing\RiderModel\Resources.cs" />
-    <Compile Include="Drawing\RiderModel\ResourcesCustom.cs" />
-    <Compile Include="Drawing\RiderModel\ResourcesDefault.cs" />
-    <Compile Include="Drawing\RiderModel\ScarfColors.cs" />
-    <Compile Include="Drawing\RiderModel\ScarfLoader.cs" />
     <Compile Include="Game\TriggerType.cs" />
     <Compile Include="Game\GameTrigger.cs" />
     <Compile Include="IO\json\RiderData.cs" />
@@ -92,6 +82,19 @@
     <Compile Include="Drawing\SafeFrameBuffer.cs" />
     <Compile Include="Drawing\Shader.cs" />
     <Compile Include="Drawing\Shaders.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Drawing\RiderModel\Filenames.cs" />
+    <Compile Include="Drawing\RiderModel\ModelLoader.cs" />
+    <Compile Include="Drawing\RiderModel\ModelLoaderLegacy.cs" />
+    <Compile Include="Drawing\RiderModel\RegionsCache.cs" />
+    <Compile Include="Drawing\RiderModel\ModelLoaderDynamic.cs" />
+    <Compile Include="Drawing\RiderModel\Resources.cs" />
+    <Compile Include="Drawing\RiderModel\ResourcesCustom.cs" />
+    <Compile Include="Drawing\RiderModel\ResourcesDefault.cs" />
+    <Compile Include="Drawing\RiderModel\ScarfColors.cs" />
+    <Compile Include="Drawing\RiderModel\ScarfLoader.cs" />
+    <Compile Include="Drawing\RiderModel\RiderLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Rendering\GameDrawingMatrix.cs" />
@@ -171,12 +174,12 @@
     <Compile Include="IO\ffmpeg\FFMPEGParameters.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IO\BigEndianReader.cs" />
-    <Compile Include="IO\BigEndianWriter.cs" />
     <Compile Include="IO\SOL\Amf0.cs" />
     <Compile Include="IO\SOL\Amf0Object.cs" />
     <Compile Include="IO\SOL\sol_track.cs" />
     <Compile Include="IO\SOL\SOLFile.cs" />
+    <Compile Include="IO\BigEndianReader.cs" />
+    <Compile Include="IO\BigEndianWriter.cs" />
     <Compile Include="IO\SOLLoader.cs" />
     <Compile Include="IO\SOLWriter.cs" />
     <Compile Include="IO\TrackIO.cs" />
@@ -222,22 +225,25 @@
     <Compile Include="UI\Dialogs\SaveWindow.cs" />
     <Compile Include="UI\Dialogs\TrackInfoWindow.cs" />
     <Compile Include="UI\Dialogs\RebindHotkeyWindow.cs" />
+    <Compile Include="UI\Dialogs\Preferences\HotkeyWidget.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Widgets\WidgetContainer.cs" />
-    <Compile Include="UI\Widgets\HotkeyWidget.cs" />
-    <Compile Include="UI\Widgets\TrackLabel.cs" />
-    <Compile Include="UI\Widgets\Sprite.cs" />
+    <Compile Include="UI\Components\TrackLabel.cs" />
+    <Compile Include="UI\Components\Sprite.cs" />
+    <Compile Include="UI\Components\ColorSwatch.cs" />
+    <Compile Include="UI\Components\ImageButton.cs" />
+    <Compile Include="UI\Components\PlayheadMarker.cs" />
+    <Compile Include="UI\Components\WidgetContainer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\Widgets\InfoBarCoords.cs" />
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
-    <Compile Include="UI\Widgets\TrackInfoBar.cs" />
-    <Compile Include="UI\Widgets\RightInfoBar.cs" />
-    <Compile Include="UI\Widgets\ColorSwatch.cs" />
+    <Compile Include="UI\Widgets\InfoBarLeft.cs" />
+    <Compile Include="UI\Widgets\InfoBarRight.cs" />
     <Compile Include="UI\Widgets\SwatchColorButton.cs" />
     <Compile Include="UI\Widgets\TimelineWidget.cs" />
-    <Compile Include="UI\Widgets\ImageButton.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\Playhead.cs" />
-    <Compile Include="UI\Widgets\PlayheadMarker.cs" />
     <Compile Include="UI\Widgets\ZoomSlider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -256,35 +262,6 @@
     <Compile Include="Utils\RectLRTB.cs" />
     <Compile Include="Utils\ErrorLog.cs" />
     <Compile Include="Utils\Settings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NVorbis, Version=0.8.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\NVorbis.0.8.5.0\lib\NVorbis.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.IO.Compression.dll" />
-    <Reference Include="System.IO.Compression.FileSystem.dll" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.4.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions">
-      <HintPath>packages\System.Threading.Tasks.Extensions.4.4.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple">
-      <HintPath>packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="Utf8Json">
-      <HintPath>Utf8Json.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\beep.wav" />
@@ -309,6 +286,8 @@
     <EmbeddedResource Include="Resources\icons\rewind.png" />
     <EmbeddedResource Include="Resources\icons\smoothpenciltool.png" />
     <EmbeddedResource Include="Resources\icons\stop.png" />
+    <EmbeddedResource Include="Resources\icons\beziertool.png" />
+    <EmbeddedResource Include="Resources\icons\generator.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ux\flagmarker.png" />
@@ -404,6 +383,35 @@
     <EmbeddedResource Include="Resources\shaders\simgrid.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NVorbis, Version=0.8.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NVorbis.0.8.5.0\lib\NVorbis.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.IO.Compression.dll" />
+    <Reference Include="System.IO.Compression.FileSystem.dll" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.4.4.0\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.4.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="Utf8Json">
+      <HintPath>Utf8Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\OpenTK.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -431,12 +439,6 @@
       <Project>{41650C82-D630-4E5C-845A-F1513C8FDC99}</Project>
       <Name>Gwen.Renderer.OpenTK</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\icons\beziertool.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\icons\generator.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

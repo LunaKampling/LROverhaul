@@ -22,6 +22,7 @@ using OpenTK.Graphics.OpenGL;
 using Color = System.Drawing.Color;
 using linerider.Rendering;
 using linerider.Game;
+using linerider.Utils;
 
 namespace linerider.Tools
 {
@@ -29,31 +30,19 @@ namespace linerider.Tools
     {
         public override bool RequestsMousePrecision
         {
-            get
-            {
-                return DrawingScenery;
-            }
+            get => DrawingScenery;
         }
         public override Swatch Swatch
         {
-            get
-            {
-                return SharedSwatches.DrawingToolsSwatch;
-            }
+            get => SharedSwatches.DrawingToolsSwatch;
         }
         public override bool ShowSwatch
         {
-            get
-            {
-                return true;
-            }
+            get => true;
         }
         public override bool NeedsRender
         {
-            get
-            {
-                return DrawingScenery || Active;
-            }
+            get => DrawingScenery || Active;
         }
         public bool Snapped = false;
         private bool _drawn;
@@ -61,23 +50,17 @@ namespace linerider.Tools
         private Vector2d _end;
         private float MINIMUM_LINE
         {
-            get
-            {
-                return 6f / game.Track.Zoom;
-            }
+            get => 6f / game.Track.Zoom;
         }
         private bool _addflip = false;
         private Vector2d _mouseshadow;
         public bool DrawingScenery
         {
-            get
-            {
-                return Swatch.Selected == LineType.Scenery;
-            }
+            get => Swatch.Selected == LineType.Scenery;
         }
         public override MouseCursor Cursor
         {
-            get { return game.Cursors["pencil"]; }
+            get => game.Cursors["pencil"];
         }
         public PencilTool() : base()
         {
@@ -180,7 +163,7 @@ namespace linerider.Tools
             base.Render();
             if (DrawingScenery && _mouseshadow != Vector2d.Zero && !game.Track.Playing)
             {
-                GameRenderer.RenderRoundedLine(_mouseshadow, _mouseshadow, Color.FromArgb(100, 0x00, 0xCC, 0x00), 2f * Swatch.GreenMultiplier, false, false);
+                GameRenderer.RenderRoundedLine(_mouseshadow, _mouseshadow, Color.FromArgb(100, Settings.Colors.SceneryLine), 2f * Swatch.GreenMultiplier, false, false);
             }
         }
         public override void Cancel()

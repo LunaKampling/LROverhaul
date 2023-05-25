@@ -38,13 +38,19 @@ namespace linerider.UI
         public TimelineWidget(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
+
+            Margin margin = new Margin(_canvas.EdgesSpacing, 0, _canvas.EdgesSpacing, _canvas.EdgesSpacing);
+            margin += new Margin(50, 0, 50, 0);
+
             Dock = Dock.Bottom;
             _editor = editor;
-            Margin = new Margin(50, 0, 50, 0);
+            Margin = margin;
             AutoSizeToContents = true;
             MouseInputEnabled = false;
             ShouldDrawBackground = true;
             Setup();
+
+            Padding = new Padding(_canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing);
         }
         private void Setup()
         {
@@ -53,14 +59,15 @@ namespace linerider.UI
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
-                Dock = Dock.Top
+                Dock = Dock.Top,
             };
             _topbar = new Panel(this)
             {
-                AutoSizeToContents = true,
+                //AutoSizeToContents = true,
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
-                Dock = Dock.Top
+                Dock = Dock.Top,
+                Height = 32,
             };
             _speedincrease = CreateButton(_topbar, GameResources.fast_forward, "Increase Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedUp, true));
             _speedincrease.Clicked += (o, e) => _editor.PlaybackSpeedUp();
@@ -124,6 +131,13 @@ namespace linerider.UI
                 },
                 Alignment = Pos.Center,
             };
+        }
+        public override void Think()
+        {
+            _speeddecrease.IsHidden = !Settings.UIShowSpeedButtons;
+            _speedincrease.IsHidden = !Settings.UIShowSpeedButtons;
+
+            base.Think();
         }
         private void SetTextColor(object sender, int alpha)
         {

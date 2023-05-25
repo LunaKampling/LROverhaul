@@ -1,37 +1,38 @@
-using System;
 using System.Drawing;
 using OpenTK.Graphics;
+
 namespace linerider.Utils
 {
     static class Constants
     {
         public static Color4 TriggerBGColor = new Color4(244, 245, 249, 255);
         public static Color4 StaticTriggerBGColor = new Color4(244, 245, 249, 255);
-        public static Color TriggerLineColorChange = Color.FromArgb(0, 0, 0);
-        public static Color StaticTriggerLineColorChange = Color.FromArgb(0, 0, 0);
+        public static Color TriggerLineColorChange = Color.Black;
+        public static Color StaticTriggerLineColorChange = Color.Black;
 
-        public static readonly Color4 ColorOffwhite = new Color4(244, 245, 249, 255);
-        public static readonly Color4 ColorWhite = new Color4(255, 255, 255, 255);
-        public static readonly Color4 ColorNightMode = new Color4(22, 22, 22, 255);
+        public static readonly Color BgExportColor = Color.White;
+        public static readonly Color BgEditorColor = Color.FromArgb(0xF9, 0xF9, 0xF9);
+        public static readonly Color BgEditorNightColor = Color.FromArgb(0x33, 0x33, 0x33);
         public static readonly int[] MotionArray =
         {
             1, 2, 5, 10, 20, 30, 40, 80, 160, 320, 640
         };
-        public static readonly Color RedLineColor = Color.FromArgb(0xCC, 0, 0);
-        public static readonly Color BlueLineColor = Color.FromArgb(0, 0x66, 0xFF);
-        public static readonly Color SceneryLineColor = Color.FromArgb(0, 0xCC, 0);
+        public static readonly Color RedLineColor = Color.FromArgb(0xE5, 0x39, 0x35);
+        public static readonly Color BlueLineColor = Color.FromArgb(0x21, 0x96, 0xF3);
+        public static readonly Color SceneryLineColor = Color.FromArgb(0x43, 0xA0, 0x47);
         public static readonly Color TriggerLineColor = Color.FromArgb(0xFF, 0x95, 0x4F);
-        public static readonly Color DefaultLineColor = Color.FromArgb(0, 0, 0);
-        public static readonly Color DefaultNightLineColor = Color.FromArgb(255, 255, 255);
+        public static readonly Color ExportLineColor = Color.Black;
+        public static readonly Color DefaultLineColor = Color.FromArgb(0x33, 0x33, 0x33);
+        public static readonly Color DefaultNightLineColor = Color.FromArgb(0xEE, 0xEE, 0xEE);
 
-        public static Color ConstraintColor = Color.FromArgb(unchecked((int)0xFFCC72B7));
+        public static Color ConstraintColor = Color.FromArgb(0xCC, 0x72, 0xB7);
         public static Color ConstraintRepelColor = Color.CornflowerBlue;
-        public static Color ConstraintFirstBreakColor = Color.FromArgb(unchecked((int)0xFFFF8C00));
-        public static Color ConstraintBreakColor = Color.FromArgb(unchecked((int)0xffe67e00));
+        public static Color ConstraintFirstBreakColor = Color.FromArgb(0xFF, 0x8C, 0x00);
+        public static Color ConstraintBreakColor = Color.FromArgb(0xE6, 0x7E, 0x00);
         public static Color ContactPointColor = Color.Cyan;
         public static Color ContactPointFakieColor = Color.Blue;
-
         public static Color MomentumVectorColor = Color.Red;
+
         public static readonly string TracksDirectory = Program.UserDirectory + TracksFolderName + System.IO.Path.DirectorySeparatorChar;
         public static readonly string RendersDirectory = Program.UserDirectory + RendersFolderName + System.IO.Path.DirectorySeparatorChar;
         public const string RendersFolderName = "Renders";
@@ -45,9 +46,7 @@ namespace linerider.Utils
         public const float MaxZoom = 24;
         public const float MaxSuperZoom = 200;
         public const int MaxFrames = 40 * 60 * 60 * 3; // 3 hours of frames
-        public static Color DefaultKnobColor => Settings.NightMode
-        ? Color.FromArgb(ColorNightMode.ToArgb())
-        : Color.FromArgb(ColorWhite.ToArgb());
+        public const string InternalDefaultName = "*default*";
 
         public static readonly string GithubPageHeader = "https://github.com/LunaKampling/LROverhaul";
         public static readonly string GithubRawHeader = "https://raw.githubusercontent.com/LunaKampling/LROverhaul";

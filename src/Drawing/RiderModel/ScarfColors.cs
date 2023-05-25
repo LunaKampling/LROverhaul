@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using linerider.Utils;
+using Newtonsoft.Json.Linq;
 using OpenTK.Audio.OpenAL;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,14 @@ namespace linerider.Drawing.RiderModel
     {
         private static List<int> Colors = new List<int>();
         private static List<byte> Opacity = new List<byte>();
-
+        public static List<int> GetColorList()
+        {
+            return Colors;
+        }
+        public static List<byte> GetOpacityList()
+        {
+            return Opacity;
+        }
         public static void Add(int color, byte opacity)
         {
             Colors.Add(color);
@@ -37,14 +45,6 @@ namespace linerider.Drawing.RiderModel
         {
             return Colors.Count();
         }
-        public static List<int> GetColorList()
-        {
-            return Colors;
-        }
-        public static List<byte> GetOpacityList()
-        {
-            return Opacity;
-        }
         public static void RemoveAll()
         {
             Colors.Clear();
@@ -58,94 +58,20 @@ namespace linerider.Drawing.RiderModel
                 Remove(Count() - 1);
             }
         }
-        public static void Reload()
+        public static void Normalize() // Make sure scarf is long enough
         {
-            bool isDefaultScarf = Settings.SelectedScarf.Equals("*default*");
-
-            try
+            while (Count() < Settings.ScarfSegments)
             {
-                if (isDefaultScarf)
-                    SetDefault();
-                else
-                    SetFromFile();
-            }
-            catch
-            {
-                SetDefault();
+                GetColorList().AddRange(GetColorList());
+                GetOpacityList().AddRange(GetOpacityList());
             }
         }
-        private static void SetFromFile()
-        {
-            string scarfLocation = Path.Combine(Program.UserDirectory, "Scarves", Settings.SelectedScarf);
-            ScarfLoader loader = new ScarfLoader(scarfLocation);
-
-            RemoveAll();
-
-            List<ScarfSegment> segments = loader.Load();
-            foreach (ScarfSegment segment in segments)
-                Add(segment.Color, segment.Opacity);
-        }
-        /*private static void SetFromFileOld(string filepath)
-        {
-            string fileHeader = File.ReadLines(filepath).First();
-            bool isLegacyFile = fileHeader == "#LRTran Scarf File";
-            bool isValidFile = fileHeader == "#Line Rider Scarf File";
-            if (!isValidFile && !isLegacyFile)
-                throw new Exception("Is not valid scarf file");
-
-            RemoveAll();
-
-            IEnumerable<string> lines = File.ReadAllLines(filepath).Skip(1);
-            foreach (string line in lines)
-            {
-                int color;
-                byte opacity;
-
-                if (isLegacyFile)
-                {
-                    color = Convert.ToInt32(line.Substring(0, line.IndexOf(",")), 16);
-                    opacity = Convert.ToByte(line.Substring(line.IndexOf(" ") + 1), 16);
-                }
-                else
-                {
-                    string colorRaw;
-                    string opacityRaw;
-
-                    if (line.Contains(',')) // Color + opacity
-                    {
-                        string[] parts = line.Split(',');
-                        colorRaw = parts[0].Trim();
-                        opacityRaw = parts[1].Trim();
-                    }
-                    else // Color only
-                    {
-                        colorRaw = line.Trim();
-                        opacityRaw = "255";
-                    }
-
-                    if (!colorRaw.StartsWith("0x"))
-                        colorRaw = $"0x{colorRaw}";
-
-                    if (opacityRaw.EndsWith("%")) // Convert "100%" to "256"
-                    {
-                        double precentage = double.Parse(opacityRaw.TrimEnd('%'));
-                        opacityRaw = Math.Round(precentage / 100 * 255 - 1).ToString();
-                    }
-
-                    color = Convert.ToInt32(colorRaw, 16);
-                    opacity = Convert.ToByte(opacityRaw);
-                }
-
-                Add(color, opacity);
-            }
-        }*/
-        private static void SetDefault()
+        public static void SetDefault()
         {
             RemoveAll();
-            // Add(0xD10101, 0xFF);
-            // Add(0xFF6464, 0xFF);
             Add(0xB93332, 0xFF);
             Add(0xEF7A5D, 0xFF);
+            Normalize();
         }
     }
 }

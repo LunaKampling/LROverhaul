@@ -104,6 +104,7 @@ namespace linerider.UI
                     lockW = Settings.ScreenshotWidth;
                     lockH = Settings.ScreenshotHeight;
                 }
+                Settings.Save();
             };
 
             var width = new NumberProperty(null)
@@ -133,6 +134,7 @@ namespace linerider.UI
                     height.NumberValue = Settings.ScreenshotWidth * lockH / lockW;
                     Settings.ScreenshotLockRatio = true;
                 }
+                Settings.Save();
             };
             height.ValueChanged += (o, e) =>
             {
@@ -143,6 +145,7 @@ namespace linerider.UI
                     width.NumberValue = Settings.ScreenshotHeight * lockW / lockH;
                     Settings.ScreenshotLockRatio = true;
                 }
+                Settings.Save();
             };
 
             table = proptree.Add("Overlay settings", 150);

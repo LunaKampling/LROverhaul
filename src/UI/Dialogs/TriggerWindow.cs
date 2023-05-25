@@ -28,15 +28,11 @@ namespace linerider.UI
         private Spinner _zoomtarget;
 
         private ControlBase _bgoptions;
-        private Spinner _backgrondred;
-        private Spinner _backgrondgreen;
-        private Spinner _backgrondblue;
+        private ControlBase _bgtraget;
 
         private ControlBase _lineoptions;
-        private Spinner _linered;
-        private Spinner _linegreen;
-        private Spinner _lineblue;
-        
+        private ControlBase _linetarget;
+
         private int SliderFrames
         {
             get
@@ -201,13 +197,8 @@ namespace linerider.UI
                 Margin = new Margin(0, 0, 0, 0),
                 Dock = Dock.Fill
             };
-            _backgrondred = new Spinner(null)
-            {
-                Min = 0,
-                Max = 255,
-                Value = 255, 
-            };
-            _backgrondred.ValueChanged += (o, e) =>
+
+            _bgtraget = GwenHelper.CreateLabeledColorInput(_bgoptions, "Background", Settings.Colors.ExportBg, (o, color) =>
             {
                 if (_selecting_trigger)
                     return;
@@ -216,54 +207,15 @@ namespace linerider.UI
                     var trigger = BeginModifyTrigger(trk);
                     if (trigger != null)
                     {
-                        trigger.backgroundRed = (int)_backgrondred.Value;
+                        trigger.backgroundRed = (int)color.Value.R;
+                        trigger.backgroundGreen = (int)color.Value.G;
+                        trigger.backgroundBlue = (int)color.Value.B;
                         EndModifyTrigger(trigger, trk);
                     }
                 }
-            };
-            _backgrondgreen = new Spinner(null)
-            {
-                Min = 0,
-                Max = 255,
-                Value = 255, 
-            };
-            _backgrondgreen.ValueChanged += (o, e) =>
-            {
-                if (_selecting_trigger)
-                    return;
-                using (var trk = _editor.CreateTrackWriter())
-                {
-                    var trigger = BeginModifyTrigger(trk);
-                    if (trigger != null)
-                    {
-                        trigger.backgroundGreen = (int)_backgrondgreen.Value;
-                        EndModifyTrigger(trigger, trk);
-                    }
-                }
-            };
-            _backgrondblue = new Spinner(null)
-            {
-                Min = 0,
-                Max = 255,
-                Value = 255, 
-            };
-            _backgrondblue.ValueChanged += (o, e) =>
-            {
-                if (_selecting_trigger)
-                    return;
-                using (var trk = _editor.CreateTrackWriter())
-                {
-                    var trigger = BeginModifyTrigger(trk);
-                    if (trigger != null)
-                    {
-                        trigger.backgroundBlue = (int)_backgrondblue.Value;
-                        EndModifyTrigger(trigger, trk);
-                    }
-                }
-            };
-            GwenHelper.CreateLabeledControl(_bgoptions, "Background Blue", _backgrondblue).Dock = Dock.Bottom;
-            GwenHelper.CreateLabeledControl(_bgoptions, "Background Green", _backgrondgreen).Dock = Dock.Bottom;
-            GwenHelper.CreateLabeledControl(_bgoptions, "Background Red", _backgrondred).Dock = Dock.Bottom;
+            });
+
+            _bgtraget.Dock = Dock.Bottom;
         }
         private void SetupLine()
         {
@@ -272,13 +224,8 @@ namespace linerider.UI
                 Margin = new Margin(0, 0, 0, 0),
                 Dock = Dock.Fill
             };
-            _linered = new Spinner(null)
-            {
-                Min = 0,
-                Max = 255,
-                Value = 255,
-            };
-            _linered.ValueChanged += (o, e) =>
+
+            _linetarget = GwenHelper.CreateLabeledColorInput(_lineoptions, "Line", Settings.Colors.ExportLine, (o, color) =>
             {
                 if (_selecting_trigger)
                     return;
@@ -287,54 +234,15 @@ namespace linerider.UI
                     var trigger = BeginModifyTrigger(trk);
                     if (trigger != null)
                     {
-                        trigger.lineRed = (int)_linered.Value;
+                        trigger.lineRed = (int)color.Value.R;
+                        trigger.lineGreen = (int)color.Value.G;
+                        trigger.lineBlue = (int)color.Value.B;
                         EndModifyTrigger(trigger, trk);
                     }
                 }
-            };
-            _linegreen = new Spinner(null)
-            {
-                Min = 0,
-                Max = 255,
-                Value = 255, 
-            };
-            _linegreen.ValueChanged += (o, e) =>
-            {
-                if (_selecting_trigger)
-                    return;
-                using (var trk = _editor.CreateTrackWriter())
-                {
-                    var trigger = BeginModifyTrigger(trk);
-                    if (trigger != null)
-                    {
-                        trigger.lineGreen = (int)_linegreen.Value;
-                        EndModifyTrigger(trigger, trk);
-                    }
-                }
-            };
-            _lineblue = new Spinner(null)
-            {
-                Min = 0,
-                Max = 255,
-                Value = 255, 
-            };
-            _lineblue.ValueChanged += (o, e) =>
-            {
-                if (_selecting_trigger)
-                    return;
-                using (var trk = _editor.CreateTrackWriter())
-                {
-                    var trigger = BeginModifyTrigger(trk);
-                    if (trigger != null)
-                    {
-                        trigger.lineBlue = (int)_lineblue.Value;
-                        EndModifyTrigger(trigger, trk);
-                    }
-                }
-            };
-            GwenHelper.CreateLabeledControl(_lineoptions, "Line Blue", _lineblue).Dock = Dock.Bottom;
-            GwenHelper.CreateLabeledControl(_lineoptions, "Line Green", _linegreen).Dock = Dock.Bottom;
-            GwenHelper.CreateLabeledControl(_lineoptions, "Line Red", _linered).Dock = Dock.Bottom;
+            });
+
+            _linetarget.Dock = Dock.Bottom;
         }
         private void SetupRight()
         {
@@ -482,7 +390,7 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.Zoom,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
                             ZoomTarget = 4,
                         };
 
@@ -492,10 +400,10 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.BGChange,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
-                            backgroundRed = 255,
-                            backgroundGreen = 255,
-                            backgroundBlue = 255,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
+                            backgroundRed = Settings.Colors.ExportBg.R,
+                            backgroundGreen = Settings.Colors.ExportBg.G,
+                            backgroundBlue = Settings.Colors.ExportBg.B,
                         };
                         break;
                     case (TriggerType.LineColor):
@@ -503,10 +411,10 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.LineColor,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
-                            lineRed = 255,
-                            lineGreen = 255,
-                            lineBlue = 255,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
+                            lineRed = Settings.Colors.ExportLine.R,
+                            lineGreen = Settings.Colors.ExportLine.G,
+                            lineBlue = Settings.Colors.ExportLine.B,
                         };
                         break;
                     default: //Default to the zoom trigger if something goes wrong
@@ -514,7 +422,7 @@ namespace linerider.UI
                         {
                             TriggerType = TriggerType.Zoom,
                             Start = _editor.Offset,
-                            End = _editor.Offset + 40,
+                            End = _editor.Offset + Settings.DefaultTriggerLength,
                             ZoomTarget = 4,
                         };
                         break;
@@ -638,6 +546,7 @@ namespace linerider.UI
                 switch (trigger.TriggerType)
                 {
                     case TriggerType.Zoom:
+                    {
                         _triggeroptions.Children.Clear();
                         _zoomoptions.Parent = _triggeroptions;
                         Debug.WriteLine("Changed to Zoom");
@@ -645,26 +554,40 @@ namespace linerider.UI
                         _zoomtarget.Value = trigger.ZoomTarget;
                         triggerSelected = TriggerType.Zoom;
                         break;
+                    }
                     case TriggerType.BGChange:
+                    {
                         _triggeroptions.Children.Clear();
                         _bgoptions.Parent = _triggeroptions;
                         Debug.WriteLine("Changed to Background");
 
-                        _backgrondred.Value = trigger.backgroundRed;
-                        _backgrondgreen.Value = trigger.backgroundGreen;
-                        _backgrondblue.Value = trigger.backgroundBlue;
+                        // (!) Temporary solution, will be remade later
+                        TextBox bgField = (TextBox)_bgtraget.FindChildByName("input");
+                        GwenHelper.ColorIndicator bgPreview = (GwenHelper.ColorIndicator)_bgtraget.FindChildByName("preview");
+                        Color color = Color.FromArgb(trigger.backgroundRed, trigger.backgroundGreen, trigger.backgroundBlue);
+
+                        bgField.Text = $"{color.R:X2}{color.G:X2}{color.B:X2}";
+                        bgPreview.Color = color;
+
                         triggerSelected = TriggerType.BGChange;
                         break;
+                    }
                     case TriggerType.LineColor:
+                    { 
                         _triggeroptions.Children.Clear();
                         _lineoptions.Parent = _triggeroptions;
                         Debug.WriteLine("Changed to Line");
 
-                        _linered.Value = trigger.lineRed;
-                        _linegreen.Value = trigger.lineGreen;
-                        _lineblue.Value = trigger.lineBlue;
+                        // (!) Temporary solution, will be remade later
+                        TextBox lineField = (TextBox)_linetarget.FindChildByName("input");
+                        GwenHelper.ColorIndicator linePreview = (GwenHelper.ColorIndicator)_bgtraget.FindChildByName("preview");
+                        Color color = Color.FromArgb(trigger.lineRed, trigger.lineGreen, trigger.lineBlue);
+
+                        lineField.Text = $"{color.R:X2}{color.G:X2}{color.B:X2}";
+                        linePreview.Color = color;
                         triggerSelected = TriggerType.LineColor;
                         break;
+                    }
                     /* Add more triggers here */
                     default:
                         break;

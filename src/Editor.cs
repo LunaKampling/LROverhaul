@@ -198,6 +198,14 @@ namespace linerider
                 }
             }
         }
+        public bool HasDefaultTrackBackground
+        {
+            get => _track.HasDefaultBackground;
+        }
+        public bool HasDefaultTrackLineColor
+        {
+            get => _track.HasDefaultLineColor;
+        }
         public int StartingBGColorR
         {
             get => _track.BGColorR; 
@@ -437,6 +445,22 @@ namespace linerider
                 RedrawLine(entry.Value);
             }
         }
+        public void SetDefaultTrackColors()
+        {
+            Color defaultBg = Settings.Colors.ExportBg;
+            Color defaultLine = Settings.Colors.ExportLine;
+
+            _track.BGColorR = defaultBg.R;
+            _track.BGColorG = defaultBg.G;
+            _track.BGColorB = defaultBg.B;
+
+            _track.LineColorR = defaultLine.R;
+            _track.LineColorG = defaultLine.G;
+            _track.LineColorB = defaultLine.B;
+            Stop();
+            Reset();
+        }
+
         public void ZoomBy(float percent)
         {
             if (Math.Abs(percent) < 0.00001)

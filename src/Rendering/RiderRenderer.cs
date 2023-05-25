@@ -13,15 +13,6 @@ namespace linerider.Rendering
 {
     public class RiderRenderer
     {
-        public List<int> scarfColors
-        {
-            get => ScarfColors.GetColorList();
-        }
-        public List<byte> scarfOpacity
-        {
-            get => ScarfColors.GetOpacityList();
-        }
-
         private AutoArray<RiderVertex> Array = new AutoArray<RiderVertex>(500);
         public float Scale = 1.0f;
         private Shader _shader;
@@ -422,23 +413,21 @@ namespace linerider.Rendering
         }
         private void DrawScarf(Line[] lines, float opacity)
         {
-            if (scarfColors.Count==0) {
-                scarfColors.Add(0xffffff);
-            }
-            if (scarfOpacity.Count == 0)
-            {
-                scarfOpacity.Add((byte)0xff);
-            }
+            if (ScarfColors.AreEmpty())
+                ScarfColors.Add(0xffffff, 0);
 
-            var c = Utility.ColorToRGBA_LE(0xD10101, (byte)(255 * opacity));    //Scarf color
-            var alt = Utility.ColorToRGBA_LE(0xff6464, (byte)(255 * opacity));  //Scarf color
-            var scarfPart = 0;
+            List<int> colorSegments = ScarfColors.GetColorList();
+            List<byte> opacitySegments = ScarfColors.GetOpacityList();
+            int segmentsCount = ScarfColors.Count();
+            int c;
+            int alt;
+            int scarfPart;
 
             List<Vector2> altvectors = new List<Vector2>();
             for (int i = 0; i < lines.Length; i += 2)
             {
-                scarfPart = (((i % scarfColors.Count)+(scarfColors.Count - 1)) % scarfColors.Count);
-                c = Utility.ColorToRGBA_LE(scarfColors[scarfPart], (byte)(scarfOpacity[scarfPart] * opacity));
+                scarfPart = ((i % segmentsCount) + (segmentsCount - 1)) % segmentsCount;
+                c = Utility.ColorToRGBA_LE(colorSegments[scarfPart], (byte)(opacitySegments[scarfPart] * opacity));
 
                 var verts = DrawLine(lines[i].Position1, lines[i].Position2, c, 2);
 
@@ -452,8 +441,8 @@ namespace linerider.Rendering
             }
             for (int i = 0; i < altvectors.Count - 4; i += 4)
             {
-                scarfPart = (i/2 % scarfColors.Count);
-                alt = Utility.ColorToRGBA_LE(scarfColors[scarfPart], (byte)(scarfOpacity[scarfPart] * opacity));
+                scarfPart = (i/2 % segmentsCount);
+                alt = Utility.ColorToRGBA_LE(colorSegments[scarfPart], (byte)(opacitySegments[scarfPart] * opacity));
                 var verts = new RiderVertex[] {
                     RiderVertex.NoTexture(altvectors[i + 0],alt),
                     RiderVertex.NoTexture(altvectors[i + 1],alt),

@@ -56,9 +56,6 @@ namespace linerider
     public class MainWindow : OpenTK.GameWindow
     {
         public bool firstGameUpdate = true; //Run this only on the first update (probably a better way to do this, this is probably bad)
-        public String currentScarf = null; //What the current scarf it to compare it to the settings
-        public bool scarfNeedsUpdate = true; //If the scarf needs a update 
-        public String currentBoshSkin = null; //What the current rider skin is to to compare it to the settings
 
         public Dictionary<string, MouseCursor> Cursors = new Dictionary<string, MouseCursor>();
         public MsaaFbo MSAABuffer;
@@ -186,15 +183,8 @@ namespace linerider
                 }
                 else
                 {
-                    GL.ClearColor(Settings.NightMode ? Constants.ColorNightMode : (Settings.WhiteBG ? Constants.ColorWhite : Constants.ColorOffwhite));
-                    if (Settings.NightMode)
-                    {
-                        Constants.TriggerLineColorChange = Settings.Lines.DefaultNightLine;
-                    }
-                    else
-                    {
-                        Constants.TriggerLineColorChange = Settings.Lines.DefaultLine;
-                    }
+                    GL.ClearColor(Settings.Computed.BGColor);
+                    Constants.TriggerLineColorChange = Settings.Computed.LineColor;
                 }
 
                 MSAABuffer.Use(RenderSize.Width, RenderSize.Height);
@@ -278,45 +268,18 @@ namespace linerider
         }
         public void GameUpdate()
         {
-            
-
-            //TODO: Put these not in the main loop and put them in reasonable places
+            // TODO: Put these not in the main loop and put them in reasonable places
             if (firstGameUpdate)
             {
                 Canvas.ShowChangelog();
                 firstGameUpdate = false;
-                ScarfColors.RemoveAll(); //Remove default white scarf
-                ReloadRiderModel();
-            }
-            //Debug.WriteLine(Track.Name);
-            //Update bosh skin if needed
-            if (currentBoshSkin != Settings.SelectedBoshSkin)
-            {
-                ScarfColors.Reload();
-                ReloadRiderModel();
-                currentBoshSkin = Settings.SelectedBoshSkin;
-            }
-            //Update scarf if needed
-            if ((scarfNeedsUpdate || (currentScarf != Settings.SelectedScarf)))
-            {
-                currentScarf = Settings.SelectedScarf;
-                ScarfColors.Reload();
-                scarfNeedsUpdate = false;
-                ReloadRiderModel();
-
-                while (ScarfColors.Count() < Settings.ScarfSegments)
-                {
-                    ScarfColors.GetColorList().AddRange(ScarfColors.GetColorList());
-                    ScarfColors.GetOpacityList().AddRange(ScarfColors.GetOpacityList());
-                }
-
-                for (int i = 1; i < Settings.multiScarfAmount; i++)
-                {
-                    ScarfColors.Insert(0x0000FF, 0x00, ((i * Settings.multiScarfSegments)) + (i - 1) - (1 + i));
-                }
+                ScarfColors.RemoveAll();
             }
 
-            //Regular code starts here
+            // Check if scarf and rider model are actual
+            RiderLoader.Validate();
+
+            // Regular code starts here
             GameUpdateHandleInput();
             var updates = Track.Scheduler.UnqueueUpdates();
             if (updates > 0)
@@ -352,7 +315,7 @@ namespace linerider
             }
             AudioService.EnsureSync();
 
-            //LRL
+            // LRL
             Coordinates.CoordsUpdate();
 
             if (CurrentTools._selected == CurrentTools.SmoothPencilTool)
@@ -361,39 +324,6 @@ namespace linerider
             }
         }
 
-        public void ReloadRiderModel()
-        {
-            bool isDefaultSkin = Settings.SelectedBoshSkin == null || Settings.SelectedBoshSkin.Equals("*default*");
-            Resources riderRes = new ResourcesDefault();
-
-            if (!isDefaultSkin)
-                riderRes = new ResourcesCustom(Settings.SelectedBoshSkin);
-
-            try
-            {
-                riderRes.Load();
-            }
-            catch (Exception e)
-            {
-                if (e is IOException || e is ArgumentException)
-                {
-                    Debug.WriteLine(e);
-                    riderRes = new ResourcesDefault();
-                    riderRes.Load();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            ModelLoader loader = new ModelLoaderDynamic();
-
-            if (riderRes.Legacy)
-                loader = new ModelLoaderLegacy();
-
-            loader.Load(riderRes);
-        }
         //Used to be static
         public void Invalidate()
         {
@@ -1534,47 +1464,6 @@ namespace linerider
             },
             null,
             repeat: false);
-        }
-        public void setScarfColor(int index, int color, byte opacity)
-        {
-            Track._renderer._riderrenderer.scarfColors[index] = color;
-            Track._renderer._riderrenderer.scarfOpacity[index] = opacity;
-        }
-        public void addScarfColor(int color, byte opacity)
-        {
-            Track._renderer._riderrenderer.scarfColors.Add(color);
-            Track._renderer._riderrenderer.scarfOpacity.Add(opacity);
-        }
-        public void insertScarfColor(int color, byte opacity, int index)
-        {
-            Track._renderer._riderrenderer.scarfColors.Insert(index, color);
-            Track._renderer._riderrenderer.scarfOpacity.Insert(index, opacity);
-        }
-        public void removeScarfColor(int index)
-        {
-            Track._renderer._riderrenderer.scarfColors.RemoveAt(index);
-            Track._renderer._riderrenderer.scarfOpacity.RemoveAt(index);
-        }
-        public List<int> getScarfColorList()
-        {
-            return Track._renderer._riderrenderer.scarfColors;
-        }
-        public List<byte> getScarfOpacityList()
-        {
-            return Track._renderer._riderrenderer.scarfOpacity;
-        }
-        public void removeAllScarfColors()
-        {
-            Track._renderer._riderrenderer.scarfColors.Clear();
-            Track._renderer._riderrenderer.scarfOpacity.Clear();
-        }
-        public void shiftScarfColors(int shift) //Shifts scarf colors to the left
-        {
-            for (int i = 0; i < shift; i++)
-            {
-                insertScarfColor(getScarfColorList()[getScarfColorList().Count - 1], getScarfOpacityList()[getScarfOpacityList().Count - 1], 0);
-                removeScarfColor(getScarfColorList().Count - 1);
-            }
         }
     }
 }

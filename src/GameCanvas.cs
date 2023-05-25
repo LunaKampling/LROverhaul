@@ -16,20 +16,18 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System.Threading;
 using System.Linq;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Drawing;
 using System;
 using OpenTK;
 using linerider.UI;
 using linerider.Tools;
-using linerider.Audio;
 using Gwen.Skin;
 using Gwen.Controls;
 using Gwen;
-using Color = System.Drawing.Color;
 using linerider.Utils;
 
 namespace linerider
@@ -37,28 +35,19 @@ namespace linerider
     public class GameCanvas : Canvas
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
+        public readonly int EdgesSpacing = 5;
+        public readonly int InnerSpacing = 5;
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
-        private RightInfoBar _infobar;
-        private TrackInfoBar _trackinfobar;
-        private ControlBase _topcontainer;
+        private InfoBarCoords _infobarcoords;
         private TimelineWidget _timeline;
         private Toolbar _toolbar;
         private LoadingSprite _loadingsprite;
         private MainWindow game;
         public PlatformImpl Platform;
         public bool Loading { get; set; }
-        public Color TextForeground
-        {
-            get
-            {
-                return Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
-            }
-        }
-        public bool IsModalOpen
-        {
-            get { return Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null; }
-        }
+        public Color TextForeground => Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
+        public bool IsModalOpen => Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null;
         private Tooltip _usertooltip;
         public bool Scrubbing => _timeline.Playhead.Held;
         public readonly Fonts Fonts;
@@ -71,7 +60,7 @@ namespace linerider
         {
             game = Game;
             Fonts = fonts;
-            this.Renderer = renderer;
+            Renderer = renderer;
             Platform = new PlatformImpl(Game);
             Gwen.Platform.Neutral.Implementation = Platform;
             CreateUI();
@@ -81,10 +70,10 @@ namespace linerider
         {
             //process recording junk
             var rec = Settings.Local.RecordingMode;
-            ZoomSlider.IsHidden = rec;
+            ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
             _timeline.IsHidden = rec;
-            //
+
             _loadingsprite.IsHidden = rec || !Loading;
             var selectedtool = CurrentTools.SelectedTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
@@ -105,58 +94,64 @@ namespace linerider
                 offset = Util.ClampRectToRect(offset, Bounds);
                 _usertooltip.SetPosition(offset.X, offset.Y);
             }
+
+            _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
         }
         private void CreateUI()
         {
+            Padding infobarPadding = new Padding(InnerSpacing, InnerSpacing, InnerSpacing, InnerSpacing);
+
             _usertooltip = new Tooltip(this) { IsHidden = true };
             _loadingsprite = new LoadingSprite(this)
             {
                 Positioner = (o) =>
                 {
-                    return new System.Drawing.Point(
+                    return new Point(
                         Width - _loadingsprite.Width,
                         0);
                 },
             };
             _loadingsprite.SetImage(GameResources.loading);
-            _toolbar = new Toolbar(this, game.Track) { Y = 0 };
+            _toolbar = new Toolbar(this, game.Track)
+            {
+                Y = EdgesSpacing,
+            };
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);
-            _topcontainer = new Panel(this)
+
+            ControlBase leftPanel = new Panel(this)
             {
-                Height = 250,
-                Dock = Dock.Top,
+                Dock = Dock.Left,
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
+                AutoSizeToContents = true,
             };
-            _infobar = new RightInfoBar(_topcontainer, game.Track);
-            _trackinfobar = new TrackInfoBar(_topcontainer, game.Track);
-        }
-        private string GetTitle() //unused copy of get title?
-        {
-            string name = game.Track.Name;
-            var changes = Math.Min(999, game.Track.TrackChanges);
-            if (changes > 0)
+            new InfoBarLeft(leftPanel, game.Track)
             {
-                name += " (*)\n";
-                if (changes > 50)
-                {
-                    int rounded = changes;
-                    if (changes < 999)
-                    {
-                        if (changes >= 200)
-                        {
-                            rounded = (changes / 100) * 100;
-                        }
-                        else
-                        {
-                            rounded = (changes / 50) * 50;
-                        }
-                    }
-                    name += (rounded) + "+ changes";
-                }
-            }
-            return name;
+                Dock = Dock.Top,
+                Padding = infobarPadding,
+                ShouldDrawBackground = true,
+            };
+            _infobarcoords = new InfoBarCoords(leftPanel)
+            {
+                Dock = Dock.Top,
+                Padding = infobarPadding,
+                ShouldDrawBackground = true,
+            };
+
+            ControlBase rightPanel = new Panel(this)
+            {
+                Dock = Dock.Right,
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
+            };
+            new InfoBarRight(rightPanel, game.Track)
+            {
+                Dock = Dock.Top,
+                Padding = infobarPadding,
+                ShouldDrawBackground = true,
+            };
         }
         protected override void OnChildAdded(ControlBase child)
         {
