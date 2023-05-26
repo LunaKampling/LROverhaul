@@ -268,12 +268,10 @@ namespace linerider
         }
         public void GameUpdate()
         {
-            // TODO: Put these not in the main loop and put them in reasonable places
             if (firstGameUpdate)
             {
                 Canvas.ShowChangelog();
                 firstGameUpdate = false;
-                ScarfColors.RemoveAll();
             }
 
             // Check if scarf and rider model are actual
@@ -403,6 +401,8 @@ namespace linerider
             AddCursor("default", GameResources.cursor_default, 7 * GameResources.screensize, 4 * GameResources.screensize);
             AddCursor("zoom", GameResources.cursor_zoom_in, 11 * GameResources.screensize, 10 * GameResources.screensize);
             AddCursor("ibeam", GameResources.cursor_ibeam, 15 * GameResources.screensize, 14 * GameResources.screensize);
+            ScarfColors.RemoveAll();
+
             Program.UpdateCheck();
             Track.AutoLoadPrevious();
             linerider.Tools.CurrentTools.Init();
