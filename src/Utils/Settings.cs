@@ -135,6 +135,7 @@ namespace linerider
         public static bool ScreenshotShowHitTest;
         public static bool ScreenshotResIndependentZoom;
 
+        public static float UIScale;
         public static bool UIShowZoom;
         public static bool UIShowSpeedButtons;
         public static int DefaultTimelineLength;
@@ -191,6 +192,10 @@ namespace linerider
         // Computed settings
         public static class Computed
         {
+            public static float UIScale
+            {
+                get => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
+            }
             public static Color BGColor
             {
                 get => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
@@ -306,6 +311,7 @@ namespace linerider
             ScreenshotShowHitTest = false;
             ScreenshotResIndependentZoom = true;
 
+            UIScale = 0f;
             UIShowZoom = true;
             UIShowSpeedButtons = false;
             DefaultTimelineLength = 30;
@@ -651,6 +657,7 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
 
             
+            LoadFloat(GetSetting(lines, nameof(UIScale)), ref UIScale);
             LoadBool(GetSetting(lines, nameof(UIShowZoom)), ref UIShowZoom);
             LoadBool(GetSetting(lines, nameof(UIShowSpeedButtons)), ref UIShowSpeedButtons);
             LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
@@ -792,6 +799,7 @@ namespace linerider
                 MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture)),
 
                 
+                MakeSetting(nameof(UIScale), UIScale.ToString(Program.Culture)),
                 MakeSetting(nameof(UIShowZoom), UIShowZoom.ToString(Program.Culture)),
                 MakeSetting(nameof(UIShowSpeedButtons), UIShowSpeedButtons.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),

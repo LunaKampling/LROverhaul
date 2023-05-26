@@ -669,6 +669,27 @@ namespace linerider.UI
             });
 
             Panel uiGroup = GwenHelper.CreateHeaderPanel(parent, "UI");
+            ComboBox uiScale = GwenHelper.CreateLabeledCombobox(uiGroup, "Scale (WIP):");
+
+            uiScale.AddItem("Auto", "", 0f);
+            uiScale.AddItem("100%", "", 1f);
+            uiScale.AddItem("125%", "", 1.25f);
+            uiScale.AddItem("150%", "", 1.5f);
+            uiScale.AddItem("175%", "", 1.75f);
+            uiScale.AddItem("200%", "", 2f);
+            uiScale.AddItem("300%", "", 3f);
+            uiScale.AddItem("400%", "", 4f);
+            uiScale.SelectByUserData(Settings.UIScale);
+
+            uiScale.ItemSelected += (o, e) =>
+            {
+                if (e.SelectedItem != null)
+                {
+                    Settings.UIScale = (float)e.SelectedItem.UserData;
+                    Settings.Save();
+                }
+            };
+
             GwenHelper.AddCheckbox(uiGroup, "Show Zoom Bar", Settings.UIShowZoom, (o, e) =>
             {
                 Settings.UIShowZoom = ((Checkbox)o).IsChecked;

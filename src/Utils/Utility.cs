@@ -29,7 +29,14 @@ namespace linerider
 {
     public static class Utility
     {
-
+        public static int NumberToCurrentScale(int value)
+        {
+            return (int)Math.Round(value * Settings.Computed.UIScale);
+        }
+        public static float NumberToCurrentScale(float value)
+        {
+            return (float)Math.Round(value * Settings.Computed.UIScale);
+        }
         public static Vector2d SnapToDegrees(Vector2d start, Vector2d end)
         {
             var degrees = (start - end).Length > 1 ? Settings.Editor.XySnapDegrees : 45;

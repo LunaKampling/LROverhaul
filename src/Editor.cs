@@ -69,7 +69,7 @@ namespace linerider
         private bool _paused = false;
         public float Zoom
         {
-            get => _zoom * Settings.ZoomMultiplier;
+            get => _zoom * Settings.ZoomMultiplier * Settings.Computed.UIScale;
             set
             {
                 _zoom = (float)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Local.MaxZoom);
