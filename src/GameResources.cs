@@ -16,33 +16,23 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
+using Svg;
+
 namespace linerider
 {
     internal class GameResources
     {
         public static int screensize;
-        private static string _px;
         private static Assembly Assembly = null;
         private static Dictionary<string, object> _lookuptable = null;
         public static void Init()
         {
-            screensize = (Screen.PrimaryScreen.Bounds.Width / 1600 < Screen.PrimaryScreen.Bounds.Height / 1080) ? (Screen.PrimaryScreen.Bounds.Width / 1600) : (Screen.PrimaryScreen.Bounds.Height / 1080);
-            if (screensize < 1) { screensize = 1; };
-            if (screensize > 4) { screensize = 4; }; //calculate screen size beforehand so the correct cursor textures can be loaded
-            screensize = 1;
-            _px = "_" + (screensize * 32).ToString() + "px";
-
-            //Debug.WriteLine(_px);
-            //Debug.WriteLine(screensize);
-
             if (Assembly == null)
             {
                 Assembly = typeof(GameResources).Assembly;
@@ -222,116 +212,99 @@ namespace linerider
             }
         }
         #endregion
-
-
-
         #region cursors
 
         
-        internal static System.Drawing.Bitmap cursor_move
+        internal static string cursor_hand
         {
             get
             {
-                return GetBitmap("cursors.move" + _px + ".png");
+                return GetString("cursors.hand.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_hand
+        internal static string cursor_drag_inactive
         {
             get
             {
-                return GetBitmap("cursors.hand" + _px + ".png");
+                return GetString("cursors.drag-inactive.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_dragging
+        internal static string cursor_drag_active
         {
             get
             {
-                return GetBitmap("cursors.closed_move" + _px + ".png");
+                return GetString("cursors.drag-active.svg");
             }
         }
 
-        internal static System.Drawing.Bitmap cursor_line
+        internal static string cursor_line
         {
             get
             {
-                return GetBitmap("cursors.line" + _px + ".png");
+                return GetString("cursors.line.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_eraser
+        internal static string cursor_eraser
         {
             get
             {
-                return GetBitmap("cursors.eraser" + _px + ".png");
+                return GetString("cursors.eraser.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_select
+        internal static string cursor_pencil
         {
             get
             {
-                return GetBitmap("cursors.select" + _px + ".png");
+                return GetString("cursors.pencil.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_pencil
+        internal static string cursor_size_swne
         {
             get
             {
-                return GetBitmap("cursors.pencil" + _px + ".png");
+                return GetString("cursors.size-swne.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_nesw
+        internal static string cursor_size_nwse
         {
             get
             {
-                return GetBitmap("cursors.size_bdiag" + _px + ".png");
+                return GetString("cursors.size-nwse.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_nwse
+        internal static string cursor_size_we
         {
             get
             {
-                return GetBitmap("cursors.size_fdiag" + _px + ".png");
+                return GetString("cursors.size-we.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_horz
+        internal static string cursor_size_ns
         {
             get
             {
-                return GetBitmap("cursors.size_hor" + _px + ".png");
+                return GetString("cursors.size-ns.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_vert
+        internal static string cursor_zoom
         {
             get
             {
-                return GetBitmap("cursors.size_ver" + _px + ".png");
+                return GetString("cursors.zoom.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_all
+        internal static string cursor_beam
         {
             get
             {
-                return GetBitmap("cursors.size_all" + _px + ".png");
+                return GetString("cursors.beam.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_zoom_in
+        internal static string cursor_default
         {
             get
             {
-                return GetBitmap("cursors.zoom" + _px + ".png");
-            }
-        }
-        internal static System.Drawing.Bitmap cursor_ibeam
-        {
-            get
-            {
-                return GetBitmap("cursors.ibeam" + _px + ".png");
-            }
-        }
-        internal static System.Drawing.Bitmap cursor_default
-        {
-            get
-            {
-                return GetBitmap("cursors.default" + _px + ".png");
+                return GetString("cursors.default.svg");
             }
         }
         #endregion

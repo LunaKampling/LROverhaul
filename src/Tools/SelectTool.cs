@@ -49,11 +49,11 @@ namespace linerider.Tools
                 if (_hoverscale)
                 {
                     if (_nodetop == _nodeleft)
-                        return game.Cursors["size_nwse"];
+                        return game.Cursors.List[CursorsHandler.Type.SizeNWSE];
                     else
-                        return game.Cursors["size_nesw"];
+                        return game.Cursors.List[CursorsHandler.Type.SizeSWNE];
                 }
-                return game.Cursors["adjustline"];
+                return game.Cursors.List[CursorsHandler.Type.AdjustLine];
             }
         }
         private bool _hoverscale = false;

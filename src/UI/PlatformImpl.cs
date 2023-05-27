@@ -93,30 +93,30 @@ namespace linerider.UI
             {
                 default:
                 case "Default":
-                    SetGameCursor(game.Cursors["default"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.Default]);
                     return;
                 case "SizeWE":
-                    SetGameCursor(game.Cursors["size_hor"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.SizeWE]);
                     break;
                 case "SizeNWSE":
-                    SetGameCursor(game.Cursors["size_nwse"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.SizeNWSE]);
                     break;
                 case "SizeNS":
-                    SetGameCursor(game.Cursors["size_ver"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.SizeNS]);
                     break;
                 case "SizeNESW":
-                    SetGameCursor(game.Cursors["size_nesw"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.SizeSWNE]);
                     break;
                 case "IBeam":
-                    SetGameCursor(game.Cursors["ibeam"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.Beam]);
                     break;
                 case "Hand":
-                    SetGameCursor(game.Cursors["hand_point"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.Hand]);
                     break;
                 case "SizeAll":
                 case "Help":
                 case "No":
-                    SetGameCursor(game.Cursors["default"]);
+                    SetGameCursor(game.Cursors.List[CursorsHandler.Type.Default]);
                     break;
             }
         }

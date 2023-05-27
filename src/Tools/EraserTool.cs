@@ -19,6 +19,7 @@
 using OpenTK;
 using System;
 using linerider.Utils;
+using linerider.UI;
 
 namespace linerider.Tools
 {
@@ -51,7 +52,7 @@ namespace linerider.Tools
         private bool _actionmade;
         public override MouseCursor Cursor
         {
-            get { return game.Cursors["eraser"]; }
+            get { return game.Cursors.List[CursorsHandler.Type.Eraser]; }
         }
 
         public EraserTool() : base()

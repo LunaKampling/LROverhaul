@@ -101,7 +101,8 @@ namespace linerider.UI
         {
             _flagmarker = new PlayheadMarker(this)
             {
-                Cursor = Cursors.Hand,
+                //Cursor = Cursors.Hand,
+                Cursor = Cursors.SizeWE,
                 MouseInputEnabled = true,
             };
             _endslider = new PlayheadMarker(this)

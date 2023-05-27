@@ -7,4 +7,4 @@ MIT License
 gwen-dotnet https://code.google.com/archive/p/gwen-dotnet
 Newtonsoft https://github.com/JamesNK/Newtonsoft.Json
 
-Paper Icons http://snwh.org/paper/icons by Sam Hewitt (http://samuelhewitt.com/) is licensed under CC-SA-4.0 http://creativecommons.org/licenses/by-sa/4.0/
+Posy cursors http://www.michieldb.nl/other/cursors by Michiel de Boer (https://www.youtube.com/user/PosyMusic)

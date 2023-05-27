@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;}
+	.st1{fill:#FEFEFE;stroke:#181925;stroke-miterlimit:10;}
+	.st2{display:none;}
+	.st3{display:inline;fill:#181925;stroke:#FEFEFE;stroke-miterlimit:10;}
+	.st4{display:inline;fill:#FEFEFE;stroke:#181925;stroke-miterlimit:10;}
+</style>
+<path id="_x23__HotSpot" class="st0" d="M15.5,15.5"/>
+<g id="_x23__Light">
+	<polygon class="st1" points="20.5,13.5 20.5,10.5 26.5,15.5 20.5,20.5 20.5,17.5 10.5,17.5 10.5,20.5 4.5,15.5 10.5,10.5 
+		10.5,13.5 	"/>
+</g>
+<g id="_x23__Dark" class="st2">
+	<polygon class="st3" points="20.5,13.5 20.5,10.5 26.5,15.5 20.5,20.5 20.5,17.5 10.5,17.5 10.5,20.5 4.5,15.5 10.5,10.5 
+		10.5,13.5 	"/>
+</g>
+<g id="_x23__Light__x28_HD_x29_" class="st2">
+	<polygon class="st4" points="20.8,13.8 20.8,11 26.5,15.5 20.8,20 20.8,17.2 10.2,17.2 10.2,20 4.5,15.5 10.2,11 10.2,13.8 	"/>
+</g>
+<g id="_x23__Dark__x28_HD_x29_" class="st2">
+	<polygon class="st3" points="20.8,13.8 20.8,11 26.5,15.5 20.8,20 20.8,17.2 10.2,17.2 10.2,20 4.5,15.5 10.2,11 10.2,13.8 	"/>
+</g>
+</svg>

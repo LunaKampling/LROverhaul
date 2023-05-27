@@ -22,6 +22,7 @@ using OpenTK.Graphics.OpenGL;
 using Color = System.Drawing.Color;
 using linerider.Rendering;
 using linerider.Game;
+using linerider.UI;
 
 namespace linerider.Tools
 {
@@ -77,7 +78,7 @@ namespace linerider.Tools
         private Vector2d _mouseshadow;
         public override MouseCursor Cursor
         {
-            get { return game.Cursors["pencil"]; }
+            get { return game.Cursors.List[CursorsHandler.Type.Pencil]; }
         }
         public SmoothPencilTool() : base()
         {

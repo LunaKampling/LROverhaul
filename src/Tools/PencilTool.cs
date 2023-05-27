@@ -23,6 +23,7 @@ using Color = System.Drawing.Color;
 using linerider.Rendering;
 using linerider.Game;
 using linerider.Utils;
+using linerider.UI;
 
 namespace linerider.Tools
 {
@@ -60,7 +61,7 @@ namespace linerider.Tools
         }
         public override MouseCursor Cursor
         {
-            get => game.Cursors["pencil"];
+            get => game.Cursors.List[CursorsHandler.Type.Pencil];
         }
         public PencilTool() : base()
         {

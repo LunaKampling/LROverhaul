@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Diagnostics;
 using linerider.Utils;
+using linerider.UI;
 
 namespace linerider.Tools
 {
@@ -34,7 +35,7 @@ namespace linerider.Tools
     {
         public override MouseCursor Cursor
         {
-            get { return game.Cursors["line"]; }
+            get { return game.Cursors.List[CursorsHandler.Type.Line]; }
         }
         public override Swatch Swatch
         {

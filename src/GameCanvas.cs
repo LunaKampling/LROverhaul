@@ -196,6 +196,11 @@ namespace linerider
                 }
             }
         }
+        public void RefreshCursors()
+        {
+            game.Cursors.Reload();
+            game.Cursors.Refresh(this);
+        }
         public void ShowChangelog()
         {
             if (Settings.showChangelog != true) { return; }

@@ -18,13 +18,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Threading;
 using System.Windows.Forms;
-using Gwen;
 using Gwen.Controls;
 using linerider.Audio;
 using linerider.Drawing;
@@ -38,15 +35,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using Key = OpenTK.Input.Key;
-using Label = Gwen.Controls.Label;
-using Menu = Gwen.Controls.Menu;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using MessageBox = Gwen.Controls.MessageBox;
-using linerider.Game;
-using System.Windows.Forms.VisualStyles;
-using System.IO;
-using System.Linq;
-using System.Configuration;
 using linerider.Addons;
 using linerider.LRL;
 using linerider.Drawing.RiderModel;
@@ -57,7 +46,7 @@ namespace linerider
     {
         public bool firstGameUpdate = true; //Run this only on the first update (probably a better way to do this, this is probably bad)
 
-        public Dictionary<string, MouseCursor> Cursors = new Dictionary<string, MouseCursor>();
+        public CursorsHandler Cursors = new CursorsHandler();
         public MsaaFbo MSAABuffer;
         public GameCanvas Canvas;
         public bool ReversePlayback = false;
@@ -334,7 +323,7 @@ namespace linerider
             if (_uicursor)
                 cursor = Canvas.Platform.CurrentCursor;
             else if (Track.Playing || _dragRider)
-                cursor = Cursors["default"];
+                cursor = Cursors.List[CursorsHandler.Type.Default];
             else if (CurrentTools.SelectedTool != null)
                 cursor = CurrentTools.SelectedTool.Cursor;
             else
@@ -384,28 +373,13 @@ namespace linerider
             _input = new Gwen.Input.OpenTK(this);
             _input.Initialize(Canvas);
             Canvas.ShouldDrawBackground = false;
-            // Models.LoadModels();
 
-            AddCursor("pencil", GameResources.cursor_pencil, 8 * GameResources.screensize, 24 * GameResources.screensize);
-            AddCursor("line", GameResources.cursor_line, 15 * GameResources.screensize, 15 * GameResources.screensize);
-            AddCursor("eraser", GameResources.cursor_eraser, 11 * GameResources.screensize, 11 * GameResources.screensize);
-            AddCursor("hand", GameResources.cursor_move, 16 * GameResources.screensize, 16 * GameResources.screensize);
-            AddCursor("hand_point", GameResources.cursor_hand, 14 * GameResources.screensize, 8 * GameResources.screensize);
-            AddCursor("closed_hand", GameResources.cursor_dragging, 16 * GameResources.screensize, 16 * GameResources.screensize);
-            AddCursor("adjustline", GameResources.cursor_select, 6 * GameResources.screensize, 4 * GameResources.screensize);
-            AddCursor("size_nesw", GameResources.cursor_size_nesw, 16 * GameResources.screensize, 16 * GameResources.screensize);
-            AddCursor("size_nwse", GameResources.cursor_size_nwse, 16 * GameResources.screensize, 16 * GameResources.screensize);
-            AddCursor("size_hor", GameResources.cursor_size_horz, 17 * GameResources.screensize, 16 * GameResources.screensize);
-            AddCursor("size_ver", GameResources.cursor_size_vert, 17 * GameResources.screensize, 16 * GameResources.screensize);
-            AddCursor("size_all", GameResources.cursor_size_all, 16 * GameResources.screensize, 16 * GameResources.screensize);
-            AddCursor("default", GameResources.cursor_default, 7 * GameResources.screensize, 4 * GameResources.screensize);
-            AddCursor("zoom", GameResources.cursor_zoom_in, 11 * GameResources.screensize, 10 * GameResources.screensize);
-            AddCursor("ibeam", GameResources.cursor_ibeam, 15 * GameResources.screensize, 14 * GameResources.screensize);
+            Cursors.Reload();
             ScarfColors.RemoveAll();
-
             Program.UpdateCheck();
             Track.AutoLoadPrevious();
-            linerider.Tools.CurrentTools.Init();
+            CurrentTools.Init();
+            Cursors.Refresh(Canvas);
         }
 
         protected override void OnResize(EventArgs e)
@@ -751,22 +725,6 @@ namespace linerider
                 GL.MatrixMode(MatrixMode.Modelview);
                 GL.LoadIdentity();
             }
-        }
-
-        private void AddCursor(string name, Bitmap image, int hotx, int hoty)
-        {
-            var data = image.LockBits(
-                new Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadOnly,
-                PixelFormat.Format32bppPArgb);
-            var size = (Screen.PrimaryScreen.Bounds.Width / 1600 < Screen.PrimaryScreen.Bounds.Height / 1080) ? (Screen.PrimaryScreen.Bounds.Width / 1600) : (Screen.PrimaryScreen.Bounds.Height / 1080);
-            if (size < 1) { size = 1; };
-            Cursors[name] = new MouseCursor(hotx, hoty, image.Width, image.Height, data.Scan0);
-            //Debug.WriteLine(Cursors[name]);
-            //Debug.WriteLine(size);
-            //Debug.WriteLine(image.Width);
-            //Debug.WriteLine(image.Width * size / 4);
-            image.UnlockBits(data);
         }
         private void RegisterHotkeys()
         {

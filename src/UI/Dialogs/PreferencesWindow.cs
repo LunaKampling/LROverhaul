@@ -657,6 +657,7 @@ namespace linerider.UI
             {
                 Settings.NightMode = ((Checkbox)o).IsChecked;
                 Settings.Save();
+                _canvas.RefreshCursors();
             });
             Checkbox preview = GwenHelper.AddCheckbox(generalGroup, "Preview Mode", Settings.PreviewMode, (o, e) =>
             {
@@ -669,7 +670,7 @@ namespace linerider.UI
             });
 
             Panel uiGroup = GwenHelper.CreateHeaderPanel(parent, "UI");
-            ComboBox uiScale = GwenHelper.CreateLabeledCombobox(uiGroup, "Scale (WIP):");
+            ComboBox uiScale = GwenHelper.CreateLabeledCombobox(uiGroup, "Scale (WIP) *:");
 
             uiScale.AddItem("Auto", "", 0f);
             uiScale.AddItem("100%", "", 1f);
@@ -687,6 +688,7 @@ namespace linerider.UI
                 {
                     Settings.UIScale = (float)e.SelectedItem.UserData;
                     Settings.Save();
+                    _canvas.RefreshCursors();
                 }
             };
 
@@ -700,6 +702,7 @@ namespace linerider.UI
                 Settings.UIShowSpeedButtons = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
+            GwenHelper.CreateHintLabel(uiGroup, "* - Needs Restart");
         }
         private void PopulateColors(ControlBase parent)
         {

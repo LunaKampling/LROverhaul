@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+<style type="text/css">
+	.st0{display:none;fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;}
+	.st1{fill:#FAFAFA;stroke:#181925;stroke-miterlimit:10;}
+	.st2{display:none;}
+	.st3{display:inline;fill:#181925;stroke:#FAFAFA;stroke-miterlimit:10;}
+</style>
+<path id="_x23__HotSpot" class="st0" d="M1,1"/>
+<g id="_x23__Light">
+	<polygon class="st1" points="12.8,12.5 1.5,1.2 1.5,16.8 5.8,12.5 	"/>
+</g>
+<g id="_x23__Dark" class="st2">
+	<polygon class="st3" points="12.8,12.5 1.5,1.2 1.5,16.8 5.8,12.5 	"/>
+</g>
+</svg>

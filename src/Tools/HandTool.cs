@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using linerider.UI;
 using OpenTK;
 using OpenTK.Input;
 
@@ -36,9 +37,9 @@ namespace linerider.Tools
             {
                 if (Active)
                 {
-                    return zoom ? game.Cursors["zoom"] : game.Cursors["closed_hand"];
+                    return zoom ? game.Cursors.List[CursorsHandler.Type.Zoom] : game.Cursors.List[CursorsHandler.Type.DragActive];
                 }
-                return game.Cursors["hand"];
+                return game.Cursors.List[CursorsHandler.Type.DragInactive];
             }
         }
 
