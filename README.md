@@ -6,7 +6,7 @@ This project's goal is to unify the best features from several existing forks of
 # Instructions
 You can download the latest version from [here](https://github.com/LunaKampling/LROverhaul/releases/tag/Initial).
 ## Windows
-If you can't run the application, you probably need to install [.net 4.6](https://www.microsoft.com/en-us/download/details.aspx?id=48130) which is a requirement for running all Line Rider Advanced forks.
+If you can't run the application, you probably need to install [.net 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) which is a requirement for running all Line Rider Advanced forks.
 ## Mac/Linux
 You will need the [mono framework](http://www.mono-project.com/download/stable/) installed in order to run all Line Rider Advanded forks.
 
@@ -28,7 +28,7 @@ First extract the source code and download [gwen-lra](https://github.com/jealous
 Run nuget restore in src (Visual Studio (not VS Code) will do this for you)
 Build src/linerider.sln with msbuild or Visual Studio
 
-This project requires .net 4.6 and C# 7 support.
+This project requires .net 4.8 and C# 7 support.
 
 # Libraries
 This project uses binaries, sources, or modified sources from the following libraries:
