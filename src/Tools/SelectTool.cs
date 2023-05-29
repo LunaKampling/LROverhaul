@@ -53,7 +53,7 @@ namespace linerider.Tools
                     else
                         return game.Cursors.List[CursorsHandler.Type.SizeSWNE];
                 }
-                return game.Cursors.List[CursorsHandler.Type.AdjustLine];
+                return game.Cursors.List[CursorsHandler.Type.Select];
             }
         }
         private bool _hoverscale = false;

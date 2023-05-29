@@ -300,6 +300,7 @@
     <EmbeddedResource Include="Resources\cursors\pencil.svg" />
     <EmbeddedResource Include="Resources\cursors\default.svg" />
     <EmbeddedResource Include="Resources\cursors\eraser.svg" />
+    <EmbeddedResource Include="Resources\cursors\select.svg" />
     <EmbeddedResource Include="Resources\cursors\zoom.svg" />
     <EmbeddedResource Include="Resources\cursors\size-we.svg" />
     <EmbeddedResource Include="Resources\cursors\size-ns.svg" />

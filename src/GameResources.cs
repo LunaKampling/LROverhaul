@@ -236,7 +236,13 @@ namespace linerider
                 return GetString("cursors.drag-active.svg");
             }
         }
-
+        internal static string cursor_select
+        {
+            get
+            {
+                return GetString("cursors.select.svg");
+            }
+        }
         internal static string cursor_line
         {
             get

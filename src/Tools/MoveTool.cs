@@ -73,7 +73,7 @@ namespace linerider.Tools
         }
         public override MouseCursor Cursor
         {
-            get { return game.Cursors.List[CursorsHandler.Type.AdjustLine]; }
+            get { return game.Cursors.List[CursorsHandler.Type.Select]; }
         }
         protected override bool EnableSnap
         {

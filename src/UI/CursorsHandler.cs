@@ -17,20 +17,18 @@ namespace linerider.UI
         {
             Default,
             Pencil,
-            //SmoothPencil, // TODO
             Line,
-            //BezierLine, // TODO
             Eraser,
             Beam,
             Hand,
             DragInactive,
             DragActive,
+            Select,
             Zoom,
             SizeWE,
             SizeNS,
             SizeSWNE,
             SizeNWSE,
-            AdjustLine,
         }
         private class SvgLayerName
         {
@@ -54,14 +52,13 @@ namespace linerider.UI
             AddSvgCursor(Type.Hand, GameResources.cursor_hand);
             AddSvgCursor(Type.DragInactive, GameResources.cursor_drag_inactive);
             AddSvgCursor(Type.DragActive, GameResources.cursor_drag_active);
+            AddSvgCursor(Type.Select, GameResources.cursor_select);
             AddSvgCursor(Type.SizeWE, GameResources.cursor_size_we);
             AddSvgCursor(Type.SizeNS, GameResources.cursor_size_ns);
             AddSvgCursor(Type.SizeSWNE, GameResources.cursor_size_swne);
             AddSvgCursor(Type.SizeNWSE, GameResources.cursor_size_nwse);
             AddSvgCursor(Type.Zoom, GameResources.cursor_zoom);
             AddSvgCursor(Type.Beam, GameResources.cursor_beam);
-
-            List[Type.AdjustLine] = List[Type.Default];
         }
 
         internal void Refresh(GameCanvas canvas)
