@@ -5,9 +5,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using Svg;
 using System.Xml;
-using linerider.Utils;
-using System.Windows.Forms;
-using Gwen.Controls;
+using System.Text.RegularExpressions;
 
 namespace linerider.UI
 {
@@ -32,8 +30,8 @@ namespace linerider.UI
         }
         private class SvgLayerName
         {
-            public const string Prefix = "_x23__"; // "# "
-            public const string HdPostfix = "__x28_HD_x29_"; // " (HD)"
+            public const string Prefix = "# ";
+            public const string HdPostfix = " (HD)";
             public const string Dark = "Dark";
             public const string Light = "Light";
             public const string HotSpot = "HotSpot";
@@ -84,7 +82,7 @@ namespace linerider.UI
         private void PruneSvgDoc(XmlDocument doc)
         {
             XmlNodeList layerNodes = doc.GetElementsByTagName("g");
-            bool preferHD = Settings.Computed.UIScale >= 2;
+            bool preferHD = Settings.Computed.UIScale > 1;
             bool preferDark = Settings.NightMode;
             XmlNode styleNode = null;
             XmlNode cursorLayer = null;
@@ -99,29 +97,28 @@ namespace linerider.UI
             List<XmlNode> layers = new List<XmlNode>();
             foreach (XmlNode el in layerNodes)
             {
-                XmlNode idNode = el.Attributes.GetNamedItem("id");
-                bool isRightLayer = idNode != null && idNode.InnerText.StartsWith(SvgLayerName.Prefix);
+                bool isRightLayer = GetSvgAttrId(el).StartsWith(SvgLayerName.Prefix);
                 if (isRightLayer)
                     layers.Add(el);
             }
 
             // Find "Light" layer and upgrade to "Light (HD)" / "Dark" / "Dark (HD) if needed
-            cursorLayer = layers.Find(x => x.Attributes.GetNamedItem("id").InnerText == SvgLayerName.Prefix + SvgLayerName.Light);
+            cursorLayer = layers.Find(x => GetSvgAttrId(x) == SvgLayerName.Prefix + SvgLayerName.Light);
             if (preferHD)
             {
-                XmlNode layer = layers.Find(x => x.Attributes.GetNamedItem("id").InnerText == SvgLayerName.Prefix + SvgLayerName.Light + SvgLayerName.HdPostfix);
+                XmlNode layer = layers.Find(x => GetSvgAttrId(x) == SvgLayerName.Prefix + SvgLayerName.Light + SvgLayerName.HdPostfix);
                 if (layer != null)
                     cursorLayer = layer;
             }
             if (preferDark)
             {
-                XmlNode layer = layers.Find(x => x.Attributes.GetNamedItem("id").InnerText == SvgLayerName.Prefix + SvgLayerName.Dark);
+                XmlNode layer = layers.Find(x => GetSvgAttrId(x) == SvgLayerName.Prefix + SvgLayerName.Dark);
                 if (layer != null)
                     cursorLayer = layer;
             }
             if (preferDark && preferHD)
             {
-                XmlNode layer = layers.Find(x => x.Attributes.GetNamedItem("id").InnerText == SvgLayerName.Prefix + SvgLayerName.Dark + SvgLayerName.HdPostfix);
+                XmlNode layer = layers.Find(x => GetSvgAttrId(x) == SvgLayerName.Prefix + SvgLayerName.Dark + SvgLayerName.HdPostfix);
                 if (layer != null)
                     cursorLayer = layer;
             }
@@ -158,8 +155,7 @@ namespace linerider.UI
 
             foreach (XmlNode el in allNodes)
             {
-                XmlNode idNode = el.Attributes.GetNamedItem("id");
-                bool isHotspot = idNode != null && idNode.InnerText == SvgLayerName.Prefix + SvgLayerName.HotSpot;
+                bool isHotspot = GetSvgAttrId(el) == SvgLayerName.Prefix + SvgLayerName.HotSpot;
                 if (isHotspot)
                 {
                     hotspotEl = el;
@@ -196,6 +192,30 @@ namespace linerider.UI
             return size;
         }
 
+        private string GetSvgAttrId(XmlNode el)
+        {
+            XmlNode idNode = el.Attributes.GetNamedItem("id");
+            string id = idNode == null ? "" : idNode.InnerText;
+
+            if (string.IsNullOrEmpty(id))
+                return id;
+
+            Match duplicatePostfixMatch = Regex.Match(id, @"_\d*_$");
+            if (duplicatePostfixMatch.Success)
+                id = id.Replace(duplicatePostfixMatch.Value, "");
+
+            MatchCollection unicodeCharMatch = Regex.Matches(id, @"_x([A-F0-9]*?)_", RegexOptions.IgnoreCase);
+            foreach (Match m in unicodeCharMatch)
+            {
+                string charCode = m.Groups[1].Value;
+                string charParsed = Convert.ToChar(Convert.ToUInt32(charCode, 16)).ToString();
+                id = id.Replace(m.Value, charParsed);
+            }
+
+            id = Regex.Replace(id, "_", " ");
+
+            return id;
+        }
 
         private void RegisterCursor(Type name, Bitmap image, int hotx, int hoty)
         {
