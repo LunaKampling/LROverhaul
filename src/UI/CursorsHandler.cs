@@ -6,6 +6,7 @@ using System.Drawing;
 using Svg;
 using System.Xml;
 using System.Text.RegularExpressions;
+using linerider.Utils;
 
 namespace linerider.UI
 {
@@ -76,7 +77,43 @@ namespace linerider.UI
             SvgDocument svg = SvgDocument.Open(doc);
             Bitmap bitmap = svg.Draw(size.Width, size.Height);
 
+            int shadowX = (int)Math.Round(2 * Settings.Computed.UIScale);
+            int shadowY = (int)Math.Round(1 * Settings.Computed.UIScale);
+            float shadowOpacity = Settings.Computed.UIScale == 1 ? 0.25f : 0.15f;
+            bool applyBlur = Settings.Computed.UIScale == 1; // Blurring is a bit slow at high resolutions
+            bitmap = AddShadow(bitmap, shadowX, shadowY, shadowOpacity, applyBlur);
+
             RegisterCursor(name, bitmap, hotspot.X, hotspot.Y);
+        }
+
+        private Bitmap AddShadow(Bitmap bitmap, int shiftX, int shiftY, float shadowOpacity, bool applyBlur)
+        {
+            GaussianBlur blur = new GaussianBlur();
+            Bitmap bitmapWithShadow = new Bitmap(bitmap.Width, bitmap.Height);
+
+            Bitmap shadow = new Bitmap(bitmap.Width, bitmap.Height);
+            using (Graphics g = Graphics.FromImage(shadow))
+            {
+                ColorMatrix colorMatrix = new ColorMatrix();
+                colorMatrix.Matrix00 = 0f;
+                colorMatrix.Matrix11 = 0f;
+                colorMatrix.Matrix22 = 0f;
+                colorMatrix.Matrix33 = shadowOpacity;
+                ImageAttributes imageAttributes = new ImageAttributes();
+                imageAttributes.SetColorMatrix(colorMatrix);
+
+                g.DrawImage(bitmap, new Rectangle(shiftX, shiftY, shadow.Width, shadow.Height), 0, 0, shadow.Width, shadow.Height, GraphicsUnit.Pixel, imageAttributes);
+            }
+            if (applyBlur)
+                shadow = blur.Apply(shadow, 2.0, 5);
+
+            using (Graphics g = Graphics.FromImage(bitmapWithShadow))
+            {
+                g.DrawImage(shadow, new Point(0, 0));
+                g.DrawImage(bitmap, new Point(0, 0));
+            }
+
+            return bitmapWithShadow;
         }
 
         private void PruneSvgDoc(XmlDocument doc)
