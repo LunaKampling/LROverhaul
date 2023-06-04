@@ -16,13 +16,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System.Drawing;
-using System.Reflection;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using Svg;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace linerider
 {
@@ -95,7 +94,7 @@ namespace linerider
                 return GetBytes("beep.wav");
             }
         }
-        internal static System.Drawing.Bitmap DefaultSkin
+        internal static System.Drawing.Bitmap defaultskin
         {
             get
             {
@@ -110,7 +109,7 @@ namespace linerider
                 return GetBytes("icon.ico");
             }
         }
-        internal static string DefaultColors
+        internal static string defaultcolors
         {
             get
             {
@@ -118,28 +117,28 @@ namespace linerider
             }
         }
         #region fonts
-        internal static string liberation_sans_15_fnt
+        internal static string font_liberation_sans_15_fnt
         {
             get
             {
                 return GetString("fonts.liberation_sans_15.fnt");
             }
         }
-        internal static System.Drawing.Bitmap liberation_sans_15_png
+        internal static System.Drawing.Bitmap font_liberation_sans_15_png
         {
             get
             {
                 return GetBitmap("fonts.liberation_sans_15_0.png");
             }
         }
-        internal static string liberation_sans_15_bold_fnt
+        internal static string font_liberation_sans_15_bold_fnt
         {
             get
             {
                 return GetString("fonts.liberation_sans_15_bold.fnt");
             }
         }
-        internal static System.Drawing.Bitmap liberation_sans_15_bold_png
+        internal static System.Drawing.Bitmap font_liberation_sans_15_bold_png
         {
             get
             {
@@ -148,56 +147,56 @@ namespace linerider
         }
         #endregion
         #region rider
-        internal static Bitmap sled_img
+        internal static Bitmap rider_sled
         {
             get
             {
                 return GetBitmap("rider.sled.png");
             }
         }
-        internal static Bitmap sledbroken_img
+        internal static Bitmap rider_sledbroken
         {
             get
             {
                 return GetBitmap("rider.sledbroken.png");
             }
         }
-        internal static Bitmap arm_img
+        internal static Bitmap rider_arm
         {
             get
             {
                 return GetBitmap("rider.arm.png");
             }
         }
-        internal static Bitmap leg_img
+        internal static Bitmap rider_leg
         {
             get
             {
                 return GetBitmap("rider.leg.png");
             }
         }
-        internal static Bitmap body_img
+        internal static Bitmap rider_body
         {
             get
             {
                 return GetBitmap("rider.body.png");
             }
         }
-        internal static Bitmap bodydead_img
+        internal static Bitmap rider_bodydead
         {
             get
             {
                 return GetBitmap("rider.bodydead.png");
             }
         }
-        internal static Bitmap rope_img
+        internal static Bitmap rider_rope
         {
             get
             {
                 return GetBitmap("rider.rope.png");
             }
         }
-        internal static string regions_file
+        internal static string rider_regions_file
         {
             get
             {
@@ -490,21 +489,21 @@ namespace linerider
         }
         #endregion
         #region ux
-        internal static System.Drawing.Bitmap flagmarker
+        internal static System.Drawing.Bitmap ux_flagmarker
         {
             get
             {
                 return GetBitmap("ux.flagmarker.png");
             }
         }
-        internal static System.Drawing.Bitmap playheadmarker
+        internal static System.Drawing.Bitmap ux_playheadmarker
         {
             get
             {
                 return GetBitmap("ux.playheadmarker.png");
             }
         }
-        internal static System.Drawing.Bitmap loading
+        internal static System.Drawing.Bitmap ux_loading
         {
             get
             {

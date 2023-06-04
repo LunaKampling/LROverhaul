@@ -6,18 +6,18 @@ namespace linerider.Drawing.RiderModel
     {
         public override void Load()
         {
-            Body = GameResources.body_img;
-            BodyDead = GameResources.bodydead_img;
+            Body = GameResources.rider_body;
+            BodyDead = GameResources.rider_bodydead;
 
-            Sled = GameResources.sled_img;
-            SledBroken = GameResources.sledbroken_img;
+            Sled = GameResources.rider_sled;
+            SledBroken = GameResources.rider_sledbroken;
 
-            Arm = GameResources.arm_img;
-            Leg = GameResources.leg_img;
+            Arm = GameResources.rider_arm;
+            Leg = GameResources.rider_leg;
 
-            Rope = GameResources.rope_img;
+            Rope = GameResources.rider_rope;
 
-            RegionsCacheLines = GameResources.regions_file.Replace("\r", string.Empty).Split('\n').ToList();
+            RegionsCacheLines = GameResources.rider_regions_file.Replace("\r", string.Empty).Split('\n').ToList();
 
             Legacy = false;
 

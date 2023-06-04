@@ -345,25 +345,25 @@ namespace linerider
             MSAABuffer = new MsaaFbo();
             var renderer = new Gwen.Renderer.OpenTK();
 
-            var skinpng = renderer.CreateTexture(GameResources.DefaultSkin);
+            var skinpng = renderer.CreateTexture(GameResources.defaultskin);
 
-            var fontpng = renderer.CreateTexture(GameResources.liberation_sans_15_png);
-            var fontpngbold = renderer.CreateTexture(GameResources.liberation_sans_15_bold_png);
+            var fontpng = renderer.CreateTexture(GameResources.font_liberation_sans_15_png);
+            var fontpngbold = renderer.CreateTexture(GameResources.font_liberation_sans_15_bold_png);
 
             var gamefont_15 = new Gwen.Renderer.BitmapFont(
                 renderer,
-                GameResources.liberation_sans_15_fnt,
+                GameResources.font_liberation_sans_15_fnt,
                 fontpng);
 
 
             var gamefont_15_bold = new Gwen.Renderer.BitmapFont(
                 renderer,
-                GameResources.liberation_sans_15_bold_fnt,
+                GameResources.font_liberation_sans_15_bold_fnt,
                 fontpngbold);
 
             var skin = new Gwen.Skin.TexturedBase(renderer,
             skinpng,
-            GameResources.DefaultColors
+            GameResources.defaultcolors
             )
             { DefaultFont = gamefont_15 };
 

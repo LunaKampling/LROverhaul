@@ -111,7 +111,7 @@ namespace linerider
                         0);
                 },
             };
-            _loadingsprite.SetImage(GameResources.loading);
+            _loadingsprite.SetImage(GameResources.ux_loading);
             _toolbar = new Toolbar(this, game.Track);
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);

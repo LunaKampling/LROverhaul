@@ -112,8 +112,8 @@ namespace linerider.UI
             };
 
             _flagmarker.IsHidden = true;
-            _flagmarker.SetImage(GameResources.flagmarker);
-            _endslider.SetImage(GameResources.playheadmarker);
+            _flagmarker.SetImage(GameResources.ux_flagmarker);
+            _endslider.SetImage(GameResources.ux_playheadmarker);
             _endslider.SendToBack();
 
             _flagmarker.Margin = new Margin(5, 0, 0, 32 - 12);
