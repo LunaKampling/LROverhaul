@@ -17,17 +17,34 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using Svg;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
 
 namespace linerider
 {
     internal class GameResources
     {
-        public static int screensize;
+        public class VectorResource
+        {
+            public string Raw;
+            public Size BaseSize;
+            public Size Size
+            {
+                get => new Size(
+                    (int)Math.Round(BaseSize.Width * Settings.Computed.UIScale),
+                    (int)Math.Round(BaseSize.Height * Settings.Computed.UIScale)
+                );
+            }
+            public Bitmap Bitmap
+            {
+                get => SvgDocument.FromSvg<SvgDocument>(Raw).Draw(Size.Width, Size.Height);
+            }
+        }
         private static Assembly Assembly = null;
         private static Dictionary<string, object> _lookuptable = null;
         public static void Init()
@@ -86,6 +103,30 @@ namespace linerider
                     return ret;
                 }
             }
+        }
+        public static VectorResource GetVectorImage(string name)
+        {
+            XmlDocument doc = new XmlDocument();
+            string raw = GetString(name);
+
+            doc.LoadXml(raw);
+
+            XmlNode rootNode = doc.GetElementsByTagName("svg")[0];
+            XmlNode viewBoxNode = rootNode.Attributes.GetNamedItem("viewBox");
+            string[] boundings = viewBoxNode.InnerText.Split(' ');
+
+            Size size = new Size(
+                (int)Math.Round(double.Parse(boundings[2])),
+                (int)Math.Round(double.Parse(boundings[3]))
+            );
+
+            VectorResource res = new VectorResource()
+            {
+                Raw = raw,
+                BaseSize = size,
+            };
+
+            return res;
         }
         internal static byte[] beep
         {
@@ -207,102 +248,102 @@ namespace linerider
         #region cursors
 
         
-        internal static string cursor_hand
+        internal static VectorResource cursor_hand
         {
             get
             {
-                return GetString("cursors.hand.svg");
+                return GetVectorImage("cursors.hand.svg");
             }
         }
-        internal static string cursor_drag_inactive
+        internal static VectorResource cursor_drag_inactive
         {
             get
             {
-                return GetString("cursors.drag-inactive.svg");
+                return GetVectorImage("cursors.drag-inactive.svg");
             }
         }
-        internal static string cursor_drag_active
+        internal static VectorResource cursor_drag_active
         {
             get
             {
-                return GetString("cursors.drag-active.svg");
+                return GetVectorImage("cursors.drag-active.svg");
             }
         }
-        internal static string cursor_select
+        internal static VectorResource cursor_select
         {
             get
             {
-                return GetString("cursors.select.svg");
+                return GetVectorImage("cursors.select.svg");
             }
         }
-        internal static string cursor_line
+        internal static VectorResource cursor_line
         {
             get
             {
-                return GetString("cursors.line.svg");
+                return GetVectorImage("cursors.line.svg");
             }
         }
-        internal static string cursor_eraser
+        internal static VectorResource cursor_eraser
         {
             get
             {
-                return GetString("cursors.eraser.svg");
+                return GetVectorImage("cursors.eraser.svg");
             }
         }
-        internal static string cursor_pencil
+        internal static VectorResource cursor_pencil
         {
             get
             {
-                return GetString("cursors.pencil.svg");
+                return GetVectorImage("cursors.pencil.svg");
             }
         }
-        internal static string cursor_size_swne
+        internal static VectorResource cursor_size_swne
         {
             get
             {
-                return GetString("cursors.size-swne.svg");
+                return GetVectorImage("cursors.size-swne.svg");
             }
         }
-        internal static string cursor_size_nwse
+        internal static VectorResource cursor_size_nwse
         {
             get
             {
-                return GetString("cursors.size-nwse.svg");
+                return GetVectorImage("cursors.size-nwse.svg");
             }
         }
-        internal static string cursor_size_we
+        internal static VectorResource cursor_size_we
         {
             get
             {
-                return GetString("cursors.size-we.svg");
+                return GetVectorImage("cursors.size-we.svg");
             }
         }
-        internal static string cursor_size_ns
+        internal static VectorResource cursor_size_ns
         {
             get
             {
-                return GetString("cursors.size-ns.svg");
+                return GetVectorImage("cursors.size-ns.svg");
             }
         }
-        internal static string cursor_zoom
+        internal static VectorResource cursor_zoom
         {
             get
             {
-                return GetString("cursors.zoom.svg");
+                return GetVectorImage("cursors.zoom.svg");
             }
         }
-        internal static string cursor_beam
+        internal static VectorResource cursor_beam
         {
             get
             {
-                return GetString("cursors.beam.svg");
+                return GetVectorImage("cursors.beam.svg");
             }
         }
-        internal static string cursor_default
+        internal static VectorResource cursor_default
         {
             get
             {
-                return GetString("cursors.default.svg");
+                return GetVectorImage("cursors.default.svg");
             }
         }
         #endregion

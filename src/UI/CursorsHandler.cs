@@ -64,12 +64,12 @@ namespace linerider.UI
         {
             canvas.Platform.SetCursor(Gwen.Cursors.Default);
         }
-        private void AddSvgCursor(Type name, string svgRaw)
+        private void AddSvgCursor(Type name, GameResources.VectorResource res)
         {
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(svgRaw);
+            doc.LoadXml(res.Raw);
 
-            Size size = GetSvgSize(doc);
+            Size size = res.Size;
             Point hotspot = GetSvgHotSpot(doc);
 
             PruneSvgDoc(doc);
@@ -85,7 +85,6 @@ namespace linerider.UI
 
             RegisterCursor(name, bitmap, hotspot.X, hotspot.Y);
         }
-
         private Bitmap AddShadow(Bitmap bitmap, int shiftX, int shiftY, float shadowOpacity, bool applyBlur)
         {
             GaussianBlur blur = new GaussianBlur();
@@ -212,21 +211,6 @@ namespace linerider.UI
             };
 
             return hotspot;
-        }
-
-        private Size GetSvgSize(XmlDocument doc)
-        {
-            XmlNode rootNode = doc.GetElementsByTagName("svg")[0];
-            XmlNode viewBoxNode = rootNode.Attributes.GetNamedItem("viewBox");
-            float scale = Settings.Computed.UIScale;
-            string[] boundings = viewBoxNode.InnerText.Split(' ');
-
-            Size size = new Size(
-                (int)Math.Round(double.Parse(boundings[2]) * scale),
-                (int)Math.Round(double.Parse(boundings[3]) * scale)
-            );
-
-            return size;
         }
 
         private string GetSvgAttrId(XmlNode el)
