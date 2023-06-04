@@ -84,6 +84,7 @@ namespace linerider
         private bool _dragRider;
         private bool _invalidated;
         private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
+        private Rectangle _previouswindowpos;
         public MainWindow()
             : base(
                 Constants.WindowSize.Width,
@@ -651,24 +652,26 @@ namespace linerider
                 var input = e.Keyboard;
                 if (!input.IsAnyKeyDown)
                     return;
-                if (input.IsKeyDown(Key.AltLeft) || input.IsKeyDown(Key.AltRight))
+
+                bool toggleFullscreen = ((input.IsKeyDown(Key.AltLeft) || input.IsKeyDown(Key.AltRight)) && input.IsKeyDown(Key.Enter)) || input.IsKeyDown(Key.F11);
+                if (toggleFullscreen)
                 {
-                    if (input.IsKeyDown(Key.Enter))
+                    if (WindowBorder == WindowBorder.Resizable)
                     {
-                        if (WindowBorder == WindowBorder.Resizable)
-                        {
-                            WindowBorder = WindowBorder.Hidden;
-                            X = 0;
-                            Y = 0;
-                            var area = Screen.PrimaryScreen.Bounds;
-                            RenderSize = area.Size;
-                        }
-                        else
-                        {
-                            WindowBorder = WindowBorder.Resizable;
-                        }
-                        return;
+                        _previouswindowpos = new Rectangle(X, Y, RenderSize.Width, RenderSize.Height);
+                        WindowBorder = WindowBorder.Hidden;
+                        RenderSize = Constants.ScreenSize;
+                        X = 0;
+                        Y = 0;
                     }
+                    else
+                    {
+                        WindowBorder = WindowBorder.Resizable;
+                        RenderSize = new Size(_previouswindowpos.Width, _previouswindowpos.Height);
+                        X = _previouswindowpos.X;
+                        Y = _previouswindowpos.Y;
+                    }
+                    return;
                 }
             }
             catch (Exception ex)
