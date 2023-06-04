@@ -102,13 +102,6 @@ namespace linerider
                 return GetBitmap("DefaultSkin.png");
             }
         }
-        internal static System.Drawing.Bitmap loading
-        {
-            get
-            {
-                return GetBitmap("loading.png");
-            }
-        }
 
         internal static byte[] icon
         {
@@ -375,7 +368,7 @@ namespace linerider
         }
 
         #endregion
-        #region Icons
+        #region icons
         internal static System.Drawing.Bitmap pencil_icon
         {
             get
@@ -439,13 +432,6 @@ namespace linerider
                 return GetBitmap("icons.flag.png");
             }
         }
-        internal static System.Drawing.Bitmap flag_invalid_icon
-        {
-            get
-            {
-                return GetBitmap("icons.flag_invalid.png");
-            }
-        }
         internal static System.Drawing.Bitmap fast_forward
         {
             get
@@ -495,15 +481,15 @@ namespace linerider
                 return GetBitmap("icons.generator.png");
             }
         }
-        #endregion
-        #region ux
         internal static System.Drawing.Bitmap camera_need_reset
         {
             get
             {
-                return GetBitmap("ux.cameraneedreset.png");
+                return GetBitmap("icons.cameraneedreset.png");
             }
         }
+        #endregion
+        #region ux
         internal static System.Drawing.Bitmap flagmarker
         {
             get
@@ -516,6 +502,13 @@ namespace linerider
             get
             {
                 return GetBitmap("ux.playheadmarker.png");
+            }
+        }
+        internal static System.Drawing.Bitmap loading
+        {
+            get
+            {
+                return GetBitmap("ux.loading.png");
             }
         }
         #endregion

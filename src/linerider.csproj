@@ -271,14 +271,12 @@
     <EmbeddedResource Include="Resources\DefaultColors.xml" />
     <EmbeddedResource Include="Resources\DefaultSkin.png" />
     <EmbeddedResource Include="Resources\icon.ico" />
-    <EmbeddedResource Include="Resources\loading.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\icons\swatch.png" />
     <EmbeddedResource Include="Resources\icons\erasertool.png" />
     <EmbeddedResource Include="Resources\icons\fast-forward.png" />
     <EmbeddedResource Include="Resources\icons\flag.png" />
-    <EmbeddedResource Include="Resources\icons\flag_invalid.png" />
     <EmbeddedResource Include="Resources\icons\movetool.png" />
     <EmbeddedResource Include="Resources\icons\linetool.png" />
     <EmbeddedResource Include="Resources\icons\menu.png" />
@@ -291,11 +289,12 @@
     <EmbeddedResource Include="Resources\icons\stop.png" />
     <EmbeddedResource Include="Resources\icons\beziertool.png" />
     <EmbeddedResource Include="Resources\icons\generator.png" />
+    <EmbeddedResource Include="Resources\icons\cameraneedreset.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ux\flagmarker.png" />
     <EmbeddedResource Include="Resources\ux\playheadmarker.png" />
-    <EmbeddedResource Include="Resources\ux\cameraneedreset.png" />
+    <EmbeddedResource Include="Resources\ux\loading.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\cursors\pencil.svg" />
