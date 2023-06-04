@@ -18,6 +18,7 @@
 using Gwen;
 using Gwen.Controls;
 using linerider.LRL;
+using linerider.UI.Components;
 
 namespace linerider.UI
 {

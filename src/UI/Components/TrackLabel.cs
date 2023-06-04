@@ -19,7 +19,7 @@
 using System.Drawing;
 using Gwen.Controls;
 
-namespace linerider.UI
+namespace linerider.UI.Components
 {
     /// <summary>
     /// Just a label that is intend to go on top of the track

@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Linq;
 using Gwen;
 using Gwen.Controls;
+using linerider.UI.Components;
 
 namespace linerider.UI
 {

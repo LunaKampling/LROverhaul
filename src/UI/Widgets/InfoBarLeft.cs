@@ -21,6 +21,7 @@ using Gwen.Controls;
 using linerider.IO;
 using linerider.Tools;
 using System.Linq;
+using linerider.UI.Components;
 
 namespace linerider.UI
 {

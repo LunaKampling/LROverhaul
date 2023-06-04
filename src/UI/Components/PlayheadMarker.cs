@@ -24,7 +24,7 @@ using Gwen.Controls;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace linerider.UI
+namespace linerider.UI.Components
 {
     public class PlayheadMarker : Gwen.ControlInternal.Dragger
     {

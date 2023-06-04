@@ -22,6 +22,7 @@ using Gwen;
 using Gwen.Controls;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using linerider.UI.Components;
 
 namespace linerider.UI
 {

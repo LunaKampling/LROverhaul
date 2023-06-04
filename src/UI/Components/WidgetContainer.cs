@@ -21,7 +21,7 @@ using Gwen;
 using Gwen.Controls;
 using linerider.Tools;
 
-namespace linerider.UI
+namespace linerider.UI.Components
 {
     public class WidgetContainer : Panel
     {

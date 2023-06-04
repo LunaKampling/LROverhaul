@@ -21,7 +21,8 @@ using Gwen;
 using Gwen.Controls;
 using linerider.Tools;
 using linerider.Utils;
-namespace linerider.UI
+
+namespace linerider.UI.Components
 {
     public class ColorSwatch : WidgetContainer
     {

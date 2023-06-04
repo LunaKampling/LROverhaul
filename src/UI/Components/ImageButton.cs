@@ -20,7 +20,7 @@ using System.Drawing;
 using Gwen;
 using Gwen.Controls;
 
-namespace linerider.UI
+namespace linerider.UI.Components
 {
     public class ImageButton : Button
     {
