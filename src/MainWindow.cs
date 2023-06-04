@@ -86,8 +86,8 @@ namespace linerider
         private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
         public MainWindow()
             : base(
-                Settings.mainWindowWidth,
-                Settings.mainWindowHeight,
+                Constants.WindowSize.Width,
+                Constants.WindowSize.Height,
                 new GraphicsMode(new ColorFormat(24), 0, 0, 0, ColorFormat.Empty),
                    "Line Rider: Advanced",
                    GameWindowFlags.Default,
@@ -107,6 +107,8 @@ namespace linerider
             GameService.Initialize(this);
             AddonManager.Initialize(this);
             RegisterHotkeys();
+            if (Settings.startWindowMaximized)
+                WindowState = WindowState.Maximized;
         }
 
         public override void Dispose()

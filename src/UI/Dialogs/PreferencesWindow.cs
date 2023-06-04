@@ -929,31 +929,12 @@ namespace linerider.UI
                 Settings.Save();
             });
 
-            Panel windowGroup = GwenHelper.CreateHeaderPanel(parent, "Window Launch Size");
-            Spinner mainWindowWidth = new Spinner(windowGroup)
+            Panel windowGroup = GwenHelper.CreateHeaderPanel(parent, "Window");
+            Checkbox maximizeWin = GwenHelper.AddCheckbox(windowGroup, "Maximize Window On Startup", Settings.showChangelog, (o, e) =>
             {
-                Min = 1,
-                Max = int.MaxValue - 1,
-                Value = Settings.mainWindowWidth,
-            };
-            mainWindowWidth.ValueChanged += (o, e) =>
-            {
-                Settings.mainWindowWidth = (int)((Spinner)o).Value;
+                Settings.startWindowMaximized = ((Checkbox)o).IsChecked;
                 Settings.Save();
-            };
-            GwenHelper.CreateLabeledControl(windowGroup, "Main Window Width (Current: " + (Program.GetWindowWidth()) + ")", mainWindowWidth);
-            Spinner mainWindowHeight = new Spinner(windowGroup)
-            {
-                Min = 1,
-                Max = int.MaxValue - 1,
-                Value = Settings.mainWindowHeight,
-            };
-            mainWindowHeight.ValueChanged += (o, e) =>
-            {
-                Settings.mainWindowHeight = (int)((Spinner)o).Value;
-                Settings.Save();
-            };
-            GwenHelper.CreateLabeledControl(windowGroup, "Main Window Height (Current: " + (Program.GetWindowHeight()) + ")", mainWindowHeight);
+            });
 
             Panel savesGroup = GwenHelper.CreateHeaderPanel(parent, "Saves");
             Spinner autosaveMinutes = new Spinner(savesGroup)

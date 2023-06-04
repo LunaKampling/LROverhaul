@@ -163,8 +163,7 @@ namespace linerider
         public static int multiScarfSegments; //How many segments a multi scarf has
         public static int autosaveChanges; //Changes when autosave starts
         public static int autosaveMinutes; //Amount of minues per autosave
-        public static int mainWindowWidth; //Main window Width
-        public static int mainWindowHeight; //Main window height
+        public static bool startWindowMaximized; //Start window maximized
         public static String DefaultSaveFormat; //What the save menu auto picks 
         public static String DefaultAutosaveFormat; //What the autosave format is
         public static String DefaultQuicksaveFormat; //What the autosave format is
@@ -335,8 +334,7 @@ namespace linerider
             multiScarfSegments = 5;
             autosaveChanges = 50;
             autosaveMinutes = 5;
-            mainWindowWidth = 1280;
-            mainWindowHeight = 720;
+            startWindowMaximized = false;
             DefaultSaveFormat = ".trk";
             DefaultAutosaveFormat = ".trk";
             DefaultQuicksaveFormat = ".trk";
@@ -695,8 +693,7 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(multiScarfAmount)), ref multiScarfAmount);
             LoadInt(GetSetting(lines, nameof(autosaveMinutes)), ref autosaveMinutes);
             LoadInt(GetSetting(lines, nameof(autosaveChanges)), ref autosaveChanges);
-            LoadInt(GetSetting(lines, nameof(mainWindowWidth)), ref mainWindowWidth);
-            LoadInt(GetSetting(lines, nameof(mainWindowHeight)), ref mainWindowHeight);
+            LoadBool(GetSetting(lines, nameof(startWindowMaximized)), ref startWindowMaximized);
             DefaultSaveFormat = GetSetting(lines, nameof(DefaultSaveFormat));
             DefaultAutosaveFormat = GetSetting(lines, nameof(DefaultAutosaveFormat));
             DefaultQuicksaveFormat = GetSetting(lines, nameof(DefaultQuicksaveFormat));
@@ -838,8 +835,7 @@ namespace linerider
                 MakeSetting(nameof(multiScarfAmount), multiScarfAmount.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveChanges), autosaveChanges.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveMinutes), autosaveMinutes.ToString(Program.Culture)),
-                MakeSetting(nameof(mainWindowWidth), mainWindowWidth.ToString(Program.Culture)),
-                MakeSetting(nameof(mainWindowHeight), mainWindowHeight.ToString(Program.Culture)),
+                MakeSetting(nameof(startWindowMaximized), startWindowMaximized.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultSaveFormat), DefaultSaveFormat),
                 MakeSetting(nameof(DefaultAutosaveFormat), DefaultAutosaveFormat),
                 MakeSetting(nameof(DefaultQuicksaveFormat), DefaultQuicksaveFormat),
