@@ -1159,24 +1159,37 @@ namespace linerider
         {
             InputUtils.RegisterHotkey(Hotkey.EditorPencilTool, () => !Track.Playing, () =>
             {
-                if (CurrentTools._selected == CurrentTools.PencilTool || (CurrentTools._selected != CurrentTools.SmoothPencilTool) & (Toolbar.smPencil == true))
+                if (CurrentTools._selected == CurrentTools.PencilTool || (CurrentTools._selected != CurrentTools.SmoothPencilTool) & (Toolbar.smPencilTool == true))
                 {
                     CurrentTools.SetTool(CurrentTools.SmoothPencilTool);
-                    Toolbar.smPencil = true;
+                    Toolbar.smPencilTool = true;
                     Toolbar._smpenbtn.IsHidden = false;
                     Toolbar._pencilbtn.IsHidden = true;
                 }
                 else
                 {
                     CurrentTools.SetTool(CurrentTools.PencilTool);
-                    Toolbar.smPencil = false;
+                    Toolbar.smPencilTool = false;
                     Toolbar._smpenbtn.IsHidden = true;
                     Toolbar._pencilbtn.IsHidden = false;
                 }
             });
             InputUtils.RegisterHotkey(Hotkey.EditorLineTool, () => !Track.Playing, () =>
             {
-                CurrentTools.SetTool(CurrentTools.LineTool);
+                if (CurrentTools._selected == CurrentTools.LineTool || (CurrentTools._selected != CurrentTools.BezierTool) & (Toolbar.bezierTool == true))
+                {
+                    CurrentTools.SetTool(CurrentTools.BezierTool);
+                    Toolbar.bezierTool = true;
+                    Toolbar._bezierbtn.IsHidden = false;
+                    Toolbar._linebtn.IsHidden = true;
+                }
+                else
+                {
+                    CurrentTools.SetTool(CurrentTools.LineTool);
+                    Toolbar.bezierTool = false;
+                    Toolbar._linebtn.IsHidden = false;
+                    Toolbar._bezierbtn.IsHidden = true;
+                }
             });
             InputUtils.RegisterHotkey(Hotkey.EditorEraserTool, () => !Track.Playing, () =>
             {

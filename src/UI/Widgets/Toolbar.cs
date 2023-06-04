@@ -25,12 +25,13 @@ namespace linerider.UI
 {
     public class Toolbar : WidgetContainer
     {
-        public static bool smPencil = false;
+        public static bool smPencilTool = false;
+        public static bool bezierTool = false;
 
         public static ImageButton _pencilbtn;
         public static ImageButton _smpenbtn;
-        private ImageButton _linebtn;
-        private ImageButton _bezierbtn;
+        public static ImageButton _linebtn;
+        public static ImageButton _bezierbtn;
         private ImageButton _eraserbtn;
         private ImageButton _selectbtn;
         private ImageButton _handbtn;
@@ -57,6 +58,7 @@ namespace linerider.UI
             SetupEvents();
             OnThink += Think;
             Padding = new Padding(_canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing);
+            Y = _canvas.EdgesSpacing;
         }
         private void Think(object sender, EventArgs e)
         {
@@ -73,10 +75,10 @@ namespace linerider.UI
             _swatch = new ColorSwatch(this);
             _swatch.Dock = Dock.Left;
             _swatch.Padding = new Padding(0, _canvas.InnerSpacing, 0, 0);
-            _pencilbtn = CreateTool(GameResources.pencil_icon, "Pencil Tool / Smooth Pencil", Hotkey.EditorPencilTool);
+            _pencilbtn = CreateTool(GameResources.pencil_icon, "Pencil / Smooth Pencil Tool", Hotkey.EditorPencilTool);
             _smpenbtn = CreateTool(GameResources.smoothpencil_icon, "Smooth Pencil / Pencil Tool", Hotkey.EditorPencilTool);
-            _linebtn = CreateTool(GameResources.line_icon, "Line Tool", Hotkey.EditorLineTool);
-            _bezierbtn = CreateTool(GameResources.bezier_icon, "Bezier Tool", Hotkey.None);
+            _linebtn = CreateTool(GameResources.line_icon, "Line / Bezier Tool", Hotkey.EditorLineTool);
+            _bezierbtn = CreateTool(GameResources.bezier_icon, "Bezier / Line Tool", Hotkey.EditorLineTool);
             _eraserbtn = CreateTool(GameResources.eraser_icon, "Eraser Tool", Hotkey.EditorEraserTool);
             _selectbtn = CreateTool(GameResources.movetool_icon, "Select Tool", Hotkey.EditorSelectTool);
             _handbtn = CreateTool(GameResources.pantool_icon, "Hand Tool", Hotkey.EditorPanTool);
@@ -88,6 +90,7 @@ namespace linerider.UI
             _menubtn = CreateTool(GameResources.menu_icon, "Options", Hotkey.None);
 
             _smpenbtn.IsHidden = true;
+            _bezierbtn.IsHidden = true;
         }
         private void MakeMenu()
         {
@@ -132,7 +135,7 @@ namespace linerider.UI
                     CurrentTools.SetTool(CurrentTools.SmoothPencilTool);
                     _smpenbtn.IsHidden = false;
                     _pencilbtn.IsHidden = true;
-                    smPencil = true;
+                    smPencilTool = true;
                 }
             };
             _smpenbtn.Clicked += (o, e) =>
@@ -146,14 +149,39 @@ namespace linerider.UI
                     CurrentTools.SetTool(CurrentTools.PencilTool);
                     _smpenbtn.IsHidden = true;
                     _pencilbtn.IsHidden = false;
-                    smPencil = false;
+                    smPencilTool = false;
                 }
             };
-            _linebtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.LineTool);
+            _linebtn.Clicked += (o, e) =>
+            {
+                if (CurrentTools._selected != CurrentTools.LineTool)
+                {
+                    CurrentTools.SetTool(CurrentTools.LineTool);
+                }
+                else
+                {
+                    CurrentTools.SetTool(CurrentTools.BezierTool);
+                    _bezierbtn.IsHidden = false;
+                    _linebtn.IsHidden = true;
+                }
+            };
+            _bezierbtn.Clicked += (o, e) =>
+            {
+                if (CurrentTools._selected != CurrentTools.BezierTool)
+                {
+                    CurrentTools.SetTool(CurrentTools.BezierTool);
+                }
+                else
+                {
+                    CurrentTools.SetTool(CurrentTools.LineTool);
+                    _linebtn.IsHidden = false;
+                    _bezierbtn.IsHidden = true;
+                }
+            };
+
             _eraserbtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.EraserTool);
             _selectbtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.MoveTool);
             _handbtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.HandTool);
-            _bezierbtn.Clicked += (o, e) => CurrentTools.SetTool(CurrentTools.BezierTool);
             _flagbtn.Clicked += (o, e) =>
             {
                 _editor.Flag(_editor.Offset);

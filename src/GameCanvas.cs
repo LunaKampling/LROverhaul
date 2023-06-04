@@ -112,10 +112,7 @@ namespace linerider
                 },
             };
             _loadingsprite.SetImage(GameResources.loading);
-            _toolbar = new Toolbar(this, game.Track)
-            {
-                Y = EdgesSpacing,
-            };
+            _toolbar = new Toolbar(this, game.Track);
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);
 
