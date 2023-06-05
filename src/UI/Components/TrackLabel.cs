@@ -18,6 +18,7 @@
 
 using System.Drawing;
 using Gwen.Controls;
+using linerider.Utils;
 
 namespace linerider.UI.Components
 {
@@ -32,7 +33,7 @@ namespace linerider.UI.Components
             get
             {
                 bool recording = Settings.PreviewMode || IO.TrackRecorder.Recording;
-                return recording ? Color.FromArgb(51, 51, 51) : Settings.Computed.LineColor;
+                return recording ? Constants.ExportLineColor : Settings.Computed.LineColor;
             }
         }
         public TrackLabel(ControlBase parent) : base(parent)

@@ -551,6 +551,13 @@ namespace linerider
                 return GetBitmap("ux.loading.png");
             }
         }
+        internal static VectorResource ux_widgetbg
+        {
+            get
+            {
+                return GetVectorImage("ux.widgetbg.svg");
+            }
+        }
         #endregion
     }
 }

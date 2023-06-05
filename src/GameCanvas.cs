@@ -35,8 +35,6 @@ namespace linerider
     public class GameCanvas : Canvas
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
-        public readonly int EdgesSpacing = Utility.NumberToCurrentScale(5);
-        public readonly int InnerSpacing = Utility.NumberToCurrentScale(5);
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
@@ -99,7 +97,6 @@ namespace linerider
         }
         private void CreateUI()
         {
-            Padding infobarPadding = new Padding(InnerSpacing, InnerSpacing, InnerSpacing, InnerSpacing);
 
             _usertooltip = new Tooltip(this) { IsHidden = true };
             _loadingsprite = new LoadingSprite(this)
@@ -126,14 +123,10 @@ namespace linerider
             new InfoBarLeft(leftPanel, game.Track)
             {
                 Dock = Dock.Top,
-                Padding = infobarPadding,
-                ShouldDrawBackground = true,
             };
             _infobarcoords = new InfoBarCoords(leftPanel)
             {
                 Dock = Dock.Top,
-                Padding = infobarPadding,
-                ShouldDrawBackground = true,
             };
 
             ControlBase rightPanel = new Panel(this)
@@ -146,8 +139,6 @@ namespace linerider
             new InfoBarRight(rightPanel, game.Track)
             {
                 Dock = Dock.Top,
-                Padding = infobarPadding,
-                ShouldDrawBackground = true,
             };
         }
         protected override void OnChildAdded(ControlBase child)

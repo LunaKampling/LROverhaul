@@ -16,21 +16,63 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
+using Gwen.Skin.Texturing;
+using linerider.IO;
+using linerider.Utils;
 
 namespace linerider.UI.Components
 {
     public class WidgetContainer : Panel
     {
+        public static readonly int WidgetMargin = Utility.NumberToCurrentScale(3);
+        public static readonly int WidgetPadding = Utility.NumberToCurrentScale(7);
+        public static readonly int WidgetItemSpacing = Utility.NumberToCurrentScale(5);
+
+        protected Texture _texture;
+        private Bordered _image;
+        private Color _bgcolor
+        {
+            get
+            {
+                bool recording = Settings.PreviewMode || TrackRecorder.Recording;
+                return recording ? Constants.BgExportColor : Settings.Computed.BGColor;
+            }
+        }
         public WidgetContainer(ControlBase parent) : base(parent)
         {
-            MouseInputEnabled = false;
+            Padding = new Padding(WidgetPadding, WidgetPadding, WidgetPadding, WidgetPadding);
+            SetImage(GameResources.ux_widgetbg.Bitmap);
+            ShouldDrawBackground = true;
             AutoSizeToContents = true;
-            ShouldDrawBackground = false;
-            BackgroundAlpha = 15;
+            MouseInputEnabled = false;
+            BackgroundAlpha = 128;
+        }
+        private void SetImage(Bitmap bmp)
+        {
+            if (_texture != null)
+                _texture.Dispose();
+
+            Texture tx = new Texture(Skin.Renderer);
+            Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
+            _texture = tx;
+
+            int middleX = (int)Math.Round((double)bmp.Width / 2);
+            int middleY = (int)Math.Round((double)bmp.Height / 2);
+            Margin bounds = new Margin(middleX, middleY, middleX, middleY);
+
+            _image = new Bordered(_texture, 0, 0, bmp.Width, bmp.Height, bounds);
+        }
+        protected override void Render(Gwen.Skin.SkinBase skin)
+        {
+            if (ShouldDrawBackground)
+            {
+                Color color = Color.FromArgb(BackgroundAlpha, _bgcolor);
+                _image.Draw(skin.Renderer, RenderBounds, color);
+            }
         }
     }
 }

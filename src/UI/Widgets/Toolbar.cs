@@ -21,6 +21,7 @@ using Gwen;
 using Gwen.Controls;
 using linerider.Tools;
 using linerider.UI.Components;
+using linerider.Utils;
 
 namespace linerider.UI
 {
@@ -50,16 +51,12 @@ namespace linerider.UI
         public Toolbar(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
-            MouseInputEnabled = false;
-            AutoSizeToContents = true;
-            ShouldDrawBackground = true;
             _editor = editor;
             MakeButtons();
             MakeMenu();
             SetupEvents();
             OnThink += Think;
-            Padding = new Padding(_canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing);
-            Y = _canvas.EdgesSpacing;
+            Y = WidgetMargin;
         }
         private void Think(object sender, EventArgs e)
         {
@@ -75,7 +72,7 @@ namespace linerider.UI
             };
             _swatch = new ColorSwatch(this);
             _swatch.Dock = Dock.Left;
-            _swatch.Padding = new Padding(0, _canvas.InnerSpacing, 0, 0);
+            _swatch.Padding = new Padding(0, WidgetItemSpacing, 0, 0);
             _pencilbtn = CreateTool(GameResources.pencil_icon, "Pencil / Smooth Pencil Tool", Hotkey.EditorPencilTool);
             _smpenbtn = CreateTool(GameResources.smoothpencil_icon, "Smooth Pencil / Pencil Tool", Hotkey.EditorPencilTool);
             _linebtn = CreateTool(GameResources.line_icon, "Line / Bezier Tool", Hotkey.EditorLineTool);

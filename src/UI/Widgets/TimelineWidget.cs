@@ -20,6 +20,7 @@ using System.Drawing;
 using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
+using linerider.Utils;
 
 namespace linerider.UI
 {
@@ -29,7 +30,6 @@ namespace linerider.UI
         private ControlBase _topbar;
         private ControlBase _bottombar;
         private Editor _editor;
-        private GameCanvas _canvas;
         private ImageButton _speedincrease;
         private ImageButton _speeddecrease;
         private TrackLabel _timecurrent;
@@ -37,20 +37,13 @@ namespace linerider.UI
         private TrackLabel _timemax;
         public TimelineWidget(ControlBase parent, Editor editor) : base(parent)
         {
-            _canvas = (GameCanvas)parent.GetCanvas();
-
-            Margin margin = new Margin(_canvas.EdgesSpacing, 0, _canvas.EdgesSpacing, _canvas.EdgesSpacing);
+            Margin margin = new Margin(WidgetMargin, 0, WidgetMargin, WidgetMargin);
             margin += new Margin(50, 0, 50, 0);
 
             Dock = Dock.Bottom;
             _editor = editor;
             Margin = margin;
-            AutoSizeToContents = true;
-            MouseInputEnabled = false;
-            ShouldDrawBackground = true;
             Setup();
-
-            Padding = new Padding(_canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing);
         }
         private void Setup()
         {
@@ -138,11 +131,6 @@ namespace linerider.UI
             _speedincrease.IsHidden = !Settings.UIShowSpeedButtons;
 
             base.Think();
-        }
-        private void SetTextColor(object sender, int alpha)
-        {
-            var text = (Label)sender;
-            text.TextColor = Color.FromArgb(alpha, _canvas.TextForeground);
         }
         private string GetTimeString(int frameid)
         {

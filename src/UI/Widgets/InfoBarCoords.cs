@@ -19,6 +19,7 @@ using Gwen;
 using Gwen.Controls;
 using linerider.LRL;
 using linerider.UI.Components;
+using linerider.Utils;
 
 namespace linerider.UI
 {
@@ -34,7 +35,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(_canvas.EdgesSpacing, _canvas.EdgesSpacing, 0, 0);
+            Margin = new Margin(WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0, 0);
 
             _ridercoordlabel = new TrackLabel(this)
             {

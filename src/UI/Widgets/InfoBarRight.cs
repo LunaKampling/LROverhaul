@@ -21,13 +21,13 @@ using System.Linq;
 using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
+using linerider.Utils;
 
 namespace linerider.UI
 {
     public class InfoBarRight : WidgetContainer
     {
         private Editor _editor;
-        private GameCanvas _canvas;
         private Stopwatch _fpswatch = new Stopwatch();
 
         private TrackLabel _fpslabel;
@@ -49,7 +49,6 @@ namespace linerider.UI
         }
         public InfoBarRight(ControlBase parent, Editor editor) : base(parent)
         {
-            _canvas = (GameCanvas)parent.GetCanvas();
             _editor = editor;
             OnThink += Think;
             Setup();
@@ -71,7 +70,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(0, _canvas.EdgesSpacing, _canvas.EdgesSpacing, 0);
+            Margin = new Margin(0, WidgetMargin, WidgetMargin, 0);
 
             _fpslabel = new TrackLabel(this)
             {
@@ -97,7 +96,7 @@ namespace linerider.UI
             _riderspeedlabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 Alignment = Pos.Right | Pos.CenterV,
                 TextRequest = (o, e) =>
                 {
@@ -119,7 +118,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
                     string text = $"Zoom: {_zoomrounded}x";
@@ -131,7 +130,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
                     double rate = Math.Round(_editor.Scheduler.UpdatesPerSecond / 40.0, 3);
@@ -143,7 +142,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, currenttext) =>
                 {
                     return _editor.CurrentNotifyMessage;
@@ -156,7 +155,7 @@ namespace linerider.UI
                 Dock = Dock.Top,
                 Width = 32,
                 Height = 32,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
             };
             _usercamerasprite = new Sprite(_iconpanel)
             {
