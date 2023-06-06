@@ -29,6 +29,7 @@ namespace linerider
 {
     internal class GameResources
     {
+        #region Init
         public class VectorResource
         {
             public string Raw;
@@ -58,6 +59,8 @@ namespace linerider
                 _lookuptable = new Dictionary<string, object>();
             }
         }
+        #endregion
+        #region Getters
         public static Bitmap GetBitmap(string name)
         {
             object lookup;
@@ -128,6 +131,8 @@ namespace linerider
 
             return res;
         }
+        #endregion
+        #region Resources: Generic
         internal static byte[] beep
         {
             get
@@ -157,7 +162,8 @@ namespace linerider
                 return GetString("DefaultColors.xml");
             }
         }
-        #region fonts
+        #endregion
+        #region Resources: Fonts
         internal static string font_liberation_sans_15_fnt
         {
             get
@@ -187,7 +193,7 @@ namespace linerider
             }
         }
         #endregion
-        #region rider
+        #region Resources: Rider
         internal static Bitmap rider_sled
         {
             get
@@ -245,9 +251,9 @@ namespace linerider
             }
         }
         #endregion
-        #region cursors
+        #region Resources: Cursors
 
-        
+
         internal static VectorResource cursor_hand
         {
             get
@@ -347,7 +353,7 @@ namespace linerider
             }
         }
         #endregion
-        #region shaders
+        #region Resources: Shaders
         internal static string simline_frag
         {
             get
@@ -408,7 +414,7 @@ namespace linerider
         }
 
         #endregion
-        #region icons
+        #region Resources: Icons
         internal static System.Drawing.Bitmap pencil_icon
         {
             get
@@ -529,7 +535,7 @@ namespace linerider
             }
         }
         #endregion
-        #region ux
+        #region Resources: UX
         internal static System.Drawing.Bitmap ux_flagmarker
         {
             get
