@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using linerider.UI;
 
 namespace linerider
 {
@@ -131,6 +132,20 @@ namespace linerider
 
             return res;
         }
+        public static Fonts GetFont(string name)
+        {
+            string fnt = GetString($"{name}.fnt");
+            Bitmap bitmap = GetBitmap($"{name}_0.png");
+            string fntbold = GetString($"{name}_bold.fnt");
+            Bitmap bitmapbold = GetBitmap($"{name}_bold_0.png");
+
+            Gwen.Renderer.OpenTK renderer = new Gwen.Renderer.OpenTK();
+            Gwen.Renderer.BitmapFont bitmapfont = new Gwen.Renderer.BitmapFont(renderer, fnt, renderer.CreateTexture(bitmap));
+            Gwen.Renderer.BitmapFont bitmapfontbold = new Gwen.Renderer.BitmapFont(renderer, fntbold, renderer.CreateTexture(bitmapbold));
+            Fonts font = new Fonts(bitmapfont, bitmapfontbold);
+
+            return font;
+        }
         #endregion
         #region Resources: Generic
         internal static byte[] beep
@@ -164,34 +179,16 @@ namespace linerider
         }
         #endregion
         #region Resources: Fonts
-        internal static string font_liberation_sans_15_fnt
+        internal static Fonts font_liberation_sans_15
         {
             get
             {
-                return GetString("fonts.liberation_sans_15.fnt");
+                return GetFont("fonts.liberation_sans_15");
             }
         }
-        internal static System.Drawing.Bitmap font_liberation_sans_15_png
-        {
-            get
-            {
-                return GetBitmap("fonts.liberation_sans_15_0.png");
-            }
-        }
-        internal static string font_liberation_sans_15_bold_fnt
-        {
-            get
-            {
-                return GetString("fonts.liberation_sans_15_bold.fnt");
-            }
-        }
-        internal static System.Drawing.Bitmap font_liberation_sans_15_bold_png
-        {
-            get
-            {
-                return GetBitmap("fonts.liberation_sans_15_bold_0.png");
-            }
-        }
+        //internal static Gwen.Renderer.BitmapFont font_test
+        //{
+        //    get
         #endregion
         #region Resources: Rider
         internal static Bitmap rider_sled

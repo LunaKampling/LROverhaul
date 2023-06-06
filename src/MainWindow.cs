@@ -347,27 +347,14 @@ namespace linerider
 
             var skinpng = renderer.CreateTexture(GameResources.defaultskin);
 
-            var fontpng = renderer.CreateTexture(GameResources.font_liberation_sans_15_png);
-            var fontpngbold = renderer.CreateTexture(GameResources.font_liberation_sans_15_bold_png);
-
-            var gamefont_15 = new Gwen.Renderer.BitmapFont(
-                renderer,
-                GameResources.font_liberation_sans_15_fnt,
-                fontpng);
-
-
-            var gamefont_15_bold = new Gwen.Renderer.BitmapFont(
-                renderer,
-                GameResources.font_liberation_sans_15_bold_fnt,
-                fontpngbold);
+            Fonts f = GameResources.font_liberation_sans_15;
 
             var skin = new Gwen.Skin.TexturedBase(renderer,
             skinpng,
             GameResources.defaultcolors
             )
-            { DefaultFont = gamefont_15 };
+            { DefaultFont = f.Default };
 
-            Fonts f = new Fonts(gamefont_15, gamefont_15_bold);
             Canvas = new GameCanvas(skin,
             this,
             renderer,
