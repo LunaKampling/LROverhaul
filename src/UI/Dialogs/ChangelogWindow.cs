@@ -14,7 +14,7 @@ namespace linerider.UI
     {
         public ChangelogWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
-            Title = "Changelog for " + Program.Version + Program.TestVersion;
+            Title = "Changelog for " + Program.FullVersion;
             AutoSizeToContents = true;
 
             var changelogText =

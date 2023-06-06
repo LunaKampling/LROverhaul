@@ -90,7 +90,7 @@ namespace linerider
                 Constants.WindowSize.Width,
                 Constants.WindowSize.Height,
                 new GraphicsMode(new ColorFormat(24), 0, 0, 0, ColorFormat.Empty),
-                   "Line Rider: Advanced",
+                   string.Empty,
                    GameWindowFlags.Default,
                    DisplayDevice.Default,
                    2,

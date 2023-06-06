@@ -37,10 +37,9 @@ namespace linerider
 #endif
         public static string BinariesFolder = "bin";
         public readonly static CultureInfo Culture = new CultureInfo("en-US");
-        public static string Version = "1.5.0.3";
-        public static string TestVersion = "a";
+        public static string FullVersion = AssemblyInfo.Version + (AssemblyInfo.TestVersion.Length > 1 ? " " : "") + AssemblyInfo.TestVersion;
         public static string NewVersion = null;
-        public static readonly string WindowTitle = "Line Rider Overhaul || " + Version + TestVersion;
+        public static readonly string WindowTitle = AssemblyInfo.Title + " \u22C5 " + FullVersion;
         public static Random Random;
         private static bool _crashed;
         private static MainWindow glGame;
@@ -189,8 +188,9 @@ namespace linerider
         }
         public static void UpdateCheck()
         {
-            if (TestVersion.Contains("closed"))
+            if (AssemblyInfo.TestVersion.ToLower().Contains("closed"))
                 return;
+
             if (Settings.CheckForUpdates)
             {
                 new System.Threading.Thread(() =>
@@ -199,16 +199,12 @@ namespace linerider
                     {
                         using (WebClient wc = new WebClient())
                         {
-                            string currentversion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version");
-                            var idx = currentversion.IndexOfAny(new char[] { '\r', '\n' });
+                            string recentversion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version");
+                            var idx = recentversion.IndexOfAny(new char[] { '\r', '\n' });
                             if (idx != -1)
-                            {
-                                currentversion = currentversion.Remove(idx);
-                            }
-                            if (currentversion != Version && currentversion.Length > 0)
-                            {
-                                NewVersion = currentversion;
-                            }
+                                recentversion = recentversion.Remove(idx);
+                            if (recentversion != AssemblyInfo.Version && recentversion.Length > 0)
+                                NewVersion = recentversion;
                         }
                     }
                     catch
@@ -227,6 +223,19 @@ namespace linerider
         public static int GetWindowHeight()
         {
             return (int)glGame.Height;
+        }
+    }
+
+    internal static class AssemblyInfo
+    {
+        public static string Title { get { return GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title); } }
+        public static string Version { get { return GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version); } }
+        public static string TestVersion { get { return GetExecutingAssemblyAttribute<AssemblyMetadataAttribute>(a => a.Value); } }
+
+        private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
+        {
+            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
+            return value.Invoke(attribute);
         }
     }
 }
