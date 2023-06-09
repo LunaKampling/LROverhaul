@@ -34,7 +34,6 @@ namespace Gwen.Renderer
     /// <summary>
     /// BMFont class made for loading files created with bmfont
     /// http://www.angelcode.com/products/bmfont/)
-    /// Supports only the ascii character table.
     /// Expects the "text" output .fnt
     /// OpenGL library independent output.
     /// </summary>
@@ -70,8 +69,11 @@ namespace Gwen.Renderer
         public string Face;
         public int FontSize { get; private set; }
         public int LineHeight { get; private set; }
+        //private const int charAmount = 256; // ASCII
+        private const int charAmount = 65535; // Unicode
+        //private const int charAmount = 200813; // Unicode + CJK
         private FontGlyph _invalid = new FontGlyph();
-        private FontGlyph[] _glyphs = new FontGlyph[256];
+        private FontGlyph[] _glyphs = new FontGlyph[charAmount];
         internal int _texWidth;
         internal int _texHeight;
         ///Creates a bitmap ASCII font
@@ -201,7 +203,7 @@ namespace Gwen.Renderer
                         {
                             if (_glyphs[first].kerning == null)
                             {
-                                _glyphs[first].kerning = new sbyte[256];
+                                _glyphs[first].kerning = new sbyte[charAmount];
                             }
                             var glyph = _glyphs[first];
                             if (Math.Abs(amount) > 127)
