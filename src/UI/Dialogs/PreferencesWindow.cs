@@ -19,7 +19,7 @@ namespace linerider.UI
         public PreferencesWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
             Title = "Preferences";
-            SetSize(500, 625);
+            SetSize(500, 525);
             MinimumSize = Size;
             ControlBase bottom = new ControlBase(this)
             {
@@ -148,47 +148,62 @@ namespace linerider.UI
         {
             Panel advancedGroup = GwenHelper.CreateHeaderPanel(parent, "Advanced Visualization");
 
-            Checkbox contact = GwenHelper.AddCheckbox(advancedGroup, "Contact Points", Settings.Editor.DrawContactPoints, (o, e) =>
+            Panel advancedGroupLeft = new Panel(advancedGroup)
+            {
+                Dock = Dock.Left,
+                ShouldDrawBackground = false,
+                AutoSizeToContents = true,
+                Margin = Margin.Zero,
+            };
+            Checkbox contact = GwenHelper.AddCheckbox(advancedGroupLeft, "Contact Points", Settings.Editor.DrawContactPoints, (o, e) =>
             {
                 Settings.Editor.DrawContactPoints = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox momentum = GwenHelper.AddCheckbox(advancedGroup, "Momentum Vectors", Settings.Editor.MomentumVectors, (o, e) =>
+            Checkbox momentum = GwenHelper.AddCheckbox(advancedGroupLeft, "Momentum Vectors", Settings.Editor.MomentumVectors, (o, e) =>
             {
                 Settings.Editor.MomentumVectors = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox hitbox = GwenHelper.AddCheckbox(advancedGroup, "Line Hitbox", Settings.Editor.RenderGravityWells, (o, e) =>
+            Checkbox hitbox = GwenHelper.AddCheckbox(advancedGroupLeft, "Line Hitbox", Settings.Editor.RenderGravityWells, (o, e) =>
             {
                 Settings.Editor.RenderGravityWells = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox hittest = GwenHelper.AddCheckbox(advancedGroup, "Hit Test", Settings.Editor.HitTest, (o, e) =>
+            Checkbox hittest = GwenHelper.AddCheckbox(advancedGroupLeft, "Hit Test", Settings.Editor.HitTest, (o, e) =>
             {
                 Settings.Editor.HitTest = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox drawagws = GwenHelper.AddCheckbox(advancedGroup, "Line Extensions (AGWs)", Settings.DrawAGWs, (o, e) =>
+            Checkbox drawagws = GwenHelper.AddCheckbox(advancedGroupLeft, "Line Extensions (AGWs)", Settings.DrawAGWs, (o, e) =>
             {
                 Settings.DrawAGWs = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox drawgrid = GwenHelper.AddCheckbox(advancedGroup, "Simulation Grid", Settings.DrawCollisionGrid, (o, e) =>
+
+            Panel advancedGroupRight = new Panel(advancedGroup)
+            {
+                Dock = Dock.Right,
+                ShouldDrawBackground = false,
+                AutoSizeToContents = true,
+                Margin = Margin.Zero,
+            };
+            Checkbox drawgrid = GwenHelper.AddCheckbox(advancedGroupRight, "Simulation Grid", Settings.DrawCollisionGrid, (o, e) =>
             {
                 Settings.DrawCollisionGrid = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox drawfloatgrid = GwenHelper.AddCheckbox(advancedGroup, "Floating-point grid", Settings.DrawFloatGrid, (o, e) =>
+            Checkbox drawfloatgrid = GwenHelper.AddCheckbox(advancedGroupRight, "Floating-point grid", Settings.DrawFloatGrid, (o, e) =>
             {
                 Settings.DrawFloatGrid = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox drawcam = GwenHelper.AddCheckbox(advancedGroup, "Camera", Settings.DrawCamera, (o, e) =>
+            Checkbox drawcam = GwenHelper.AddCheckbox(advancedGroupRight, "Camera", Settings.DrawCamera, (o, e) =>
             {
                 Settings.DrawCamera = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox coordmenu = GwenHelper.AddCheckbox(advancedGroup, "Show Coordinate Menu", Settings.Editor.ShowCoordinateMenu, (o, e) =>
+            Checkbox coordmenu = GwenHelper.AddCheckbox(advancedGroupRight, "Show Coordinate Menu", Settings.Editor.ShowCoordinateMenu, (o, e) =>
             {
                 Settings.Editor.ShowCoordinateMenu = ((Checkbox)o).IsChecked;
                 Settings.Save();
@@ -581,59 +596,50 @@ namespace linerider.UI
             smStabilizer.Tooltip = "Determines by how much your lines are dragged behind";
 
             Panel selectGroup = GwenHelper.CreateHeaderPanel(parent, "Select Tool");
-            selectGroup.Margin = Margin.Zero;
 
-            Panel line = GwenHelper.CreateHeaderPanel(selectGroup, "Line Info");
-            Checkbox length = GwenHelper.AddCheckbox(line, "Show Length", Settings.Editor.ShowLineLength, (o, e) =>
+            Panel lineGroup = GwenHelper.CreateHeaderPanel(selectGroup, "Line Info");
+            lineGroup.Dock = Dock.Left;
+            lineGroup.Margin = Margin.Zero;
+            Checkbox length = GwenHelper.AddCheckbox(lineGroup, "Show Length", Settings.Editor.ShowLineLength, (o, e) =>
             {
                 Settings.Editor.ShowLineLength = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox angle = GwenHelper.AddCheckbox(line, "Show Angle", Settings.Editor.ShowLineAngle, (o, e) =>
+            Checkbox angle = GwenHelper.AddCheckbox(lineGroup, "Show Angle", Settings.Editor.ShowLineAngle, (o, e) =>
             {
                 Settings.Editor.ShowLineAngle = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Checkbox showid = GwenHelper.AddCheckbox(line, "Show ID", Settings.Editor.ShowLineID, (o, e) =>
+            Checkbox showid = GwenHelper.AddCheckbox(lineGroup, "Show ID", Settings.Editor.ShowLineID, (o, e) =>
             {
                 Settings.Editor.ShowLineID = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
 
-            Panel pblifelock = GwenHelper.CreateHeaderPanel(selectGroup, "Lifelock Conditions");
-            GwenHelper.AddCheckbox(pblifelock, "Next Frame Constraints", Settings.Editor.LifeLockNoOrange, (o, e) =>
+            Panel lifelockGroup = GwenHelper.CreateHeaderPanel(selectGroup, "Lifelock Conditions");
+            lifelockGroup.Dock = Dock.Right;
+            lifelockGroup.Margin = Margin.Zero;
+            GwenHelper.AddCheckbox(lifelockGroup, "Next Frame Constraints", Settings.Editor.LifeLockNoOrange, (o, e) =>
             {
                 Settings.Editor.LifeLockNoOrange = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            GwenHelper.AddCheckbox(pblifelock, "No Fakie Death", Settings.Editor.LifeLockNoFakie, (o, e) =>
+            GwenHelper.AddCheckbox(lifelockGroup, "No Fakie Death", Settings.Editor.LifeLockNoFakie, (o, e) =>
             {
                 Settings.Editor.LifeLockNoFakie = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
 
             Panel snappingGroup = GwenHelper.CreateHeaderPanel(parent, "Snapping");
-            Checkbox linesnap = GwenHelper.AddCheckbox(snappingGroup, "Snap New Lines", Settings.Editor.SnapNewLines, (o, e) =>
+
+            Panel snappingGroupBottom = new Panel(snappingGroup)
             {
-                Settings.Editor.SnapNewLines = ((Checkbox)o).IsChecked;
-                Settings.Save();
-            });
-            Checkbox movelinesnap = GwenHelper.AddCheckbox(snappingGroup, "Snap Line Movement", Settings.Editor.SnapMoveLine, (o, e) =>
-            {
-                Settings.Editor.SnapMoveLine = ((Checkbox)o).IsChecked;
-                Settings.Save();
-            });
-            Checkbox gridsnap = GwenHelper.AddCheckbox(snappingGroup, "Snap to displayed grids", Settings.Editor.SnapToGrid, (o, e) =>
-            {
-                Settings.Editor.SnapToGrid = ((Checkbox)o).IsChecked;
-                Settings.Save();
-            });
-            Checkbox forcesnap = GwenHelper.AddCheckbox(snappingGroup, "Force X/Y snap", Settings.Editor.ForceXySnap, (o, e) =>
-            {
-                Settings.Editor.ForceXySnap = ((Checkbox)o).IsChecked;
-                Settings.Save();
-            });
-            Spinner snapAngle = new Spinner(snappingGroup)
+                Dock = Dock.Bottom,
+                ShouldDrawBackground = false,
+                AutoSizeToContents = true,
+                Margin = Margin.Zero,
+            };
+            Spinner snapAngle = new Spinner(snappingGroupBottom)
             {
                 Min = 0,
                 Max = 180,
@@ -646,9 +652,45 @@ namespace linerider.UI
                 ((Spinner)o).Value = Settings.Editor.XySnapDegrees;  // Re-display the rounded value
                 Settings.Save();
             };
-            GwenHelper.CreateLabeledControl(snappingGroup, "X/Y Snap Degrees", snapAngle);
-            forcesnap.Tooltip = "Forces all lines drawn to\nsnap to multiples of a chosen angle";
+            ControlBase snapdegrees = GwenHelper.CreateLabeledControl(snappingGroupBottom, "X/Y Snap Degrees", snapAngle);
+
+            Panel snappingGroupLeft = new Panel(snappingGroup)
+            {
+                Dock = Dock.Left,
+                ShouldDrawBackground = false,
+                AutoSizeToContents = true,
+                Margin = Margin.Zero,
+            };
+            Checkbox linesnap = GwenHelper.AddCheckbox(snappingGroupLeft, "Snap New Lines", Settings.Editor.SnapNewLines, (o, e) =>
+            {
+                Settings.Editor.SnapNewLines = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
+            Checkbox movelinesnap = GwenHelper.AddCheckbox(snappingGroupLeft, "Snap Line Movement", Settings.Editor.SnapMoveLine, (o, e) =>
+            {
+                Settings.Editor.SnapMoveLine = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
             movelinesnap.Tooltip = "Snap to lines when using the\nselect tool to move a single line";
+
+            Panel snappingGroupRight = new Panel(snappingGroup)
+            {
+                Dock = Dock.Right,
+                ShouldDrawBackground = false,
+                AutoSizeToContents = true,
+                Margin = Margin.Zero,
+            };
+            Checkbox gridsnap = GwenHelper.AddCheckbox(snappingGroupRight, "Snap to displayed grids", Settings.Editor.SnapToGrid, (o, e) =>
+            {
+                Settings.Editor.SnapToGrid = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
+            Checkbox forcesnap = GwenHelper.AddCheckbox(snappingGroupRight, "Force X/Y snap", Settings.Editor.ForceXySnap, (o, e) =>
+            {
+                Settings.Editor.ForceXySnap = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
+            forcesnap.Tooltip = "Forces all lines drawn to\nsnap to multiples of a chosen angle";
         }
         private void PopulateInterfaceGeneral(ControlBase parent)
         {
@@ -670,7 +712,7 @@ namespace linerider.UI
             });
 
             Panel uiGroup = GwenHelper.CreateHeaderPanel(parent, "UI");
-            ComboBox uiScale = GwenHelper.CreateLabeledCombobox(uiGroup, "Scale (WIP) *:");
+            ComboBox uiScale = GwenHelper.CreateLabeledCombobox(uiGroup, "Scale *");
 
             uiScale.AddItem("Auto", "", 0f);
             uiScale.AddItem("100%", "", 1f);
@@ -702,7 +744,8 @@ namespace linerider.UI
                 Settings.UIShowSpeedButtons = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            GwenHelper.CreateHintLabel(uiGroup, "* - Needs Restart");
+            GwenHelper.CreateHintLabel(uiGroup, "* Restart required");
+            GwenHelper.CreateHintLabel(uiGroup, "Scale is a Work In Progress feature,\nsome UI parts are not scalable yet.");
         }
         private void PopulateColors(ControlBase parent)
         {
@@ -757,21 +800,18 @@ namespace linerider.UI
             {
                 Settings.Colors.StandardLine = color.Value;
                 Settings.Save();
-                //_canvas.UpdateToolbarSwatchesColors();
                 _editor.RedrawAllLines();
             });
             GwenHelper.CreateLabeledColorInput(lineTypesColors, "Acceleration", Settings.Colors.AccelerationLine, (o, color) =>
             {
                 Settings.Colors.AccelerationLine = color.Value;
                 Settings.Save();
-                //_canvas.UpdateToolbarSwatchesColors();
                 _editor.RedrawAllLines();
             });
             GwenHelper.CreateLabeledColorInput(lineTypesColors, "Scenery", Settings.Colors.SceneryLine, (o, color) =>
             {
                 Settings.Colors.SceneryLine = color.Value;
                 Settings.Save();
-                //_canvas.UpdateToolbarSwatchesColors();
                 _editor.RedrawAllLines();
             });
         }
@@ -863,7 +903,7 @@ namespace linerider.UI
                 Settings.Save();
             };
             GwenHelper.CreateLabeledControl(scarfGroup, "Multi-Scarf Segments *", multiScarfSegments);
-            GwenHelper.CreateHintLabel(scarfGroup, "* - Needs Restart");
+            GwenHelper.CreateHintLabel(scarfGroup, "* Restart required");
 
             Button openManualBtn = new Button(parent)
             {

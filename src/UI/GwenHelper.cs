@@ -77,7 +77,7 @@ namespace linerider.UI
                 },
                 AutoSizeToContents = true,
                 Margin = new Margin(0, 0, 0, 10),
-                Padding = new Padding(10, 0, 0, 0),
+                Padding = new Padding(10, 0, 5, 0),
                 ShouldDrawBackground = false
             };
             return panel;
