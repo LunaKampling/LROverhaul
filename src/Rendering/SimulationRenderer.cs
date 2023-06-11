@@ -110,7 +110,7 @@ namespace linerider.Rendering
             }
             _riderrenderer.Scale = options.Zoom;
             _riderrenderer.Draw();
-            CurrentTools.SelectedTool.Render();
+            CurrentTools.CurrentTool.Render();
             _riderrenderer.DrawLines();
             _riderrenderer.Clear();
         }

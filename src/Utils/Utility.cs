@@ -37,6 +37,10 @@ namespace linerider
         {
             return (float)Math.Round(value * Settings.Computed.UIScale);
         }
+        public static bool IsColorDark(Color color)
+        {
+            return color.R * 0.2126 + color.G * 0.6652 + color.B * 0.0722 < 255 / 2;
+        }
         public static Vector2d SnapToDegrees(Vector2d start, Vector2d end)
         {
             var degrees = (start - end).Length > 1 ? Settings.Editor.XySnapDegrees : 45;

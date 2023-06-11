@@ -136,7 +136,7 @@ namespace linerider
             (Track.Playing) ||
             Canvas.Loading ||
             Track.NeedsDraw ||
-            CurrentTools.SelectedTool.NeedsRender;
+            CurrentTools.CurrentTool.NeedsRender;
             if (shouldrender)
             {
                 _invalidated = false;
@@ -228,7 +228,7 @@ namespace linerider
             if (!Track.Playing &&
                     !Canvas.NeedsRedraw &&
                     !Track.NeedsDraw &&
-                    !CurrentTools.SelectedTool.Active)
+                    !CurrentTools.CurrentTool.Active)
             {
                 Thread.Sleep(10);
             }
@@ -237,7 +237,7 @@ namespace linerider
         {
             if (InputUtils.HandleMouseMove(out int x, out int y) && !Canvas.IsModalOpen)
             {
-                CurrentTools.SelectedTool.OnMouseMoved(new Vector2d(x, y));
+                CurrentTools.CurrentTool.OnMouseMoved(new Vector2d(x, y));
             }
         }
         /// <summary>
@@ -308,7 +308,7 @@ namespace linerider
             // LRL
             Coordinates.CoordsUpdate();
 
-            if (CurrentTools._selected == CurrentTools.SmoothPencilTool)
+            if (CurrentTools._current == CurrentTools.SmoothPencilTool)
             {
                 CurrentTools.SmoothPencilTool.UpdateSmooth();
             }
@@ -327,8 +327,8 @@ namespace linerider
                 cursor = Canvas.Platform.CurrentCursor;
             else if (Track.Playing || _dragRider)
                 cursor = Cursors.List[CursorsHandler.Type.Default];
-            else if (CurrentTools.SelectedTool != null)
-                cursor = CurrentTools.SelectedTool.Cursor;
+            else if (CurrentTools.CurrentTool != null)
+                cursor = CurrentTools.CurrentTool.Cursor;
             else
             {
                 cursor = MouseCursor.Default;
@@ -355,6 +355,8 @@ namespace linerider
             )
             { DefaultFont = f.Default };
 
+            CurrentTools.Init();
+
             Canvas = new GameCanvas(skin,
             this,
             renderer,
@@ -368,7 +370,6 @@ namespace linerider
             ScarfColors.RemoveAll();
             Program.UpdateCheck();
             Track.AutoLoadPrevious();
-            CurrentTools.Init();
             Cursors.Refresh(Canvas);
         }
 
@@ -448,16 +449,16 @@ namespace linerider
                         {
                             if (e.Button == MouseButton.Left)
                             {
-                                CurrentTools.SelectedTool.OnMouseDown(new Vector2d(e.X, e.Y));
+                                CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y));
                             }
                             else if (e.Button == MouseButton.Right)
                             {
-                                CurrentTools.SelectedTool.OnMouseRightDown(new Vector2d(e.X, e.Y));
+                                CurrentTools.CurrentTool.OnMouseRightDown(new Vector2d(e.X, e.Y));
                             }
                         }
 
                     }
-                    else if (CurrentTools.SelectedTool == CurrentTools.PencilTool)
+                    else if (CurrentTools.CurrentTool == CurrentTools.PencilTool)
                     {
                         if (e.Button == MouseButton.Left)
                         {
@@ -489,9 +490,9 @@ namespace linerider
                 var r = _input.ProcessMouseMessage(e);
                 _uicursor = _input.MouseCaptured;
                 InputUtils.CheckCurrentHotkey();
-                if (!r || CurrentTools.SelectedTool.IsMouseButtonDown)
+                if (!r || CurrentTools.CurrentTool.IsMouseButtonDown)
                 {
-                    if (!CurrentTools.SelectedTool.IsMouseButtonDown &&
+                    if (!CurrentTools.CurrentTool.IsMouseButtonDown &&
                         Canvas.GetOpenWindows().Count != 0)
                     {
                         UpdateCursor();
@@ -499,11 +500,11 @@ namespace linerider
                     }
                     if (e.Button == MouseButton.Left)
                     {
-                        CurrentTools.SelectedTool.OnMouseUp(new Vector2d(e.X, e.Y));
+                        CurrentTools.CurrentTool.OnMouseUp(new Vector2d(e.X, e.Y));
                     }
                     else if (e.Button == MouseButton.Right)
                     {
-                        CurrentTools.SelectedTool.OnMouseRightUp(new Vector2d(e.X, e.Y));
+                        CurrentTools.CurrentTool.OnMouseRightUp(new Vector2d(e.X, e.Y));
                     }
                 }
                 UpdateCursor();
@@ -545,9 +546,9 @@ namespace linerider
                     }
                     Invalidate();
                 }
-                if (CurrentTools.SelectedTool.RequestsMousePrecision)
+                if (CurrentTools.CurrentTool.RequestsMousePrecision)
                 {
-                    CurrentTools.SelectedTool.OnMouseMoved(new Vector2d(e.X, e.Y));
+                    CurrentTools.CurrentTool.OnMouseMoved(new Vector2d(e.X, e.Y));
                 }
 
                 if (r)
@@ -626,7 +627,7 @@ namespace linerider
                 }
                 if (
                     Canvas.IsModalOpen ||
-                    (!Track.Playing && CurrentTools.SelectedTool.OnKeyDown(e.Key)) ||
+                    (!Track.Playing && CurrentTools.CurrentTool.OnKeyDown(e.Key)) ||
                     _dragRider)
                 {
                     UpdateCursor();
@@ -679,7 +680,7 @@ namespace linerider
                 if (linerider.IO.TrackRecorder.Recording)
                     return;
                 InputUtils.CheckCurrentHotkey();
-                CurrentTools.SelectedTool.OnKeyUp(e.Key);
+                CurrentTools.CurrentTool.OnKeyUp(e.Key);
                 _input.ProcessKeyUp(e);
                 UpdateCursor();
                 Invalidate();
@@ -696,13 +697,13 @@ namespace linerider
 
         public void StopTools()
         {
-            CurrentTools.SelectedTool.Stop();
+            CurrentTools.CurrentTool.Stop();
         }
         public void StopHandTool()
         {
-            if (CurrentTools.SelectedTool == CurrentTools.HandTool)
+            if (CurrentTools.CurrentTool == CurrentTools.PanTool)
             {
-                CurrentTools.HandTool.Stop();
+                CurrentTools.PanTool.Stop();
             }
         }
 
@@ -924,46 +925,9 @@ namespace linerider
             {
                 MagicAnimator.RecedeMultiFrame();
             });
-            InputUtils.RegisterHotkey(Hotkey.LineGeneratorWindow, () => true, () =>
-            {
-                Canvas.ShowGeneratorWindow(MouseGamePos);
-            });
         }
         private void RegisterPlaybackHotkeys()
         {
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () =>
-            {
-                StopTools();
-                Track.StartFromFlag();
-                Track.Scheduler.UpdatesPerSecond = Settings.SlowmoSpeed;
-            });
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () =>
-            {
-                StopTools();
-                Track.StartIgnoreFlag();
-                Track.ResetSpeedDefault();
-            });
-            // InputUtils.RegisterHotkey(Hotkey.PlaybackStartGhostFlag, () => true, () =>
-            // {
-            //     StopTools();
-            //     Track.ResumeFromFlag();
-            //     Track.ResetSpeedDefault();
-            // });
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () =>
-            {
-                StopTools();
-                Track.StartFromFlag();
-                Track.ResetSpeedDefault();
-            });
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStop, () => true, () =>
-            {
-                StopTools();
-                Track.Stop();
-            });
-            InputUtils.RegisterHotkey(Hotkey.PlaybackFlag, () => true, () =>
-            {
-                Track.Flag(Track.Offset);
-            });
             InputUtils.RegisterHotkey(Hotkey.PlaybackForward, () => true, () =>
             {
                 StopTools();
@@ -1004,9 +968,9 @@ namespace linerider
                 Track.NextFrame();
                 Invalidate();
                 Track.UpdateCamera();
-                if (CurrentTools.SelectedTool.IsMouseButtonDown)
+                if (CurrentTools.CurrentTool.IsMouseButtonDown)
                 {
-                    CurrentTools.SelectedTool.OnMouseMoved(InputUtils.GetMouse());
+                    CurrentTools.CurrentTool.OnMouseMoved(InputUtils.GetMouse());
                 }
             },
             null,
@@ -1019,22 +983,14 @@ namespace linerider
                 Track.PreviousFrame();
                 Invalidate();
                 Track.UpdateCamera(true);
-                if (CurrentTools.SelectedTool.IsMouseButtonDown)
+                if (CurrentTools.CurrentTool.IsMouseButtonDown)
                 {
-                    CurrentTools.SelectedTool.OnMouseMoved(InputUtils.GetMouse());
+                    CurrentTools.CurrentTool.OnMouseMoved(InputUtils.GetMouse());
                 }
             },
             null,
             repeat: true);
-            InputUtils.RegisterHotkey(Hotkey.PlaybackSpeedUp, () => true, () =>
-            {
-                Track.PlaybackSpeedUp();
-            });
-            InputUtils.RegisterHotkey(Hotkey.PlaybackSpeedDown, () => true, () =>
-            {
-                Track.PlaybackSpeedDown();
-            });
-            InputUtils.RegisterHotkey(Hotkey.PlaybackSlowmo, () => true, () =>
+            InputUtils.RegisterHotkey(Hotkey.ToggleSlowmo, () => true, () =>
             {
                 if (Track.Scheduler.UpdatesPerSecond !=
                 Settings.SlowmoSpeed)
@@ -1046,13 +1002,6 @@ namespace linerider
                     Track.ResetSpeedDefault(false);
                 }
             });
-            InputUtils.RegisterHotkey(Hotkey.PlaybackTogglePause, () => true, () =>
-            {
-                StopTools();
-                Track.TogglePause();
-            },
-            null,
-            repeat: false);
             InputUtils.RegisterHotkey(Hotkey.PlaybackIterationNext, () => !Track.Playing, () =>
             {
                 StopTools();
@@ -1093,12 +1042,6 @@ namespace linerider
             },
             null,
             repeat: true);
-            InputUtils.RegisterHotkey(Hotkey.PlaybackResetCamera, () => true, () =>
-            {
-                Track.Zoom = Track.Timeline.GetFrameZoom(Track.Offset);
-                Track.UseUserZoom = false;
-                Track.UpdateCamera();
-            });
         }
         private void RegisterPopupHotkeys()
         {
@@ -1108,31 +1051,31 @@ namespace linerider
             });
 
             InputUtils.RegisterHotkey(Hotkey.PreferencesWindow,
-            () => !CurrentTools.SelectedTool.Active,
+            () => !CurrentTools.CurrentTool.Active,
             () =>
             {
                 Canvas.ShowPreferencesDialog();
             });
             InputUtils.RegisterHotkey(Hotkey.GameMenuWindow,
-            () => !CurrentTools.SelectedTool.Active,
+            () => !CurrentTools.CurrentTool.Active,
             () =>
             {
                 Canvas.ShowGameMenuWindow();
             });
             InputUtils.RegisterHotkey(Hotkey.TriggerMenuWindow,
-            () => !CurrentTools.SelectedTool.Active,
+            () => !CurrentTools.CurrentTool.Active,
             () =>
             {
                 Canvas.ShowTriggerWindow();
             });
             InputUtils.RegisterHotkey(Hotkey.SaveAsWindow,
-            () => !CurrentTools.SelectedTool.Active,
+            () => !CurrentTools.CurrentTool.Active,
             () =>
             {
                 Canvas.ShowSaveDialog();
             });
             InputUtils.RegisterHotkey(Hotkey.TrackPropertiesWindow,
-            () => !CurrentTools.SelectedTool.Active,
+            () => !CurrentTools.CurrentTool.Active,
             () =>
             {
                 Canvas.ShowTrackPropertiesDialog();
@@ -1144,94 +1087,36 @@ namespace linerider
         }
         private void RegisterEditorHotkeys()
         {
-            InputUtils.RegisterHotkey(Hotkey.EditorPencilTool, () => !Track.Playing, () =>
-            {
-                if (CurrentTools._selected == CurrentTools.PencilTool || (CurrentTools._selected != CurrentTools.SmoothPencilTool) & (Toolbar.smPencilTool == true))
-                {
-                    CurrentTools.SetTool(CurrentTools.SmoothPencilTool);
-                    Toolbar.smPencilTool = true;
-                    Toolbar._smpenbtn.IsHidden = false;
-                    Toolbar._pencilbtn.IsHidden = true;
-                }
-                else
-                {
-                    CurrentTools.SetTool(CurrentTools.PencilTool);
-                    Toolbar.smPencilTool = false;
-                    Toolbar._smpenbtn.IsHidden = true;
-                    Toolbar._pencilbtn.IsHidden = false;
-                }
-            });
-            InputUtils.RegisterHotkey(Hotkey.EditorLineTool, () => !Track.Playing, () =>
-            {
-                if (CurrentTools._selected == CurrentTools.LineTool || (CurrentTools._selected != CurrentTools.BezierTool) & (Toolbar.bezierTool == true))
-                {
-                    CurrentTools.SetTool(CurrentTools.BezierTool);
-                    Toolbar.bezierTool = true;
-                    Toolbar._bezierbtn.IsHidden = false;
-                    Toolbar._linebtn.IsHidden = true;
-                }
-                else
-                {
-                    CurrentTools.SetTool(CurrentTools.LineTool);
-                    Toolbar.bezierTool = false;
-                    Toolbar._linebtn.IsHidden = false;
-                    Toolbar._bezierbtn.IsHidden = true;
-                }
-            });
-            InputUtils.RegisterHotkey(Hotkey.EditorEraserTool, () => !Track.Playing, () =>
-            {
-                CurrentTools.SetTool(CurrentTools.EraserTool);
-            });
-            InputUtils.RegisterHotkey(Hotkey.EditorSelectTool, () => !Track.Playing, () =>
-            {
-                CurrentTools.SetTool(CurrentTools.MoveTool);
-            });
-            InputUtils.RegisterHotkey(Hotkey.EditorPanTool, () => !Track.Playing, () =>
-            {
-                CurrentTools.SetTool(CurrentTools.HandTool);
-            });
-            InputUtils.RegisterHotkey(Hotkey.EditorQuickPan, () => !Track.Playing && !Canvas.IsModalOpen, () =>
-            {
-                CurrentTools.QuickPan = true;
-                Invalidate();
-                UpdateCursor();
-            },
-            () =>
-            {
-                CurrentTools.QuickPan = false;
-                Invalidate();
-                UpdateCursor();
-            });
             InputUtils.RegisterHotkey(Hotkey.EditorDragCanvas, () => !Track.Playing && !Canvas.IsModalOpen, () =>
             {
                 var mouse = InputUtils.GetMouse();
                 CurrentTools.QuickPan = true;
-                CurrentTools.HandTool.OnMouseDown(new Vector2d(mouse.X, mouse.Y));
+                CurrentTools.PanTool.OnMouseDown(new Vector2d(mouse.X, mouse.Y));
             },
             () =>
             {
                 if (CurrentTools.QuickPan)
                 {
                     var mouse = InputUtils.GetMouse();
-                    CurrentTools.HandTool.OnMouseUp(new Vector2d(mouse.X, mouse.Y));
+                    CurrentTools.PanTool.OnMouseUp(new Vector2d(mouse.X, mouse.Y));
                     CurrentTools.QuickPan = false;
                 }
             });
 
             InputUtils.RegisterHotkey(Hotkey.EditorUndo, () => !Track.Playing, () =>
             {
-                CurrentTools.SelectedTool.Cancel();
+                CurrentTools.CurrentTool.Cancel();
                 var hint = Track.UndoManager.Undo();
-                CurrentTools.SelectedTool.OnUndoRedo(true, hint);
+                CurrentTools.CurrentTool.OnUndoRedo(true, hint);
                 Invalidate();
             },
             null,
             repeat: true);
             InputUtils.RegisterHotkey(Hotkey.EditorRedo, () => !Track.Playing, () =>
             {
-                CurrentTools.SelectedTool.Cancel();
+                CurrentTools.CurrentTool.Cancel();
                 var hint = Track.UndoManager.Redo();
-                CurrentTools.SelectedTool.OnUndoRedo(false, hint);
+                CurrentTools.CurrentTool.OnUndoRedo(false, hint);
                 Invalidate();
             },
             null,
@@ -1243,7 +1128,7 @@ namespace linerider
                     StopTools();
                     using (var trk = Track.CreateTrackWriter())
                     {
-                        CurrentTools.SelectedTool.Stop();
+                        CurrentTools.CurrentTool.Stop();
                         var l = trk.GetNewestLine();
                         if (l != null)
                         {
@@ -1285,9 +1170,9 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorCycleToolSetting, () => !Track.Playing, () =>
             {
-                if (CurrentTools.SelectedTool.ShowSwatch)
+                if (CurrentTools.CurrentTool.ShowSwatch)
                 {
-                    CurrentTools.SelectedTool.Swatch.IncrementSelectedMultiplier();
+                    CurrentTools.CurrentTool.Swatch.IncrementSelectedMultiplier();
                     Invalidate();
                 }
             });
@@ -1297,7 +1182,7 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorToolColor1, () => !Track.Playing, () =>
             {
-                var swatch = CurrentTools.SelectedTool.Swatch;
+                var swatch = CurrentTools.CurrentTool.Swatch;
                 if (swatch != null)
                 {
                     swatch.Selected = LineType.Blue;
@@ -1306,7 +1191,7 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorToolColor2, () => !Track.Playing, () =>
             {
-                var swatch = CurrentTools.SelectedTool.Swatch;
+                var swatch = CurrentTools.CurrentTool.Swatch;
                 if (swatch != null)
                 {
                     swatch.Selected = LineType.Red;
@@ -1315,7 +1200,7 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorToolColor3, () => !Track.Playing, () =>
             {
-                var swatch = CurrentTools.SelectedTool.Swatch;
+                var swatch = CurrentTools.CurrentTool.Swatch;
                 if (swatch != null)
                 {
                     swatch.Selected = LineType.Scenery;
@@ -1337,11 +1222,11 @@ namespace linerider
                 Invalidate();
             });
             InputUtils.RegisterHotkey(Hotkey.EditorCancelTool,
-            () => CurrentTools.SelectedTool.Active,
+            () => CurrentTools.CurrentTool.Active,
             () =>
             {
-                var tool = CurrentTools.SelectedTool;
-                var selecttool = CurrentTools.SelectTool;
+                var tool = CurrentTools.CurrentTool;
+                var selecttool = CurrentTools.SelectSubtool;
                 if (tool == selecttool)
                 {
                     selecttool.CancelSelection();
@@ -1353,76 +1238,76 @@ namespace linerider
                 Invalidate();
             });
             InputUtils.RegisterHotkey(Hotkey.ToolCopy, () => !Track.Playing &&
-            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectTool.Copy();
+                CurrentTools.SelectSubtool.Copy();
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolCut, () => !Track.Playing &&
-            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectTool.Cut();
+                CurrentTools.SelectSubtool.Cut();
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolPaste, () => !Track.Playing &&
-            (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
-            CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
+            (CurrentTools.CurrentTool == CurrentTools.SelectSubtool ||
+            CurrentTools.CurrentTool == CurrentTools.SelectTool), () =>
             {
-                CurrentTools.SelectTool.Paste();
+                CurrentTools.SelectSubtool.Paste();
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolDelete, () => !Track.Playing &&
-            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectTool.Delete();
+                CurrentTools.SelectSubtool.Delete();
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolCopyValues, () => !Track.Playing &&
-            (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
-            CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
+            (CurrentTools.CurrentTool == CurrentTools.SelectSubtool ||
+            CurrentTools.CurrentTool == CurrentTools.SelectTool), () =>
             {
-                CurrentTools.SelectTool.CopyValues();
+                CurrentTools.SelectSubtool.CopyValues();
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolPasteValues, () => !Track.Playing &&
-            (CurrentTools.SelectedTool == CurrentTools.SelectTool ||
-            CurrentTools.SelectedTool == CurrentTools.MoveTool), () =>
+            (CurrentTools.CurrentTool == CurrentTools.SelectSubtool ||
+            CurrentTools.CurrentTool == CurrentTools.SelectTool), () =>
             {
-                CurrentTools.SelectTool.PasteValues();
+                CurrentTools.SelectSubtool.PasteValues();
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchBlue, () => !Track.Playing &&
-            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectTool.SwitchLineType(LineType.Blue);
+                CurrentTools.SelectSubtool.SwitchLineType(LineType.Blue);
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchRed, () => !Track.Playing &&
-            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectTool.SwitchLineType(LineType.Red);
+                CurrentTools.SelectSubtool.SwitchLineType(LineType.Red);
                 Invalidate();
             },
             null,
             repeat: false);
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchGreen, () => !Track.Playing &&
-            CurrentTools.SelectedTool == CurrentTools.SelectTool, () =>
+            CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectTool.SwitchLineType(LineType.Scenery);
+                CurrentTools.SelectSubtool.SwitchLineType(LineType.Scenery);
                 Invalidate();
             },
             null,

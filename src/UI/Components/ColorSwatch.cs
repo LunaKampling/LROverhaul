@@ -40,7 +40,7 @@ namespace linerider.UI.Components
         {
             base.Think();
 
-            bool hide = !Tools.CurrentTools.SelectedTool.ShowSwatch;
+            bool hide = !Tools.CurrentTools.CurrentTool.ShowSwatch;
             foreach (var child in Children)
                 child.IsHidden = hide;
 

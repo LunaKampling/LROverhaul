@@ -28,11 +28,15 @@ using System.Linq;
 using System.Diagnostics;
 using linerider.Utils;
 using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class BezierTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorLineTool;
+        public override string Name => "Bezier Tool";
         public override MouseCursor Cursor
         {
             get { return game.Cursors.List[CursorsHandler.Type.Line]; }

@@ -35,8 +35,6 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0, 0);
-
             _ridercoordlabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,

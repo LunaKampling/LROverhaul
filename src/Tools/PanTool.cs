@@ -16,13 +16,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Drawing;
 using linerider.UI;
 using OpenTK;
 using OpenTK.Input;
 
 namespace linerider.Tools
 {
-    public class HandTool : Tool
+    public class PanTool : Tool
     {
         private Vector2d CameraStart;
         private float ZoomStart;
@@ -31,6 +32,9 @@ namespace linerider.Tools
         private Vector2d lastposition;
         private bool zoom = false;
 
+        public override Bitmap Icon => GameResources.icon_tool_pan.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorPanTool;
+        public override string Name => "Hand Tool";
         public override MouseCursor Cursor
         {
             get
@@ -43,7 +47,7 @@ namespace linerider.Tools
             }
         }
 
-        public HandTool() : base()
+        public PanTool() : base()
         {
         }
 

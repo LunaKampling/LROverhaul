@@ -186,9 +186,6 @@ namespace linerider
                 return GetFont("fonts.liberation_sans_15");
             }
         }
-        //internal static Gwen.Renderer.BitmapFont font_test
-        //{
-        //    get
         #endregion
         #region Resources: Rider
         internal static Bitmap rider_sled
@@ -412,104 +409,6 @@ namespace linerider
 
         #endregion
         #region Resources: Icons
-        internal static System.Drawing.Bitmap pencil_icon
-        {
-            get
-            {
-                return GetBitmap("icons.penciltool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap smoothpencil_icon
-        {
-            get
-            {
-                return GetBitmap("icons.smoothpenciltool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap line_icon
-        {
-            get
-            {
-                return GetBitmap("icons.linetool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap bezier_icon
-        {
-            get
-            {
-                return GetBitmap("icons.beziertool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap eraser_icon
-        {
-            get
-            {
-                return GetBitmap("icons.erasertool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap movetool_icon
-        {
-            get
-            {
-                return GetBitmap("icons.movetool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap pantool_icon
-        {
-            get
-            {
-                return GetBitmap("icons.pantool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap menu_icon
-        {
-            get
-            {
-                return GetBitmap("icons.menu.png");
-            }
-        }
-        internal static System.Drawing.Bitmap flag_icon
-        {
-            get
-            {
-                return GetBitmap("icons.flag.png");
-            }
-        }
-        internal static System.Drawing.Bitmap fast_forward
-        {
-            get
-            {
-                return GetBitmap("icons.fast-forward.png");
-            }
-        }
-        internal static System.Drawing.Bitmap rewind
-        {
-            get
-            {
-                return GetBitmap("icons.rewind.png");
-            }
-        }
-        internal static System.Drawing.Bitmap play_icon
-        {
-            get
-            {
-                return GetBitmap("icons.play.png");
-            }
-        }
-        internal static System.Drawing.Bitmap stop_icon
-        {
-            get
-            {
-                return GetBitmap("icons.stop.png");
-            }
-        }
-        internal static System.Drawing.Bitmap pause
-        {
-            get
-            {
-                return GetBitmap("icons.pause.png");
-            }
-        }
         internal static System.Drawing.Bitmap swatch
         {
             get
@@ -517,21 +416,73 @@ namespace linerider
                 return GetBitmap("icons.swatch.png");
             }
         }
-        internal static System.Drawing.Bitmap generator_icon
+
+        internal static VectorResource icon_tool_pencil
         {
-            get
-            {
-                return GetBitmap("icons.generator.png");
-            }
+            get => GetVectorImage("icons.tool_pencil.svg");
         }
-        internal static System.Drawing.Bitmap camera_need_reset
+        internal static VectorResource icon_tool_smooth_pencil
         {
-            get
-            {
-                return GetBitmap("icons.cameraneedreset.png");
-            }
+            get => GetVectorImage("icons.tool_smooth_pencil.svg");
+        }
+        internal static VectorResource icon_tool_line
+        {
+            get => GetVectorImage("icons.tool_line.svg");
+        }
+        internal static VectorResource icon_tool_bezier
+        {
+            get => GetVectorImage("icons.tool_bezier.svg");
+        }
+        internal static VectorResource icon_tool_eraser
+        {
+            get => GetVectorImage("icons.tool_eraser.svg");
+        }
+        internal static VectorResource icon_tool_select
+        {
+            get => GetVectorImage("icons.tool_select.svg");
+        }
+        internal static VectorResource icon_tool_pan
+        {
+            get => GetVectorImage("icons.tool_pan.svg");
+        }
+        internal static VectorResource icon_play
+        {
+            get => GetVectorImage("icons.play.svg");
+        }
+        internal static VectorResource icon_pause
+        {
+            get => GetVectorImage("icons.pause.svg");
+        }
+        internal static VectorResource icon_stop
+        {
+            get => GetVectorImage("icons.stop.svg");
+        }
+        internal static VectorResource icon_flag
+        {
+            get => GetVectorImage("icons.flag.svg");
+        }
+        internal static VectorResource icon_generators
+        {
+            get => GetVectorImage("icons.generators.svg");
+        }
+        internal static VectorResource icon_menu
+        {
+            get => GetVectorImage("icons.menu.svg");
+        }
+        internal static VectorResource icon_reset_camera
+        {
+            get => GetVectorImage("icons.reset_camera.svg");
+        }
+        internal static VectorResource icon_speedup
+        {
+            get => GetVectorImage("icons.speedup.svg");
+        }
+        internal static VectorResource icon_slowdown
+        {
+            get => GetVectorImage("icons.slowdown.svg");
         }
         #endregion
+
         #region Resources: UX
         internal static System.Drawing.Bitmap ux_flagmarker
         {
@@ -554,12 +505,18 @@ namespace linerider
                 return GetBitmap("ux.loading.png");
             }
         }
-        internal static VectorResource ux_widgetbg
+
+        internal static VectorResource ux_widget_background
         {
-            get
-            {
-                return GetVectorImage("ux.widgetbg.svg");
-            }
+            get => GetVectorImage("ux.widget_background.svg");
+        }
+        internal static VectorResource ux_tool_background
+        {
+            get => GetVectorImage("ux.tool_background.svg");
+        }
+        internal static VectorResource icon_multitool_indicator
+        {
+            get => GetVectorImage("ux.multitool_indicator.svg");
         }
         #endregion
     }

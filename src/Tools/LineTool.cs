@@ -23,11 +23,15 @@ using Color = System.Drawing.Color;
 using OpenTK.Input;
 using linerider.Game;
 using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class LineTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_line.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorLineTool;
+        public override string Name => "Line Tool";
         public override MouseCursor Cursor
         {
             get { return game.Cursors.List[CursorsHandler.Type.Line]; }

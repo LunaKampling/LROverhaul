@@ -1,29 +1,40 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿//  Author:
+//       Noah Ablaseau <nablaseau@hotmail.com>
+//
+//  Copyright (c) 2017 
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+using Gwen.Controls;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Input;
-using linerider.Utils;
-using linerider.Game;
-using linerider.Rendering;
-using linerider.Drawing;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Windows;
+using linerider.Game;
 using linerider.UI;
+using linerider.Utils;
 using System.Diagnostics;
-using static linerider.Settings;
-using System.Windows.Forms;
-using System.Text;
-using Newtonsoft.Json.Linq;
+using linerider.Rendering;
 
 namespace linerider.Tools
 {
-    //todo the node attachment gets wonky when inverting scale/rotate.
-    //can be demonstrated by showing the hover while clicking
-    //ideally, the node/square shuold be rotated
     public class SelectTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_select.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorSelectTool;
+        public override string Name => "Select Tool";
         public override Swatch Swatch
         {
             get
@@ -38,1023 +49,481 @@ namespace linerider.Tools
                 return true;
             }
         }
-        public SelectTool() : base()
-        {
-            Swatch.Selected = LineType.All;
-        }
-        public override MouseCursor Cursor
+        public override string Tooltip
         {
             get
             {
-                if (_hoverscale)
+                if (_active && _selection != null && _selection.line != null)
                 {
-                    if (_nodetop == _nodeleft)
-                        return game.Cursors.List[CursorsHandler.Type.SizeNWSE];
-                    else
-                        return game.Cursors.List[CursorsHandler.Type.SizeSWNE];
+                    var vec = _selection.line.GetVector();
+                    var len = vec.Length;
+                    var angle = Angle.FromVector(vec);
+                    angle.Degrees += 90;
+                    string tooltip = "";
+                    if (Settings.Editor.ShowLineLength)
+                        tooltip += "length: " + Math.Round(len, 2);
+                    if (Settings.Editor.ShowLineAngle)
+                        tooltip += " \n" +
+                        "angle: " + Math.Round(angle.Degrees, 2) + "° ";
+                    if (Settings.Editor.ShowLineID &&
+                            _selection.line.Type != LineType.Scenery)
+                        tooltip += "\n" +
+                        "ID: " + _selection.line.ID + " ";
+                    return tooltip;
                 }
-                return game.Cursors.List[CursorsHandler.Type.Select];
+                return "";
             }
         }
-        private bool _hoverscale = false;
-        private DoubleRect _boxstart;
-        private DoubleRect _selectionbox = DoubleRect.Empty;
-        private DoubleRect _startselectionedges = DoubleRect.Empty;
-        private DoubleRect _drawbox = DoubleRect.Empty;
+        public override MouseCursor Cursor
+        {
+            get { return game.Cursors.List[CursorsHandler.Type.Select]; }
+        }
+        protected override bool EnableSnap
+        {
+            get
+            {
+                var toggle = InputUtils.CheckPressed(Hotkey.ToolToggleSnap);
+                return Settings.Editor.SnapMoveLine != toggle;
+            }
+        }
+        public bool CanLifelock => UI.InputUtils.Check(Hotkey.ToolLifeLock) &&
+        CurrentTools.CurrentTool == this;
         private Vector2d _clickstart;
-        private bool _movingselection = false;
-        private List<LineSelection> _selection = new List<LineSelection>();
-        private List<LineSelection> _boxselection = new List<LineSelection>();
-        private HashSet<int> _selectedlines = new HashSet<int>();
-        private bool _drawingbox = false;
-        private bool _movemade = false;
-        private List<GameLine> _copybuffer = new List<GameLine>();
-        private GameLine _snapline = null;
-        private bool _snapknob2 = false;
-        private bool _snapknob1 = false;
+        private bool _lifelocking = false;
+        private LineSelection _selection;
+        private bool _active = false;
         private GameLine _hoverline = null;
-        private Vector2d _copyorigin;
-        private bool _scaling = false;
-        private bool _rotating = false;
-        private bool _nodetop = false;
-        private bool _nodeleft = false;
+        private bool _hoverknob = false;
+        private bool _hoverknobjoint1;
+        private Stopwatch _hovertime = new Stopwatch();
+        private bool _hoverclick = false;
+        public override bool Active
+        {
+            get
+            {
+                return _active;
+            }
+            protected set
+            {
+                Debug.Fail($"Cannot set MoveTool.Active, use {nameof(_active)} instead");
+            }
+        }
+        public SelectTool()
+        {
+        }
+        private void UpdatePlayback(GameLine line)
+        {
+            if (line is StandardLine && CanLifelock)
+            {
+                game.Track.NotifyTrackChanged();
+                using (var trk = game.Track.CreateTrackReader())
+                {
+                    if (!LifeLock(trk, game.Track.Timeline, (StandardLine)line))
+                    {
+                        _lifelocking = true;
+                    }
+                    else if (_lifelocking)
+                    {
+                        DropLine();
+                    }
+                }
 
-        public List<LineSelection> GetLineSelections()
-        {
-            return _selection;
-        }
-        public List<LineSelection> GetLineSelectionsInBox()
-        {
-            return _boxselection;
-        }
-        public void CancelSelection()
-        {
-            if (Active)
-            {
-                if (_drawingbox)
-                {
-                    Cancel();
-                }
-                else
-                {
-                    Stop();
-                    DeferToMoveTool();
-                }
-            }
-        }
-        public override void OnUndoRedo(bool isundo, object undohint)
-        {
-            if (Active && (_selection.Count != 0 || _boxselection.Count != 0) &&
-                (undohint is int[] lineids))
-            {
-                if (lineids.Length != 0)
-                {
-                    Stop(false);
-                    _hoverline = null;
-                    Active = true;
-                    using (var trk = game.Track.CreateTrackWriter())
-                    {
-                        foreach (var lineid in lineids)
-                        {
-                            var line = trk.Track.LineLookup[lineid];
-                            _selectedlines.Add(line.ID);
-                            var selection = new LineSelection(line, true, null);
-                            _selection.Add(selection);
-                            line.SelectionState = SelectionState.Selected;
-                            game.Track.RedrawLine(line);
-                        }
-                    }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    return;
-                }
-            }
-            Stop(true);
-        }
-        public override void OnMouseRightDown(Vector2d pos)
-        {
-            if (Active && _selection.Count != 0 && _movingselection == false)
-            {
-                var gamepos = ScreenToGameCoords(pos);
-                if (!StartTransformSelection(gamepos, true))
-                    Stop(true);
-            }
-            base.OnMouseRightDown(pos);
-        }
-        public override void OnMouseRightUp(Vector2d pos)
-        {
-            if (_movingselection & _rotating)
-            {
-                ReleaseSelection();
-            }
-            base.OnMouseRightUp(pos);
-        }
-        public override void OnMouseDown(Vector2d pos)
-        {
-            var gamepos = ScreenToGameCoords(pos);
-            if (Active && _selection.Count != 0)
-            {
-                if (StartTransformSelection(gamepos, false))
-                {
-                    return;
-                }
-                var axis = UI.InputUtils.CheckPressed(Hotkey.ToolAxisLock);
-                var perpendicularaxis = UI.InputUtils.CheckPressed(Hotkey.ToolPerpendicularAxisLock);
-                if ((axis || perpendicularaxis) && StartMoveSelection(gamepos))
-                {
-                    return;
-                }
-                else if (UI.InputUtils.CheckPressed(UI.Hotkey.ToolAddSelection))
-                {
-                    StartAddSelection(gamepos);
-                    return;
-                }
-                else if (UI.InputUtils.CheckPressed(UI.Hotkey.ToolToggleSelection))
-                {
-                    ToggleSelection(gamepos);
-                    return;
-                }
-                else if (!(axis || perpendicularaxis) && StartMoveSelection(gamepos))
-                {
-                    return;
-                }
-            }
-            Unselect();
-            _selectionbox = DoubleRect.Empty;
-            _drawbox = new DoubleRect(gamepos, Vector2d.Zero);
-            Active = true;
-            _drawingbox = true;
-            _movingselection = false;
-            base.OnMouseDown(pos);
-        }
-        public override void OnMouseMoved(Vector2d pos)
-        {
-            var gamepos = ScreenToGameCoords(pos);
-            _hoverscale = false;
-            if (Active && _drawingbox)
-            {
-                UpdateDrawingBox(gamepos);
-            }
-            else if (Active && _movingselection)
-            {
-                if (_scaling)
-                    ScaleSelection(gamepos);
-                else if (_rotating)
-                    RotateSelection(gamepos);
-                else
-                    MoveSelection(gamepos);
-            }
-            else if (Active)
-            {
-                UpdateHover(gamepos);
-            }
-            base.OnMouseMoved(pos);
-        }
-        public override void OnMouseUp(Vector2d pos)
-        {
-            if (_drawingbox)
-            {
-                _drawingbox = false;
-                if (_selection.Count == 0 && _boxselection.Count == 0)
-                {
-                    Stop(true);
-                }
-                else
-                {
-                    foreach (var v in _boxselection)
-                    {
-                        var linetypeSelected = v.GetLineType();
-                        if (linetypeSelected == Swatch.Selected || Swatch.Selected == LineType.All)
-                        {
-                            _selectedlines.Add(v.line.ID);
-                            _selection.Add(v);
-                        }
-                    }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    _boxselection.Clear();
-                }
-                _drawbox = DoubleRect.Empty;
             }
             else
             {
-                ReleaseSelection();
-            }
-            base.OnMouseUp(pos);
-        }
-        private void UpdateDrawingBox(Vector2d gamepos)
-        {
-            var size = gamepos - _drawbox.Vector;
-            _drawbox.Size = size;
-            UnselectBox();
-            using (var trk = game.Track.CreateTrackWriter())
-            {
-                var lines = trk.GetLinesInRect(_drawbox.MakeLRTB(), true);
-                foreach (var line in lines)
-                {
-                    if (!_selectedlines.Contains(line.ID))
-                    {
-                        var selection = new LineSelection(line, true, null);
-                        if (line.Type == Swatch.Selected || Swatch.Selected == LineType.All)
-                        {
-                            line.SelectionState = SelectionState.Selected;
-                            _boxselection.Add(selection);
-                            game.Track.RedrawLine(line);
-                        }
-                    }
-                }
+                game.Track.NotifyTrackChanged();
             }
         }
-        private void UpdateHover(Vector2d gamepos)
+        private bool SelectLine(Vector2d gamepos)
         {
-            _hoverline = null;
             using (var trk = game.Track.CreateTrackReader())
-            {
-                GameLine selected;
-                if (UI.InputUtils.CheckPressed(UI.Hotkey.ToolToggleSelection))
-                    selected = SelectLine(trk, gamepos, out bool knob);
-                else
-                    selected = SelectInSelection(trk, gamepos)?.line;
-                if (selected != null)
-                {
-                    _hoverline = selected;
-                }
-            }
-            if (CornerContains(gamepos, _nodetop = true, _nodeleft = true) ||
-                CornerContains(gamepos, _nodetop = true, _nodeleft = false) ||
-                CornerContains(gamepos, _nodetop = false, _nodeleft = false) ||
-                CornerContains(gamepos, _nodetop = false, _nodeleft = true))
-            {
-                _hoverscale = true;
-            }
-        }
-        private void ReleaseSelection()
-        {
-            if (_movingselection)
-            {
-                _snapline = null;
-                _movingselection = false;
-                _snapknob1 = false;
-                _snapknob2 = false;
-                _rotating = false;
-                _scaling = false;
-                SaveMovedSelection();
-                foreach (var selected in _selection)
-                {
-                    selected.clone = selected.line.Clone();
-                }
-            }
-        }
-        public override void OnChangingTool()
-        {
-            Stop(false);
-        }
-
-        public override void Cancel()
-        {
-            _hoverscale = false;
-            CancelDrawBox();
-            UnselectBox();
-            if (Active)
-            {
-                ReleaseSelection();
-            }
-        }
-        public override void Stop()
-        {
-            if (Active)
-            {
-                Stop(true);
-            }
-        }
-        private void Stop(bool defertomovetool)
-        {
-            if (Active)
-            {
-                SaveMovedSelection();
-            }
-            Active = false;
-            UnselectBox();
-            Unselect();
-            CancelDrawBox();
-            _selectionbox = DoubleRect.Empty;
-            _movingselection = false;
-            _movemade = false;
-            _snapline = null;
-            _hoverline = null;
-            _snapknob1 = false;
-            _snapknob2 = false;
-            _scaling = false;
-            _rotating = false;
-            _hoverscale = false;
-            if (defertomovetool)
-                DeferToMoveTool();
-        }
-        private DoubleRect GetCorner(DoubleRect box, bool top, bool left, int boxsize = 15)
-        {
-            DoubleRect corner = box;
-            corner.Width = boxsize / game.Track.Zoom;
-            corner.Height = boxsize / game.Track.Zoom;
-            if (!left)
-            {
-                corner.Left = box.Right;
-            }
-            else
-            {
-                corner.Left -= corner.Width;
-            }
-            if (!top)
-            {
-                corner.Top = box.Bottom;
-            }
-            else
-            {
-                corner.Top -= corner.Height;
-            }
-            return corner;
-        }
-        private void RenderFilledCorner(DoubleRect box, bool top, bool left)
-        {
-            var corner = GetCorner(box, top, left);
-            var rect = new DoubleRect(
-                GameDrawingMatrix.ScreenCoordD(corner.Vector),
-                new Vector2d(corner.Width * game.Track.Zoom,
-                corner.Height * game.Track.Zoom));
-            GameRenderer.RenderRoundedRectangle(rect, Color.CornflowerBlue, 5, false);
-        }
-        private void RenderCorner(DoubleRect box, bool top, bool left)
-        {
-            var corner = GetCorner(box, top, left);
-            var rect = new DoubleRect(
-                GameDrawingMatrix.ScreenCoordD(corner.Vector),
-                new Vector2d(corner.Width * game.Track.Zoom,
-                corner.Height * game.Track.Zoom));
-            GameRenderer.RenderRoundedRectangle(rect, Color.CornflowerBlue, 2, false);
-        }
-        public override void Render()
-        {
-            if (Active)
-            {
-                var color = Color.FromArgb(255, 0x00, 0x77, 0xcc);
-                if (_selectionbox != DoubleRect.Empty)
-                {
-                    GameRenderer.RenderRoundedRectangle(_selectionbox, color, 2f / game.Track.Zoom);
-                    RenderCorner(_selectionbox, true, true);
-                    RenderCorner(_selectionbox, false, false);
-                    RenderCorner(_selectionbox, true, false);
-                    RenderCorner(_selectionbox, false, true);
-                    if (_hoverscale)
-                        RenderFilledCorner(_selectionbox, _nodetop, _nodeleft);
-                }
-                if (_drawbox != DoubleRect.Empty)
-                    GameRenderer.RenderRoundedRectangle(_drawbox, color, 2f / game.Track.Zoom);
-                if (_hoverline != null)
-                {
-                    GameRenderer.RenderRoundedLine(_hoverline.Position1, _hoverline.Position2, Color.FromArgb(127, Settings.Computed.BGColor), (_hoverline.Width * 2 * 0.8f));
-
-                    GameRenderer.DrawKnob(_hoverline.Position1, _snapknob1, false, _hoverline.Width, _snapknob1 && !_snapknob2 ? 1 : 0);
-                    GameRenderer.DrawKnob(_hoverline.Position2, _snapknob2, false, _hoverline.Width, _snapknob2 && !_snapknob1 ? 1 : 0);
-                }
-            }
-            base.Render();
-        }
-        public bool CancelDrawBox()
-        {
-            if (_drawingbox)
-            {
-                UnselectBox();
-                _drawingbox = false;
-                _drawbox = DoubleRect.Empty;
-                return true;
-            }
-            return false;
-        }
-        public void Delete()
-        {
-            if (!Active || _drawingbox || _selection.Count == 0) return;
-
-            using (var trk = game.Track.CreateTrackWriter())
-            {
-                game.Track.UndoManager.BeginAction();
-                foreach (var selected in _selectedlines)
-                {
-                    var line = trk.Track.LineLookup[selected];
-                    line.SelectionState = SelectionState.None;
-                    trk.RemoveLine(line);
-                }
-                game.Track.UndoManager.EndAction();
-                trk.NotifyTrackChanged();
-            }
-            _selection.Clear();
-            _selectedlines.Clear();
-            Stop();
-        }
-        public void Cut()
-        {
-            if (!Active || _drawingbox || _selection.Count == 0) return;
-
-            Copy();
-            Delete();
-        }
-        public void Copy()
-        {
-            if (!Active || _drawingbox || _selection.Count == 0) return;
-            _copybuffer.Clear();
-            
-            foreach (var selected in _selection)
-            {
-                _copybuffer.Add(selected.line.Clone());
-            }
-            _copyorigin = GetCopyOrigin();
-        }
-        public void Paste()
-        {
-            PasteFromBuffer(_copybuffer);
-        }
-        private void PasteFromBuffer(List<GameLine> buffer)
-        {
-            if (buffer.Count == 0) return;
-
-            Stop(false);
-            var pasteorigin = GetCopyOrigin();
-            var diff = pasteorigin - _copyorigin;
-            Unselect();
-            Active = true;
-            if (CurrentTools.SelectedTool != this)
-            {
-                CurrentTools.SetTool(this);
-            }
-            using (var trk = game.Track.CreateTrackWriter())
-            {
-                game.Track.UndoManager.BeginAction();
-                foreach (var line in buffer)
-                {
-                    var add = line.Clone();
-                    add.ID = GameLine.UninitializedID;
-                    add.Position1 += diff;
-                    add.Position2 += diff;
-                    if (add is StandardLine stl)
-                        stl.CalculateConstants();
-                    add.SelectionState = SelectionState.Selected;
-                    trk.AddLine(add);
-                    var selectinfo = new LineSelection(add, true, null);
-                    _selection.Add(selectinfo);
-                    _selectedlines.Add(add.ID);
-                }
-                game.Track.UndoManager.EndAction();
-            }
-            _selectionbox = GetBoxFromSelected(_selection);
-            game.Track.NotifyTrackChanged();
-        }
-        public void CopyValues()
-        {
-            if (!Active || _drawingbox || _selection.Count == 0) return;
-
-            StringBuilder lineArray = new StringBuilder("[");
-
-            Vector2d offset = GetCopyOrigin();
-
-            for (int i = 0; i < _selection.Count; i++)
-            {
-                GameLine line = _selection[i].line.Clone();
-                line.Position1 -= offset;
-                line.Position2 -= offset;
-                lineArray.Append(line.ToString());
-
-                if(i < _selection.Count - 1)
-                {
-                    lineArray.Append(",");
-                }
-            }
-
-            Clipboard.SetText(lineArray.ToString() + "]");
-            
-            game.Track.Notify("Copied!");
-        }
-        public void PasteValues()
-        {
-            string lineArray = Clipboard.GetText();
-            List<GameLine> lineList = ParseJson(lineArray);
-
-            if (lineList is null) return;
-
-            PasteFromBuffer(lineList);
-        }
-        private List<GameLine> ParseJson(string lineArray)
-        {
-            try
-            {
-                JArray parsedLineArray = JArray.Parse(lineArray);
-
-                List<GameLine> deserializedLines = new List<GameLine>();
-
-                foreach (JToken line in parsedLineArray)
-                {
-                    JObject inner = line.Value<JObject>();
-
-                    GameLine newLine = null;
-
-                    Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
-                    Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
-                    bool flipped = inner.ContainsKey("flipped") ? (bool) inner["flipped"] : false;
-                    bool left = inner.ContainsKey("leftExtended") ? (bool) inner["leftExtended"] : false;
-                    bool right = inner.ContainsKey("rightExtended") ? (bool) inner["rightExtended"] : false;
-                    StandardLine.Ext extension =
-                        left && right ? StandardLine.Ext.Both :
-                        left ? StandardLine.Ext.Left :
-                        right ? StandardLine.Ext.Right :
-                        StandardLine.Ext.None;
-                    switch ((int) inner["type"])
-                    {
-                        case 0:
-                        {
-                            newLine = new StandardLine(pos1, pos2, flipped)
-                            { Extension = extension };
-                            break;
-                        }
-                        case 1:
-                        {
-                            int multiplier = inner.ContainsKey("multiplier") ? (int)inner["multiplier"] : 1;
-                            newLine = new RedLine(pos1, pos2)
-                            { Multiplier = multiplier };
-                            break;
-                        }
-                        case 2:
-                        {
-                            float width = inner.ContainsKey("width") ? (float)inner["width"] : 1f;
-                            newLine = new SceneryLine(pos1, pos2)
-                            { Width = width };
-                            break;
-                        }
-                        default:
-                            throw new Exception("Unknown line type");
-                    }
-
-                    deserializedLines.Add(newLine);
-                }
-
-                return deserializedLines;
-            }
-            catch
-            {
-                game.Track.Notify("Failed to Paste");
-                return null;
-            }
-        }
-        public void SwitchLineType(LineType type)
-        {
-            if (!Active || _drawingbox || _selection.Count == 0) return;
-
-            using (var trk = game.Track.CreateTrackWriter())
-            {
-                game.Track.UndoManager.BeginAction();
-
-                List<GameLine> buffer = new List<GameLine>();
-
-                foreach (var selected in _selectedlines)
-                {
-                    GameLine line = trk.Track.LineLookup[selected];
-                    line.SelectionState = SelectionState.None;
-                    trk.RemoveLine(line);
-
-                    buffer.Add(CreateLine(trk, line.Start, line.End, false, false, false, type));
-                }
-
-                _selection.Clear();
-                _selectedlines.Clear();
-                Stop();
-
-                game.Track.UndoManager.EndAction();
-                trk.NotifyTrackChanged();
-            }
-        }
-        private void StartAddSelection(Vector2d gamepos)
-        {
-            _movingselection = false;
-            _drawbox = new DoubleRect(gamepos, Vector2d.Zero);
-            _drawingbox = true;
-        }
-        private bool ToggleSelection(Vector2d gamepos)
-        {
-            using (var trk = game.Track.CreateTrackWriter())
             {
                 var line = SelectLine(trk, gamepos, out bool knob);
                 if (line != null)
                 {
-                    if (_selectedlines.Contains(line.ID))
+                    _clickstart = gamepos;
+                    _active = true;
+                    //is it a knob?
+                    if (knob)
                     {
-                        _selectedlines.Remove(line.ID);
-                        _selection.RemoveAt(
-                            _selection.FindIndex(
-                                x => x.line.ID == line.ID));
-                        line.SelectionState = SelectionState.None;
+                        if (InputUtils.Check(Hotkey.ToolSelectBothJoints))
+                        {
+                            _selection = new LineSelection(line, bothjoints: true);
+                        }
+                        else
+                        {
+                            var knobpos = Utility.CloserPoint(
+                                gamepos,
+                                line.Position1,
+                                line.Position2);
+                            _selection = new LineSelection(line, knobpos);
+                            _hoverclick = true;
+                            _hovertime.Restart();
+                            foreach (var snap in LineEndsInRadius(trk, knobpos, 1))
+                            {
+                                if ((snap.Position1 == knobpos ||
+                                    snap.Position2 == knobpos) &&
+                                    snap != line)
+                                {
+                                    _selection.snapped.Add(new LineSelection(snap, knobpos));
+                                }
+                            }
+                        }
+                        return true;
                     }
                     else
                     {
-                        _selectedlines.Add(line.ID);
-                        var selection = new LineSelection(line, true, null);
-                        _selection.Add(selection);
-                        line.SelectionState = SelectionState.Selected;
-                    }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    game.Track.RedrawLine(line);
-                    return true;
-                }
-            }
-            return false;
-        }
-        /// <param name="rotate">
-        /// If true rotates selection, if false scales selection
-        /// </param>
-        private bool StartTransformSelection(Vector2d gamepos, bool rotate)
-        {
-            if (CornerContains(gamepos, _nodetop = true, _nodeleft = true) ||
-                CornerContains(gamepos, _nodetop = true, _nodeleft = false) ||
-                CornerContains(gamepos, _nodetop = false, _nodeleft = false) ||
-                CornerContains(gamepos, _nodetop = false, _nodeleft = true))
-            {
-                if (rotate)
-                {
-                    _rotating = true;
-                }
-                else
-                {
-                    _scaling = true;
-                }
-                _movingselection = true;
-                _clickstart = gamepos;
-                _boxstart = _selectionbox;
-                _startselectionedges = GetBoxLineEdges(_selection);
-                return true;
-            }
-            return false;
-        }
-        private bool StartMoveSelection(Vector2d gamepos)
-        {
-            if (_selectionbox.Contains(gamepos.X, gamepos.Y))
-            {
-                using (var trk = game.Track.CreateTrackReader())
-                {
-                    var selected = SelectInSelection(trk, gamepos);
-                    if (selected != null)
-                    {
-                        bool snapped = IsLineSnappedByKnob(trk, gamepos, selected.clone, out bool knob1);
-
-                        _snapknob1 = !snapped || knob1;
-                        _snapknob2 = !snapped || !knob1;
-
-                        _snapline = selected.clone;
-                        _clickstart = gamepos;
-                        _boxstart = _selectionbox;
-                        _movingselection = true;
+                        _selection = new LineSelection(line, true);
                         return true;
                     }
                 }
             }
             return false;
         }
-        private bool CornerContains(Vector2d gamepos, bool top, bool left)
-        {
-            var corner = GetCorner(_selectionbox, top, left);
-            var ret = corner.Contains(gamepos.X, gamepos.Y);
-            return ret;
-        }
-        /// <summary>
-        /// Returns selection box without calculating line widths
-        /// </summary>
-        private DoubleRect GetBoxLineEdges(List<LineSelection> selected)
-        {
-            if (selected == null || selected.Count == 0)
-                return DoubleRect.Empty;
-            var ret = DoubleRect.Empty;
-            Vector2d tl = selected[0].line.Position1;
-            Vector2d br = selected[0].line.Position1;
-            for (int i = 0; i < selected.Count; i++)
-            {
-                var sel = selected[i].line;
-                var p1 = sel.Position1;
-                var p2 = sel.Position2;
-                tl.X = Math.Min(tl.X, Math.Min(p1.X, p2.X));
-                tl.Y = Math.Min(tl.Y, Math.Min(p1.Y, p2.Y));
-                br.X = Math.Max(br.X, Math.Max(p1.X, p2.X));
-                br.Y = Math.Max(br.Y, Math.Max(p1.Y, p2.Y));
-            }
-            return new DoubleRect(tl, br - tl);
-        }
-        private DoubleRect GetBoxFromSelected(List<LineSelection> selected)
-        {
-            if (selected == null || selected.Count == 0)
-                return DoubleRect.Empty;
-            var ret = DoubleRect.Empty;
-            Vector2d tl = selected[0].line.Position1;
-            Vector2d br = selected[0].line.Position1;
-            for (int i = 0; i < selected.Count; i++)
-            {
-                var sel = selected[i].line;
-                var p1 = sel.Position1;
-                var p2 = sel.Position2;
-                tl.X = Math.Min(tl.X, Math.Min(p1.X, p2.X) - sel.Width);
-                tl.Y = Math.Min(tl.Y, Math.Min(p1.Y, p2.Y) - sel.Width);
-
-                br.X = Math.Max(br.X, Math.Max(p1.X, p2.X) + (sel.Width));
-                br.Y = Math.Max(br.Y, Math.Max(p1.Y, p2.Y) + (sel.Width));
-            }
-            return new DoubleRect(tl, br - tl);
-        }
-        private Vector2d GetSnapOffset(Vector2d movediff, TrackReader trk)
-        {
-            Vector2d snapoffset = Vector2d.Zero;
-            double distance = -1;
-            void checklines(GameLine[] lines, Vector2d snap)
-            {
-                foreach (var line in lines)
-                {
-                    if (!_selectedlines.Contains(line.ID))
-                    {
-                        var closer = Utility.CloserPoint(snap, line.Position1, line.Position2);
-                        var diff = closer - snap;
-                        var dist = diff.Length;
-                        if (distance == -1 || dist < distance)
-                        {
-                            snapoffset = diff;
-                            distance = dist;
-                        }
-                    }
-                }
-            }
-            if (_snapknob1)
-            {
-                var snap1 = _snapline.Position1 + movediff;
-                var lines1 = LineEndsInRadius(trk, snap1, SnapRadius);
-                checklines(lines1, snap1);
-            }
-            if (_snapknob2)
-            {
-                var snap2 = _snapline.Position2 + movediff;
-                var lines2 = (LineEndsInRadius(trk, snap2, SnapRadius));
-                checklines(lines2, snap2);
-            }
-
-            return snapoffset;
-        }
-        private void ScaleSelection(Vector2d pos)
-        {
-            if (_selection.Count > 0)
-            {
-                _movemade = true;
-                var movediff = (pos - _clickstart);
-                if (UI.InputUtils.CheckPressed(UI.Hotkey.ToolScaleAspectRatio))
-                {
-                    if (_nodeleft == _nodetop)
-                        movediff.Y = movediff.X * (_boxstart.Height / _boxstart.Width);
-                    else
-                        movediff.Y = -(movediff.X * (_boxstart.Height / _boxstart.Width));
-                }
-                using (var trk = game.Track.CreateTrackWriter())
-                {
-                    trk.DisableUndo();
-
-                    foreach (var selected in _selection)
-                    {
-                        var scalar1 = Vector2d.Divide(
-                            selected.clone.Position1 - _startselectionedges.Vector,
-                            _startselectionedges.Size);
-
-                        var scalar2 = Vector2d.Divide(
-                            selected.clone.Position2 - _startselectionedges.Vector,
-                             _startselectionedges.Size);
-                        if (_nodetop)
-                        {
-                            scalar1.Y = 1 - scalar1.Y;
-                            scalar2.Y = 1 - scalar2.Y;
-                        }
-                        if (_nodeleft)
-                        {
-                            scalar1.X = 1 - scalar1.X;
-                            scalar2.X = 1 - scalar2.X;
-                        }
-                        if (_startselectionedges.Size.X == 0)
-                        {
-                            scalar1.X = 0;
-                            scalar2.X = 0;
-                        }
-                        if (_startselectionedges.Size.Y == 0)
-                        {
-                            scalar1.Y = 0;
-                            scalar2.Y = 0;
-                        }
-                        var p1 = Vector2d.Multiply(scalar1, movediff);
-                        var p2 = Vector2d.Multiply(scalar2, movediff);
-
-                        trk.MoveLine(
-                            selected.line,
-                            selected.clone.Position1 + p1,
-                            selected.clone.Position2 + p2);
-                    }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    game.Track.NotifyTrackChanged();
-                }
-            }
-            game.Invalidate();
-        }
-        private void RotateSelection(Vector2d pos)
-        {
-            if (_selection.Count > 0)
-            {
-                _movemade = true;
-                var movediff = (pos - _clickstart);
-                using (var trk = game.Track.CreateTrackWriter())
-                {
-                    trk.DisableUndo();
-                    var center = _startselectionedges.Vector +
-                        (_startselectionedges.Size / 2);
-                    var edge = new Vector2d(_nodeleft
-                        ? _startselectionedges.Left
-                        : _startselectionedges.Right,
-                        _nodetop
-                        ? _startselectionedges.Top
-                        : _startselectionedges.Bottom);
-
-                    var angle = Angle.FromVector(edge - center);
-                    var newangle = Angle.FromVector(pos - center);
-                    var anglediff = newangle - angle;
-                    if (game.ShouldXySnap())
-                        anglediff = new Angle(Math.Round(anglediff.Degrees / Settings.Editor.XySnapDegrees) * Settings.Editor.XySnapDegrees);
-                    foreach (var selected in _selection)
-                    {
-                        Vector2d p1 = Utility.Rotate(selected.clone.Position1, center, anglediff);
-                        Vector2d p2 = Utility.Rotate(selected.clone.Position2, center, anglediff);
-                        trk.MoveLine(selected.line, p1, p2);
-                    }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    game.Track.NotifyTrackChanged();
-                }
-            }
-            game.Invalidate();
-        }
-
-        private bool ApplyModifiers(Vector2d joint1, ref Vector2d joint2)
-        {
-            var axis = UI.InputUtils.CheckPressed(Hotkey.ToolAxisLock);
-            var perpendicularaxis = UI.InputUtils.CheckPressed(Hotkey.ToolPerpendicularAxisLock);
-            var modified = false;
-            if (axis || perpendicularaxis)
-            {
-                var angle = Angle.FromVector(_snapline.GetVector());
-                if (perpendicularaxis)
-                {
-                    angle.Degrees -= 90;
-                }
-                joint2 = Utility.AngleLock(joint1, joint2, angle);
-                modified = true;
-            }
-            return modified;
-        }
         private void MoveSelection(Vector2d pos)
         {
-            if (_selection.Count > 0)
+            if (_selection != null)
             {
-                _movemade = true;
-                var movediff = (pos - _clickstart);
+                var line = _selection.line;
                 using (var trk = game.Track.CreateTrackWriter())
                 {
-                    var pos2 = pos;
-                    if (ApplyModifiers(_clickstart, ref pos2))
+                    trk.DisableUndo();
+                    var joint1 = _selection.joint1
+                        ? _selection.clone.Position1 + (pos - _clickstart)
+                        : line.Position1;
+                    var joint2 = _selection.joint2
+                        ? _selection.clone.Position2 + (pos - _clickstart)
+                        : line.Position2;
+                    bool mod = ApplyModifiers(ref joint1, ref joint2);
+
+                    if (!mod && EnableSnap)
                     {
-                        movediff = (pos2 - _clickstart);
+                        SnapJoints(trk, line, ref joint1, ref joint2);
                     }
-                    else if (_snapline != null && EnableSnap)
+
+                    /*GameLine newLine = line;
+                    if (UI.InputUtils.Check(Hotkey.DrawDebugCamera))
                     {
-                        movediff += GetSnapOffset(movediff, trk);
-                    }
-                    _selectionbox.Vector = _boxstart.Vector + movediff;
-                    foreach (var selected in _selection)
+                        GameLine movedLine = line;
+                        movedLine.Position = joint1;
+                        movedLine.Position2 = joint2;
+                        newLine = FixNoFakie2(game.Track.Timeline, line, _selection.joint1 ? line.Position : line.Position2);
+                        joint1 = newLine.Position;
+                        joint2 = newLine.Position2;
+                        //trk.MoveLine(movedLine, newLine.Position, newLine.Position2);
+                        //line = newLine;
+                    }*/
+
+                    trk.MoveLine(
+                        line,
+                        joint1,
+                        joint2);
+                    //line = newLine;
+
+                    foreach (var sl in _selection.snapped)
                     {
-                        trk.DisableUndo();
+                        var snap = sl.line;
+                        var snapjoint = _selection.joint1 ? joint1 : joint2;
                         trk.MoveLine(
-                            selected.line,
-                            selected.clone.Position1 + movediff,
-                            selected.clone.Position2 + movediff);
+                            snap,
+                            sl.joint1 ? snapjoint : snap.Position1,
+                            sl.joint2 ? snapjoint : snap.Position2);
                     }
-                    game.Track.NotifyTrackChanged();
                 }
+                UpdatePlayback(_selection.line);
             }
             game.Invalidate();
         }
-        public void UnselectBox()
+        private void UpdateHoverline(Vector2d gamepos)
         {
-            if (_boxselection.Count != 0)
+            var oldhover = _hoverline;
+            var oldhoverknob = _hoverknob;
+            _hoverline = null;
+            if (!_active)
             {
-                using (var trk = game.Track.CreateTrackWriter())
+                using (var trk = game.Track.CreateTrackReader())
                 {
-                    foreach (var sel in _boxselection)
+                    var line = SelectLine(trk, gamepos, out bool knob);
+                    if (line != null)
                     {
-                        if (!_selectedlines.Contains(sel.line.ID))
+                        _hoverline = line;
+                        if (knob)
                         {
-                            if (sel.line.SelectionState != 0)
+                            var point = Utility.CloserPoint(
+                                gamepos,
+                                line.Position1,
+                                line.Position2);
+
+                            var joint1 = point == line.Position1;
+
+                            if (_hoverline != oldhover ||
+                            _hoverknobjoint1 != joint1 ||
+                            _hoverknob != knob)
                             {
-                                sel.line.SelectionState = 0;
-                                game.Track.RedrawLine(sel.line);
+                                _hoverclick = false;
+                                _hovertime.Restart();
                             }
+                            _hoverknobjoint1 = joint1;
                         }
+                        _hoverknob = knob;
                     }
                 }
-                _boxselection.Clear();
             }
         }
-        public void Unselect()
+
+        public override void OnMouseDown(Vector2d mousepos)
         {
-            if (_selection.Count != 0)
+            base.OnMouseDown(mousepos);
+            var gamepos = ScreenToGameCoords(mousepos);
+
+            Stop();//double check
+            if (!SelectLine(gamepos))
             {
-                using (var trk = game.Track.CreateTrackWriter())
+                CurrentTools.SetTool(CurrentTools.SelectSubtool);
+                CurrentTools.SelectSubtool.OnMouseDown(mousepos);
+                IsLeftMouseDown = false;
+                _hoverline = null;
+            }
+            else
+            {
+                UpdateHoverline(gamepos);
+            }
+        }
+        public override void OnMouseUp(Vector2d pos)
+        {
+            DropLine();
+            UpdateHoverline(ScreenToGameCoords(pos));
+            base.OnMouseUp(pos);
+        }
+        public override void OnMouseMoved(Vector2d pos)
+        {
+            UpdateHoverline(ScreenToGameCoords(pos));
+            if (_active)
+            {
+                MoveSelection(ScreenToGameCoords(pos));
+            }
+            base.OnMouseMoved(pos);
+        }
+
+        public override void OnMouseRightDown(Vector2d pos)
+        {
+            Stop();//double check
+            var gamepos = ScreenToGameCoords(pos);
+            using (var trk = game.Track.CreateTrackWriter())
+            {
+                var line = SelectLine(trk, gamepos, out bool knob);
+                if (line != null)
                 {
-                    var lookup = trk.Track.LineLookup;
-                    foreach (var sel in _selection)
-                    {
-                        //prefer the 'real' line, if the track state changed
-                        //our sel.line could be out of sync
-                        if (lookup.TryGetValue(sel.line.ID, out var line))
-                        {
-                            if (line.SelectionState != SelectionState.None)
-                            {
-                                line.SelectionState = SelectionState.None;
-                                game.Track.RedrawLine(line);
-                            }
-                        }
-                    }
-                    _selection.Clear();
-                    _selectedlines.Clear();
+                    game.Canvas.ShowLineWindow(line, (int)pos.X, (int)pos.Y);
                 }
             }
-            _movemade = false;
+            base.OnMouseRightDown(pos);
         }
-
-        public List<LineSelection> SelectLines(List<GameLine> lines, bool additive = false)
+        public override void OnChangingTool()
         {
-            if (!additive)
-            {
-                Unselect();
-                UnselectBox();
-            }
-            foreach (GameLine line in lines)
-            {
-                LineSelection selection = new LineSelection(line, true, null);
-                _selectedlines.Add(line.ID);
-                _selection.Add(selection);
-                _boxselection.Add(selection);
-
-                line.SelectionState = SelectionState.Selected;
-                game.Track.RedrawLine(line);
-            }
-            _selectionbox = GetBoxFromSelected(_selection);
-            Render();
-            
-            return _selection;
+            Stop();
         }
-
-        private void SaveMovedSelection()
+        public override void Render()
         {
-            if (Active)
+            if (_hoverline != null)
             {
-                if (_selection.Count != 0 && _movemade)
+                DrawHover(
+                    _hoverline,
+                     _hoverknob && _hoverknobjoint1,
+                     _hoverknob && !_hoverknobjoint1,
+                     false);
+            }
+            if (_active)
+            {
+                DrawHover(
+                    _selection.line,
+                    _selection.joint1,
+                    _selection.joint2,
+                    true);
+            }
+            base.Render();
+        }
+        private void DrawHover(GameLine line,
+            bool knob1, bool knob2, bool selected = false)
+        {
+            var start = line.Position1;
+            var end = line.Position2;
+            var width = line.Width;
+            var elapsed = _hovertime.ElapsedMilliseconds;
+            int animtime = 250;
+            if (_hovertime.IsRunning)
+            {
+                if (elapsed > animtime * 2)
+                {
+                    if (_hoverclick)
+                        _hovertime.Stop();
+                    else
+                        _hovertime.Stop();
+                }
+                game.Track.Invalidate();
+            }
+            float hoverratio;
+            if (_hoverclick)
+            {
+                animtime = 75;
+                elapsed += 75 / 4;
+                hoverratio = Math.Min(animtime, elapsed) / (float)animtime;
+            }
+            else
+            {
+                hoverratio = Math.Min((Math.Min(animtime, elapsed) / (float)animtime), 0.5f);
+            }
+            var both = knob1 == knob2 == true;
+            var linealpha = both ? 64 : 48;
+            if (selected && both)
+                linealpha += 16;
+            GameRenderer.RenderRoundedLine(
+                start,
+                end,
+                Color.FromArgb(linealpha, Color.FromArgb(127, 127, 127)),
+                (width * 2));
+
+            bool canlifelock = CanLifelock && line.Type != LineType.Scenery;
+            GameRenderer.DrawKnob(start, knob1, canlifelock, width, hoverratio);
+            GameRenderer.DrawKnob(end, knob2, canlifelock, width, hoverratio);
+
+        }
+        private void DropLine()
+        {
+            if (_active)
+            {
+                _hoverline = _selection.line;
+                _hoverknob = !_selection.BothJoints;
+                _hoverknobjoint1 = _selection.joint1;
+            }
+            _lifelocking = false;
+            if (_active)
+            {
+                if (_selection != null)
                 {
                     game.Track.UndoManager.BeginAction();
-                    game.Track.UndoManager.SetActionUserHint(_selectedlines.ToArray());
-                    foreach (var selected in _selection)
+                    game.Track.UndoManager.AddChange(_selection.clone, _selection.line);
+                    foreach (var s in _selection.snapped)
                     {
-                        game.Track.UndoManager.AddChange(selected.clone, selected.line);
+                        game.Track.UndoManager.AddChange(s.clone, s.line);
                     }
                     game.Track.UndoManager.EndAction();
-                    _movemade = false;
                 }
                 game.Invalidate();
             }
+            _active = false;
+            _selection = null;
         }
-        private void DeferToMoveTool()
+        public override void Cancel()
         {
-            CurrentTools.SetTool(CurrentTools.MoveTool);
+            Stop();
         }
-        private Vector2d GetCopyOrigin()
+        public override void Stop()
         {
-            return game.Track.Camera.GetCenter();
+            DropLine();
+            _hoverline = null;
+            _hoverclick = false;
         }
-        /// <summary>
-        /// Return the line (if any) in the point that we've selected
-        /// </summary>
-        private LineSelection SelectInSelection(TrackReader trk, Vector2d gamepos)
+        private bool ApplyModifiers(ref Vector2d joint1, ref Vector2d joint2) //Modifies the movement to account for angle locks & stuff
         {
-            foreach (var line in SelectLines(trk, gamepos))
+            bool both = _selection.joint1 && _selection.joint2;
+            bool modified = false;
+            if (both)
             {
-                if (_selectedlines.Contains(line.ID))
+                var axis = UI.InputUtils.CheckPressed(Hotkey.ToolAxisLock);
+                var perpendicularaxis = UI.InputUtils.CheckPressed(Hotkey.ToolPerpendicularAxisLock);
+                if (axis || perpendicularaxis)
                 {
-                    foreach (var s in _selection)
+                    var angle = Angle.FromVector(_selection.clone.GetVector());
+                    if (perpendicularaxis)
                     {
-                        if (s.line.ID == line.ID)
-                        {
-                            return s;
-                        }
+                        angle.Degrees -= 90;
                     }
+                    joint1 = Utility.AngleLock(_selection.line.Position1, joint1, angle);
+                    joint2 = Utility.AngleLock(_selection.line.Position2, joint2, angle);
+                    modified = true;
                 }
             }
-            return null;
+            else
+            {
+                var start = _selection.joint1 ? joint2 : joint1;
+                var end = _selection.joint2 ? joint2 : joint1;
+                if (UI.InputUtils.Check(Hotkey.ToolAngleLock))
+                {
+                    end = Utility.AngleLock(start, end, Angle.FromVector(_selection.clone.GetVector()));
+                    modified = true;
+                }
+                if (UI.InputUtils.CheckPressed(Hotkey.ToolXYSnap))
+                {
+                    end = Utility.SnapToDegrees(start, end);
+                    modified = true;
+                }
+                if (UI.InputUtils.Check(Hotkey.ToolLengthLock))
+                {
+                    var currentdelta = _selection.line.Position2 - _selection.line.Position1;
+                    end = Utility.LengthLock(start, end, currentdelta.Length);
+                    modified = true;
+                }
+
+                if (_selection.joint2)
+                    joint2 = end;
+                else
+                    joint1 = end;
+            }
+            return modified;
+        }
+        private void SnapJoints(TrackReader trk, GameLine line,
+         ref Vector2d joint1, ref Vector2d joint2)
+        {
+            HashSet<int> ignoreids = new HashSet<int>();
+            ignoreids.Add(_selection.line.ID);
+            foreach (var snapped in _selection.snapped)
+            {
+                ignoreids.Add(snapped.line.ID);
+            }
+            var snapj1 = joint1;
+            var snapj2 = joint2;
+
+            bool j1snapped = false;
+            bool j2snapped = false;
+
+            bool ignorescenery = line is StandardLine;
+            if (_selection.joint1)
+            {
+                j1snapped = GetSnapPoint(trk, joint1, line.Position2, joint1,
+                    ignoreids, out snapj1, ignorescenery);
+
+                if (!j1snapped)
+                    j1snapped = GetSnapPoint_Grid(joint1, line.Position2, joint1, out snapj1);
+            }
+            if (_selection.joint2)
+            {
+                j2snapped = GetSnapPoint(trk, line.Position1, joint2, joint2,
+                    ignoreids, out snapj2, ignorescenery);
+
+                if (!j2snapped)
+                    j2snapped = GetSnapPoint_Grid(line.Position1, joint2, joint2, out snapj2);
+            }
+            if (_selection.BothJoints)
+            {
+                var j1diff = snapj1 - joint1;
+                var j2diff = snapj2 - joint2;
+                if (j1snapped && j2snapped)
+                {
+                    if (j1diff.Length < j2diff.Length)
+                        j2snapped = false;
+                    else
+                        j1snapped = false;
+                }
+                if (j1snapped)
+                    joint2 += j1diff;
+                else if (j2snapped)
+                    joint1 += j2diff;
+            }
+            if (j1snapped)
+                joint1 = snapj1;
+            else if (j2snapped)
+                joint2 = snapj2;
         }
     }
 }

@@ -58,8 +58,6 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(WidgetMargin, WidgetMargin, 0, 0);
-
             _title = new TrackLabel(this)
             {
                 Dock = Dock.Top,
@@ -129,9 +127,9 @@ namespace linerider.UI
         }
         private int GetSelectedLinesCount()
         {
-            if (CurrentTools.SelectedTool == CurrentTools.SelectTool)
+            if (CurrentTools.CurrentTool == CurrentTools.SelectSubtool)
             {
-                SelectTool selectTool = (SelectTool)CurrentTools.SelectedTool;
+                SelectSubtool selectTool = (SelectSubtool)CurrentTools.CurrentTool;
                 int linecount = selectTool.GetLineSelectionsInBox().Count;
                 if (linecount == 0)
                     linecount = selectTool.GetLineSelections().Count;

@@ -45,7 +45,7 @@ namespace linerider.UI.Components
         public WidgetContainer(ControlBase parent) : base(parent)
         {
             Padding = new Padding(WidgetPadding, WidgetPadding, WidgetPadding, WidgetPadding);
-            SetImage(GameResources.ux_widgetbg.Bitmap);
+            SetImage(GameResources.ux_widget_background.Bitmap);
             ShouldDrawBackground = true;
             AutoSizeToContents = true;
             MouseInputEnabled = false;

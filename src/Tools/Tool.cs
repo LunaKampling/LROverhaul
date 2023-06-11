@@ -23,12 +23,34 @@ using OpenTK;
 using linerider.Utils;
 using linerider.Game;
 using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public abstract class Tool : GameService
     {
         private static Swatch Default = new Swatch();
+        public virtual Bitmap Icon
+        {
+            get
+            {
+                return new Bitmap(1, 1);
+            }
+        }
+        public virtual Hotkey Hotkey
+        {
+            get
+            {
+                return Hotkey.None;
+            }
+        }
+        public virtual string Name
+        {
+            get
+            {
+                return "";
+            }
+        }
         public virtual Swatch Swatch
         {
             get

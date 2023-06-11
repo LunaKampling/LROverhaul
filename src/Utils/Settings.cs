@@ -245,7 +245,6 @@ namespace linerider
             KeybindConflicts[Hotkey.ToolSwitchGreen] = KeyConflicts.SelectTool;
             KeybindConflicts[Hotkey.ToolSwitchBlue] = KeyConflicts.SelectTool;
 
-            KeybindConflicts[Hotkey.PlayButtonIgnoreFlag] = KeyConflicts.HardCoded;
             KeybindConflicts[Hotkey.EditorCancelTool] = KeyConflicts.HardCoded;
             KeybindConflicts[Hotkey.ToolAddSelection] = KeyConflicts.HardCoded;
             KeybindConflicts[Hotkey.ToolToggleSelection] = KeyConflicts.HardCoded;
@@ -417,7 +416,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.PlaybackFlag, new Keybinding(Key.I));
             SetupDefaultKeybind(Hotkey.PlaybackStart, new Keybinding(Key.Y));
             SetupDefaultKeybind(Hotkey.PlaybackStop, new Keybinding(Key.U));
-            SetupDefaultKeybind(Hotkey.PlaybackSlowmo, new Keybinding(Key.M));
+            SetupDefaultKeybind(Hotkey.ToggleSlowmo, new Keybinding(Key.M));
             SetupDefaultKeybind(Hotkey.PlaybackZoom, new Keybinding(Key.Z));
             SetupDefaultKeybind(Hotkey.PlaybackUnzoom, new Keybinding(Key.X));
 
@@ -450,13 +449,11 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
             SetupDefaultKeybind(Hotkey.Quicksave, new Keybinding(Key.S, KeyModifiers.Control));
 
-            SetupDefaultKeybind(Hotkey.PlayButtonIgnoreFlag, new Keybinding(KeyModifiers.Alt));
 
             SetupDefaultKeybind(Hotkey.EditorQuickPan, new Keybinding(Key.Space, KeyModifiers.Shift));
             SetupDefaultKeybind(Hotkey.EditorDragCanvas, new Keybinding(MouseButton.Middle));
 
             SetupDefaultKeybind(Hotkey.EditorCancelTool, new Keybinding(Key.Escape));
-            SetupDefaultKeybind(Hotkey.PlayButtonIgnoreFlag, new Keybinding(KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.PlaybackResetCamera, new Keybinding(Key.N));
             SetupDefaultKeybind(Hotkey.ToolCopy, new Keybinding(Key.C, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.ToolCut, new Keybinding(Key.X, KeyModifiers.Control));

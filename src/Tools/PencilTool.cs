@@ -24,11 +24,15 @@ using linerider.Rendering;
 using linerider.Game;
 using linerider.Utils;
 using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class PencilTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_pencil.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorPencilTool;
+        public override string Name => "Pencil Tool";
         public override bool RequestsMousePrecision
         {
             get => DrawingScenery;

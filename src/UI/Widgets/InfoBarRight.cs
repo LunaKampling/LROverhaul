@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Linq;
 using Gwen;
 using Gwen.Controls;
+using linerider.Tools;
 using linerider.UI.Components;
 using linerider.Utils;
 
@@ -36,8 +37,7 @@ namespace linerider.UI
         private TrackLabel _playbackratelabel;
         private TrackLabel _notifylabel;
 
-        private Panel _iconpanel;
-        private Sprite _usercamerasprite;
+        private Panel _resetcamerawrapper;
 
         private double _zoomrounded
         {
@@ -62,16 +62,13 @@ namespace linerider.UI
             _playbackratelabel.IsHidden = rec || _editor.Scheduler.UpdatesPerSecond == 40;
             _notifylabel.IsHidden = rec || string.IsNullOrEmpty(_editor.CurrentNotifyMessage);
 
-            _usercamerasprite.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
-            _iconpanel.IsHidden = _usercamerasprite.IsHidden;
+            _resetcamerawrapper.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
 
             bool hasNoContent = Children.All(x => x.IsHidden);
             ShouldDrawBackground = !hasNoContent;
         }
         private void Setup()
         {
-            Margin = new Margin(0, WidgetMargin, WidgetMargin, 0);
-
             _fpslabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
@@ -149,29 +146,27 @@ namespace linerider.UI
                 },
             };
 
-            _iconpanel = new Panel(this)
+            _resetcamerawrapper = new Panel(this)
             {
-                ShouldDrawBackground = false,
                 Dock = Dock.Top,
-                Width = 32,
-                Height = 32,
-                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
+                ShouldDrawBackground = false,
+                //Margin = new Margin(0, WidgetItemSpacing, 0, 0),
+                AutoSizeToContents = true,
             };
-            _usercamerasprite = new Sprite(_iconpanel)
+
+            new WidgetButton(_resetcamerawrapper)
             {
                 Dock = Dock.Right,
-                IsHidden = true,
-                Tooltip = "Click to Reset Camera" + Settings.HotkeyToString(Hotkey.PlaybackResetCamera, true),
-                MouseInputEnabled = true,
-                TooltipDelay = 0,
+                Name = "Reset Camera",
+                Icon = GameResources.icon_reset_camera.Bitmap,
+                Action = (o, e) =>
+                {
+                    _editor.Zoom = _editor.Timeline.GetFrameZoom(_editor.Offset);
+                    _editor.UseUserZoom = false;
+                    _editor.UpdateCamera();
+                },
+                Hotkey = Hotkey.PlaybackResetCamera,
             };
-            _usercamerasprite.Clicked += (o,e)=>
-            {
-                _editor.Zoom = _editor.Timeline.GetFrameZoom(_editor.Offset);
-                _editor.UseUserZoom = false;
-                _editor.UpdateCamera();
-            };
-            _usercamerasprite.SetImage(GameResources.camera_need_reset);
 
         }
     }

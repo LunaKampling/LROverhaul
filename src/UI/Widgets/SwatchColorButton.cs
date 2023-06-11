@@ -37,7 +37,7 @@ namespace linerider.UI
         }
         private bool Selected
         {
-            get => CurrentTools.SelectedTool.Swatch.Selected == _linetype;
+            get => CurrentTools.CurrentTool.Swatch.Selected == _linetype;
         }
 
         public SwatchColorButton(ControlBase canvas, LineType linetype) : base(canvas)
@@ -58,9 +58,9 @@ namespace linerider.UI
             TextRequest = (o, e) =>
              {
                  if (!Selected ||
-                    CurrentTools.SelectedTool == CurrentTools.EraserTool ||
-                    CurrentTools.SelectedTool == CurrentTools.SelectTool ||
-                    CurrentTools.SelectedTool == CurrentTools.MoveTool)
+                    CurrentTools.CurrentTool == CurrentTools.EraserTool ||
+                    CurrentTools.CurrentTool == CurrentTools.SelectSubtool ||
+                    CurrentTools.CurrentTool == CurrentTools.SelectTool)
                      return "";
                  switch (_linetype)
                  {
@@ -68,12 +68,12 @@ namespace linerider.UI
                          return "";
                      case LineType.Red:
                          {
-                             var sw = CurrentTools.SelectedTool.Swatch;
+                             var sw = CurrentTools.CurrentTool.Swatch;
                              return sw.RedMultiplier.ToString(Program.Culture) + "x";
                          }
                      case LineType.Scenery:
                          {
-                             var sw = CurrentTools.SelectedTool.Swatch;
+                             var sw = CurrentTools.CurrentTool.Swatch;
                              return sw.GreenMultiplier.ToString(Program.Culture) + "x";
                          }
                      default:
@@ -83,7 +83,7 @@ namespace linerider.UI
 
             Clicked += (o, e) =>
             {
-                CurrentTools.SelectedTool.Swatch.Selected = _linetype;
+                CurrentTools.CurrentTool.Swatch.Selected = _linetype;
                 Invalidate();
             };
 
@@ -95,12 +95,12 @@ namespace linerider.UI
         public void IncrementMultiplier()
         {
             if (Selected &&
-            CurrentTools.SelectedTool != CurrentTools.EraserTool &&
-            CurrentTools.SelectedTool != CurrentTools.EraserTool &&
-            CurrentTools.SelectedTool != CurrentTools.SelectTool &&
-            CurrentTools.SelectedTool.ShowSwatch)
+            CurrentTools.CurrentTool != CurrentTools.EraserTool &&
+            CurrentTools.CurrentTool != CurrentTools.EraserTool &&
+            CurrentTools.CurrentTool != CurrentTools.SelectSubtool &&
+            CurrentTools.CurrentTool.ShowSwatch)
             {
-                CurrentTools.SelectedTool.Swatch.IncrementSelectedMultiplier();
+                CurrentTools.CurrentTool.Swatch.IncrementSelectedMultiplier();
                 Invalidate();
             }
         }

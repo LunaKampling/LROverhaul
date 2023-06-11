@@ -20,11 +20,15 @@ using OpenTK;
 using System;
 using linerider.Utils;
 using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class EraserTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_eraser.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorEraserTool;
+        public override string Name => "Eraser Tool";
         public override Swatch Swatch
         {
             get

@@ -30,8 +30,8 @@ namespace linerider.UI
         private ControlBase _topbar;
         private ControlBase _bottombar;
         private Editor _editor;
-        private ImageButton _speedincrease;
-        private ImageButton _speeddecrease;
+        private WidgetButton _speedincrease;
+        private WidgetButton _speeddecrease;
         private TrackLabel _timecurrent;
         private TrackLabel _iterations;
         private TrackLabel _timemax;
@@ -60,15 +60,32 @@ namespace linerider.UI
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 Dock = Dock.Top,
-                Height = 32,
+                Height = 40,
             };
-            _speedincrease = CreateButton(_topbar, GameResources.fast_forward, "Increase Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedUp, true));
-            _speedincrease.Clicked += (o, e) => _editor.PlaybackSpeedUp();
-            _speedincrease.Dock = Dock.Right;
 
-            _speeddecrease = CreateButton(_topbar, GameResources.rewind, "Decrease Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedDown, true));
-            _speeddecrease.Clicked += (o, e) => _editor.PlaybackSpeedDown();
-            _speeddecrease.Dock = Dock.Left;
+            _speedincrease = new WidgetButton(_topbar)
+            {
+                Dock = Dock.Right,
+                Name = "Increase Speed",
+                Icon = GameResources.icon_speedup.Bitmap,
+                Action = (o, e) =>
+                {
+                    _editor.PlaybackSpeedUp();
+                },
+                Hotkey = Hotkey.PlaybackSpeedUp,
+            };
+
+            _speeddecrease = new WidgetButton(_topbar)
+            {
+                Dock = Dock.Left,
+                Name = "Decrease Speed",
+                Icon = GameResources.icon_slowdown.Bitmap,
+                Action = (o, e) =>
+                {
+                    _editor.PlaybackSpeedDown();
+                },
+                Hotkey = Hotkey.PlaybackSpeedDown,
+            };
 
             Playhead = new Playhead(_topbar, _editor);
             Playhead.Dock = Dock.Fill;

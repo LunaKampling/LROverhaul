@@ -29,6 +29,7 @@ using Gwen.Skin;
 using Gwen.Controls;
 using Gwen;
 using linerider.Utils;
+using linerider.UI.Components;
 
 namespace linerider
 {
@@ -39,6 +40,7 @@ namespace linerider
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
         private TimelineWidget _timeline;
+        private ColorSwatch _swatchbar;
         private Toolbar _toolbar;
         private LoadingSprite _loadingsprite;
         private MainWindow game;
@@ -70,10 +72,12 @@ namespace linerider
             var rec = Settings.Local.RecordingMode;
             ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
+            _swatchbar.IsHidden = rec;
+            _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timeline.IsHidden = rec;
 
             _loadingsprite.IsHidden = rec || !Loading;
-            var selectedtool = CurrentTools.SelectedTool;
+            var selectedtool = CurrentTools.CurrentTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
             if (!_usertooltip.IsHidden)
             {
@@ -92,8 +96,6 @@ namespace linerider
                 offset = Util.ClampRectToRect(offset, Bounds);
                 _usertooltip.SetPosition(offset.X, offset.Y);
             }
-
-            _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
         }
         private void CreateUI()
         {
@@ -109,16 +111,16 @@ namespace linerider
                 },
             };
             _loadingsprite.SetImage(GameResources.ux_loading);
-            _toolbar = new Toolbar(this, game.Track);
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);
 
             ControlBase leftPanel = new Panel(this)
             {
-                Dock = Dock.Left,
+                Margin = new Margin(WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0, 0),
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 AutoSizeToContents = true,
+                Dock = Dock.Left,
             };
             new InfoBarLeft(leftPanel, game.Track)
             {
@@ -127,14 +129,33 @@ namespace linerider
             _infobarcoords = new InfoBarCoords(leftPanel)
             {
                 Dock = Dock.Top,
+                Margin = new Margin(0, WidgetContainer.WidgetMargin, 0, 0),
+            };
+
+            ControlBase middlePanel = new Panel(this)
+            {
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
+                Positioner = (o) => new Point(Width / 2 - o.Width / 2, WidgetContainer.WidgetMargin),
+            };
+            _toolbar = new Toolbar(middlePanel, game)
+            {
+                Dock = Dock.Top,
+            };
+            _swatchbar = new ColorSwatch(middlePanel)
+            {
+                Dock = Dock.Left,
+                Margin = new Margin(WidgetContainer.WidgetMargin, 0, 0, 0),
             };
 
             ControlBase rightPanel = new Panel(this)
             {
-                Dock = Dock.Right,
+                Margin = new Margin(0, WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0),
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 AutoSizeToContents = true,
+                Dock = Dock.Right,
             };
             new InfoBarRight(rightPanel, game.Track)
             {
@@ -145,7 +166,7 @@ namespace linerider
         {
             if (child is Gwen.ControlInternal.Modal || child is WindowControl)
             {
-                CurrentTools.SelectedTool.Stop();
+                CurrentTools.CurrentTool.Stop();
             }
         }
         public override void Think()

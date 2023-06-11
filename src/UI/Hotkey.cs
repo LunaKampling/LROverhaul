@@ -56,7 +56,7 @@ namespace linerider.UI
         PlaybackStart,
         PlaybackStop,
         PlaybackFlag,
-        PlaybackSlowmo,
+        ToggleSlowmo,
         PlaybackZoom,
         PlaybackUnzoom,
         PlaybackSpeedUp,
@@ -85,8 +85,6 @@ namespace linerider.UI
         SaveAsWindow,
         TriggerMenuWindow,
         LineGeneratorWindow,
-
-        PlayButtonIgnoreFlag,
 
         MagicAnimateAdvanceFrame,
         MagicAnimateRecedeFrame,

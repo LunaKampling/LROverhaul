@@ -158,12 +158,12 @@
   <ItemGroup>
     <Compile Include="Tools\CurrentTools.cs" />
     <Compile Include="Tools\EraserTool.cs" />
-    <Compile Include="Tools\HandTool.cs" />
+    <Compile Include="Tools\PanTool.cs" />
     <Compile Include="Tools\BezierTool.cs" />
     <Compile Include="Tools\LineTool.cs" />
-    <Compile Include="Tools\MoveTool.cs" />
-    <Compile Include="Tools\SmoothPencilTool.cs" />
     <Compile Include="Tools\SelectTool.cs" />
+    <Compile Include="Tools\SmoothPencilTool.cs" />
+    <Compile Include="Tools\SelectSubtool.cs" />
     <Compile Include="Tools\LineSelection.cs" />
     <Compile Include="Tools\PencilTool.cs" />
     <Compile Include="Tools\SharedSwatches.cs" />
@@ -202,6 +202,9 @@
     <Compile Include="LRL\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Components\MultiToolButton.cs" />
+    <Compile Include="UI\Components\WidgetButton.cs" />
+    <Compile Include="UI\Components\ToolButton.cs" />
     <Compile Include="UI\Dialogs\ChangelogWindow.cs" />
     <Compile Include="UI\Dialogs\ScreenshotWindow.cs" />
     <Compile Include="UI\Dialogs\GeneratorWindow.cs" />
@@ -274,28 +277,30 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\icons\swatch.png" />
-    <EmbeddedResource Include="Resources\icons\erasertool.png" />
-    <EmbeddedResource Include="Resources\icons\fast-forward.png" />
-    <EmbeddedResource Include="Resources\icons\flag.png" />
-    <EmbeddedResource Include="Resources\icons\movetool.png" />
-    <EmbeddedResource Include="Resources\icons\linetool.png" />
-    <EmbeddedResource Include="Resources\icons\menu.png" />
-    <EmbeddedResource Include="Resources\icons\pantool.png" />
-    <EmbeddedResource Include="Resources\icons\pause.png" />
-    <EmbeddedResource Include="Resources\icons\penciltool.png" />
-    <EmbeddedResource Include="Resources\icons\play.png" />
-    <EmbeddedResource Include="Resources\icons\rewind.png" />
-    <EmbeddedResource Include="Resources\icons\smoothpenciltool.png" />
-    <EmbeddedResource Include="Resources\icons\stop.png" />
-    <EmbeddedResource Include="Resources\icons\beziertool.png" />
-    <EmbeddedResource Include="Resources\icons\generator.png" />
-    <EmbeddedResource Include="Resources\icons\cameraneedreset.png" />
+    <EmbeddedResource Include="Resources\icons\tool_pencil.svg" />
+    <EmbeddedResource Include="Resources\icons\tool_smooth_pencil.svg" />
+    <EmbeddedResource Include="Resources\icons\tool_line.svg" />
+    <EmbeddedResource Include="Resources\icons\tool_bezier.svg" />
+    <EmbeddedResource Include="Resources\icons\tool_eraser.svg" />
+    <EmbeddedResource Include="Resources\icons\tool_select.svg" />
+    <EmbeddedResource Include="Resources\icons\tool_pan.svg" />
+    <EmbeddedResource Include="Resources\icons\play.svg" />
+    <EmbeddedResource Include="Resources\icons\pause.svg" />
+    <EmbeddedResource Include="Resources\icons\stop.svg" />
+    <EmbeddedResource Include="Resources\icons\flag.svg" />
+    <EmbeddedResource Include="Resources\icons\generators.svg" />
+    <EmbeddedResource Include="Resources\icons\menu.svg" />
+    <EmbeddedResource Include="Resources\icons\reset_camera.svg" />
+    <EmbeddedResource Include="Resources\icons\slowdown.svg" />
+    <EmbeddedResource Include="Resources\icons\speedup.svg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ux\flagmarker.png" />
     <EmbeddedResource Include="Resources\ux\playheadmarker.png" />
     <EmbeddedResource Include="Resources\ux\loading.png" />
-    <EmbeddedResource Include="Resources\ux\widgetbg.svg" />
+    <EmbeddedResource Include="Resources\ux\widget_background.svg" />
+    <EmbeddedResource Include="Resources\ux\tool_background.svg" />
+    <EmbeddedResource Include="Resources\ux\multitool_indicator.svg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\cursors\pencil.svg" />
