@@ -20,8 +20,8 @@ namespace linerider
 {
     public enum LineType
     {
-        Blue,
-        Red,
+        Standard,
+        Acceleration,
         Scenery,
         All,
     }

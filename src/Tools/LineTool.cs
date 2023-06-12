@@ -58,7 +58,7 @@ namespace linerider.Tools
 
         public LineTool() : base()
         {
-            Swatch.Selected = LineType.Blue;
+            Swatch.Selected = LineType.Standard;
         }
 
         public override void OnChangingTool()
@@ -190,13 +190,13 @@ namespace linerider.Tools
                 {
                     switch (Swatch.Selected)
                     {
-                        case LineType.Blue:
+                        case LineType.Standard:
                             StandardLine sl = new StandardLine(_start, _end, _addflip);
                             sl.CalculateConstants();
                             GameRenderer.DrawTrackLine(sl, c, Settings.Editor.RenderGravityWells, true);
                             break;
 
-                        case LineType.Red:
+                        case LineType.Acceleration:
                             RedLine rl = new RedLine(_start, _end, _addflip);
                             rl.Multiplier = Swatch.RedMultiplier;
                             rl.CalculateConstants();

@@ -87,7 +87,7 @@ namespace linerider.Tools
         }
         public SmoothPencilTool() : base()
         {
-            Swatch.Selected = LineType.Blue;
+            Swatch.Selected = LineType.Standard;
         }
         public override void OnMouseDown(Vector2d pos)
         {

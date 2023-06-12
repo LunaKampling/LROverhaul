@@ -25,15 +25,15 @@ namespace linerider.UI
             _standardBtn = new WidgetButton(this)
             {
                 Name = "Standard Line",
-                Action = (o, e) => SwatchSelect(LineType.Blue),
+                Action = (o, e) => SwatchSelect(LineType.Standard),
                 Hotkey = Hotkey.EditorToolColor1,
             };
             _accelerationBtn = new WidgetButton(this)
             {
                 Name = "Acceleration Line",
                 Font = canvas.Fonts.DefaultBold,
-                TextRequest = (o, e) => TextRequest(LineType.Red),
-                Action = (o, e) => SwatchSelect(LineType.Red),
+                TextRequest = (o, e) => TextRequest(LineType.Acceleration),
+                Action = (o, e) => SwatchSelect(LineType.Acceleration),
                 Hotkey = Hotkey.EditorToolColor2,
             };
             _sceneryBtn = new WidgetButton(this)
@@ -53,7 +53,7 @@ namespace linerider.UI
                 Hotkey = Hotkey.EditorToolColor4,
             };
 
-            _accelerationBtn.RightClicked += (o, e) => IncrementMultiplier(LineType.Red);
+            _accelerationBtn.RightClicked += (o, e) => IncrementMultiplier(LineType.Acceleration);
             _sceneryBtn.RightClicked += (o, e) => IncrementMultiplier(LineType.Scenery);
         }
         public override void Think()
@@ -77,8 +77,8 @@ namespace linerider.UI
             }
 
             LineType currSwatch = CurrentTools.CurrentTool.Swatch.Selected;
-            _standardBtn.Icon = currSwatch == LineType.Blue ? _activeTexture : _normalTexture;
-            _accelerationBtn.Icon = currSwatch == LineType.Red ? _activeTexture : _normalTexture;
+            _standardBtn.Icon = currSwatch == LineType.Standard ? _activeTexture : _normalTexture;
+            _accelerationBtn.Icon = currSwatch == LineType.Acceleration ? _activeTexture : _normalTexture;
             _sceneryBtn.Icon = currSwatch == LineType.Scenery ? _activeTexture : _normalTexture;
             _allBtn.Icon = currSwatch == LineType.All ? _activeTexture : _normalTexture;
 
@@ -98,7 +98,7 @@ namespace linerider.UI
 
             switch (linetype)
             {
-                case LineType.Red:
+                case LineType.Acceleration:
                     label = "\u00A0" + swatch.RedMultiplier.ToString(Program.Culture) + "\u00D7";
                     break;
                 case LineType.Scenery:

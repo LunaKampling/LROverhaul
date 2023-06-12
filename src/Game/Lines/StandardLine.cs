@@ -70,7 +70,7 @@ namespace linerider.Game
         {
             get
             {
-                return LineType.Blue;
+                return LineType.Standard;
             }
         }
         public override System.Drawing.Color Color => Settings.Colors.StandardLine;

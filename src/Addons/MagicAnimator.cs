@@ -79,10 +79,10 @@ namespace linerider.Addons
                 {
                     switch (selection.line.Type)
                     {
-                        case LineType.Red:
+                        case LineType.Acceleration:
                             newLine = new RedLine(nextP1, nextP2, ((RedLine)selectedLine).inv);
                             break;
-                        case LineType.Blue:
+                        case LineType.Standard:
                             newLine = new StandardLine(nextP1, nextP2, ((StandardLine)selectedLine).inv);
                             break;
                         case LineType.Scenery:

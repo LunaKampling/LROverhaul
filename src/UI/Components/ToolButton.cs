@@ -60,10 +60,10 @@ namespace linerider.UI.Components
                         case LineType.Scenery:
                             backgroundColor = Settings.Colors.SceneryLine;
                             break;
-                        case LineType.Blue:
+                        case LineType.Standard:
                             backgroundColor = Settings.Colors.StandardLine;
                             break;
-                        case LineType.Red:
+                        case LineType.Acceleration:
                             backgroundColor = Settings.Colors.AccelerationLine;
                             break;
                     }

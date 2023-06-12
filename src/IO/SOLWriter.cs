@@ -18,9 +18,9 @@ namespace linerider.IO
         {
             switch (t)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     return 0;
-                case LineType.Red:
+                case LineType.Acceleration:
                     return 1;
                 case LineType.Scenery:
                     return 2;

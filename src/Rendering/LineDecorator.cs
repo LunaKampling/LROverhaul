@@ -43,7 +43,7 @@ namespace linerider.Rendering
             var red = new List<RedLine>(lines.Count / 4);
             foreach (var line in lines.unsafe_array)
             {
-                if (line.Type == LineType.Red)
+                if (line.Type == LineType.Acceleration)
                     red.Add((RedLine)line);
             }
             _linecolorrenderer.Initialize(lines);

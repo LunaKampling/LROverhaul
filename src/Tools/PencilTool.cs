@@ -69,7 +69,7 @@ namespace linerider.Tools
         }
         public PencilTool() : base()
         {
-            Swatch.Selected = LineType.Blue;
+            Swatch.Selected = LineType.Standard;
         }
         public override void OnMouseDown(Vector2d pos)
         {

@@ -165,10 +165,10 @@ namespace linerider
             }
             switch (line.Type)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     BlueLines++;
                     break;
-                case LineType.Red:
+                case LineType.Acceleration:
                     RedLines++;
                     break;
                 case LineType.Scenery:
@@ -192,10 +192,10 @@ namespace linerider
         {
             switch (line.Type)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     BlueLines--;
                     break;
-                case LineType.Red:
+                case LineType.Acceleration:
                     RedLines--;
                     break;
                 case LineType.Scenery:

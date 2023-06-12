@@ -55,9 +55,9 @@ namespace linerider.Game
         {
             switch (Type)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     return Settings.Colors.StandardLine;
-                case LineType.Red:
+                case LineType.Acceleration:
                     return Settings.Colors.AccelerationLine;
                 case LineType.Scenery:
                     return Settings.Colors.SceneryLine;

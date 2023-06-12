@@ -209,10 +209,6 @@ namespace linerider
                 Canvas.RenderCanvas();
                 MSAABuffer.End();
 
-                //if (Settings.NightMode)
-                //{
-                //    StaticRenderer.RenderRect(new FloatRect(0, 0, RenderSize.Width, RenderSize.Height), Color.FromArgb(0, 0, 0, 0));
-                //}
                 SwapBuffers();
                 //there are machines and cases where a refresh may not hit the screen without calling glfinish...
                 GL.Finish();
@@ -1264,7 +1260,7 @@ namespace linerider
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchBlue, () => !Track.Playing &&
             CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectSubtool.SwitchLineType(LineType.Blue);
+                CurrentTools.SelectSubtool.SwitchLineType(LineType.Standard);
                 Invalidate();
             },
             null,
@@ -1272,7 +1268,7 @@ namespace linerider
             InputUtils.RegisterHotkey(Hotkey.ToolSwitchRed, () => !Track.Playing &&
             CurrentTools.CurrentTool == CurrentTools.SelectSubtool, () =>
             {
-                CurrentTools.SelectSubtool.SwitchLineType(LineType.Red);
+                CurrentTools.SelectSubtool.SwitchLineType(LineType.Acceleration);
                 Invalidate();
             },
             null,
