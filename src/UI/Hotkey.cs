@@ -16,6 +16,7 @@ namespace linerider.UI
         EditorToolColor1,
         EditorToolColor2,
         EditorToolColor3,
+        EditorToolColor4,
         EditorRemoveLatestLine,
         EditorFocusStart,
         EditorFocusLastLine,

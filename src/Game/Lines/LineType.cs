@@ -20,13 +20,9 @@ namespace linerider
 {
     public enum LineType
     {
-        Scenery = 0,
-        Blue = 1,
-        Red = 2,
-        
-        /// <summary>
-        /// Used for the swatch selector
-        /// </summary>
-        All = 3
+        Blue,
+        Red,
+        Scenery,
+        All,
     }
 }

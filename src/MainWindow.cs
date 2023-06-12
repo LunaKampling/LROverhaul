@@ -1180,33 +1180,6 @@ namespace linerider
             {
                 Settings.Local.TrackOverlay = !Settings.Local.TrackOverlay;
             });
-            InputUtils.RegisterHotkey(Hotkey.EditorToolColor1, () => !Track.Playing, () =>
-            {
-                var swatch = CurrentTools.CurrentTool.Swatch;
-                if (swatch != null)
-                {
-                    swatch.Selected = LineType.Blue;
-                }
-                Invalidate();
-            });
-            InputUtils.RegisterHotkey(Hotkey.EditorToolColor2, () => !Track.Playing, () =>
-            {
-                var swatch = CurrentTools.CurrentTool.Swatch;
-                if (swatch != null)
-                {
-                    swatch.Selected = LineType.Red;
-                }
-                Invalidate();
-            });
-            InputUtils.RegisterHotkey(Hotkey.EditorToolColor3, () => !Track.Playing, () =>
-            {
-                var swatch = CurrentTools.CurrentTool.Swatch;
-                if (swatch != null)
-                {
-                    swatch.Selected = LineType.Scenery;
-                }
-                Invalidate();
-            });
             InputUtils.RegisterHotkey(Hotkey.EditorFocusFlag, () => !Track.Playing, () =>
             {
                 var flag = Track.GetFlag();

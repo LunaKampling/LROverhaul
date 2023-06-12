@@ -235,7 +235,6 @@
   <ItemGroup>
     <Compile Include="UI\Components\TrackLabel.cs" />
     <Compile Include="UI\Components\Sprite.cs" />
-    <Compile Include="UI\Components\ColorSwatch.cs" />
     <Compile Include="UI\Components\ImageButton.cs" />
     <Compile Include="UI\Components\PlayheadMarker.cs" />
     <Compile Include="UI\Components\WidgetContainer.cs" />
@@ -245,10 +244,10 @@
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
     <Compile Include="UI\Widgets\InfoBarLeft.cs" />
     <Compile Include="UI\Widgets\InfoBarRight.cs" />
-    <Compile Include="UI\Widgets\SwatchColorButton.cs" />
     <Compile Include="UI\Widgets\TimelineWidget.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\Playhead.cs" />
+    <Compile Include="UI\Widgets\SwatchBar.cs" />
     <Compile Include="UI\Widgets\ZoomSlider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -276,7 +275,6 @@
     <EmbeddedResource Include="Resources\icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\icons\swatch.png" />
     <EmbeddedResource Include="Resources\icons\tool_pencil.svg" />
     <EmbeddedResource Include="Resources\icons\tool_smooth_pencil.svg" />
     <EmbeddedResource Include="Resources\icons\tool_line.svg" />
@@ -298,6 +296,8 @@
     <EmbeddedResource Include="Resources\ux\flagmarker.png" />
     <EmbeddedResource Include="Resources\ux\playheadmarker.png" />
     <EmbeddedResource Include="Resources\ux\loading.png" />
+    <EmbeddedResource Include="Resources\ux\swatch.svg" />
+    <EmbeddedResource Include="Resources\ux\swatch_active.svg" />
     <EmbeddedResource Include="Resources\ux\widget_background.svg" />
     <EmbeddedResource Include="Resources\ux\tool_background.svg" />
     <EmbeddedResource Include="Resources\ux\multitool_indicator.svg" />

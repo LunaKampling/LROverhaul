@@ -514,6 +514,14 @@ namespace linerider
         {
             get => GetVectorImage("ux.tool_background.svg");
         }
+        internal static VectorResource ux_swatch
+        {
+            get => GetVectorImage("ux.swatch.svg");
+        }
+        internal static VectorResource ux_swatch_active
+        {
+            get => GetVectorImage("ux.swatch_active.svg");
+        }
         internal static VectorResource icon_multitool_indicator
         {
             get => GetVectorImage("ux.multitool_indicator.svg");

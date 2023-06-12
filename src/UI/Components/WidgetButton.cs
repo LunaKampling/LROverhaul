@@ -9,10 +9,6 @@ namespace linerider.UI.Components
 {
     public class WidgetButton : ImageButton
     {
-        private GwenEventHandler<EventArgs> _action;
-        private Hotkey _hotkey;
-        private Bitmap _icon;
-
         public GwenEventHandler<EventArgs> Action
         {
             get => _action;
@@ -28,9 +24,12 @@ namespace linerider.UI.Components
             get => _icon;
             set
             {
-                _icon = value;
-                SetImage(_icon);
-                SetSize(_icon.Width, _icon.Height);
+                if (_icon != value)
+                {
+                    _icon = value;
+                    SetImage(_icon);
+                    SetSize(_icon.Width, _icon.Height);
+                }
             }
         }
         public Hotkey Hotkey
@@ -43,6 +42,21 @@ namespace linerider.UI.Components
                 InputUtils.RegisterHotkey(_hotkey, () => true, () => Action(this, EventArgs.Empty));
             }
         }
+        public Color Color
+        {
+            get => _color == Color.Empty ? Settings.Computed.LineColor : _color;
+            set
+            {
+                _color = value;
+            }
+        }
+
+
+        public new Color TextColor = Color.Black;
+        private GwenEventHandler<EventArgs> _action;
+        private Hotkey _hotkey;
+        private Bitmap _icon;
+        private Color _color = Color.Empty;
 
         public WidgetButton(ControlBase parent) : base(parent)
         {
@@ -69,7 +83,8 @@ namespace linerider.UI.Components
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
-            skin.Renderer.DrawColor = Color.FromArgb(Alpha, Settings.Computed.LineColor);
+            m_Text.TextColor = TextColor;
+            skin.Renderer.DrawColor = Color.FromArgb(Alpha, Color);
             skin.Renderer.DrawTexturedRect(m_texture, RenderBounds);
         }
     }

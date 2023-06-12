@@ -67,6 +67,8 @@ namespace linerider.UI
             AddBinding(editorTable, "Swatch Color Blue", Hotkey.EditorToolColor1);
             AddBinding(editorTable, "Swatch Color Red", Hotkey.EditorToolColor2);
             AddBinding(editorTable, "Swatch Color Green", Hotkey.EditorToolColor3);
+            AddBinding(editorTable, "Swatch Color All", Hotkey.EditorToolColor4,
+                "Used in eraser and select tools");
             AddBinding(editorTable, "Cycle Tool Setting", Hotkey.EditorCycleToolSetting);
 
             AddBinding(editorTable, "Move Start Point", Hotkey.EditorMoveStart,

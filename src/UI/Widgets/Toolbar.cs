@@ -16,6 +16,9 @@ namespace linerider.UI
 
         public Toolbar(ControlBase parent, MainWindow game) : base(parent)
         {
+            ShouldDrawBackground = false;
+            Padding = Padding.Zero;
+
             _canvas = (GameCanvas)parent.GetCanvas();
             _editor = game.Track;
             _game = game;

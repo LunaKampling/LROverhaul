@@ -40,7 +40,7 @@ namespace linerider
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
         private TimelineWidget _timeline;
-        private ColorSwatch _swatchbar;
+        private SwatchBar _swatchbar;
         private Toolbar _toolbar;
         private LoadingSprite _loadingsprite;
         private MainWindow game;
@@ -72,7 +72,7 @@ namespace linerider
             var rec = Settings.Local.RecordingMode;
             ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
-            _swatchbar.IsHidden = rec;
+            _swatchbar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
             _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timeline.IsHidden = rec;
 
@@ -132,10 +132,8 @@ namespace linerider
                 Margin = new Margin(0, WidgetContainer.WidgetMargin, 0, 0),
             };
 
-            ControlBase middlePanel = new Panel(this)
+            WidgetContainer middlePanel = new WidgetContainer(this)
             {
-                ShouldDrawBackground = false,
-                MouseInputEnabled = false,
                 AutoSizeToContents = true,
                 Positioner = (o) => new Point(Width / 2 - o.Width / 2, WidgetContainer.WidgetMargin),
             };
@@ -143,10 +141,10 @@ namespace linerider
             {
                 Dock = Dock.Top,
             };
-            _swatchbar = new ColorSwatch(middlePanel)
+            _swatchbar = new SwatchBar(middlePanel)
             {
+                AutoSizeToContents = true,
                 Dock = Dock.Left,
-                Margin = new Margin(WidgetContainer.WidgetMargin, 0, 0, 0),
             };
 
             ControlBase rightPanel = new Panel(this)
