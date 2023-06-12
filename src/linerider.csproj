@@ -295,7 +295,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\ux\flagmarker.png" />
     <EmbeddedResource Include="Resources\ux\playheadmarker.png" />
-    <EmbeddedResource Include="Resources\ux\loading.png" />
+    <EmbeddedResource Include="Resources\ux\loading.svg" />
     <EmbeddedResource Include="Resources\ux\swatch.svg" />
     <EmbeddedResource Include="Resources\ux\swatch_active.svg" />
     <EmbeddedResource Include="Resources\ux\widget_background.svg" />

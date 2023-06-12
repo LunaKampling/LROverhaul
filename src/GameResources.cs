@@ -498,14 +498,11 @@ namespace linerider
                 return GetBitmap("ux.playheadmarker.png");
             }
         }
-        internal static System.Drawing.Bitmap ux_loading
-        {
-            get
-            {
-                return GetBitmap("ux.loading.png");
-            }
-        }
 
+        internal static VectorResource ux_loading
+        {
+            get => GetVectorImage("ux.loading.svg");
+        }
         internal static VectorResource ux_widget_background
         {
             get => GetVectorImage("ux.widget_background.svg");

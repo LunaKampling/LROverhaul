@@ -101,16 +101,6 @@ namespace linerider
         {
 
             _usertooltip = new Tooltip(this) { IsHidden = true };
-            _loadingsprite = new LoadingSprite(this)
-            {
-                Positioner = (o) =>
-                {
-                    return new Point(
-                        Width - _loadingsprite.Width,
-                        0);
-                },
-            };
-            _loadingsprite.SetImage(GameResources.ux_loading);
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);
 
@@ -158,6 +148,14 @@ namespace linerider
             new InfoBarRight(rightPanel, game.Track)
             {
                 Dock = Dock.Top,
+            };
+
+            _loadingsprite = new LoadingSprite(this)
+            {
+                Positioner = (o) => new Point(
+                    middlePanel.X + middlePanel.Width,
+                    middlePanel.Y + WidgetContainer.WidgetPadding
+                ),
             };
         }
         protected override void OnChildAdded(ControlBase child)
