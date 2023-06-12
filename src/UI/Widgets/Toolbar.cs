@@ -80,6 +80,7 @@ namespace linerider.UI
                     WidgetButton button = (WidgetButton)o;
                     Point canvaspos = LocalPosToCanvas(new Point(button.X, button.Y));
                     _menu.SetPosition(canvaspos.X, canvaspos.Y + button.Height);
+                    _menu.Width = 250;
                     _menu.Show();
                 },
             };
@@ -126,51 +127,38 @@ namespace linerider.UI
         {
             _menu = new Menu(_canvas)
             {
+                AutoSizeToContents = false,
                 IsHidden = true,
             };
 
-            AddMenuItem("Save As...", Hotkey.SaveAsWindow)
-                .Clicked += (o2, e2) => _canvas.ShowSaveDialog();
-            AddMenuItem("Load...", Hotkey.LoadWindow)
-                .Clicked += (o2, e2) => _canvas.ShowLoadDialog();
-            AddMenuItem("New")
-                .Clicked += (o2, e2) => NewTrack();
-
+            AddMenuItem("Save As...", Hotkey.SaveAsWindow, () => _canvas.ShowSaveDialog());
+            AddMenuItem("Load...", Hotkey.LoadWindow, () => _canvas.ShowLoadDialog());
+            AddMenuItem("New", () => NewTrack());
             AddDivider();
-
-            AddMenuItem("Preferences", Hotkey.PreferencesWindow)
-                .Clicked += (o2, e2) => _canvas.ShowPreferencesDialog();
-            AddMenuItem("Open User Directory")
-                .Clicked += (o2, e2) => GameCanvas.OpenUrl(Program.UserDirectory);
-
+            AddMenuItem("Preferences", Hotkey.PreferencesWindow, () => _canvas.ShowPreferencesDialog());
+            AddMenuItem("Open User Directory", () => GameCanvas.OpenUrl(Program.UserDirectory));
             AddDivider();
-
-            AddMenuItem("Track Properties", Hotkey.TrackPropertiesWindow)
-                .Clicked += (o2, e2) => _canvas.ShowTrackPropertiesDialog();
-            AddMenuItem("Triggers", Hotkey.TriggerMenuWindow)
-                .Clicked += (o2, e2) => _canvas.ShowTriggerWindow();
-
+            AddMenuItem("Track Properties", Hotkey.TrackPropertiesWindow, () => _canvas.ShowTrackPropertiesDialog());
+            AddMenuItem("Triggers", Hotkey.TriggerMenuWindow, () => _canvas.ShowTriggerWindow());
             AddDivider();
-
-            AddMenuItem("Export Video")
-                .Clicked += (o2, e2) => _canvas.ShowExportVideoWindow();
-            AddMenuItem("Capture Screen")
-                .Clicked += (o2, e2) => _canvas.ShowScreenCaptureWindow();
+            AddMenuItem("Export Video", () => _canvas.ShowExportVideoWindow());
+            AddMenuItem("Capture Screen", () => _canvas.ShowScreenCaptureWindow());
         }
         private void AddDivider()
         {
             _menu.AddDivider();
         }
-        private MenuItem AddMenuItem(string caption, Hotkey hotkey = Hotkey.None)
+        private MenuItem AddMenuItem(string caption, Action action)
+        {
+            return AddMenuItem(caption, Hotkey.None, action);
+        }
+        private MenuItem AddMenuItem(string caption, Hotkey hotkey, Action action)
         {
             string hotkeyStr = Settings.HotkeyToString(hotkey);
-
-            // Gwen's hotkey field (accelerator) doesn't affect menu width
-            // (there's a "todo" comment there) so expanding menu this hacky way :(
-            if (hotkey != Hotkey.None)
-                caption += new string(' ', (int)Math.Round(hotkeyStr.Length * 2.5));
-
             MenuItem item = _menu.AddItem(caption, string.Empty, hotkeyStr);
+
+            if (action != null)
+                item.Clicked += (o2, e2) => action();
 
             return item;
         }
