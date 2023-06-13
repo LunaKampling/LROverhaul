@@ -35,7 +35,6 @@ namespace linerider.Tools
     public class BezierTool : Tool
     {
         public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
-        public override Hotkey Hotkey => Hotkey.EditorLineTool;
         public override string Name => "Bezier Tool";
         public override MouseCursor Cursor
         {

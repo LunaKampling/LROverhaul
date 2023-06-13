@@ -56,11 +56,10 @@ namespace linerider.UI
             };
             _topbar = new Panel(this)
             {
-                //AutoSizeToContents = true,
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 Dock = Dock.Top,
-                Height = 40,
+                Height = GameResources.icon_speedup.Size.Height,
             };
 
             _speedincrease = new WidgetButton(_topbar)

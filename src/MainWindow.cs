@@ -353,10 +353,7 @@ namespace linerider
 
             CurrentTools.Init();
 
-            Canvas = new GameCanvas(skin,
-            this,
-            renderer,
-            f);
+            Canvas = new GameCanvas(skin, this, renderer, f);
 
             _input = new Gwen.Input.OpenTK(this);
             _input.Initialize(Canvas);

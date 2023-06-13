@@ -31,7 +31,6 @@ namespace linerider.Tools
     public class PencilTool : Tool
     {
         public override Bitmap Icon => GameResources.icon_tool_pencil.Bitmap;
-        public override Hotkey Hotkey => Hotkey.EditorPencilTool;
         public override string Name => "Pencil Tool";
         public override bool RequestsMousePrecision
         {

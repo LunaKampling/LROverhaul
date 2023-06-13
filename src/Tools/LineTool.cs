@@ -30,7 +30,6 @@ namespace linerider.Tools
     public class LineTool : Tool
     {
         public override Bitmap Icon => GameResources.icon_tool_line.Bitmap;
-        public override Hotkey Hotkey => Hotkey.EditorLineTool;
         public override string Name => "Line Tool";
         public override MouseCursor Cursor
         {
