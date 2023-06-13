@@ -1,10 +1,14 @@
-This program features code from the following libraries:
+This program features code and resources from the following libraries:
 
 Microsoft Public License
 NVorbis https://github.com/NVorbis/NVorbis
+SVG.NET https://github.com/svg-net/SVG
 
 MIT License
 gwen-dotnet https://code.google.com/archive/p/gwen-dotnet
 Newtonsoft https://github.com/JamesNK/Newtonsoft.Json
+
+Apache License 2.0
+Material Design Icons https://pictogrammers.com/library/mdi/
 
 Posy cursors http://www.michieldb.nl/other/cursors by Michiel de Boer (https://www.youtube.com/user/PosyMusic)
