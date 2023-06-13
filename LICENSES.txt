@@ -6,6 +6,7 @@ SVG.NET https://github.com/svg-net/SVG
 
 MIT License
 gwen-dotnet https://code.google.com/archive/p/gwen-dotnet
+OpenTK https://github.com/opentk/opentk
 Newtonsoft https://github.com/JamesNK/Newtonsoft.Json
 
 Apache License 2.0
