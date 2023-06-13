@@ -20,9 +20,9 @@ namespace linerider
 {
     public enum LineType
     {
-        Standard,
-        Acceleration,
-        Scenery,
-        All,
+        Standard = 1,
+        Acceleration = 2,
+        Scenery = 0,
+        All = 3,
     }
 }
