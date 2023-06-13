@@ -28,14 +28,13 @@ namespace linerider.UI
 
         private void MakeButtons()
         {
-            new MultiToolButton(this, new Tool[] { CurrentTools.PencilTool, CurrentTools.SmoothPencilTool }, Hotkey.EditorPencilTool);
-            new MultiToolButton(this, new Tool[] { CurrentTools.LineTool, CurrentTools.BezierTool }, Hotkey.EditorLineTool);
-            new ToolButton(this, CurrentTools.EraserTool);
-            new ToolButton(this, CurrentTools.SelectTool)
-            {
-                Subtool = CurrentTools.SelectSubtool,
-            };
-            new ToolButton(this, CurrentTools.PanTool);
+            Func<bool> condition = () => !_editor.Playing;
+
+            new MultiToolButton(this, new Tool[] { CurrentTools.PencilTool, CurrentTools.SmoothPencilTool }, Hotkey.EditorPencilTool) { HotkeyCondition = condition };
+            new MultiToolButton(this, new Tool[] { CurrentTools.LineTool, CurrentTools.BezierTool }, Hotkey.EditorLineTool) { HotkeyCondition = condition };
+            new ToolButton(this, CurrentTools.EraserTool) { HotkeyCondition = condition };
+            new ToolButton(this, CurrentTools.SelectTool) { HotkeyCondition = condition, Subtool = CurrentTools.SelectSubtool };
+            new ToolButton(this, CurrentTools.PanTool) { HotkeyCondition = condition };
 
             WidgetButton playpausebtn = new WidgetButton(this)
             {
@@ -47,6 +46,7 @@ namespace linerider.UI
             InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStart));
             InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStartSlowmo));
             InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStartIgnoreFlag));
+
             new WidgetButton(this)
             {
                 Name = "Stop",
@@ -54,7 +54,6 @@ namespace linerider.UI
                 Action = (o, e) => TogglePlayback(playpausebtn, Hotkey.PlaybackStop),
                 Hotkey = Hotkey.PlaybackStop,
             };
-
             new WidgetButton(this)
             {
                 Name = "Flag",
@@ -62,15 +61,14 @@ namespace linerider.UI
                 Action = (o, e) => _editor.Flag(_editor.Offset),
                 Hotkey = Hotkey.PlaybackFlag,
             };
-
             new WidgetButton(this)
             {
                 Name = "Generators",
                 Icon = GameResources.icon_generators.Bitmap,
                 Action = (o, e) => _canvas.ShowGeneratorWindow(OpenTK.Vector2d.Zero),
                 Hotkey = Hotkey.LineGeneratorWindow,
+                HotkeyCondition = condition,
             };
-
             new WidgetButton(this)
             {
                 Name = "Menu",

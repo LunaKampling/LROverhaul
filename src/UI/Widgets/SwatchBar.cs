@@ -3,11 +3,14 @@ using Gwen.Controls;
 using linerider.Tools;
 using linerider.UI.Components;
 using System.Drawing;
+using static linerider.Settings;
 
 namespace linerider.UI
 {
     public class SwatchBar : WidgetContainer
     {
+        private Editor _editor;
+
         private Bitmap _normalTexture = GameResources.ux_swatch.Bitmap;
         private Bitmap _activeTexture = GameResources.ux_swatch_active.Bitmap;
         private WidgetButton _standardBtn;
@@ -15,9 +18,10 @@ namespace linerider.UI
         private WidgetButton _sceneryBtn;
         private WidgetButton _allBtn;
 
-        public SwatchBar(ControlBase parent) : base(parent)
+        public SwatchBar(ControlBase parent, Editor editor) : base(parent)
         {
             GameCanvas canvas = (GameCanvas)GetCanvas();
+            _editor = editor;
             ShouldDrawBackground = false;
             Margin = new Margin(0, WidgetMargin, 0, 0);
             Padding = Padding.Zero;
@@ -27,6 +31,7 @@ namespace linerider.UI
                 Name = "Standard Line",
                 Action = (o, e) => SwatchSelect(LineType.Standard),
                 Hotkey = Hotkey.EditorToolColor1,
+                HotkeyCondition = () => !_editor.Playing,
             };
             _accelerationBtn = new WidgetButton(this)
             {
@@ -35,6 +40,7 @@ namespace linerider.UI
                 TextRequest = (o, e) => TextRequest(LineType.Acceleration),
                 Action = (o, e) => SwatchSelect(LineType.Acceleration),
                 Hotkey = Hotkey.EditorToolColor2,
+                HotkeyCondition = () => !_editor.Playing,
             };
             _sceneryBtn = new WidgetButton(this)
             {
@@ -43,6 +49,7 @@ namespace linerider.UI
                 TextRequest = (o, e) => TextRequest(LineType.Scenery),
                 Action = (o, e) => SwatchSelect(LineType.Scenery),
                 Hotkey = Hotkey.EditorToolColor3,
+                HotkeyCondition = () => !_editor.Playing,
             };
             _allBtn = new WidgetButton(this)
             {
@@ -51,6 +58,7 @@ namespace linerider.UI
                 TextRequest = (o, e) => TextRequest(LineType.All),
                 Action = (o, e) => SwatchSelect(LineType.All),
                 Hotkey = Hotkey.EditorToolColor4,
+                HotkeyCondition = () => !_editor.Playing,
             };
 
             _accelerationBtn.RightClicked += (o, e) => IncrementMultiplier(LineType.Acceleration);

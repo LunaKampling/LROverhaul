@@ -39,7 +39,15 @@ namespace linerider.UI.Components
             {
                 InputUtils.FreeHotkey(_hotkey);
                 _hotkey = value;
-                InputUtils.RegisterHotkey(_hotkey, () => true, () => Action(this, EventArgs.Empty));
+                InputUtils.RegisterHotkey(_hotkey, _hotkeycondition, () => Action(this, EventArgs.Empty));
+            }
+        }
+        public Func<bool> HotkeyCondition
+        {
+            set
+            {
+                _hotkeycondition = value;
+                Hotkey = _hotkey;
             }
         }
         public Color Color
@@ -51,8 +59,8 @@ namespace linerider.UI.Components
             }
         }
 
-
         public new Color TextColor = Color.Black;
+        private Func<bool> _hotkeycondition = () => true;
         private GwenEventHandler<EventArgs> _action;
         private Hotkey _hotkey;
         private Bitmap _icon;

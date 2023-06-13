@@ -131,7 +131,7 @@ namespace linerider
             {
                 Dock = Dock.Top,
             };
-            _swatchbar = new SwatchBar(middlePanel)
+            _swatchbar = new SwatchBar(middlePanel, game.Track)
             {
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
