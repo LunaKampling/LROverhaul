@@ -80,11 +80,11 @@ namespace linerider.Game.LineGenerator
             GameLine added = null;
             switch (type)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     added = new StandardLine(start, end, inv);
                     break;
 
-                case LineType.Red:
+                case LineType.Acceleration:
                     var red = new RedLine(start, end, inv)
                     { Multiplier = multiplier };
                     red.CalculateConstants();//multiplier needs to be recalculated

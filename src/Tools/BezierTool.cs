@@ -27,14 +27,18 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Diagnostics;
 using linerider.Utils;
+using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class BezierTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
+        public override string Name => "Bezier Tool";
         public override MouseCursor Cursor
         {
-            get { return game.Cursors["line"]; }
+            get { return game.Cursors.List[CursorsHandler.Type.Line]; }
         }
         public override Swatch Swatch
         {
@@ -66,7 +70,7 @@ namespace linerider.Tools
         public BezierTool()
             : base()
         {
-            Swatch.Selected = LineType.Blue;
+            Swatch.Selected = LineType.Standard;
         }
 
         public override void OnChangingTool()
@@ -260,13 +264,13 @@ namespace linerider.Tools
             GameRenderer.GenerateBezierCurve2d(controlPoints.ToArray(), Settings.Bezier.Resolution, out curve);
             switch (Swatch.Selected)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.StandardLine, nodeSize, nodeThickness);
                     break;
                 case LineType.Scenery:
                     GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.SceneryLine, nodeSize, nodeThickness);
                     break;
-                case LineType.Red:
+                case LineType.Acceleration:
                     GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.AccelerationLine, nodeSize, nodeThickness);
                     break;
             }
@@ -275,13 +279,13 @@ namespace linerider.Tools
         {
             switch (Swatch.Selected)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     GameRenderer.RenderPoints(controlPoints, Settings.Colors.StandardLine, nodeSize, nodeThickness);
                     break;
                 case LineType.Scenery:
                     GameRenderer.RenderPoints(controlPoints, Settings.Colors.SceneryLine, nodeSize, nodeThickness);
                     break;
-                case LineType.Red:
+                case LineType.Acceleration:
                     GameRenderer.RenderPoints(controlPoints, Settings.Colors.AccelerationLine, nodeSize, nodeThickness);
                     break;
             }

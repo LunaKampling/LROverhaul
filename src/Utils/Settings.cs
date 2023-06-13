@@ -135,6 +135,7 @@ namespace linerider
         public static bool ScreenshotShowHitTest;
         public static bool ScreenshotResIndependentZoom;
 
+        public static float UIScale;
         public static bool UIShowZoom;
         public static bool UIShowSpeedButtons;
         public static int DefaultTimelineLength;
@@ -162,8 +163,7 @@ namespace linerider
         public static int multiScarfSegments; //How many segments a multi scarf has
         public static int autosaveChanges; //Changes when autosave starts
         public static int autosaveMinutes; //Amount of minues per autosave
-        public static int mainWindowWidth; //Main window Width
-        public static int mainWindowHeight; //Main window height
+        public static bool startWindowMaximized; //Start window maximized
         public static String DefaultSaveFormat; //What the save menu auto picks 
         public static String DefaultAutosaveFormat; //What the autosave format is
         public static String DefaultQuicksaveFormat; //What the autosave format is
@@ -191,6 +191,10 @@ namespace linerider
         // Computed settings
         public static class Computed
         {
+            public static float UIScale
+            {
+                get => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
+            }
             public static Color BGColor
             {
                 get => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
@@ -241,7 +245,6 @@ namespace linerider
             KeybindConflicts[Hotkey.ToolSwitchGreen] = KeyConflicts.SelectTool;
             KeybindConflicts[Hotkey.ToolSwitchBlue] = KeyConflicts.SelectTool;
 
-            KeybindConflicts[Hotkey.PlayButtonIgnoreFlag] = KeyConflicts.HardCoded;
             KeybindConflicts[Hotkey.EditorCancelTool] = KeyConflicts.HardCoded;
             KeybindConflicts[Hotkey.ToolAddSelection] = KeyConflicts.HardCoded;
             KeybindConflicts[Hotkey.ToolToggleSelection] = KeyConflicts.HardCoded;
@@ -306,6 +309,7 @@ namespace linerider
             ScreenshotShowHitTest = false;
             ScreenshotResIndependentZoom = true;
 
+            UIScale = 0f;
             UIShowZoom = true;
             UIShowSpeedButtons = false;
             DefaultTimelineLength = 30;
@@ -329,8 +333,7 @@ namespace linerider
             multiScarfSegments = 5;
             autosaveChanges = 50;
             autosaveMinutes = 5;
-            mainWindowWidth = 1280;
-            mainWindowHeight = 720;
+            startWindowMaximized = false;
             DefaultSaveFormat = ".trk";
             DefaultAutosaveFormat = ".trk";
             DefaultQuicksaveFormat = ".trk";
@@ -362,6 +365,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.EditorToolColor1, new Keybinding(Key.Number1));
             SetupDefaultKeybind(Hotkey.EditorToolColor2, new Keybinding(Key.Number2));
             SetupDefaultKeybind(Hotkey.EditorToolColor3, new Keybinding(Key.Number3));
+            SetupDefaultKeybind(Hotkey.EditorToolColor4, new Keybinding(Key.Number4));
 
             SetupDefaultKeybind(Hotkey.EditorCycleToolSetting, new Keybinding(Key.Tab));
             SetupDefaultKeybind(Hotkey.EditorMoveStart, new Keybinding(Key.D));
@@ -413,7 +417,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.PlaybackFlag, new Keybinding(Key.I));
             SetupDefaultKeybind(Hotkey.PlaybackStart, new Keybinding(Key.Y));
             SetupDefaultKeybind(Hotkey.PlaybackStop, new Keybinding(Key.U));
-            SetupDefaultKeybind(Hotkey.PlaybackSlowmo, new Keybinding(Key.M));
+            SetupDefaultKeybind(Hotkey.ToggleSlowmo, new Keybinding(Key.M));
             SetupDefaultKeybind(Hotkey.PlaybackZoom, new Keybinding(Key.Z));
             SetupDefaultKeybind(Hotkey.PlaybackUnzoom, new Keybinding(Key.X));
 
@@ -446,13 +450,11 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
             SetupDefaultKeybind(Hotkey.Quicksave, new Keybinding(Key.S, KeyModifiers.Control));
 
-            SetupDefaultKeybind(Hotkey.PlayButtonIgnoreFlag, new Keybinding(KeyModifiers.Alt));
 
             SetupDefaultKeybind(Hotkey.EditorQuickPan, new Keybinding(Key.Space, KeyModifiers.Shift));
             SetupDefaultKeybind(Hotkey.EditorDragCanvas, new Keybinding(MouseButton.Middle));
 
             SetupDefaultKeybind(Hotkey.EditorCancelTool, new Keybinding(Key.Escape));
-            SetupDefaultKeybind(Hotkey.PlayButtonIgnoreFlag, new Keybinding(KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.PlaybackResetCamera, new Keybinding(Key.N));
             SetupDefaultKeybind(Hotkey.ToolCopy, new Keybinding(Key.C, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.ToolCut, new Keybinding(Key.X, KeyModifiers.Control));
@@ -651,6 +653,7 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
 
             
+            LoadFloat(GetSetting(lines, nameof(UIScale)), ref UIScale);
             LoadBool(GetSetting(lines, nameof(UIShowZoom)), ref UIShowZoom);
             LoadBool(GetSetting(lines, nameof(UIShowSpeedButtons)), ref UIShowSpeedButtons);
             LoadInt(GetSetting(lines, nameof(DefaultTimelineLength)), ref DefaultTimelineLength);
@@ -688,8 +691,7 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(multiScarfAmount)), ref multiScarfAmount);
             LoadInt(GetSetting(lines, nameof(autosaveMinutes)), ref autosaveMinutes);
             LoadInt(GetSetting(lines, nameof(autosaveChanges)), ref autosaveChanges);
-            LoadInt(GetSetting(lines, nameof(mainWindowWidth)), ref mainWindowWidth);
-            LoadInt(GetSetting(lines, nameof(mainWindowHeight)), ref mainWindowHeight);
+            LoadBool(GetSetting(lines, nameof(startWindowMaximized)), ref startWindowMaximized);
             DefaultSaveFormat = GetSetting(lines, nameof(DefaultSaveFormat));
             DefaultAutosaveFormat = GetSetting(lines, nameof(DefaultAutosaveFormat));
             DefaultQuicksaveFormat = GetSetting(lines, nameof(DefaultQuicksaveFormat));
@@ -792,6 +794,7 @@ namespace linerider
                 MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture)),
 
                 
+                MakeSetting(nameof(UIScale), UIScale.ToString(Program.Culture)),
                 MakeSetting(nameof(UIShowZoom), UIShowZoom.ToString(Program.Culture)),
                 MakeSetting(nameof(UIShowSpeedButtons), UIShowSpeedButtons.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultTimelineLength), DefaultTimelineLength.ToString(Program.Culture)),
@@ -830,8 +833,7 @@ namespace linerider
                 MakeSetting(nameof(multiScarfAmount), multiScarfAmount.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveChanges), autosaveChanges.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveMinutes), autosaveMinutes.ToString(Program.Culture)),
-                MakeSetting(nameof(mainWindowWidth), mainWindowWidth.ToString(Program.Culture)),
-                MakeSetting(nameof(mainWindowHeight), mainWindowHeight.ToString(Program.Culture)),
+                MakeSetting(nameof(startWindowMaximized), startWindowMaximized.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultSaveFormat), DefaultSaveFormat),
                 MakeSetting(nameof(DefaultAutosaveFormat), DefaultAutosaveFormat),
                 MakeSetting(nameof(DefaultQuicksaveFormat), DefaultQuicksaveFormat),

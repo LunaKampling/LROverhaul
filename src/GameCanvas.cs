@@ -29,18 +29,18 @@ using Gwen.Skin;
 using Gwen.Controls;
 using Gwen;
 using linerider.Utils;
+using linerider.UI.Components;
 
 namespace linerider
 {
     public class GameCanvas : Canvas
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
-        public readonly int EdgesSpacing = 5;
-        public readonly int InnerSpacing = 5;
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
         private TimelineWidget _timeline;
+        private SwatchBar _swatchbar;
         private Toolbar _toolbar;
         private LoadingSprite _loadingsprite;
         private MainWindow game;
@@ -72,10 +72,12 @@ namespace linerider
             var rec = Settings.Local.RecordingMode;
             ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
+            _swatchbar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
+            _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timeline.IsHidden = rec;
 
             _loadingsprite.IsHidden = rec || !Loading;
-            var selectedtool = CurrentTools.SelectedTool;
+            var selectedtool = CurrentTools.CurrentTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
             if (!_usertooltip.IsHidden)
             {
@@ -94,70 +96,73 @@ namespace linerider
                 offset = Util.ClampRectToRect(offset, Bounds);
                 _usertooltip.SetPosition(offset.X, offset.Y);
             }
-
-            _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
         }
         private void CreateUI()
         {
-            Padding infobarPadding = new Padding(InnerSpacing, InnerSpacing, InnerSpacing, InnerSpacing);
 
             _usertooltip = new Tooltip(this) { IsHidden = true };
-            _loadingsprite = new LoadingSprite(this)
-            {
-                Positioner = (o) =>
-                {
-                    return new Point(
-                        Width - _loadingsprite.Width,
-                        0);
-                },
-            };
-            _loadingsprite.SetImage(GameResources.loading);
-            _toolbar = new Toolbar(this, game.Track)
-            {
-                Y = EdgesSpacing,
-            };
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);
 
             ControlBase leftPanel = new Panel(this)
             {
-                Dock = Dock.Left,
+                Margin = new Margin(WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0, 0),
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 AutoSizeToContents = true,
+                Dock = Dock.Left,
             };
             new InfoBarLeft(leftPanel, game.Track)
             {
                 Dock = Dock.Top,
-                Padding = infobarPadding,
-                ShouldDrawBackground = true,
             };
             _infobarcoords = new InfoBarCoords(leftPanel)
             {
                 Dock = Dock.Top,
-                Padding = infobarPadding,
-                ShouldDrawBackground = true,
+                Margin = new Margin(0, WidgetContainer.WidgetMargin, 0, 0),
+            };
+
+            WidgetContainer middlePanel = new WidgetContainer(this)
+            {
+                AutoSizeToContents = true,
+                Positioner = (o) => new Point(Width / 2 - o.Width / 2, WidgetContainer.WidgetMargin),
+            };
+            _toolbar = new Toolbar(middlePanel, game)
+            {
+                Dock = Dock.Top,
+            };
+            _swatchbar = new SwatchBar(middlePanel, game.Track)
+            {
+                AutoSizeToContents = true,
+                Dock = Dock.Left,
             };
 
             ControlBase rightPanel = new Panel(this)
             {
-                Dock = Dock.Right,
+                Margin = new Margin(0, WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0),
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 AutoSizeToContents = true,
+                Dock = Dock.Right,
             };
             new InfoBarRight(rightPanel, game.Track)
             {
                 Dock = Dock.Top,
-                Padding = infobarPadding,
-                ShouldDrawBackground = true,
+            };
+
+            _loadingsprite = new LoadingSprite(this)
+            {
+                Positioner = (o) => new Point(
+                    middlePanel.X + middlePanel.Width,
+                    middlePanel.Y + WidgetContainer.WidgetPadding
+                ),
             };
         }
         protected override void OnChildAdded(ControlBase child)
         {
             if (child is Gwen.ControlInternal.Modal || child is WindowControl)
             {
-                CurrentTools.SelectedTool.Stop();
+                CurrentTools.CurrentTool.Stop();
             }
         }
         public override void Think()
@@ -195,6 +200,11 @@ namespace linerider
                     throw;
                 }
             }
+        }
+        public void RefreshCursors()
+        {
+            game.Cursors.Reload();
+            game.Cursors.Refresh(this);
         }
         public void ShowChangelog()
         {

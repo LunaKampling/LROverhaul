@@ -23,11 +23,15 @@ using Color = System.Drawing.Color;
 using linerider.Rendering;
 using linerider.Game;
 using linerider.Utils;
+using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class PencilTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_pencil.Bitmap;
+        public override string Name => "Pencil Tool";
         public override bool RequestsMousePrecision
         {
             get => DrawingScenery;
@@ -60,11 +64,11 @@ namespace linerider.Tools
         }
         public override MouseCursor Cursor
         {
-            get => game.Cursors["pencil"];
+            get => game.Cursors.List[CursorsHandler.Type.Pencil];
         }
         public PencilTool() : base()
         {
-            Swatch.Selected = LineType.Blue;
+            Swatch.Selected = LineType.Standard;
         }
         public override void OnMouseDown(Vector2d pos)
         {

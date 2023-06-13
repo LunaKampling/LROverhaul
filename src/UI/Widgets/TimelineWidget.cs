@@ -19,7 +19,8 @@ using System;
 using System.Drawing;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
+using linerider.UI.Components;
+using linerider.Utils;
 
 namespace linerider.UI
 {
@@ -29,28 +30,20 @@ namespace linerider.UI
         private ControlBase _topbar;
         private ControlBase _bottombar;
         private Editor _editor;
-        private GameCanvas _canvas;
-        private ImageButton _speedincrease;
-        private ImageButton _speeddecrease;
+        private WidgetButton _speedincrease;
+        private WidgetButton _speeddecrease;
         private TrackLabel _timecurrent;
         private TrackLabel _iterations;
         private TrackLabel _timemax;
         public TimelineWidget(ControlBase parent, Editor editor) : base(parent)
         {
-            _canvas = (GameCanvas)parent.GetCanvas();
-
-            Margin margin = new Margin(_canvas.EdgesSpacing, 0, _canvas.EdgesSpacing, _canvas.EdgesSpacing);
+            Margin margin = new Margin(WidgetMargin, 0, WidgetMargin, WidgetMargin);
             margin += new Margin(50, 0, 50, 0);
 
             Dock = Dock.Bottom;
             _editor = editor;
             Margin = margin;
-            AutoSizeToContents = true;
-            MouseInputEnabled = false;
-            ShouldDrawBackground = true;
             Setup();
-
-            Padding = new Padding(_canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing, _canvas.InnerSpacing);
         }
         private void Setup()
         {
@@ -63,19 +56,35 @@ namespace linerider.UI
             };
             _topbar = new Panel(this)
             {
-                //AutoSizeToContents = true,
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 Dock = Dock.Top,
-                Height = 32,
+                Height = GameResources.icon_speedup.Size.Height,
             };
-            _speedincrease = CreateButton(_topbar, GameResources.fast_forward, "Increase Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedUp, true));
-            _speedincrease.Clicked += (o, e) => _editor.PlaybackSpeedUp();
-            _speedincrease.Dock = Dock.Right;
 
-            _speeddecrease = CreateButton(_topbar, GameResources.rewind, "Decrease Speed" + Settings.HotkeyToString(Hotkey.PlaybackSpeedDown, true));
-            _speeddecrease.Clicked += (o, e) => _editor.PlaybackSpeedDown();
-            _speeddecrease.Dock = Dock.Left;
+            _speedincrease = new WidgetButton(_topbar)
+            {
+                Dock = Dock.Right,
+                Name = "Increase Speed",
+                Icon = GameResources.icon_speedup.Bitmap,
+                Action = (o, e) =>
+                {
+                    _editor.PlaybackSpeedUp();
+                },
+                Hotkey = Hotkey.PlaybackSpeedUp,
+            };
+
+            _speeddecrease = new WidgetButton(_topbar)
+            {
+                Dock = Dock.Left,
+                Name = "Decrease Speed",
+                Icon = GameResources.icon_slowdown.Bitmap,
+                Action = (o, e) =>
+                {
+                    _editor.PlaybackSpeedDown();
+                },
+                Hotkey = Hotkey.PlaybackSpeedDown,
+            };
 
             Playhead = new Playhead(_topbar, _editor);
             Playhead.Dock = Dock.Fill;
@@ -138,11 +147,6 @@ namespace linerider.UI
             _speedincrease.IsHidden = !Settings.UIShowSpeedButtons;
 
             base.Think();
-        }
-        private void SetTextColor(object sender, int alpha)
-        {
-            var text = (Label)sender;
-            text.TextColor = Color.FromArgb(alpha, _canvas.TextForeground);
         }
         private string GetTimeString(int frameid)
         {

@@ -41,7 +41,7 @@ namespace linerider.Game
         {
             get
             {
-                return LineType.Red;
+                return LineType.Acceleration;
             }
         }
         public override System.Drawing.Color Color => Settings.Colors.AccelerationLine;

@@ -48,7 +48,7 @@ namespace linerider.Game.LineGenerator
 
             for (int i = 0; i < multilinesRequired; i++)
             {
-                lines.Add(CreateLine(trk, lineLeft, lineRight, LineType.Red, inverse, (int)multiplierRequired));
+                lines.Add(CreateLine(trk, lineLeft, lineRight, LineType.Acceleration, inverse, (int)multiplierRequired));
                 lineLeft += (vert_displacement / 100.0) * NormalDirection;
                 lineRight += (vert_displacement / 100.0) * NormalDirection;
             }

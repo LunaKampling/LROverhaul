@@ -1,4 +1,6 @@
+using System;
 using System.Drawing;
+using System.Windows.Forms;
 using OpenTK.Graphics;
 
 namespace linerider.Utils
@@ -47,6 +49,10 @@ namespace linerider.Utils
         public const float MaxSuperZoom = 200;
         public const int MaxFrames = 40 * 60 * 60 * 3; // 3 hours of frames
         public const string InternalDefaultName = "*default*";
+
+        public static readonly Size ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+        public static readonly Size WindowSize = new Size(Math.Max(1280, (int)Math.Round(ScreenSize.Width / 1.5)), Math.Max(720, (int)Math.Round(ScreenSize.Height / 1.5)));
+        public static readonly float ScreenScale = Math.Max(1, (ScreenSize.Width / 1600 < ScreenSize.Height / 1080) ? (ScreenSize.Width / 1600) : (ScreenSize.Height / 1080));
 
         public static readonly string GithubPageHeader = "https://github.com/LunaKampling/LROverhaul";
         public static readonly string GithubRawHeader = "https://raw.githubusercontent.com/LunaKampling/LROverhaul";

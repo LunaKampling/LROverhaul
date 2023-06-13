@@ -23,12 +23,34 @@ using OpenTK;
 using linerider.Utils;
 using linerider.Game;
 using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public abstract class Tool : GameService
     {
         private static Swatch Default = new Swatch();
+        public virtual Bitmap Icon
+        {
+            get
+            {
+                return new Bitmap(1, 1);
+            }
+        }
+        public virtual Hotkey Hotkey
+        {
+            get
+            {
+                return Hotkey.None;
+            }
+        }
+        public virtual string Name
+        {
+            get
+            {
+                return "";
+            }
+        }
         public virtual Swatch Swatch
         {
             get
@@ -214,11 +236,11 @@ namespace linerider.Tools
             GameLine added;
             switch (type)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     added = new StandardLine(start, end, inv);
                     break;
 
-                case LineType.Red:
+                case LineType.Acceleration:
                     var red = new RedLine(start, end, inv)
                     { Multiplier = multiplier };
                     red.CalculateConstants();//multiplier needs to be recalculated
@@ -232,8 +254,8 @@ namespace linerider.Tools
 
                 default: //In case no swatch is chosen select blue and make a blue line
                     added = new StandardLine(start, end, inv);
-                    Swatch.Selected = LineType.Blue;
-                    type = LineType.Blue;
+                    Swatch.Selected = LineType.Standard;
+                    type = LineType.Standard;
                     break;
             }
             trk.AddLine(added);

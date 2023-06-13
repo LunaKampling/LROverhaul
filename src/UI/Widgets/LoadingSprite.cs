@@ -18,32 +18,42 @@
 
 using System;
 using System.Drawing;
-using Gwen;
 using Gwen.Controls;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using linerider.UI.Components;
+using Svg;
 
 namespace linerider.UI
 {
     public class LoadingSprite : Sprite
     {
-        public LoadingSprite(ControlBase canvas)
-            : base(canvas)
+        private Color Color = Settings.Colors.StandardLine;
+
+        public LoadingSprite(ControlBase canvas) : base(canvas)
         {
             IsTabable = false;
             KeyboardInputEnabled = false;
             MouseInputEnabled = false;
+
+            Size Size = GameResources.ux_loading.Size;
+
+            // Double resolution for better quality on animation
+            Bitmap bitmap = SvgDocument.FromSvg<SvgDocument>(GameResources.ux_loading.Raw).Draw(Size.Width * 2, Size.Height * 2);
+            SetImage(bitmap);
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
             ((Gwen.Renderer.OpenTK)skin.Renderer).Flush();
-            var rotation = (Environment.TickCount % 1000) / 1000f;
-            var trans = new Vector3d(X + (Width / 2), Y + (Height / 2), 0);
+            float rotation = (Environment.TickCount % 1000) / 1000f;
+            Vector3d trans = new Vector3d(X + Width / 2, Y + Height / 2, 0);
+            GL.Translate(Width / -4, Height / -4, 0);
             GL.PushMatrix();
             GL.Translate(trans);
             GL.Rotate(360 * rotation, Vector3d.UnitZ);
+            GL.Scale(0.5, 0.5, 0);
             GL.Translate(-trans);
-            skin.Renderer.DrawColor = Color.FromArgb(Alpha, 255, 255, 255);
+            skin.Renderer.DrawColor = Color.FromArgb(Alpha, Color);
             skin.Renderer.DrawTexturedRect(m_texture, RenderBounds);
             ((Gwen.Renderer.OpenTK)skin.Renderer).Flush();
             GL.PopMatrix();

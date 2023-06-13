@@ -22,14 +22,18 @@ using System;
 using Color = System.Drawing.Color;
 using OpenTK.Input;
 using linerider.Game;
+using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class LineTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_line.Bitmap;
+        public override string Name => "Line Tool";
         public override MouseCursor Cursor
         {
-            get { return game.Cursors["line"]; }
+            get { return game.Cursors.List[CursorsHandler.Type.Line]; }
         }
         public override Swatch Swatch
         {
@@ -53,7 +57,7 @@ namespace linerider.Tools
 
         public LineTool() : base()
         {
-            Swatch.Selected = LineType.Blue;
+            Swatch.Selected = LineType.Standard;
         }
 
         public override void OnChangingTool()
@@ -185,13 +189,13 @@ namespace linerider.Tools
                 {
                     switch (Swatch.Selected)
                     {
-                        case LineType.Blue:
+                        case LineType.Standard:
                             StandardLine sl = new StandardLine(_start, _end, _addflip);
                             sl.CalculateConstants();
                             GameRenderer.DrawTrackLine(sl, c, Settings.Editor.RenderGravityWells, true);
                             break;
 
-                        case LineType.Red:
+                        case LineType.Acceleration:
                             RedLine rl = new RedLine(_start, _end, _addflip);
                             rl.Multiplier = Swatch.RedMultiplier;
                             rl.CalculateConstants();

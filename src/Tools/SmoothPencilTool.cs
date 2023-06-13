@@ -22,11 +22,17 @@ using OpenTK.Graphics.OpenGL;
 using Color = System.Drawing.Color;
 using linerider.Rendering;
 using linerider.Game;
+using linerider.UI;
+using System.Drawing;
 
 namespace linerider.Tools
 {
     public class SmoothPencilTool : Tool
     {
+        public override Bitmap Icon => GameResources.icon_tool_smooth_pencil.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorPencilTool;
+        public override string Name => "Smooth Pencil Tool";
+
         private bool SmoothMoved = false;
 
         public override bool RequestsMousePrecision
@@ -77,11 +83,11 @@ namespace linerider.Tools
         private Vector2d _mouseshadow;
         public override MouseCursor Cursor
         {
-            get { return game.Cursors["pencil"]; }
+            get { return game.Cursors.List[CursorsHandler.Type.Pencil]; }
         }
         public SmoothPencilTool() : base()
         {
-            Swatch.Selected = LineType.Blue;
+            Swatch.Selected = LineType.Standard;
         }
         public override void OnMouseDown(Vector2d pos)
         {

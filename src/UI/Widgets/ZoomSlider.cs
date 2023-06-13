@@ -18,6 +18,7 @@
 using System;
 using System.Drawing;
 using Gwen.Controls;
+using linerider.UI.Components;
 using linerider.Utils;
 using OpenTK;
 
@@ -27,10 +28,8 @@ namespace linerider.UI
     {
         private Editor _editor;
         private Tooltip _tooltip;
-        private GameCanvas _canvas;
         public ZoomSlider(ControlBase parent, Editor editor) : base(parent)
         {
-            _canvas = (GameCanvas)parent.GetCanvas();
             TooltipDelay = 0;
             IsTabable = false;
             KeyboardInputEnabled = false;
@@ -41,7 +40,7 @@ namespace linerider.UI
             _tooltip.IsHidden = true;
             Positioner = (o) =>
             {
-                return new Point(Parent.Width - Width - _canvas.EdgesSpacing, Parent.Height - Height - 50 - _canvas.EdgesSpacing);
+                return new Point(Parent.Width - Width - WidgetContainer.WidgetMargin, Parent.Height - Height - 50 - WidgetContainer.WidgetMargin);
             };
             SetRange(Constants.MinimumZoom, Constants.MaxZoom);
             ValueChanged += (o, e) =>

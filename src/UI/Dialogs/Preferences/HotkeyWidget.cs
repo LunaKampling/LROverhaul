@@ -67,6 +67,8 @@ namespace linerider.UI
             AddBinding(editorTable, "Swatch Color Blue", Hotkey.EditorToolColor1);
             AddBinding(editorTable, "Swatch Color Red", Hotkey.EditorToolColor2);
             AddBinding(editorTable, "Swatch Color Green", Hotkey.EditorToolColor3);
+            AddBinding(editorTable, "Swatch Color All", Hotkey.EditorToolColor4,
+                "Used in eraser and select tools");
             AddBinding(editorTable, "Cycle Tool Setting", Hotkey.EditorCycleToolSetting);
 
             AddBinding(editorTable, "Move Start Point", Hotkey.EditorMoveStart,
@@ -133,10 +135,9 @@ namespace linerider.UI
             AddBinding(playbackTable, "Hold -- Rewind", Hotkey.PlaybackBackward);
             AddBinding(playbackTable, "Increase Playback Rate", Hotkey.PlaybackSpeedUp);
             AddBinding(playbackTable, "Decrease Playback Rate", Hotkey.PlaybackSpeedDown);
-            AddBinding(playbackTable, "Toggle Slowmo", Hotkey.PlaybackSlowmo);
+            AddBinding(playbackTable, "Toggle Slowmo", Hotkey.ToggleSlowmo);
             AddBinding(playbackTable, "Zoom In", Hotkey.PlaybackZoom);
             AddBinding(playbackTable, "Zoom Out", Hotkey.PlaybackUnzoom);
-            AddBinding(playbackTable, "Play Button - Ignore Flag", Hotkey.PlayButtonIgnoreFlag);
 
             var menuTable = _kbtree.Add("Menus", firstColWidth);
             AddBinding(menuTable, "Quicksave", Hotkey.Quicksave);

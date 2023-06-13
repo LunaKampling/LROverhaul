@@ -20,7 +20,7 @@ using System.Drawing;
 using Gwen;
 using Gwen.Controls;
 
-namespace linerider.UI
+namespace linerider.UI.Components
 {
     public class ImageButton : Button
     {
@@ -28,6 +28,7 @@ namespace linerider.UI
         private Texture tx1;
         private Texture _overridetex = null;
         private bool _override = false;
+        protected Texture m_texture;
 
         public ImageButton(ControlBase canvas) : base(canvas) { AutoSizeToContents = false; }
 
@@ -86,7 +87,5 @@ namespace linerider.UI
                 skin.Renderer.DrawTexturedRect(m_texture, RenderBounds);
             }
         }
-
-        private Texture m_texture;
     }
 }

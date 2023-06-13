@@ -19,7 +19,7 @@ using System;
 using System.Drawing;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
+using linerider.UI.Components;
 
 namespace linerider.UI
 {
@@ -101,7 +101,8 @@ namespace linerider.UI
         {
             _flagmarker = new PlayheadMarker(this)
             {
-                Cursor = Cursors.Hand,
+                //Cursor = Cursors.Hand,
+                Cursor = Cursors.SizeWE,
                 MouseInputEnabled = true,
             };
             _endslider = new PlayheadMarker(this)
@@ -111,8 +112,8 @@ namespace linerider.UI
             };
 
             _flagmarker.IsHidden = true;
-            _flagmarker.SetImage(GameResources.flagmarker);
-            _endslider.SetImage(GameResources.playheadmarker);
+            _flagmarker.SetImage(GameResources.ux_flagmarker);
+            _endslider.SetImage(GameResources.ux_playheadmarker);
             _endslider.SendToBack();
 
             _flagmarker.Margin = new Margin(5, 0, 0, 32 - 12);

@@ -16,33 +16,41 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using Svg;
 using System;
-using System.Drawing;
-using System.Reflection;
-using System.IO;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using System.Diagnostics;
+using System.Reflection;
+using System.Xml;
+using linerider.UI;
+
 namespace linerider
 {
     internal class GameResources
     {
-        public static int screensize;
-        private static string _px;
+        #region Init
+        public class VectorResource
+        {
+            public string Raw;
+            public Size BaseSize;
+            public Size Size
+            {
+                get => new Size(
+                    (int)Math.Round(BaseSize.Width * Settings.Computed.UIScale),
+                    (int)Math.Round(BaseSize.Height * Settings.Computed.UIScale)
+                );
+            }
+            public Bitmap Bitmap
+            {
+                get => SvgDocument.FromSvg<SvgDocument>(Raw).Draw(Size.Width, Size.Height);
+            }
+        }
         private static Assembly Assembly = null;
         private static Dictionary<string, object> _lookuptable = null;
         public static void Init()
         {
-            screensize = (Screen.PrimaryScreen.Bounds.Width / 1600 < Screen.PrimaryScreen.Bounds.Height / 1080) ? (Screen.PrimaryScreen.Bounds.Width / 1600) : (Screen.PrimaryScreen.Bounds.Height / 1080);
-            if (screensize < 1) { screensize = 1; };
-            if (screensize > 4) { screensize = 4; }; //calculate screen size beforehand so the correct cursor textures can be loaded
-            screensize = 1;
-            _px = "_" + (screensize * 32).ToString() + "px";
-
-            //Debug.WriteLine(_px);
-            //Debug.WriteLine(screensize);
-
             if (Assembly == null)
             {
                 Assembly = typeof(GameResources).Assembly;
@@ -52,6 +60,8 @@ namespace linerider
                 _lookuptable = new Dictionary<string, object>();
             }
         }
+        #endregion
+        #region Getters
         public static Bitmap GetBitmap(string name)
         {
             object lookup;
@@ -98,6 +108,46 @@ namespace linerider
                 }
             }
         }
+        public static VectorResource GetVectorImage(string name)
+        {
+            XmlDocument doc = new XmlDocument();
+            string raw = GetString(name);
+
+            doc.LoadXml(raw);
+
+            XmlNode rootNode = doc.GetElementsByTagName("svg")[0];
+            XmlNode viewBoxNode = rootNode.Attributes.GetNamedItem("viewBox");
+            string[] boundings = viewBoxNode.InnerText.Split(' ');
+
+            Size size = new Size(
+                (int)Math.Round(double.Parse(boundings[2])),
+                (int)Math.Round(double.Parse(boundings[3]))
+            );
+
+            VectorResource res = new VectorResource()
+            {
+                Raw = raw,
+                BaseSize = size,
+            };
+
+            return res;
+        }
+        public static Fonts GetFont(string name)
+        {
+            string fnt = GetString($"{name}.fnt");
+            Bitmap bitmap = GetBitmap($"{name}_0.png");
+            string fntbold = GetString($"{name}_bold.fnt");
+            Bitmap bitmapbold = GetBitmap($"{name}_bold_0.png");
+
+            Gwen.Renderer.OpenTK renderer = new Gwen.Renderer.OpenTK();
+            Gwen.Renderer.BitmapFont bitmapfont = new Gwen.Renderer.BitmapFont(renderer, fnt, renderer.CreateTexture(bitmap));
+            Gwen.Renderer.BitmapFont bitmapfontbold = new Gwen.Renderer.BitmapFont(renderer, fntbold, renderer.CreateTexture(bitmapbold));
+            Fonts font = new Fonts(bitmapfont, bitmapfontbold);
+
+            return font;
+        }
+        #endregion
+        #region Resources: Generic
         internal static byte[] beep
         {
             get
@@ -105,18 +155,11 @@ namespace linerider
                 return GetBytes("beep.wav");
             }
         }
-        internal static System.Drawing.Bitmap DefaultSkin
+        internal static System.Drawing.Bitmap defaultskin
         {
             get
             {
                 return GetBitmap("DefaultSkin.png");
-            }
-        }
-        internal static System.Drawing.Bitmap loading
-        {
-            get
-            {
-                return GetBitmap("loading.png");
             }
         }
 
@@ -127,94 +170,74 @@ namespace linerider
                 return GetBytes("icon.ico");
             }
         }
-        internal static string DefaultColors
+        internal static string defaultcolors
         {
             get
             {
                 return GetString("DefaultColors.xml");
             }
         }
-        #region fonts
-        internal static string liberation_sans_15_fnt
+        #endregion
+        #region Resources: Fonts
+        internal static Fonts font_liberation_sans_15
         {
             get
             {
-                return GetString("fonts.liberation_sans_15.fnt");
-            }
-        }
-        internal static System.Drawing.Bitmap liberation_sans_15_png
-        {
-            get
-            {
-                return GetBitmap("fonts.liberation_sans_15_0.png");
-            }
-        }
-        internal static string liberation_sans_15_bold_fnt
-        {
-            get
-            {
-                return GetString("fonts.liberation_sans_15_bold.fnt");
-            }
-        }
-        internal static System.Drawing.Bitmap liberation_sans_15_bold_png
-        {
-            get
-            {
-                return GetBitmap("fonts.liberation_sans_15_bold_0.png");
+                return GetFont("fonts.liberation_sans_15");
             }
         }
         #endregion
-        #region rider
-        internal static Bitmap sled_img
+        #region Resources: Rider
+        internal static Bitmap rider_sled
         {
             get
             {
                 return GetBitmap("rider.sled.png");
             }
         }
-        internal static Bitmap sledbroken_img
+        internal static Bitmap rider_sledbroken
         {
             get
             {
                 return GetBitmap("rider.sledbroken.png");
             }
         }
-        internal static Bitmap arm_img
+        internal static Bitmap rider_arm
         {
             get
             {
                 return GetBitmap("rider.arm.png");
             }
         }
-        internal static Bitmap leg_img
+        internal static Bitmap rider_leg
         {
             get
             {
                 return GetBitmap("rider.leg.png");
             }
         }
-        internal static Bitmap body_img
+        internal static Bitmap rider_body
         {
             get
             {
                 return GetBitmap("rider.body.png");
             }
         }
-        internal static Bitmap bodydead_img
+        internal static Bitmap rider_bodydead
         {
             get
             {
                 return GetBitmap("rider.bodydead.png");
             }
         }
-        internal static Bitmap rope_img
+        internal static Bitmap rider_rope
         {
             get
             {
                 return GetBitmap("rider.rope.png");
             }
         }
-        internal static string regions_file
+        internal static string rider_regions_file
         {
             get
             {
@@ -222,120 +245,109 @@ namespace linerider
             }
         }
         #endregion
+        #region Resources: Cursors
 
 
-
-        #region cursors
-
-        
-        internal static System.Drawing.Bitmap cursor_move
+        internal static VectorResource cursor_hand
         {
             get
             {
-                return GetBitmap("cursors.move" + _px + ".png");
+                return GetVectorImage("cursors.hand.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_hand
+        internal static VectorResource cursor_drag_inactive
         {
             get
             {
-                return GetBitmap("cursors.hand" + _px + ".png");
+                return GetVectorImage("cursors.drag-inactive.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_dragging
+        internal static VectorResource cursor_drag_active
         {
             get
             {
-                return GetBitmap("cursors.closed_move" + _px + ".png");
+                return GetVectorImage("cursors.drag-active.svg");
             }
         }
-
-        internal static System.Drawing.Bitmap cursor_line
+        internal static VectorResource cursor_select
         {
             get
             {
-                return GetBitmap("cursors.line" + _px + ".png");
+                return GetVectorImage("cursors.select.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_eraser
+        internal static VectorResource cursor_line
         {
             get
             {
-                return GetBitmap("cursors.eraser" + _px + ".png");
+                return GetVectorImage("cursors.line.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_select
+        internal static VectorResource cursor_eraser
         {
             get
             {
-                return GetBitmap("cursors.select" + _px + ".png");
+                return GetVectorImage("cursors.eraser.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_pencil
+        internal static VectorResource cursor_pencil
         {
             get
             {
-                return GetBitmap("cursors.pencil" + _px + ".png");
+                return GetVectorImage("cursors.pencil.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_nesw
+        internal static VectorResource cursor_size_swne
         {
             get
             {
-                return GetBitmap("cursors.size_bdiag" + _px + ".png");
+                return GetVectorImage("cursors.size-swne.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_nwse
+        internal static VectorResource cursor_size_nwse
         {
             get
             {
-                return GetBitmap("cursors.size_fdiag" + _px + ".png");
+                return GetVectorImage("cursors.size-nwse.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_horz
+        internal static VectorResource cursor_size_we
         {
             get
             {
-                return GetBitmap("cursors.size_hor" + _px + ".png");
+                return GetVectorImage("cursors.size-we.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_vert
+        internal static VectorResource cursor_size_ns
         {
             get
             {
-                return GetBitmap("cursors.size_ver" + _px + ".png");
+                return GetVectorImage("cursors.size-ns.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_size_all
+        internal static VectorResource cursor_zoom
         {
             get
             {
-                return GetBitmap("cursors.size_all" + _px + ".png");
+                return GetVectorImage("cursors.zoom.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_zoom_in
+        internal static VectorResource cursor_beam
         {
             get
             {
-                return GetBitmap("cursors.zoom" + _px + ".png");
+                return GetVectorImage("cursors.beam.svg");
             }
         }
-        internal static System.Drawing.Bitmap cursor_ibeam
+        internal static VectorResource cursor_default
         {
             get
             {
-                return GetBitmap("cursors.ibeam" + _px + ".png");
-            }
-        }
-        internal static System.Drawing.Bitmap cursor_default
-        {
-            get
-            {
-                return GetBitmap("cursors.default" + _px + ".png");
+                return GetVectorImage("cursors.default.svg");
             }
         }
         #endregion
-        #region shaders
+        #region Resources: Shaders
         internal static string simline_frag
         {
             get
@@ -396,112 +408,7 @@ namespace linerider
         }
 
         #endregion
-        #region Icons
-        internal static System.Drawing.Bitmap pencil_icon
-        {
-            get
-            {
-                return GetBitmap("icons.penciltool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap smoothpencil_icon
-        {
-            get
-            {
-                return GetBitmap("icons.smoothpenciltool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap line_icon
-        {
-            get
-            {
-                return GetBitmap("icons.linetool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap bezier_icon
-        {
-            get
-            {
-                return GetBitmap("icons.beziertool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap eraser_icon
-        {
-            get
-            {
-                return GetBitmap("icons.erasertool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap movetool_icon
-        {
-            get
-            {
-                return GetBitmap("icons.movetool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap pantool_icon
-        {
-            get
-            {
-                return GetBitmap("icons.pantool.png");
-            }
-        }
-        internal static System.Drawing.Bitmap menu_icon
-        {
-            get
-            {
-                return GetBitmap("icons.menu.png");
-            }
-        }
-        internal static System.Drawing.Bitmap flag_icon
-        {
-            get
-            {
-                return GetBitmap("icons.flag.png");
-            }
-        }
-        internal static System.Drawing.Bitmap flag_invalid_icon
-        {
-            get
-            {
-                return GetBitmap("icons.flag_invalid.png");
-            }
-        }
-        internal static System.Drawing.Bitmap fast_forward
-        {
-            get
-            {
-                return GetBitmap("icons.fast-forward.png");
-            }
-        }
-        internal static System.Drawing.Bitmap rewind
-        {
-            get
-            {
-                return GetBitmap("icons.rewind.png");
-            }
-        }
-        internal static System.Drawing.Bitmap play_icon
-        {
-            get
-            {
-                return GetBitmap("icons.play.png");
-            }
-        }
-        internal static System.Drawing.Bitmap stop_icon
-        {
-            get
-            {
-                return GetBitmap("icons.stop.png");
-            }
-        }
-        internal static System.Drawing.Bitmap pause
-        {
-            get
-            {
-                return GetBitmap("icons.pause.png");
-            }
-        }
+        #region Resources: Icons
         internal static System.Drawing.Bitmap swatch
         {
             get
@@ -509,35 +416,112 @@ namespace linerider
                 return GetBitmap("icons.swatch.png");
             }
         }
-        internal static System.Drawing.Bitmap generator_icon
+
+        internal static VectorResource icon_tool_pencil
         {
-            get
-            {
-                return GetBitmap("icons.generator.png");
-            }
+            get => GetVectorImage("icons.tool_pencil.svg");
+        }
+        internal static VectorResource icon_tool_smooth_pencil
+        {
+            get => GetVectorImage("icons.tool_smooth_pencil.svg");
+        }
+        internal static VectorResource icon_tool_line
+        {
+            get => GetVectorImage("icons.tool_line.svg");
+        }
+        internal static VectorResource icon_tool_bezier
+        {
+            get => GetVectorImage("icons.tool_bezier.svg");
+        }
+        internal static VectorResource icon_tool_eraser
+        {
+            get => GetVectorImage("icons.tool_eraser.svg");
+        }
+        internal static VectorResource icon_tool_select
+        {
+            get => GetVectorImage("icons.tool_select.svg");
+        }
+        internal static VectorResource icon_tool_pan
+        {
+            get => GetVectorImage("icons.tool_pan.svg");
+        }
+        internal static VectorResource icon_play
+        {
+            get => GetVectorImage("icons.play.svg");
+        }
+        internal static VectorResource icon_pause
+        {
+            get => GetVectorImage("icons.pause.svg");
+        }
+        internal static VectorResource icon_stop
+        {
+            get => GetVectorImage("icons.stop.svg");
+        }
+        internal static VectorResource icon_flag
+        {
+            get => GetVectorImage("icons.flag.svg");
+        }
+        internal static VectorResource icon_generators
+        {
+            get => GetVectorImage("icons.generators.svg");
+        }
+        internal static VectorResource icon_menu
+        {
+            get => GetVectorImage("icons.menu.svg");
+        }
+        internal static VectorResource icon_reset_camera
+        {
+            get => GetVectorImage("icons.reset_camera.svg");
+        }
+        internal static VectorResource icon_speedup
+        {
+            get => GetVectorImage("icons.speedup.svg");
+        }
+        internal static VectorResource icon_slowdown
+        {
+            get => GetVectorImage("icons.slowdown.svg");
         }
         #endregion
-        #region ux
-        internal static System.Drawing.Bitmap camera_need_reset
-        {
-            get
-            {
-                return GetBitmap("ux.cameraneedreset.png");
-            }
-        }
-        internal static System.Drawing.Bitmap flagmarker
+
+        #region Resources: UX
+        internal static System.Drawing.Bitmap ux_flagmarker
         {
             get
             {
                 return GetBitmap("ux.flagmarker.png");
             }
         }
-        internal static System.Drawing.Bitmap playheadmarker
+        internal static System.Drawing.Bitmap ux_playheadmarker
         {
             get
             {
                 return GetBitmap("ux.playheadmarker.png");
             }
+        }
+
+        internal static VectorResource ux_loading
+        {
+            get => GetVectorImage("ux.loading.svg");
+        }
+        internal static VectorResource ux_widget_background
+        {
+            get => GetVectorImage("ux.widget_background.svg");
+        }
+        internal static VectorResource ux_tool_background
+        {
+            get => GetVectorImage("ux.tool_background.svg");
+        }
+        internal static VectorResource ux_swatch
+        {
+            get => GetVectorImage("ux.swatch.svg");
+        }
+        internal static VectorResource ux_swatch_active
+        {
+            get => GetVectorImage("ux.swatch_active.svg");
+        }
+        internal static VectorResource icon_multitool_indicator
+        {
+            get => GetVectorImage("ux.multitool_indicator.svg");
         }
         #endregion
     }

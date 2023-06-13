@@ -18,8 +18,9 @@
 
 using System.Drawing;
 using Gwen.Controls;
+using linerider.Utils;
 
-namespace linerider.UI
+namespace linerider.UI.Components
 {
     /// <summary>
     /// Just a label that is intend to go on top of the track
@@ -32,7 +33,7 @@ namespace linerider.UI
             get
             {
                 bool recording = Settings.PreviewMode || IO.TrackRecorder.Recording;
-                return recording ? Color.FromArgb(51, 51, 51) : Settings.Computed.LineColor;
+                return recording ? Constants.ExportLineColor : Settings.Computed.LineColor;
             }
         }
         public TrackLabel(ControlBase parent) : base(parent)

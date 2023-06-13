@@ -79,10 +79,10 @@ namespace linerider.Addons
                 {
                     switch (selection.line.Type)
                     {
-                        case LineType.Red:
+                        case LineType.Acceleration:
                             newLine = new RedLine(nextP1, nextP2, ((RedLine)selectedLine).inv);
                             break;
-                        case LineType.Blue:
+                        case LineType.Standard:
                             newLine = new StandardLine(nextP1, nextP2, ((StandardLine)selectedLine).inv);
                             break;
                         case LineType.Scenery:
@@ -100,7 +100,7 @@ namespace linerider.Addons
                 newLines.Add(newLine);
             }
 
-            var selectTool = CurrentTools.SelectTool;
+            var selectTool = CurrentTools.SelectSubtool;
             foreach (GameLine newLine in newLines)
             {
                 trackWriter.AddLine(newLine);
@@ -130,13 +130,13 @@ namespace linerider.Addons
 
         private static List<LineSelection> GetLineSelections()
         {
-            if (!CurrentTools.SelectedTool.Equals(CurrentTools.SelectTool))
+            if (!CurrentTools.CurrentTool.Equals(CurrentTools.SelectSubtool))
             {
                 // This tool shouldn't work mid-selection, or if the Selection tool isn't active
                 return new List<LineSelection>();
             }
 
-            return CurrentTools.SelectTool.GetLineSelections();
+            return CurrentTools.SelectSubtool.GetLineSelections();
         }
 
         public static void AdvanceFrame()

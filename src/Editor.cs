@@ -69,7 +69,7 @@ namespace linerider
         private bool _paused = false;
         public float Zoom
         {
-            get => _zoom * Settings.ZoomMultiplier;
+            get => _zoom * Settings.ZoomMultiplier * Settings.Computed.UIScale;
             set
             {
                 _zoom = (float)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Local.MaxZoom);
@@ -382,10 +382,10 @@ namespace linerider
             drawOptions.GravityWells = Settings.Editor.RenderGravityWells;
             drawOptions.LineColors = !Settings.PreviewMode && (!Playing || Settings.ColorPlayback);
             drawOptions.KnobState = KnobState.Hidden;
-            var selectedtool = CurrentTools.SelectedTool;
+            var selectedtool = CurrentTools.CurrentTool;
             if (!Playing &&
-                (selectedtool == CurrentTools.MoveTool ||
-                selectedtool == CurrentTools.SelectTool))
+                (selectedtool == CurrentTools.SelectTool ||
+                selectedtool == CurrentTools.SelectSubtool))
             {
                 drawOptions.KnobState = KnobState.Shown;
             }
@@ -775,7 +775,7 @@ namespace linerider
                 using (_tracksync.AcquireWrite())
                 {
                     AudioService.Stop();
-                    CurrentTools.SelectedTool.Stop();
+                    CurrentTools.CurrentTool.Stop();
                     _loadingTrack = true;
                     Stop();
                     _flag = null;
@@ -793,9 +793,9 @@ namespace linerider
                     Reset();
                     Camera.SetFrameCenter(Timeline.GetFrame(0).CalculateCenter());
                     _loadingTrack = false;
-                    if (CurrentTools.SelectedTool.Active)
+                    if (CurrentTools.CurrentTool.Active)
                     {
-                        CurrentTools.SelectedTool.Stop();
+                        CurrentTools.CurrentTool.Stop();
                     }
                     UndoManager = new UndoManager();
                     ResetTrackChangeCounter();

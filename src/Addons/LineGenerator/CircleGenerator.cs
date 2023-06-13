@@ -26,7 +26,7 @@ namespace linerider.Game.LineGenerator
             position = _position;
             lineCount = _lineCount;
             invert = _invert;
-            lineType = LineType.Blue;
+            lineType = LineType.Standard;
         }
 
         public override void Generate_Internal(TrackWriter trk)
@@ -58,11 +58,11 @@ namespace linerider.Game.LineGenerator
         {
             switch(type)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     lines.Add(CreateLine(trk, start, end, type, inv));
                     break;
 
-                case LineType.Red:
+                case LineType.Acceleration:
                     lines.Add(CreateLine(trk, start, end, type, inv, multiplier));
                     break;
 

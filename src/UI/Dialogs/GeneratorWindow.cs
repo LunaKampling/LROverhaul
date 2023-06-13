@@ -286,10 +286,10 @@ namespace linerider.UI
             var greenType = lineTypeRadioGroup.AddOption("Green");
             switch (gen_Circle.lineType)
             {
-                case LineType.Blue:
+                case LineType.Standard:
                     blueType.Select();
                     break;
-                case LineType.Red:
+                case LineType.Acceleration:
                     redType.Select();
                     break;
                 case LineType.Scenery:
@@ -300,7 +300,7 @@ namespace linerider.UI
             }
             blueType.CheckChanged += (o, e) =>
             {
-                gen_Circle.lineType = LineType.Blue;
+                gen_Circle.lineType = LineType.Standard;
                 gen_Circle.ReGenerate_Preview();
                 CircleMultiplier.Disable();
                 CircleWidth.Disable();
@@ -309,7 +309,7 @@ namespace linerider.UI
             };
             redType.CheckChanged += (o, e) =>
             {
-                gen_Circle.lineType = LineType.Red;
+                gen_Circle.lineType = LineType.Acceleration;
                 gen_Circle.ReGenerate_Preview();
                 CircleMultiplier.Enable();
                 CircleWidth.Disable();

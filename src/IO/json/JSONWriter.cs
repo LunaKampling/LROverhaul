@@ -53,10 +53,10 @@ namespace linerider.IO
                 line_json jline = new line_json();
                 switch (line.Type)
                 {
-                    case LineType.Blue:
+                    case LineType.Standard:
                         jline.type = 0;
                         break;
-                    case LineType.Red:
+                    case LineType.Acceleration:
                         jline.type = 1;
                         break;
                     case LineType.Scenery:

@@ -290,12 +290,12 @@ namespace linerider.IO
                     LineTrigger tr = null;
                     if (redmultipier)
                     {
-                        if (lt == LineType.Red)
+                        if (lt == LineType.Acceleration)
                         {
                             multiplier = br.ReadByte();
                         }
                     }
-                    if (lt == LineType.Blue || lt == LineType.Red)
+                    if (lt == LineType.Standard || lt == LineType.Acceleration)
                     {
                         if (ignorabletrigger)
                         {
@@ -341,14 +341,14 @@ namespace linerider.IO
                     }
                     switch (lt)
                     {
-                        case LineType.Blue:
+                        case LineType.Standard:
                             var bl = new StandardLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv);
                             bl.ID = ID;
                             bl.Extension = (StandardLine.Ext)lim;
                             l = bl;
                             break;
 
-                        case LineType.Red:
+                        case LineType.Acceleration:
                             var rl = new RedLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv);
                             rl.ID = ID;
                             rl.Extension = (StandardLine.Ext)lim;

@@ -99,6 +99,9 @@ namespace linerider.UI
             Action onkeyup = null,
             bool repeat = false)
         {
+            if (Handlers.ContainsKey(hotkey))
+                throw new Exception("Hotkey registered twice");
+
             Handlers.Add(hotkey, new HotkeyHandler()
             {
                 hotkey = hotkey,
@@ -107,6 +110,10 @@ namespace linerider.UI
                 keyuphandler = onkeyup,
                 repeat = repeat
             });
+        }
+        public static void FreeHotkey(Hotkey hotkey)
+        {
+            Handlers.Remove(hotkey);
         }
         /// <summary>
         /// Checks if the currently pressed hotkey is still 'pressed' after a

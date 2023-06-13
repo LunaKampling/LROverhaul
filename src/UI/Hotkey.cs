@@ -16,6 +16,7 @@ namespace linerider.UI
         EditorToolColor1,
         EditorToolColor2,
         EditorToolColor3,
+        EditorToolColor4,
         EditorRemoveLatestLine,
         EditorFocusStart,
         EditorFocusLastLine,
@@ -56,7 +57,7 @@ namespace linerider.UI
         PlaybackStart,
         PlaybackStop,
         PlaybackFlag,
-        PlaybackSlowmo,
+        ToggleSlowmo,
         PlaybackZoom,
         PlaybackUnzoom,
         PlaybackSpeedUp,
@@ -85,8 +86,6 @@ namespace linerider.UI
         SaveAsWindow,
         TriggerMenuWindow,
         LineGeneratorWindow,
-
-        PlayButtonIgnoreFlag,
 
         MagicAnimateAdvanceFrame,
         MagicAnimateRecedeFrame,

@@ -56,18 +56,18 @@ namespace linerider.Tools
         public const int MinRedMultiplier = 1;
         public const int MaxGreenMultiplier = 3;
         public const float MinGreenMultiplier = 0.5f;
-        public LineType Selected { get; set; } = LineType.Blue;
+        public LineType Selected { get; set; } = LineType.Standard;
         public void IncrementSelectedMultiplier()
         {
-            if (CurrentTools.SelectedTool != CurrentTools.EraserTool && 
-                CurrentTools.SelectedTool != CurrentTools.SelectTool &&
-                CurrentTools.SelectedTool != CurrentTools.MoveTool &&
-            CurrentTools.SelectedTool.ShowSwatch)
+            if (CurrentTools.CurrentTool != CurrentTools.EraserTool && 
+                CurrentTools.CurrentTool != CurrentTools.SelectSubtool &&
+                CurrentTools.CurrentTool != CurrentTools.SelectTool &&
+            CurrentTools.CurrentTool.ShowSwatch)
             {
-                var sw = CurrentTools.SelectedTool.Swatch;
+                var sw = CurrentTools.CurrentTool.Swatch;
                 switch (Selected)
                 {
-                    case LineType.Red:
+                    case LineType.Acceleration:
                         {
                             var mul = sw.RedMultiplier;
                             mul++;

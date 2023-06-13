@@ -422,14 +422,14 @@ namespace linerider.UI
                 LineType origLineType = _ownerline.Type;
 
                 // If adding acceleration to a blue line
-                if (origLineType == LineType.Blue && mul != 0)
+                if (origLineType == LineType.Standard && mul != 0)
                 {
                     redCpy = RedLine.CloneFromBlue((StandardLine)_ownerline);
                     _editor._renderer.RedrawLine(_ownerline);
                     _editor._renderer.AddLine(redCpy);
                 }
                 // If setting acceleration to 0 of a red line
-                else if (origLineType == LineType.Red && mul == 0)
+                else if (origLineType == LineType.Acceleration && mul == 0)
                 {
                     _editor._renderer.RemoveLine(_ownerline);
                     blueCpy = StandardLine.CloneFromRed((RedLine)_ownerline);
@@ -450,12 +450,12 @@ namespace linerider.UI
                 {
                     StandardLine copy;
                     // Going from red lines to blue
-                    if (origLineType == LineType.Red && _ownerline.Type == LineType.Blue)
+                    if (origLineType == LineType.Acceleration && _ownerline.Type == LineType.Standard)
                     {
                         copy = StandardLine.CloneFromRed(line);
                     }
                     // Going from blue lines to red
-                    else if (origLineType == LineType.Blue && _ownerline.Type == LineType.Red)
+                    else if (origLineType == LineType.Standard && _ownerline.Type == LineType.Acceleration)
                     {
                         copy = RedLine.CloneFromBlue(line);
                     }

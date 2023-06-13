@@ -21,13 +21,14 @@ using Gwen.Controls;
 using linerider.IO;
 using linerider.Tools;
 using System.Linq;
+using linerider.UI.Components;
+using linerider.Utils;
 
 namespace linerider.UI
 {
     public class InfoBarLeft : WidgetContainer
     {
         private Editor _editor;
-        private GameCanvas _canvas;
         
         private TrackLabel _title;
         private TrackLabel _autosavelabel;
@@ -37,7 +38,6 @@ namespace linerider.UI
 
         public InfoBarLeft(ControlBase parent, Editor editor) : base(parent)
         {
-            _canvas = (GameCanvas)parent.GetCanvas();
             _editor = editor;
             OnThink += Think;
             Setup();
@@ -58,8 +58,6 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Margin = new Margin(_canvas.EdgesSpacing, _canvas.EdgesSpacing, 0, 0);
-
             _title = new TrackLabel(this)
             {
                 Dock = Dock.Top,
@@ -74,7 +72,7 @@ namespace linerider.UI
             _autosavelabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 IsHidden = true,
                 Text = "Autosave enabled!",
             };
@@ -82,7 +80,7 @@ namespace linerider.UI
             _changedlines = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 IsHidden = true,
                 TextRequest = (o, current) =>
                 {
@@ -97,7 +95,7 @@ namespace linerider.UI
             _linecount = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, current) =>
                 {
                     int u = (int)_linecount.UserData;
@@ -116,7 +114,7 @@ namespace linerider.UI
             _selectioncount = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, _canvas.InnerSpacing, 0, 0),
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, current) =>
                 {
                     if (!_editor.Paused || TrackRecorder.Recording)
@@ -129,9 +127,9 @@ namespace linerider.UI
         }
         private int GetSelectedLinesCount()
         {
-            if (CurrentTools.SelectedTool == CurrentTools.SelectTool)
+            if (CurrentTools.CurrentTool == CurrentTools.SelectSubtool)
             {
-                SelectTool selectTool = (SelectTool)CurrentTools.SelectedTool;
+                SelectSubtool selectTool = (SelectSubtool)CurrentTools.CurrentTool;
                 int linecount = selectTool.GetLineSelectionsInBox().Count;
                 if (linecount == 0)
                     linecount = selectTool.GetLineSelections().Count;
