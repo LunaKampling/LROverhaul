@@ -19,7 +19,7 @@ You can download the latest version from [here](https://github.com/LunaKampling/
 * Copy paste preservation of line data to transfer between tracks
 * Ability to change line type of a selection
 * Customizable UI colors, better night mode support
-* New Bosh sprite and [user skin and scarf handlers](/tree/main/Examples)
+* New Bosh sprite and [user skin and scarf handlers](/Examples)
 
 # Build
 Clone the repository and build `src/linerider.sln` with msbuild or Visual Studio.
@@ -39,7 +39,7 @@ This project uses binaries, sources, or modified sources from the following libr
 * Newtonsoft Json.NET https://github.com/JamesNK/Newtonsoft.Json
 * SVG.NET https://github.com/svg-net/SVG
 
-You can find their license info in [LICENSES.txt](LICENSES.txt)
+You can find their license info in [LICENSES.txt](/LICENSES.txt)
 
 The UI is a modified modified version of gwen-dotnet by jealouscloud
 
