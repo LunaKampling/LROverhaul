@@ -7,11 +7,11 @@ namespace Gwen.Anim
     {
         private bool m_Started;
         private bool m_Finished;
-        private double m_Start;
-        private double m_End;
-        private double m_Ease;
+        private readonly double m_Start;
+        private readonly double m_End;
+        private readonly double m_Ease;
 
-        public override bool Finished { get { return m_Finished; } }
+        public override bool Finished => m_Finished;
 
         public TimedAnimation(float length, float delay = 0.0f, float ease = 1.0f)
         {
@@ -29,8 +29,8 @@ namespace Gwen.Anim
             if (m_Finished)
                 return;
 
-            var current = Platform.Neutral.GetTimeInSeconds();
-            var secondsIn = current - m_Start;
+            double current = Platform.Neutral.GetTimeInSeconds();
+            double secondsIn = current - m_Start;
             if (secondsIn < 0.0)
                 return;
 
@@ -40,7 +40,7 @@ namespace Gwen.Anim
                 OnStart();
             }
 
-            var delta = secondsIn / (m_End - m_Start);
+            double delta = secondsIn / (m_End - m_Start);
             if (delta < 0.0)
                 delta = 0.0;
             if (delta > 1.0)

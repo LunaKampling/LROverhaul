@@ -1,35 +1,26 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Gwen.Renderer
 {
-    public class BitmapFont : Gwen.Font
+    public class BitmapFont : Font
     {
-        public override int LineHeight
-        {
-            get
-            {
-                return fontdata.LineHeight;
-            }
-        }
+        public override int LineHeight => fontdata.LineHeight;
         public BMFont fontdata;
         public Texture texture;
         public BitmapFont(RendererBase renderer, string bmfont, Texture tx)
         : base(renderer)
         {
             fontdata = new BMFont(bmfont);
-            this.FaceName = fontdata.Face;
-            this.Size = fontdata.FontSize;
-            this.texture = tx;
+            FaceName = fontdata.Face;
+            Size = fontdata.FontSize;
+            texture = tx;
         }
-        public override List<string> WordWrap(string input, int maxpx)
-        {
-            return fontdata.WordWrap(input, maxpx);
-        }
+        public override List<string> WordWrap(string input, int maxpx) => fontdata.WordWrap(input, maxpx);
     }
     /// <summary>
     /// BMFont class made for loading files created with bmfont
@@ -59,8 +50,8 @@ namespace Gwen.Renderer
             public int x, y;
             public float u, v;
         }
-        ///Just a size class.
-        ///Avoiding system.drawing completely.
+        // Just a size class.
+        // Avoiding system.drawing completely.
         public struct Size
         {
             public int Width;
@@ -73,10 +64,10 @@ namespace Gwen.Renderer
         private const int charAmount = 65535; // Unicode
         //private const int charAmount = 200813; // Unicode + CJK
         private FontGlyph _invalid = new FontGlyph();
-        private FontGlyph[] _glyphs = new FontGlyph[charAmount];
+        private readonly FontGlyph[] _glyphs = new FontGlyph[charAmount];
         internal int _texWidth;
         internal int _texHeight;
-        ///Creates a bitmap ASCII font
+        // Creates a bitmap ASCII font
         public BMFont(string bmfont)
         {
             using (StringReader sr = new StringReader(bmfont))
@@ -84,22 +75,22 @@ namespace Gwen.Renderer
                 string fullline;
                 while ((fullline = sr.ReadLine()) != null)
                 {
-                    var line = fullline.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] line = fullline.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     Queue<string> lq = new Queue<string>();
-                    foreach (var lword in line)
+                    foreach (string lword in line)
                     {
                         lq.Enqueue(lword);
                     }
                     string cword = lq.Dequeue();
                     if (cword == "info")
                     {
-                        var facesubstr = "face=\"";
-                        var faceidx1 = fullline.IndexOf(facesubstr, StringComparison.Ordinal) + facesubstr.Length;
-                        var faceidx2 = fullline.IndexOf("\"", faceidx1, StringComparison.Ordinal);
+                        string facesubstr = "face=\"";
+                        int faceidx1 = fullline.IndexOf(facesubstr, StringComparison.Ordinal) + facesubstr.Length;
+                        int faceidx2 = fullline.IndexOf("\"", faceidx1, StringComparison.Ordinal);
 
-                        var sizesubstr = "size=";
-                        var sizeidx1 = fullline.IndexOf(sizesubstr, StringComparison.Ordinal) + sizesubstr.Length;
-                        var sizeidx2 = fullline.IndexOf(" ", sizeidx1, StringComparison.Ordinal);
+                        string sizesubstr = "size=";
+                        int sizeidx1 = fullline.IndexOf(sizesubstr, StringComparison.Ordinal) + sizesubstr.Length;
+                        int sizeidx2 = fullline.IndexOf(" ", sizeidx1, StringComparison.Ordinal);
 
                         Face = fullline.Substring(faceidx1, faceidx2 - faceidx1);
                         FontSize = ParseInt(fullline.Substring(sizeidx1, sizeidx2 - sizeidx1));
@@ -109,8 +100,8 @@ namespace Gwen.Renderer
                         while (lq.Count > 0)
                         {
                             cword = lq.Dequeue();
-                            var key = extract_key(cword);
-                            var val = extract_value(cword);
+                            string key = ExtractKey(cword);
+                            string val = ExtractValue(cword);
                             switch (key)
                             {
                                 case "lineHeight":
@@ -131,13 +122,15 @@ namespace Gwen.Renderer
                     }
                     else if (cword == "char")
                     {
-                        FontGlyph glyph = new FontGlyph();
-                        glyph.id = 0;
+                        FontGlyph glyph = new FontGlyph
+                        {
+                            id = 0
+                        };
                         while (lq.Count > 0)
                         {
                             cword = lq.Dequeue();
-                            var key = extract_key(cword);
-                            var val = int.Parse(extract_value(cword));
+                            string key = ExtractKey(cword);
+                            int val = int.Parse(ExtractValue(cword));
                             switch (key)
                             {
                                 case "id":
@@ -147,15 +140,15 @@ namespace Gwen.Renderer
                                     glyph.x1 = val / (float)_texWidth;
                                     break;
                                 case "y":
-                                    glyph.y1 = ((float)val / (float)_texHeight);
+                                    glyph.y1 = val / (float)_texHeight;
                                     break;
                                 case "width":
                                     glyph.width = val;
-                                    glyph.x2 = glyph.x1 + ((float)val / (float)_texWidth);
+                                    glyph.x2 = glyph.x1 + val / (float)_texWidth;
                                     break;
                                 case "height":
                                     glyph.height = val;
-                                    glyph.y2 = glyph.y1 + ((float)val / (float)_texHeight);
+                                    glyph.y2 = glyph.y1 + val / (float)_texHeight;
                                     break;
                                 case "xoffset":
                                     glyph.xoffset = val;
@@ -184,8 +177,8 @@ namespace Gwen.Renderer
                         while (lq.Count > 0)
                         {
                             cword = lq.Dequeue();
-                            var key = extract_key(cword);
-                            var val = int.Parse(extract_value(cword));
+                            string key = ExtractKey(cword);
+                            int val = int.Parse(ExtractValue(cword));
                             switch (key)
                             {
                                 case "first":
@@ -205,7 +198,7 @@ namespace Gwen.Renderer
                             {
                                 _glyphs[first].kerning = new sbyte[charAmount];
                             }
-                            var glyph = _glyphs[first];
+                            FontGlyph glyph = _glyphs[first];
                             if (Math.Abs(amount) > 127)
                                 throw new Exception("Unsupported kerning value");
                             glyph.kerning[second] = (sbyte)amount;
@@ -224,12 +217,12 @@ namespace Gwen.Renderer
                             _glyphs[i] = CreateEmpty(i);
                             break;
                         case '\t':
-                            _glyphs[i] = _glyphs[(int)' '];
+                            _glyphs[i] = _glyphs[' '];
                             _glyphs[i].xadvance *= 4;
                             break;
                         default:
-                            //invalid may not be set
-                            //but that's okay.
+                            // Invalid may not be set
+                            // but that's okay.
                             _glyphs[i] = _invalid;
                             break;
                     }
@@ -238,8 +231,10 @@ namespace Gwen.Renderer
         }
         private FontGlyph CreateEmpty(int id)
         {
-            FontGlyph ret = new FontGlyph();
-            ret.id = id;
+            FontGlyph ret = new FontGlyph
+            {
+                id = id
+            };
             return ret;
         }
         private int MeasureWordSplit(string input, int start, int px)
@@ -249,22 +244,22 @@ namespace Gwen.Renderer
                 return 0;
             for (int i = start; i < input.Length; i++)
             {
-                var currentchar = input[i];
-                var glyph = _glyphs[currentchar];
+                char currentchar = input[i];
+                FontGlyph glyph = _glyphs[currentchar];
                 int glyphwidth = glyph.xadvance;
                 if (i > 0)
                 {
-                    var prev = _glyphs[input[i - 1]];
+                    FontGlyph prev = _glyphs[input[i - 1]];
                     if (prev.kerning != null &&
                         currentchar < prev.kerning.Length)
                     {
-                        var ker = prev.kerning[currentchar];
+                        sbyte ker = prev.kerning[currentchar];
                         glyphwidth += ker;
                     }
                 }
                 if (width + glyphwidth >= px)
                 {
-                    return Math.Max(1, (i - start));
+                    return Math.Max(1, i - start);
                 }
                 width += glyphwidth;
             }
@@ -272,17 +267,17 @@ namespace Gwen.Renderer
         }
         private List<string> WrapLine(string line, int maxpx, List<int> widths)
         {
-            var wordarr = line.Split(' ');
-            var ret = new List<string>();
+            string[] wordarr = line.Split(' ');
+            List<string> ret = new List<string>();
             List<string> words = new List<string>(wordarr.Length);
-            foreach (var word in wordarr)
+            foreach (string word in wordarr)
             {
                 if (MeasureText(word).Width >= maxpx)
                 {
                     int index = 0;
                     do
                     {
-                        var linewidth = MeasureWordSplit(word, index, maxpx);
+                        int linewidth = MeasureWordSplit(word, index, maxpx);
                         Debug.Assert(
                             linewidth != 0,
                             "word wrap split line width is zero");
@@ -301,20 +296,20 @@ namespace Gwen.Renderer
             int lnwidth = 0;
             for (int i = 0; i < words.Count; i++)
             {
-                var word = words[i];
-                var str = linebuilder.ToString();
-                var add = str + seperator + word;
+                string word = words[i];
+                string str = linebuilder.ToString();
+                string add = str + seperator + word;
                 lnwidth = MeasureText(add).Width;
                 if (lnwidth < maxpx)
                 {
-                    linebuilder.Append(seperator + word);
+                    _ = linebuilder.Append(seperator + word);
                 }
                 else
                 {
                     ret.Add(str);
                     widths.Add(lnwidth);
-                    linebuilder.Clear();
-                    linebuilder.Append(word);
+                    _ = linebuilder.Clear();
+                    _ = linebuilder.Append(word);
                     continue;
                 }
                 seperator = " ";
@@ -328,15 +323,15 @@ namespace Gwen.Renderer
         }
         public List<string> WordWrap(string input, int maxpx)
         {
-            // this function isnt 100% for performance but i think thats okay.
+            // This function isnt 100% for performance but i think thats okay.
             string[] originallines = input.Replace("\r\n", "\n").Split('\n');
 
             List<string> ret = new List<string>();
             List<int> widths = new List<int>();
-            foreach (var line in originallines)
+            foreach (string line in originallines)
             {
                 widths.Clear();
-                var wrapped = WrapLine(line, maxpx, widths);
+                List<string> wrapped = WrapLine(line, maxpx, widths);
                 if (wrapped.Count == 0)
                 {
                     wrapped.Add("");
@@ -367,25 +362,25 @@ namespace Gwen.Renderer
             int y = posy;
             for (int i = 0; i < text.Length; i++)
             {
-                int charid = (int)text[i];
+                int charid = text[i];
                 if (charid > _glyphs.Length - 1)
                 {
-                    charid = 0;//unsupported character
+                    charid = 0; // Unsupported character
                 }
                 if (text[i] == '\n')
                 {
                     retheight += LineHeight;
                     y += LineHeight;
-                    //fuck it, return to carriage.
+                    // Fuck it, return to carriage.
                     x = posx;
                 }
-                var glyph = _glyphs[charid];
+                FontGlyph glyph = _glyphs[charid];
                 if (render)
                 {
                     ret.AddRange(GetGlyphVerts(glyph, x, y));
                 }
                 x += glyph.xadvance;
-                //check for kerning
+                // Check for kerning
                 if (i + 1 < text.Length)
                 {
                     if (glyph.kerning != null)
@@ -393,12 +388,12 @@ namespace Gwen.Renderer
                         char c = text[i + 1];
                         if (c < glyph.kerning.Length)
                         {
-                            var ker = glyph.kerning[c];
+                            sbyte ker = glyph.kerning[c];
                             x += ker;
                         }
                     }
                 }
-                retwidth = Math.Max(retwidth, x - posx);//in case of newline
+                retwidth = Math.Max(retwidth, x - posx); // In case of newline
             }
             size = new Size() { Width = retwidth, Height = retheight };
             return ret;
@@ -411,28 +406,14 @@ namespace Gwen.Renderer
         // with the texture associated with this bmfont loaded.
         // Render as GL_QUADS
         /// </summary>
-        public List<Vertex> GenerateText(int posx, int posy, string text)
-        {
-            Size size;
-            return GenerateTextInternal(posx, posy, text, true, out size);
-        }
+        public List<Vertex> GenerateText(int posx, int posy, string text) => GenerateTextInternal(posx, posy, text, true, out _);
         public Size MeasureText(string text)
         {
-            Size ret;
-            GenerateTextInternal(0, 0, text, false, out ret);
+            _ = GenerateTextInternal(0, 0, text, false, out Size ret);
             return ret;
         }
-        private static string extract_value(string cword)
-        {
-            return cword.Substring(cword.IndexOf('=') + 1);
-        }
-        private static string extract_key(string cword)
-        {
-            return cword.Substring(0, cword.IndexOf('='));
-        }
-        private static int ParseInt(string s)
-        {
-            return int.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
-        }
+        private static string ExtractValue(string cword) => cword.Substring(cword.IndexOf('=') + 1);
+        private static string ExtractKey(string cword) => cword.Substring(0, cword.IndexOf('='));
+        private static int ParseInt(string s) => int.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
     }
 }

@@ -16,20 +16,20 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System.Linq;
-using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Drawing;
-using System;
-using OpenTK;
-using linerider.UI;
-using linerider.Tools;
-using Gwen.Skin;
-using Gwen.Controls;
 using Gwen;
-using linerider.Utils;
+using Gwen.Controls;
+using Gwen.Skin;
+using linerider.Tools;
+using linerider.UI;
 using linerider.UI.Components;
+using linerider.Utils;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 
 namespace linerider
 {
@@ -43,7 +43,7 @@ namespace linerider
         private SwatchBar _swatchbar;
         private Toolbar _toolbar;
         private LoadingSprite _loadingsprite;
-        private MainWindow game;
+        private readonly MainWindow game;
         public PlatformImpl Platform;
         public bool Loading { get; set; }
         public Color TextForeground => Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
@@ -68,8 +68,8 @@ namespace linerider
         }
         private void Think(object sender, EventArgs e)
         {
-            //process recording junk
-            var rec = Settings.Local.RecordingMode;
+            // Process recording junk
+            bool rec = Settings.Local.RecordingMode;
             ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
             _swatchbar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
@@ -77,7 +77,7 @@ namespace linerider
             _timeline.IsHidden = rec;
 
             _loadingsprite.IsHidden = rec || !Loading;
-            var selectedtool = CurrentTools.CurrentTool;
+            Tool selectedtool = CurrentTools.CurrentTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
             if (!_usertooltip.IsHidden)
             {
@@ -86,9 +86,9 @@ namespace linerider
                     _usertooltip.Text = selectedtool.Tooltip;
                     _usertooltip.Layout();
                 }
-                var mousePos = Gwen.Input.InputHandler.MousePosition;
-                var bounds = _usertooltip.Bounds;
-                var offset = Util.FloatRect(
+                Point mousePos = Gwen.Input.InputHandler.MousePosition;
+                Rectangle bounds = _usertooltip.Bounds;
+                Rectangle offset = Util.FloatRect(
                     mousePos.X - bounds.Width * 0.5f,
                     mousePos.Y - bounds.Height - 10,
                     bounds.Width,
@@ -112,7 +112,7 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
             };
-            new InfoBarLeft(leftPanel, game.Track)
+            _ = new InfoBarLeft(leftPanel, game.Track)
             {
                 Dock = Dock.Top,
             };
@@ -145,7 +145,7 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Right,
             };
-            new InfoBarRight(rightPanel, game.Track)
+            _ = new InfoBarRight(rightPanel, game.Track)
             {
                 Dock = Dock.Top,
             };
@@ -177,23 +177,23 @@ namespace linerider
         {
             try
             {
-                Process.Start(url);
+                _ = Process.Start(url);
             }
             catch
             {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                // Hack because of this: https://github.com/dotnet/corefx/issues/10361
                 if (Configuration.RunningOnWindows)
                 {
                     url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                    _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
                 }
                 else if (Configuration.RunningOnMacOS)
                 {
-                    Process.Start("open", url);
+                    _ = Process.Start("open", url);
                 }
                 else if (Configuration.RunningOnLinux)
                 {
-                    Process.Start("xdg-open", url);
+                    _ = Process.Start("xdg-open", url);
                 }
                 else
                 {
@@ -208,19 +208,22 @@ namespace linerider
         }
         public void ShowChangelog()
         {
-            if (Settings.showChangelog != true) { return; }
+            if (Settings.showChangelog != true)
+            {
+                return;
+            }
             ShowDialog(new ChangelogWindow(this, game.Track));
         }
 
-        public static bool ShowLoadCrashBackup(Canvas canvas, string name)
+        public static bool ShowLoadCrashBackup(string name)
         {
             bool ret = false;
-            var text = "" +
+            string text = "" +
                 "Hey, it looks like you are trying to load a Crash Backup.\n" +
                 "(" + name + ")\n" +
                 "Some issues with the save may cause the file to always crash this program.\n" +
                 "Are you sure you want to load it?";
-            var title = "So about that crash backup...";
+            string title = "So about that crash backup...";
 
             if (System.Windows.Forms.MessageBox.Show(text, title,
                 System.Windows.Forms.MessageBoxButtons.YesNo)
@@ -237,7 +240,7 @@ namespace linerider
         {
             if (Program.NewVersion == null)
                 return;
-            var window = MessageBox.Show(this, "Would you like to download the latest version?", "Update Available! v" + Program.NewVersion, MessageBox.ButtonType.OkCancel);
+            MessageBox window = MessageBox.Show(this, "Would you like to download the latest version?", "Update Available! v" + Program.NewVersion, MessageBox.ButtonType.OkCancel);
             window.RenameButtons("Go to Download");
             window.Dismissed += (o, e) =>
             {
@@ -255,14 +258,11 @@ namespace linerider
             };
             Program.NewVersion = null;
         }
-        public void ShowError(string message)
-        {
-            MessageBox.Show(this, message, "Error!");
-        }
+        public void ShowError(string message) => MessageBox.Show(this, message, "Error!");
         public List<ControlBase> GetOpenWindows()
         {
             List<ControlBase> ret = new List<ControlBase>();
-            foreach (var child in Children)
+            foreach (ControlBase child in Children)
             {
                 if (child is WindowControl)
                 {
@@ -270,7 +270,7 @@ namespace linerider
                 }
                 else if (child is Gwen.ControlInternal.Modal)
                 {
-                    foreach (var modalchild in child.Children)
+                    foreach (ControlBase modalchild in child.Children)
                     {
                         if (modalchild is WindowControl w)
                         {
@@ -293,29 +293,14 @@ namespace linerider
             game.StopTools();
             window.ShowCentered();
         }
-        public void ShowSaveDialog()
-        {
-            ShowDialog(new SaveWindow(this, game.Track));
-        }
-        public void ShowLoadDialog()
-        {
-            ShowDialog(new LoadWindow(this, game.Track));
-        }
-        public void ShowPreferencesDialog()
-        {
-            ShowDialog(new PreferencesWindow(this, game.Track));
-        }
-        public void ShowTrackPropertiesDialog()
-        {
-            ShowDialog(new TrackInfoWindow(this, game.Track));
-        }
-        public void ShowTriggerWindow()
-        {
-            ShowDialog(new TriggerWindow(this, game.Track));
-        }
+        public void ShowSaveDialog() => ShowDialog(new SaveWindow(this, game.Track));
+        public void ShowLoadDialog() => ShowDialog(new LoadWindow(this, game.Track));
+        public void ShowPreferencesDialog() => ShowDialog(new PreferencesWindow(this, game.Track));
+        public void ShowTrackPropertiesDialog() => ShowDialog(new TrackInfoWindow(this, game.Track));
+        public void ShowTriggerWindow() => ShowDialog(new TriggerWindow(this, game.Track));
         public void ShowExportVideoWindow()
         {
-            if (File.Exists(linerider.IO.ffmpeg.FFMPEG.ffmpeg_path))
+            if (File.Exists(IO.ffmpeg.FFMPEG.ffmpeg_path))
             {
                 ShowDialog(new ExportWindow(this, game.Track, game));
             }
@@ -324,17 +309,11 @@ namespace linerider
                 ShowffmpegMissing();
             }
         }
-        public void ShowScreenCaptureWindow()
-        {
-            ShowDialog(new ScreenshotWindow(this, game.Track, game));
-        }
-        public void ShowGameMenuWindow()
-        {
-            ShowDialog(new GameMenuWindow(this, game.Track));
-        }
+        public void ShowScreenCaptureWindow() => ShowDialog(new ScreenshotWindow(this, game.Track, game));
+        public void ShowGameMenuWindow() => ShowDialog(new GameMenuWindow(this, game.Track));
         public void ShowffmpegMissing()
         {
-            var mbox = MessageBox.Show(
+            MessageBox mbox = MessageBox.Show(
                 this,
                 "This feature requires ffmpeg for encoding.\n" +
                 "Automatically download it?",
@@ -352,13 +331,10 @@ namespace linerider
         }
         public void ShowLineWindow(Game.GameLine line, int x, int y)
         {
-            var wnd = new LineWindow(this, game.Track, line);
+            LineWindow wnd = new LineWindow(this, game.Track, line);
             ShowDialog(wnd);
             wnd.SetPosition(x - wnd.Width / 2, y - wnd.Height / 2);
         }
-        public void ShowGeneratorWindow(Vector2d pos)
-        {
-            ShowDialog(new GeneratorWindow(this, game.Track, pos));
-        }
+        public void ShowGeneratorWindow(Vector2d pos) => ShowDialog(new GeneratorWindow(this, pos));
     }
 }

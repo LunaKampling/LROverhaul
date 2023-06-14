@@ -1,17 +1,14 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
 
 namespace linerider.Game.LineGenerator
 {
     public class CircleGenerator : Generator
     {
-        public double radius; //Radius of the circle
-        public Vector2d position; //Centre of the circle
-        public int lineCount; //Number of lines used to generate the circle
+        public double radius; // Radius of the circle
+        public Vector2d position; // Centre of the circle
+        public int lineCount; // Number of lines used to generate the circle
         public int multiplier = 1;
         public float width = 1;
         public bool invert;
@@ -31,8 +28,8 @@ namespace linerider.Game.LineGenerator
 
         public override void Generate_Internal(TrackWriter trk)
         {
-            var points = new List<Vector2d>();
-            for (double frac = 0.0; frac < 1.0; frac += 1.0 / (double)lineCount)
+            List<Vector2d> points = new List<Vector2d>();
+            for (double frac = 0.0; frac < 1.0; frac += 1.0 / lineCount)
             {
                 double ang = frac * 2.0 * Math.PI;
                 points.Add(position + radius * new Vector2d(Math.Cos(ang), Math.Sin(ang)));
@@ -56,7 +53,7 @@ namespace linerider.Game.LineGenerator
         }
         private void addLine(TrackWriter trk, Vector2d start, Vector2d end, LineType type, bool inv)
         {
-            switch(type)
+            switch (type)
             {
                 case LineType.Standard:
                     lines.Add(CreateLine(trk, start, end, type, inv));
@@ -71,9 +68,6 @@ namespace linerider.Game.LineGenerator
                     break;
             }
         }
-        public override void Generate_Preview_Internal(TrackWriter trk)
-        {
-            Generate_Internal(trk);
-        }
+        public override void Generate_Preview_Internal(TrackWriter trk) => Generate_Internal(trk);
     }
 }

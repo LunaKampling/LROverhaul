@@ -1,6 +1,5 @@
-﻿using System;
-using System.Drawing;
-using Gwen.ControlInternal;
+﻿using Gwen.ControlInternal;
+using System;
 
 namespace Gwen.Controls
 {
@@ -15,12 +14,12 @@ namespace Gwen.Controls
         /// <summary>
         /// Header text.
         /// </summary>
-        public string Text { get { return m_HeaderButton.Text; } set { m_HeaderButton.Text = value; } }
+        public string Text { get => m_HeaderButton.Text; set => m_HeaderButton.Text = value; }
 
         /// <summary>
         /// Determines whether the category is collapsed (closed).
         /// </summary>
-        public bool IsCollapsed { get { return m_HeaderButton.ToggleState; } set { m_HeaderButton.ToggleState = value; } }
+        public bool IsCollapsed { get => m_HeaderButton.ToggleState; set => m_HeaderButton.ToggleState = value; }
 
         /// <summary>
         /// Invoked when an entry has been selected.
@@ -31,22 +30,18 @@ namespace Gwen.Controls
         /// Invoked when the category collapsed state has been changed (header button has been pressed).
         /// </summary>
 		public event GwenEventHandler<EventArgs> Collapsed;
-        protected override Margin PanelMargin
-        {
-            get
-            {
-                return new Margin(0, 0, 0, 5);
-            }
-        }
+        protected override Margin PanelMargin => new Margin(0, 0, 0, 5);
         /// <summary>
         /// Initializes a new instance of the <see cref="CollapsibleCategory"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
         public CollapsibleCategory(CollapsibleList parent) : base(parent)
         {
-            m_HeaderButton = new CategoryHeaderButton(null);
-            m_HeaderButton.Text = "Category Title"; // [omeg] todo: i18n
-            m_HeaderButton.Dock = Dock.Top;
+            m_HeaderButton = new CategoryHeaderButton(null)
+            {
+                Text = "Category Title", // [omeg] todo: i18n
+                Dock = Dock.Top
+            };
             m_HeaderButton.Toggled += OnHeaderToggle;
             m_HeaderButton.AutoSizeToContents = true;
             PrivateChildren.Add(m_HeaderButton);
@@ -57,7 +52,7 @@ namespace Gwen.Controls
             AutoSizeToContents = true;
             m_Panel.Dock = Dock.Fill;
             m_Panel.AutoSizeToContents = true;
-            this.Dock = Dock.Top;
+            Dock = Dock.Top;
             Margin = new Margin(2, 2, 2, 2);
         }
 
@@ -68,8 +63,7 @@ namespace Gwen.Controls
         {
             foreach (ControlBase child in Children)
             {
-                CategoryButton button = child as CategoryButton;
-                if (button == null)
+                if (!(child is CategoryButton button))
                     continue;
 
                 if (button.ToggleState)
@@ -88,8 +82,7 @@ namespace Gwen.Controls
             m_Panel.IsHidden = m_HeaderButton.ToggleState;
             Invalidate();
             InvalidateParent();
-            if (Collapsed != null)
-                Collapsed.Invoke(this, EventArgs.Empty);
+            Collapsed?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -98,8 +91,8 @@ namespace Gwen.Controls
         /// <param name="control">Event source.</param>
 		protected virtual void OnSelected(ControlBase control, EventArgs args)
         {
-            CategoryButton child = control as CategoryButton;
-            if (child == null) return;
+            if (!(control is CategoryButton child))
+                return;
 
             if (m_List != null)
             {
@@ -112,8 +105,7 @@ namespace Gwen.Controls
 
             child.ToggleState = true;
 
-            if (Selected != null)
-                Selected.Invoke(this, new ItemSelectedEventArgs(control));
+            Selected?.Invoke(this, new ItemSelectedEventArgs(control));
         }
 
         /// <summary>
@@ -121,10 +113,7 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="name">Entry name (displayed).</param>
         /// <returns>Newly created control.</returns>
-        public Button Add(string name)
-        {
-            return new CategoryButton(this) { Text = name };
-        }
+        public Button Add(string name) => new CategoryButton(this) { Text = name };
 
         protected override void OnChildAdded(ControlBase child)
         {
@@ -161,8 +150,7 @@ namespace Gwen.Controls
         {
             foreach (ControlBase child in Children)
             {
-                CategoryButton button = child as CategoryButton;
-                if (button == null)
+                if (!(child is CategoryButton button))
                     continue;
 
                 button.ToggleState = false;
@@ -176,12 +164,11 @@ namespace Gwen.Controls
         protected override void PostLayout()
         {
             base.PostLayout();
-            // alternate row coloring
+            // Alternate row coloring
             bool b = false;
             foreach (ControlBase child in Children)
             {
-                CategoryButton button = child as CategoryButton;
-                if (button == null)
+                if (!(child is CategoryButton button))
                     continue;
 
                 button.m_Alt = b;

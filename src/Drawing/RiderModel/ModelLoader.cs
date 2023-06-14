@@ -30,19 +30,10 @@ namespace linerider.Drawing.RiderModel
             }
         }
 
-        protected virtual void ApplyRope()
-        {
-            throw new NotImplementedException();
-        }
-        protected virtual void ApplyRects()
-        {
-            throw new NotImplementedException();
-        }
+        protected virtual void ApplyRope() => throw new NotImplementedException();
+        protected virtual void ApplyRects() => throw new NotImplementedException();
 
-        protected virtual void ApplySprites()
-        {
-            Models.SetSprites(Model.Body, Model.BodyDead, Model.Sled, Model.SledBroken, Model.Arm, Model.Leg);
-        }
+        protected virtual void ApplySprites() => Models.SetSprites(Model.Body, Model.BodyDead, Model.Sled, Model.SledBroken, Model.Arm, Model.Leg);
 
         private void ApplyPalette()
         {

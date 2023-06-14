@@ -17,16 +17,14 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Threading;
-using System.Windows.Forms;
 using Gwen.Controls;
+using linerider.Addons;
 using linerider.Audio;
 using linerider.Drawing;
-using linerider.Rendering;
+using linerider.Drawing.RiderModel;
 using linerider.IO;
+using linerider.LRL;
+using linerider.Rendering;
 using linerider.Tools;
 using linerider.UI;
 using linerider.Utils;
@@ -34,15 +32,16 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.Threading;
 using Key = OpenTK.Input.Key;
 using MessageBox = Gwen.Controls.MessageBox;
-using linerider.Addons;
-using linerider.LRL;
-using linerider.Drawing.RiderModel;
 
 namespace linerider
 {
-    public class MainWindow : OpenTK.GameWindow
+    public class MainWindow : GameWindow
     {
         public bool firstGameUpdate = true; //Run this only on the first update (probably a better way to do this, this is probably bad)
 
@@ -66,10 +65,7 @@ namespace linerider
                 }
                 return ClientSize;
             }
-            set
-            {
-                ClientSize = value;
-            }
+            set => ClientSize = value;
         }
         public Vector2d ScreenTranslation => -ScreenPosition;
         public Vector2d ScreenPosition
@@ -125,15 +121,12 @@ namespace linerider
             base.Dispose();
         }
 
-        public bool ShouldXySnap()
-        {
-            return Settings.Editor.ForceXySnap || InputUtils.CheckPressed(Hotkey.ToolXYSnap);
-        }
+        public bool ShouldXySnap() => Settings.Editor.ForceXySnap || InputUtils.CheckPressed(Hotkey.ToolXYSnap);
         public void Render(float blend = 1)
         {
             bool shouldrender = _invalidated ||
              Canvas.NeedsRedraw ||
-            (Track.Playing) ||
+            Track.Playing ||
             Canvas.Loading ||
             Track.NeedsDraw ||
             CurrentTools.CurrentTool.NeedsRender;
@@ -161,10 +154,10 @@ namespace linerider
                     /* BG triggers and Line trigger updates */
                     if (Track.Offset == 0)
                     {
-                        linerider.Utils.Constants.TriggerBGColor = new Color4((byte)Track.StartingBGColorR, (byte)Track.StartingBGColorG, (byte)Track.StartingBGColorB, (byte)255);
-                        linerider.Utils.Constants.StaticTriggerBGColor = new Color4((byte)Track.StartingBGColorR, (byte)Track.StartingBGColorG, (byte)Track.StartingBGColorB, (byte)255);
-                        linerider.Utils.Constants.StaticTriggerLineColorChange = Color.FromArgb(255, Track.StartingLineColorR, Track.StartingLineColorG, Track.StartingLineColorB);
-                        linerider.Utils.Constants.TriggerLineColorChange = Color.FromArgb(255, Track.StartingLineColorR, Track.StartingLineColorG, Track.StartingLineColorB);
+                        Constants.TriggerBGColor = new Color4((byte)Track.StartingBGColorR, (byte)Track.StartingBGColorG, (byte)Track.StartingBGColorB, 255);
+                        Constants.StaticTriggerBGColor = new Color4((byte)Track.StartingBGColorR, (byte)Track.StartingBGColorG, (byte)Track.StartingBGColorB, 255);
+                        Constants.StaticTriggerLineColorChange = Color.FromArgb(255, Track.StartingLineColorR, Track.StartingLineColorG, Track.StartingLineColorB);
+                        Constants.TriggerLineColorChange = Color.FromArgb(255, Track.StartingLineColorR, Track.StartingLineColorG, Track.StartingLineColorB);
                         GL.ClearColor(Constants.TriggerBGColor);
                     }
                     else
@@ -210,9 +203,9 @@ namespace linerider
                 MSAABuffer.End();
 
                 SwapBuffers();
-                //there are machines and cases where a refresh may not hit the screen without calling glfinish...
+                // There are machines and cases where a refresh may not hit the screen without calling glfinish...
                 GL.Finish();
-                var seconds = Track.FramerateWatch.Elapsed.TotalSeconds;
+                double seconds = Track.FramerateWatch.Elapsed.TotalSeconds;
                 Track.FramerateCounter.AddFrame(seconds);
                 Track.FramerateWatch.Restart();
             }
@@ -250,7 +243,7 @@ namespace linerider
                 }
                 catch
                 {
-                    // do nothing
+                    // Do nothing
                 }
             }
         }
@@ -267,7 +260,7 @@ namespace linerider
 
             // Regular code starts here
             GameUpdateHandleInput();
-            var updates = Track.Scheduler.UnqueueUpdates();
+            int updates = Track.Scheduler.UnqueueUpdates();
             if (updates > 0)
             {
                 Invalidate();
@@ -310,11 +303,8 @@ namespace linerider
             }
         }
 
-        //Used to be static
-        public void Invalidate()
-        {
-            _invalidated = true;
-        }
+        // Used to be static
+        public void Invalidate() => _invalidated = true;
         public void UpdateCursor()
         {
             MouseCursor cursor;
@@ -339,13 +329,13 @@ namespace linerider
         {
             Shaders.Load();
             MSAABuffer = new MsaaFbo();
-            var renderer = new Gwen.Renderer.OpenTK();
+            Gwen.Renderer.OpenTK renderer = new Gwen.Renderer.OpenTK();
 
-            var skinpng = renderer.CreateTexture(GameResources.defaultskin);
+            Gwen.Texture skinpng = renderer.CreateTexture(GameResources.defaultskin);
 
             Fonts f = GameResources.font_liberation_sans_15;
 
-            var skin = new Gwen.Skin.TexturedBase(renderer,
+            Gwen.Skin.TexturedBase skin = new Gwen.Skin.TexturedBase(renderer,
             skinpng,
             GameResources.defaultcolors
             )
@@ -389,9 +379,9 @@ namespace linerider
             try
             {
                 InputUtils.UpdateMouse(e.Mouse);
-                if (linerider.IO.TrackRecorder.Recording)
+                if (TrackRecorder.Recording)
                     return;
-                var r = _input.ProcessMouseMessage(e);
+                bool r = _input.ProcessMouseMessage(e);
                 _uicursor = _input.MouseCaptured;
                 if (Canvas.GetOpenWindows().Count != 0)
                 {
@@ -404,7 +394,7 @@ namespace linerider
                     if (!Track.Playing)
                     {
                         bool dragstart = false;
-                        MouseGamePos = ScreenPosition + (new Vector2d(e.X, e.Y) / Track.Zoom);
+                        MouseGamePos = ScreenPosition + new Vector2d(e.X, e.Y) / Track.Zoom;
                         if (Track.Offset == 0 &&
                          e.Button == MouseButton.Left &&
                         InputUtils.Check(Hotkey.EditorMoveStart))
@@ -419,7 +409,7 @@ namespace linerider
                                 // place to assume the user has done "work"
                                 if (!Track.MoveStartWarned && Track.LineCount > 5)
                                 {
-                                    var popup = MessageBox.Show(Canvas,
+                                    MessageBox popup = MessageBox.Show(Canvas,
                                         "You're about to move the start position of the rider." +
                                         " This cannot be undone, and may drastically change how your track plays." +
                                         "\nAre you sure you want to do this?", "Warning", MessageBox.ButtonType.OkCancel);
@@ -449,7 +439,6 @@ namespace linerider
                                 CurrentTools.CurrentTool.OnMouseRightDown(new Vector2d(e.X, e.Y));
                             }
                         }
-
                     }
                     else if (CurrentTools.CurrentTool == CurrentTools.PencilTool)
                     {
@@ -477,12 +466,12 @@ namespace linerider
             try
             {
                 InputUtils.UpdateMouse(e.Mouse);
-                if (linerider.IO.TrackRecorder.Recording)
+                if (TrackRecorder.Recording)
                     return;
                 _dragRider = false;
-                var r = _input.ProcessMouseMessage(e);
+                bool r = _input.ProcessMouseMessage(e);
                 _uicursor = _input.MouseCaptured;
-                InputUtils.CheckCurrentHotkey();
+                _ = InputUtils.CheckCurrentHotkey();
                 if (!r || CurrentTools.CurrentTool.IsMouseButtonDown)
                 {
                     if (!CurrentTools.CurrentTool.IsMouseButtonDown &&
@@ -516,12 +505,12 @@ namespace linerider
             base.OnMouseMove(e);
             try
             {
-                var pos = new Vector2d(e.X, e.Y);
-                MouseGamePos = ScreenPosition + (pos / Track.Zoom);
+                Vector2d pos = new Vector2d(e.X, e.Y);
+                MouseGamePos = ScreenPosition + pos / Track.Zoom;
                 InputUtils.UpdateMouse(e.Mouse);
-                if (linerider.IO.TrackRecorder.Recording)
+                if (TrackRecorder.Recording)
                     return;
-                var r = _input.ProcessMouseMessage(e);
+                bool r = _input.ProcessMouseMessage(e);
                 _uicursor = _input.MouseCaptured;
                 if (Canvas.GetOpenWindows().Count != 0)
                 {
@@ -531,7 +520,7 @@ namespace linerider
                 if (_dragRider)
                 {
                     Track.Stop();
-                    using (var trk = Track.CreateTrackWriter())
+                    using (TrackWriter trk = Track.CreateTrackWriter())
                     {
                         trk.Track.StartOffset = MouseGamePos;
                         Track.Reset();
@@ -565,7 +554,7 @@ namespace linerider
             try
             {
                 InputUtils.UpdateMouse(e.Mouse);
-                if (linerider.IO.TrackRecorder.Recording)
+                if (TrackRecorder.Recording)
                     return;
                 if (_input.ProcessMouseMessage(e))
                     return;
@@ -598,21 +587,21 @@ namespace linerider
                     InputUtils.KeyDown(e.Key);
                 }
                 InputUtils.UpdateKeysDown(e.Keyboard, e.Modifiers);
-                if (linerider.IO.TrackRecorder.Recording)
+                if (TrackRecorder.Recording)
                     return;
-                var mod = e.Modifiers;
+                KeyModifiers mod = e.Modifiers;
                 if (_input.ProcessKeyDown(e))
                 {
                     return;
                 }
                 if (e.Key == Key.Escape && !e.IsRepeat)
                 {
-                    var openwindows = Canvas.GetOpenWindows();
+                    System.Collections.Generic.List<ControlBase> openwindows = Canvas.GetOpenWindows();
                     if (openwindows != null && openwindows.Count >= 1)
                     {
-                        foreach (var v in openwindows)
+                        foreach (ControlBase v in openwindows)
                         {
-                            ((WindowControl)v).Close();
+                            _ = ((WindowControl)v).Close();
                             Invalidate();
                         }
                         return;
@@ -630,7 +619,7 @@ namespace linerider
                 InputUtils.ProcessKeyboardHotkeys();
                 UpdateCursor();
                 Invalidate();
-                var input = e.Keyboard;
+                KeyboardState input = e.Keyboard;
                 if (!input.IsAnyKeyDown)
                     return;
 
@@ -670,11 +659,11 @@ namespace linerider
             try
             {
                 InputUtils.UpdateKeysDown(e.Keyboard, e.Modifiers);
-                if (linerider.IO.TrackRecorder.Recording)
+                if (TrackRecorder.Recording)
                     return;
-                InputUtils.CheckCurrentHotkey();
-                CurrentTools.CurrentTool.OnKeyUp(e.Key);
-                _input.ProcessKeyUp(e);
+                _ = InputUtils.CheckCurrentHotkey();
+                _ = CurrentTools.CurrentTool.OnKeyUp(e.Key);
+                _ = _input.ProcessKeyUp(e);
                 UpdateCursor();
                 Invalidate();
             }
@@ -687,11 +676,7 @@ namespace linerider
             }
         }
 
-
-        public void StopTools()
-        {
-            CurrentTools.CurrentTool.Stop();
-        }
+        public void StopTools() => CurrentTools.CurrentTool.Stop();
         public void StopHandTool()
         {
             if (CurrentTools.CurrentTool == CurrentTools.PanTool)
@@ -1082,7 +1067,7 @@ namespace linerider
         {
             InputUtils.RegisterHotkey(Hotkey.EditorDragCanvas, () => !Track.Playing && !Canvas.IsModalOpen, () =>
             {
-                var mouse = InputUtils.GetMouse();
+                Vector2d mouse = InputUtils.GetMouse();
                 CurrentTools.QuickPan = true;
                 CurrentTools.PanTool.OnMouseDown(new Vector2d(mouse.X, mouse.Y));
             },
@@ -1090,7 +1075,7 @@ namespace linerider
             {
                 if (CurrentTools.QuickPan)
                 {
-                    var mouse = InputUtils.GetMouse();
+                    Vector2d mouse = InputUtils.GetMouse();
                     CurrentTools.PanTool.OnMouseUp(new Vector2d(mouse.X, mouse.Y));
                     CurrentTools.QuickPan = false;
                 }
@@ -1099,7 +1084,7 @@ namespace linerider
             InputUtils.RegisterHotkey(Hotkey.EditorUndo, () => !Track.Playing, () =>
             {
                 CurrentTools.CurrentTool.Cancel();
-                var hint = Track.UndoManager.Undo();
+                object hint = Track.UndoManager.Undo();
                 CurrentTools.CurrentTool.OnUndoRedo(true, hint);
                 Invalidate();
             },
@@ -1108,7 +1093,7 @@ namespace linerider
             InputUtils.RegisterHotkey(Hotkey.EditorRedo, () => !Track.Playing, () =>
             {
                 CurrentTools.CurrentTool.Cancel();
-                var hint = Track.UndoManager.Redo();
+                object hint = Track.UndoManager.Redo();
                 CurrentTools.CurrentTool.OnUndoRedo(false, hint);
                 Invalidate();
             },
@@ -1119,10 +1104,10 @@ namespace linerider
                 if (!Track.Playing)
                 {
                     StopTools();
-                    using (var trk = Track.CreateTrackWriter())
+                    using (TrackWriter trk = Track.CreateTrackWriter())
                     {
                         CurrentTools.CurrentTool.Stop();
-                        var l = trk.GetNewestLine();
+                        Game.GameLine l = trk.GetNewestLine();
                         if (l != null)
                         {
                             Track.UndoManager.BeginAction();
@@ -1139,9 +1124,9 @@ namespace linerider
             repeat: true);
             InputUtils.RegisterHotkey(Hotkey.EditorFocusStart, () => !Track.Playing, () =>
             {
-                using (var trk = Track.CreateTrackReader())
+                using (TrackReader trk = Track.CreateTrackReader())
                 {
-                    var l = trk.GetOldestLine();
+                    Game.GameLine l = trk.GetOldestLine();
                     if (l != null)
                     {
                         Track.Camera.SetFrameCenter(l.Position1);
@@ -1151,9 +1136,9 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorFocusLastLine, () => !Track.Playing, () =>
             {
-                using (var trk = Track.CreateTrackReader())
+                using (TrackReader trk = Track.CreateTrackReader())
                 {
-                    var l = trk.GetNewestLine();
+                    Game.GameLine l = trk.GetNewestLine();
                     if (l != null)
                     {
                         Track.Camera.SetFrameCenter(l.Position1);
@@ -1175,7 +1160,7 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorFocusFlag, () => !Track.Playing, () =>
             {
-                var flag = Track.GetFlag();
+                Game.RiderFrame flag = Track.GetFlag();
                 if (flag != null)
                 {
                     Track.Camera.SetFrameCenter(flag.State.CalculateCenter());
@@ -1191,8 +1176,8 @@ namespace linerider
             () => CurrentTools.CurrentTool.Active,
             () =>
             {
-                var tool = CurrentTools.CurrentTool;
-                var selecttool = CurrentTools.SelectSubtool;
+                Tool tool = CurrentTools.CurrentTool;
+                SelectSubtool selecttool = CurrentTools.SelectSubtool;
                 if (tool == selecttool)
                 {
                     selecttool.CancelSelection();

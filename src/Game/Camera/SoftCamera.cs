@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using linerider.Game;
-using linerider.Rendering;
-using OpenTK;
 using linerider.Utils;
-using System.Diagnostics;
+using OpenTK;
+using System;
 
 namespace linerider.Game
 {
@@ -18,23 +12,23 @@ namespace linerider.Game
             const double pull = 0.01;
 
             CameraEntry entry = _frames[frame];
-            var ret = box.Clamp(prev + entry.CameraOffset);
+            Vector2d ret = box.Clamp(prev + entry.CameraOffset);
             Angle a = Angle.FromVector(ret);
             double length = ret.Length;
             double prevlength = prev.Length;
-            var edge = a.MovePoint(
+            Vector2d edge = a.MovePoint(
                 Vector2d.Zero,
                 Math.Max(box.Bounds.Width, box.Bounds.Height));
             double maxlength = box.Clamp(edge).Length;
             double lengthratio = length / maxlength;
             double prevratio = prevlength / maxlength;
-            double diffratio = Math.Abs(lengthratio - prevratio);
+            _ = Math.Abs(lengthratio - prevratio);
             if (length > prevlength)
             {
-                var dr = lengthratio - prevratio;
-                var damper = lengthratio - (dr / 2);
+                double dr = lengthratio - prevratio;
+                double damper = lengthratio - dr / 2;
 
-                var delta = length - prevlength;
+                double delta = length - prevlength;
                 delta *= Math.Max(0.05, push * (1 - Math.Max(0, damper)));
                 length = prevlength + delta;
             }

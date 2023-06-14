@@ -71,10 +71,7 @@ namespace Gwen
             m_Renderer.LoadTextureRaw(this, pixelData);
         }
 
-        public void LoadStream(Stream data)
-        {
-            m_Renderer.LoadTextureStream(this, data);
-        }
+        public void LoadStream(Stream data) => m_Renderer.LoadTextureStream(this, data);
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -89,7 +86,7 @@ namespace Gwen
 
         ~Texture()
         {
-            Debug.WriteLine(String.Format("IDisposable object finalized: {0}", GetType()));
+            Debug.WriteLine(string.Format("IDisposable object finalized: {0}", GetType()));
         }
 
 #endif

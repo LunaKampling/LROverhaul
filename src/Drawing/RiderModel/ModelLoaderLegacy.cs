@@ -14,16 +14,13 @@ namespace linerider.Drawing.RiderModel
             public static readonly DoubleRect Leg = new DoubleRect(-0.6535, -2.013, 8.02, 4.01);
         }
 
-        protected override void ApplyRects()
-        {
-            Models.SetRects(
+        protected override void ApplyRects() => Models.SetRects(
                 Rect.Sled,
                 Rect.SledBroken,
                 Rect.Body,
                 Rect.Arm,
                 Rect.Leg
             );
-        }
 
         protected override void ApplyRope()
         {

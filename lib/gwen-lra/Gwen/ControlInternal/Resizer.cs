@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -25,7 +24,7 @@ namespace Gwen.ControlInternal
         {
             m_ResizeDir = Pos.Left;
             MouseInputEnabled = true;
-            SetSize(6, 6);
+            _ = SetSize(6, 6);
             Target = parent;
         }
 
@@ -38,8 +37,10 @@ namespace Gwen.ControlInternal
         /// <param name="dy">Y change.</param>
         protected override void OnMouseMoved(int x, int y, int dx, int dy)
         {
-            if (null == m_Target) return;
-            if (!m_Held) return;
+            if (null == m_Target)
+                return;
+            if (!m_Held)
+                return;
 
             Rectangle oldBounds = m_Target.Bounds;
             Rectangle bounds = m_Target.Bounds;
@@ -95,7 +96,8 @@ namespace Gwen.ControlInternal
                 int woff = bounds.Width - m_HoldPos.X;
                 int diff = bounds.Width;
                 bounds.Width = pCursorPos.X + woff;
-                if (bounds.Width < min.Width) bounds.Width = min.Width;
+                if (bounds.Width < min.Width)
+                    bounds.Width = min.Width;
                 diff -= bounds.Width;
 
                 m_HoldPos.X -= diff;
@@ -106,16 +108,16 @@ namespace Gwen.ControlInternal
                 int hoff = bounds.Height - m_HoldPos.Y;
                 int diff = bounds.Height;
                 bounds.Height = pCursorPos.Y + hoff;
-                if (bounds.Height < min.Height) bounds.Height = min.Height;
+                if (bounds.Height < min.Height)
+                    bounds.Height = min.Height;
                 diff -= bounds.Height;
 
                 m_HoldPos.Y -= diff;
             }
 
-            m_Target.SetBounds(bounds);
+            _ = m_Target.SetBounds(bounds);
 
-            if (Resized != null)
-                Resized.Invoke(this, EventArgs.Empty);
+            Resized?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

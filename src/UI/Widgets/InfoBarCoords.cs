@@ -19,13 +19,12 @@ using Gwen;
 using Gwen.Controls;
 using linerider.LRL;
 using linerider.UI.Components;
-using linerider.Utils;
 
 namespace linerider.UI
 {
     public class InfoBarCoords : WidgetContainer
     {
-        private GameCanvas _canvas;
+        private readonly GameCanvas _canvas;
         private TrackLabel _ridercoordlabel;
 
         public InfoBarCoords(ControlBase parent) : base(parent)
@@ -33,17 +32,14 @@ namespace linerider.UI
             _canvas = (GameCanvas)parent.GetCanvas();
             Setup();
         }
-        private void Setup()
+        private void Setup() => _ridercoordlabel = new TrackLabel(this)
         {
-            _ridercoordlabel = new TrackLabel(this)
+            Dock = Dock.Top,
+            TextRequest = (o, e) =>
             {
-                Dock = Dock.Top,
-                TextRequest = (o, e) =>
-                {
-                    string coords = string.Join("\n", Coordinates.CoordsData);
-                    return coords;
-                },
-            };
-        }
+                string coords = string.Join("\n", Coordinates.CoordsData);
+                return coords;
+            },
+        };
     }
 }

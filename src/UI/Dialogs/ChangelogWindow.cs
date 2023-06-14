@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
 using linerider.Utils;
-using linerider.IO;
 
 namespace linerider.UI
 {
@@ -17,7 +11,7 @@ namespace linerider.UI
             Title = "Changelog for " + Program.FullVersion;
             AutoSizeToContents = true;
 
-            var changelogText =
+            string changelogText =
                 "5/15/2023 \n" +
                 "*Change line type based on selection! Alt + 1/2/3 to change the line type \n" +
                 "*Copy line data to your clipboard! Ctrl+shift+c/v to copy/paste line data \n" +
@@ -28,8 +22,7 @@ namespace linerider.UI
                 "*Toolbar buttons should be upscaled by now \n \n" +
                 "*Note: Bezier and Remount still need fixing \n" +
                 "*New selection mechanics have been tested, though if you happen to somehow crash \n" +
-                "the program, report it on the Trello page. Of course also send your log file."; 
-
+                "the program, report it on the Trello page. Of course also send your log file.";
 
             ControlBase bottomcontainer = new ControlBase(this)
             {
@@ -48,9 +41,9 @@ namespace linerider.UI
             };
             btncontinue.Clicked += (o, e) =>
             {
-                Close();
+                _ = Close();
             };
-            
+
             Button btndontshow = new Button(null)
             {
                 Text = "Continue and don\'t show again",
@@ -63,9 +56,9 @@ namespace linerider.UI
             {
                 Settings.showChangelog = false;
                 Settings.Save();
-                Close();
+                _ = Close();
             };
-            
+
             Button btngithub = new Button(null)
             {
                 Text = "Previous Changelogs (Github)",
@@ -82,9 +75,9 @@ namespace linerider.UI
                 }
                 catch
                 {
-                    MessageBox.Show(parent, "Unable to open your browser.", "Error!");
+                    _ = MessageBox.Show(parent, "Unable to open your browser.", "Error!");
                 }
-                Close();
+                _ = Close();
             };
 
             ControlBase buttoncontainer = new ControlBase(bottomcontainer)
@@ -99,19 +92,21 @@ namespace linerider.UI
                     btngithub,
                 }
             };
-            
-            RichLabel l = new RichLabel(this);
-            l.Dock = Dock.Top;
-            l.AutoSizeToContents = true;
+
+            RichLabel l = new RichLabel(this)
+            {
+                Dock = Dock.Top,
+                AutoSizeToContents = true
+            };
             l.AddText(changelogText, Skin.Colors.Text.Foreground);
             MakeModal(true);
             DisableResizing();
         }
-        
+
         private void CreateLabeledControl(ControlBase parent, string label, ControlBase control)
         {
             control.Dock = Dock.Right;
-            ControlBase container = new ControlBase(parent)
+            _ = new ControlBase(parent)
             {
                 Children =
                 {

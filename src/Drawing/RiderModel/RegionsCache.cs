@@ -17,7 +17,8 @@ namespace linerider.Drawing.RiderModel
 
         public List<Rectangle> RegionsBody = new List<Rectangle>();
         public List<Rectangle> RegionsBodyDead = new List<Rectangle>();
-        enum ParseMode
+
+        private enum ParseMode
         {
             None,
             Hashes,
@@ -27,20 +28,11 @@ namespace linerider.Drawing.RiderModel
 
         public string SkinHomePath;
 
-        public void SetHome(string path)
-        {
-            SkinHomePath = path;
-        }
+        public void SetHome(string path) => SkinHomePath = path;
 
-        internal void SetFilenames(Filenames filenames)
-        {
-            Filenames = filenames;
-        }
+        internal void SetFilenames(Filenames filenames) => Filenames = filenames;
 
-        public void Delete()
-        {
-            File.Delete(Path.Combine(SkinHomePath, Filenames.RegionsCache));
-        }
+        public void Delete() => File.Delete(Path.Combine(SkinHomePath, Filenames.RegionsCache));
 
         public bool Parse(List<string> cacheLines)
         {
@@ -54,45 +46,57 @@ namespace linerider.Drawing.RiderModel
 
                 switch (cacheLine)
                 {
-                    case HeaderHashes: { mode = ParseMode.Hashes; continue; }
-                    case HeaderBody: { mode = ParseMode.BodyRegions; continue; }
-                    case HeaderBodyDead: { mode = ParseMode.BodyDeadRegions; continue; }
+                    case HeaderHashes:
+                    {
+                        mode = ParseMode.Hashes;
+                        continue;
+                    }
+                    case HeaderBody:
+                    {
+                        mode = ParseMode.BodyRegions;
+                        continue;
+                    }
+                    case HeaderBodyDead:
+                    {
+                        mode = ParseMode.BodyDeadRegions;
+                        continue;
+                    }
                 }
 
                 switch (mode)
                 {
                     case ParseMode.Hashes:
+                    {
+                        if (string.IsNullOrEmpty(SkinHomePath))
+                            continue;
+
+                        string[] parts = cacheLine.Split(';');
+                        string filename = parts[0];
+                        string hashShouldBe = parts[1];
+
+                        using (FileStream inputStream = File.OpenRead(Path.Combine(SkinHomePath, filename)))
                         {
-                            if (string.IsNullOrEmpty(SkinHomePath))
-                                continue;
+                            byte[] hash = MD5.Create().ComputeHash(inputStream);
+                            string hashStr = Convert.ToBase64String(hash);
 
-                            string[] parts = cacheLine.Split(';');
-                            string filename = parts[0];
-                            string hashShouldBe = parts[1];
-
-                            using (FileStream inputStream = File.OpenRead(Path.Combine(SkinHomePath, filename)))
-                            {
-                                byte[] hash = MD5.Create().ComputeHash(inputStream);
-                                string hashStr = Convert.ToBase64String(hash);
-
-                                // Hash is invalid
-                                if (hashStr != hashShouldBe)
-                                    return false;
-                            }
+                            // Hash is invalid
+                            if (hashStr != hashShouldBe)
+                                return false;
                         }
-                        break;
+                    }
+                    break;
                     case ParseMode.BodyRegions:
                     case ParseMode.BodyDeadRegions:
-                        {
-                            Rectangle region = new Rectangle();
-                            region = (Rectangle)converter.ConvertFromString(cacheLine);
+                    {
+                        _ = new Rectangle();
+                        Rectangle region = (Rectangle)converter.ConvertFromString(cacheLine);
 
-                            if (mode == ParseMode.BodyRegions)
-                                RegionsBody.Add(region);
-                            else
-                                RegionsBodyDead.Add(region);
-                        }
-                        break;
+                        if (mode == ParseMode.BodyRegions)
+                            RegionsBody.Add(region);
+                        else
+                            RegionsBodyDead.Add(region);
+                    }
+                    break;
                 }
             }
             return true;
@@ -144,17 +148,25 @@ namespace linerider.Drawing.RiderModel
                         Color bodyDeadColor = bodyDeadPNG.GetPixel(x, y);
                         if (bodyColor.Equals(colorToFind))
                         {
-                            if (aliveRegion.X > x) aliveRegion.X = x;
-                            if (aliveRegion.Y > y) aliveRegion.Y = y;
-                            if (aliveRegion.Width < x) aliveRegion.Width = x - aliveRegion.X + 1;
-                            if (aliveRegion.Height < y) aliveRegion.Height = y - aliveRegion.Y + 1;
+                            if (aliveRegion.X > x)
+                                aliveRegion.X = x;
+                            if (aliveRegion.Y > y)
+                                aliveRegion.Y = y;
+                            if (aliveRegion.Width < x)
+                                aliveRegion.Width = x - aliveRegion.X + 1;
+                            if (aliveRegion.Height < y)
+                                aliveRegion.Height = y - aliveRegion.Y + 1;
                         }
                         if (bodyDeadColor.Equals(colorToFind))
                         {
-                            if (crashedRegion.X > x) crashedRegion.X = x;
-                            if (crashedRegion.Y > y) crashedRegion.Y = y;
-                            if (crashedRegion.Width < x) crashedRegion.Width = x - crashedRegion.X + 1;
-                            if (crashedRegion.Height < y) crashedRegion.Height = y - crashedRegion.Y + 1;
+                            if (crashedRegion.X > x)
+                                crashedRegion.X = x;
+                            if (crashedRegion.Y > y)
+                                crashedRegion.Y = y;
+                            if (crashedRegion.Width < x)
+                                crashedRegion.Width = x - crashedRegion.X + 1;
+                            if (crashedRegion.Height < y)
+                                crashedRegion.Height = y - crashedRegion.Y + 1;
                         }
                     }
                 }

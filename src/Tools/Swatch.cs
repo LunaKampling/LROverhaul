@@ -17,40 +17,18 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using OpenTK;
-using linerider.Utils;
-using linerider.Game;
 
 namespace linerider.Tools
 {
     public class Swatch : GameService
     {
-        private float _greenmultiplier = 1;
         private float _redmultiplier = 1;
-        public float GreenMultiplier
-        {
-            get
-            {
-                return _greenmultiplier;
-            }
-            set
-            {
-                _greenmultiplier = value;
-            }
-        }
+        public float GreenMultiplier { get; set; } = 1;
 
         public int RedMultiplier
         {
-            get
-            {
-                return (int)Math.Round(_redmultiplier);
-            }
-            set
-            {
-                _redmultiplier = value;
-            }
+            get => (int)Math.Round(_redmultiplier);
+            set => _redmultiplier = value;
         }
         public const int MaxRedMultiplier = 3;
         public const int MinRedMultiplier = 1;
@@ -59,33 +37,33 @@ namespace linerider.Tools
         public LineType Selected { get; set; } = LineType.Standard;
         public void IncrementSelectedMultiplier()
         {
-            if (CurrentTools.CurrentTool != CurrentTools.EraserTool && 
+            if (CurrentTools.CurrentTool != CurrentTools.EraserTool &&
                 CurrentTools.CurrentTool != CurrentTools.SelectSubtool &&
                 CurrentTools.CurrentTool != CurrentTools.SelectTool &&
             CurrentTools.CurrentTool.ShowSwatch)
             {
-                var sw = CurrentTools.CurrentTool.Swatch;
+                Swatch sw = CurrentTools.CurrentTool.Swatch;
                 switch (Selected)
                 {
                     case LineType.Acceleration:
-                        {
-                            var mul = sw.RedMultiplier;
-                            mul++;
-                            if (mul > Swatch.MaxRedMultiplier)
-                                mul = Swatch.MinRedMultiplier;
-                            sw.RedMultiplier = mul;
-                        }
-                        break;
+                    {
+                        int mul = sw.RedMultiplier;
+                        mul++;
+                        if (mul > MaxRedMultiplier)
+                            mul = MinRedMultiplier;
+                        sw.RedMultiplier = mul;
+                    }
+                    break;
                     case LineType.Scenery:
-                        {
-                            var mul = sw.GreenMultiplier;
-                            mul++;
-                            mul = (float)Math.Floor(mul);
-                            if (mul > Swatch.MaxGreenMultiplier)
-                                mul = Swatch.MinGreenMultiplier;
-                            sw.GreenMultiplier = mul;
-                        }
-                        break;
+                    {
+                        float mul = sw.GreenMultiplier;
+                        mul++;
+                        mul = (float)Math.Floor(mul);
+                        if (mul > MaxGreenMultiplier)
+                            mul = MinGreenMultiplier;
+                        sw.GreenMultiplier = mul;
+                    }
+                    break;
                 }
             }
         }

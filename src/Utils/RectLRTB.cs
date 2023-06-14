@@ -16,13 +16,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Runtime.CompilerServices;
 using linerider.Game;
+using System.Runtime.CompilerServices;
 namespace linerider.Utils
 {
     /// <summary>
-    /// lrtb rectangle for use with physics operations
+    /// LRTB rectangle for use with physics operations
     /// </summary>
     public struct RectLRTB
     {
@@ -36,7 +35,7 @@ namespace linerider.Utils
         /// <param name="start"></param>
         public RectLRTB(ref SimulationPoint start)
         {
-            var gp = SimulationGrid.GetGridPoint(start.Location.X, start.Location.Y);
+            GridPoint gp = SimulationGrid.GetGridPoint(start.Location.X, start.Location.Y);
             top = gp.Y - 1;
             bottom = gp.Y + 1;
             left = gp.X - 1;
@@ -54,15 +53,9 @@ namespace linerider.Utils
             right = gp.X;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool ContainsPoint(GridPoint cell)
-        {
-            return cell.X >= left && cell.X <= right && cell.Y >= top && cell.Y <= bottom;
-        }
+        public bool ContainsPoint(GridPoint cell) => cell.X >= left && cell.X <= right && cell.Y >= top && cell.Y <= bottom;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Intersects(RectLRTB cell)
-        {
-            return !(cell.bottom < top || bottom < cell.top
+        public bool Intersects(RectLRTB cell) => !(cell.bottom < top || bottom < cell.top
             || cell.right < left || right < cell.left);
-        }
     }
 }

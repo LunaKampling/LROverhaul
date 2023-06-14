@@ -1,23 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
-using linerider.IO;
 using linerider.Game;
+using linerider.Utils;
 using OpenTK;
+using System;
 using System.Linq;
 
 namespace linerider.UI
 {
     public class LineWindow : DialogBase
     {
-        private PropertyTree _proptree;
+        private readonly PropertyTree _proptree;
         private GameLine _ownerline;
-        private GameLine _linecopy;
+        private readonly GameLine _linecopy;
         private bool _linechangemade = false;
         private const string DefaultTitle = "Line Properties";
         private bool closing = false;
@@ -41,9 +36,9 @@ namespace linerider.UI
             _proptree = new PropertyTree(this)
             {
                 Width = 220,
-                Height = 250
+                Height = 250,
+                Dock = Dock.Top
             };
-            _proptree.Dock = Dock.Top;
             MakeModal(true);
             Setup();
             _proptree.ExpandAll();
@@ -75,7 +70,7 @@ namespace linerider.UI
         }
         private void WarnClose()
         {
-            var mbox = MessageBox.Show(
+            MessageBox mbox = MessageBox.Show(
                 _canvas,
                 "The line has been modified. Do you want to save your changes?",
                 "Save Changes?",
@@ -89,12 +84,12 @@ namespace linerider.UI
                     case DialogResult.Yes:
                         FinishChange();
                         closing = true;
-                        base.Close();
+                        _ = base.Close();
                         break;
                     case DialogResult.No:
                         CancelChange();
                         closing = true;
-                        base.Close();
+                        _ = base.Close();
                         break;
                 }
             };
@@ -102,7 +97,7 @@ namespace linerider.UI
         private void Setup()
         {
             SetupLineRightClickOptions(_proptree);
-            
+
             Panel bottom = new Panel(this)
             {
                 Dock = Dock.Bottom,
@@ -118,7 +113,7 @@ namespace linerider.UI
             {
                 CancelChange();
                 closing = true;
-                Close();
+                _ = Close();
             };
             Button ok = new Button(bottom)
             {
@@ -130,13 +125,13 @@ namespace linerider.UI
             {
                 FinishChange();
                 closing = true;
-                Close();
+                _ = Close();
             };
         }
 
         private void SetupSceneryOptions(PropertyTree tree, PropertyTable lineProp)
         {
-            var width = new NumberProperty(lineProp)
+            NumberProperty width = new NumberProperty(lineProp)
             {
                 Min = 0.1,
                 Max = 25.5,
@@ -146,7 +141,7 @@ namespace linerider.UI
             {
                 ChangeWidth(width.NumberValue);
             };
-            lineProp.Add("Width", width);
+            _ = lineProp.Add("Width", width);
         }
 
         private void SetupBlueAndRedOptions(PropertyTree tree)
@@ -157,46 +152,38 @@ namespace linerider.UI
             bool leftEXT = ((StandardLine)_ownerline).Extension == StandardLine.Ext.Both || ((StandardLine)_ownerline).Extension == StandardLine.Ext.Left;
             bool rightEXT = ((StandardLine)_ownerline).Extension == StandardLine.Ext.Both || ((StandardLine)_ownerline).Extension == StandardLine.Ext.Right;
 
-
             if (_ownerline is RedLine red)
             {
                 currentMultiplier = red.Multiplier;
                 inv = red.inv;
             }
 
-            var table = tree.Add("Acceleration", 120);
+            PropertyTable table = tree.Add("Acceleration", 120);
             multiplier = new NumberProperty(table)
             {
                 Min = -255,
                 Max = 255,
-                NumberValue = (inv ? -currentMultiplier : currentMultiplier),
+                NumberValue = inv ? -currentMultiplier : currentMultiplier,
                 OnlyWholeNumbers = true,
             };
             multiplier.ValueChanged += (o, e) =>
             {
-                if (multiplier.NumberValue < 0)
-                {
-                    accelinverse.IsChecked = true;
-                }
-                else
-                {
-                    accelinverse.IsChecked = false;
-                }
+                accelinverse.IsChecked = multiplier.NumberValue < 0;
                 ChangeMultiplier((int)Math.Abs(multiplier.NumberValue));
             };
-            table.Add("Multiplier", multiplier);
+            _ = table.Add("Multiplier", multiplier);
             multilines = new NumberProperty(table)
             {
                 Min = 1,
                 Max = 9999,
                 OnlyWholeNumbers = true,
+                NumberValue = GetMultiLines(true).Count
             };
-            multilines.NumberValue = GetMultiLines(true).Count;
             multilines.ValueChanged += (o, e) =>
             {
                 Multiline((int)multilines.NumberValue);
             };
-            table.Add("Multilines", multilines);
+            _ = table.Add("Multilines", multilines);
 
             accelinverse = GwenHelper.AddPropertyCheckbox(
                 table,
@@ -207,34 +194,37 @@ namespace linerider.UI
             {
                 if (accelinverse.IsChecked)
                 {
-                    if (multiplier.NumberValue > 0) { multiplier.NumberValue = -multiplier.NumberValue; }
+                    if (multiplier.NumberValue > 0)
+                    {
+                        multiplier.NumberValue = -multiplier.NumberValue;
+                    }
                 }
                 else
                 {
                     multiplier.NumberValue = Math.Abs(multiplier.NumberValue);
                 }
 
-                using (var trk = _editor.CreateTrackWriter())
+                using (TrackWriter trk = _editor.CreateTrackWriter())
                 {
-                    var multi = GetMultiLines(false);
-                    foreach (var l in multi)
+                    SimulationCell multi = GetMultiLines(false);
+                    foreach (StandardLine l in multi)
                     {
-                        var cpy = (StandardLine)l.Clone();
+                        StandardLine cpy = (StandardLine)l.Clone();
                         cpy.Position1 = l.Position2;
                         cpy.Position2 = l.Position1;
                         cpy.inv = accelinverse.IsChecked;
                         UpdateLine(trk, l, cpy);
                     }
 
-                    var owner = (StandardLine)_ownerline.Clone();
+                    StandardLine owner = (StandardLine)_ownerline.Clone();
                     owner.Position1 = _ownerline.Position2;
                     owner.Position2 = _ownerline.Position1;
                     owner.inv = accelinverse.IsChecked;
                     UpdateOwnerLine(trk, owner);
                 }
 
-                var vec = _ownerline.GetVector();
-                var angle = Angle.FromVector(vec);
+                Vector2d vec = _ownerline.GetVector();
+                Angle angle = Angle.FromVector(vec);
                 angle.Degrees += 90;
                 angleProp.NumberValue = angle.Degrees;
             };
@@ -271,16 +261,16 @@ namespace linerider.UI
         }
         private void SetupLineRightClickOptions(PropertyTree tree)
         {
-            var vec = _ownerline.GetVector();
-            var len = vec.Length;
-            var angle = Angle.FromVector(vec);
+            Vector2d vec = _ownerline.GetVector();
+            double len = vec.Length;
+            Angle angle = Angle.FromVector(vec);
             angle.Degrees += 90;
 
-            var lineProp = tree.Add("Line Properties", 120);
+            PropertyTable lineProp = tree.Add("Line Properties", 120);
 
             if (_ownerline.Type != LineType.Scenery)
             {
-                var id = new NumberProperty(lineProp)
+                NumberProperty id = new NumberProperty(lineProp)
                 {
                     Min = int.MinValue + 1,
                     Max = int.MaxValue - 1,
@@ -290,9 +280,9 @@ namespace linerider.UI
                 };
                 id.ValueChanged += (o, e) =>
                 {
-                    ChangeID((int)id.NumberValue); //TODO: Add the ability to change line IDs
+                    ChangeID((int)id.NumberValue); // TODO: Add the ability to change line IDs
                 };
-                lineProp.Add("ID", id);
+                _ = lineProp.Add("ID", id);
             }
 
             length = new NumberProperty(lineProp)
@@ -305,7 +295,7 @@ namespace linerider.UI
             {
                 ChangeLength(length.NumberValue);
             };
-            lineProp.Add("Length", length);
+            _ = lineProp.Add("Length", length);
 
             angleProp = new NumberProperty(lineProp)
             {
@@ -317,7 +307,7 @@ namespace linerider.UI
             {
                 ChangeAngle(angleProp.NumberValue);
             };
-            lineProp.Add("Angle", angleProp);
+            _ = lineProp.Add("Angle", angleProp);
 
             if (_ownerline.Type != LineType.Scenery)
             {
@@ -351,16 +341,16 @@ namespace linerider.UI
         }
         private void ChangeAngle(double numberValue)
         {
-            var multilines = GetMultiLines(false);
-            using (var trk = _editor.CreateTrackWriter())
+            SimulationCell multilines = GetMultiLines(false);
+            using (TrackWriter trk = _editor.CreateTrackWriter())
             {
-                var cpy = _ownerline.Clone();
+                GameLine cpy = _ownerline.Clone();
                 bool lineIsInverted = cpy.Start == cpy.Position2;
-                var angle = Angle.FromDegrees(numberValue - 90);
+                Angle angle = Angle.FromDegrees(numberValue - 90);
 
-                var posEstimate = Utility.Rotate(cpy.End, cpy.Start, angle - Angle.FromVector(cpy.GetVector()));
-                var newPos = Utility.AngleLock(cpy.Start, posEstimate, angle);
-                if (lineIsInverted) //Inverted line
+                Vector2d posEstimate = Utility.Rotate(cpy.End, cpy.Start, angle - Angle.FromVector(cpy.GetVector()));
+                Vector2d newPos = Utility.AngleLock(cpy.Start, posEstimate, angle);
+                if (lineIsInverted) // Inverted line
                 {
                     cpy.Position1 = newPos;
                 }
@@ -370,10 +360,10 @@ namespace linerider.UI
                 }
 
                 UpdateOwnerLine(trk, cpy);
-                
-                foreach (var line in multilines)
+
+                foreach (StandardLine line in multilines)
                 {
-                    var copy = line.Clone();
+                    GameLine copy = line.Clone();
                     copy.Position1 = cpy.Position1;
                     copy.Position2 = cpy.Position2;
                     UpdateLine(trk, line, copy);
@@ -382,22 +372,22 @@ namespace linerider.UI
         }
         private void ChangeLength(double length)
         {
-            var multilines = GetMultiLines(false);
-            using (var trk = _editor.CreateTrackWriter())
+            SimulationCell multilines = GetMultiLines(false);
+            using (TrackWriter trk = _editor.CreateTrackWriter())
             {
-                var cpy = _ownerline.Clone();
-                var angle = Angle.FromVector(cpy.GetVector()).Radians;
+                GameLine cpy = _ownerline.Clone();
+                double angle = Angle.FromVector(cpy.GetVector()).Radians;
 
-                var x2 = cpy.Position1.X + (length * Math.Cos(angle));
-                var y2 = cpy.Position1.Y + (length * Math.Sin(angle));
-                
-                var newPos = new Vector2d(x2, y2);
+                double x2 = cpy.Position1.X + length * Math.Cos(angle);
+                double y2 = cpy.Position1.Y + length * Math.Sin(angle);
+
+                Vector2d newPos = new Vector2d(x2, y2);
                 cpy.Position2 = newPos;
                 UpdateOwnerLine(trk, cpy);
 
-                foreach (var line in multilines)
+                foreach (StandardLine line in multilines)
                 {
-                    var copy = line.Clone();
+                    GameLine copy = line.Clone();
                     copy.Position2 = newPos;
                     UpdateLine(trk, line, copy);
                 }
@@ -405,17 +395,17 @@ namespace linerider.UI
         }
         private void ChangeWidth(double width)
         {
-            using (var trk = _editor.CreateTrackWriter())
+            using (TrackWriter trk = _editor.CreateTrackWriter())
             {
-                var cpy = _ownerline.Clone();
+                GameLine cpy = _ownerline.Clone();
                 cpy.Width = (float)width;
                 UpdateOwnerLine(trk, cpy);
             }
         }
         private void ChangeMultiplier(int mul)
         {
-            var lines = GetMultiLines(false);
-            using (var trk = _editor.CreateTrackWriter())
+            SimulationCell lines = GetMultiLines(false);
+            using (TrackWriter trk = _editor.CreateTrackWriter())
             {
                 RedLine redCpy = null;
                 StandardLine blueCpy = null;
@@ -444,25 +434,16 @@ namespace linerider.UI
                 {
                     redCpy.Multiplier = mul;
                 }
-                StandardLine cpy = redCpy != null ? redCpy : blueCpy;
+                StandardLine cpy = redCpy ?? blueCpy;
                 UpdateOwnerLine(trk, cpy);
-                foreach (var line in lines)
+                foreach (StandardLine line in lines)
                 {
-                    StandardLine copy;
+                    StandardLine copy = origLineType == LineType.Acceleration && _ownerline.Type == LineType.Standard
+                        ? StandardLine.CloneFromRed(line)
+                        : origLineType == LineType.Standard && _ownerline.Type == LineType.Acceleration
+                            ? RedLine.CloneFromBlue(line)
+                            : (StandardLine)line.Clone();
                     // Going from red lines to blue
-                    if (origLineType == LineType.Acceleration && _ownerline.Type == LineType.Standard)
-                    {
-                        copy = StandardLine.CloneFromRed(line);
-                    }
-                    // Going from blue lines to red
-                    else if (origLineType == LineType.Standard && _ownerline.Type == LineType.Acceleration)
-                    {
-                        copy = RedLine.CloneFromBlue(line);
-                    }
-                    else
-                    {
-                        copy = (StandardLine)line.Clone();
-                    }
                     if (copy is RedLine redCopy)
                     {
                         redCopy.Multiplier = mul;
@@ -475,9 +456,9 @@ namespace linerider.UI
         private void UpdateAGWs(bool left, bool right)
         {
             StandardLine.Ext newExt = (StandardLine.Ext)((left ? 1 : 0) + (right ? 2 : 0));
-            
-            var multilines = GetMultiLines(false);
-            using (var trk = _editor.CreateTrackWriter())
+
+            SimulationCell multilines = GetMultiLines(false);
+            using (TrackWriter trk = _editor.CreateTrackWriter())
             {
                 trk.DisableExtensionUpdating();
 
@@ -485,7 +466,7 @@ namespace linerider.UI
                 cpy.Extension = newExt;
                 UpdateOwnerLine(trk, cpy);
 
-                foreach (var line in multilines)
+                foreach (StandardLine line in multilines)
                 {
                     StandardLine copy = (StandardLine)line.Clone();
                     copy.Extension = newExt;
@@ -500,13 +481,12 @@ namespace linerider.UI
                 return new SimulationCell();
             }
 
-
             SimulationCell redlines = new SimulationCell();
-            using (var trk = _editor.CreateTrackReader())
+            using (TrackReader trk = _editor.CreateTrackReader())
             {
-                var owner = (StandardLine)_ownerline;
-                var lines = trk.GetLinesInRect(new Utils.DoubleRect(owner.Position1, new Vector2d(1, 1)), false);
-                foreach (var red in lines)
+                StandardLine owner = (StandardLine)_ownerline;
+                System.Collections.Generic.IEnumerable<GameLine> lines = trk.GetLinesInRect(new DoubleRect(owner.Position1, new Vector2d(1, 1)), false);
+                foreach (GameLine red in lines)
                 {
                     if (
                         red is StandardLine stl &&
@@ -523,12 +503,12 @@ namespace linerider.UI
         private void Multiline(int count)
         {
             SimulationCell redlines = GetMultiLines(false);
-            using (var trk = _editor.CreateTrackWriter())
+            using (TrackWriter trk = _editor.CreateTrackWriter())
             {
-                var owner = (StandardLine)_ownerline;
+                StandardLine owner = (StandardLine)_ownerline;
                 MakingChange();
-                // owner line doesn't count, but our min bounds is 1
-                var diff = (count - 1) - redlines.Count;
+                // Owner line doesn't count, but our min bounds is 1
+                int diff = count - 1 - redlines.Count;
                 if (diff < 0)
                 {
                     for (int i = 0; i > diff; i--)
@@ -541,11 +521,9 @@ namespace linerider.UI
                 {
                     for (int i = 0; i < diff; i++)
                     {
-                        StandardLine newLine;
-                        if (owner is RedLine)
-                            newLine = new RedLine(owner.Position1, owner.Position2, owner.inv) { Multiplier = ((RedLine)owner).Multiplier };
-                        else
-                            newLine = new StandardLine(owner.Position1, owner.Position2, owner.inv);
+                        StandardLine newLine = owner is RedLine line
+                            ? new RedLine(owner.Position1, owner.Position2, owner.inv) { Multiplier = line.Multiplier }
+                            : new StandardLine(owner.Position1, owner.Position2, owner.inv);
                         newLine.CalculateConstants();
                         trk.AddLine(newLine);
                     }

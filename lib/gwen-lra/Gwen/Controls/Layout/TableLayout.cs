@@ -1,6 +1,6 @@
 using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Gwen.Controls
 {
@@ -15,10 +15,7 @@ namespace Gwen.Controls
         private int m_cols = 0;
         public bool AutoSizeRows
         {
-            get
-            {
-                return m_autosizerows;
-            }
+            get => m_autosizerows;
             set
             {
                 if (value != m_autosizerows)
@@ -30,10 +27,7 @@ namespace Gwen.Controls
         }
         public int ColumnCount
         {
-            get
-            {
-                return m_cols;
-            }
+            get => m_cols;
             set
             {
                 if (value != m_cols)
@@ -59,22 +53,19 @@ namespace Gwen.Controls
             m_rowwidths[column] = width;
             Invalidate();
         }
-        public TableRow CreateRow()
-        {
-            return new TableRow(this);
-        }
+        public TableRow CreateRow() => new TableRow(this);
         private void CalculateRows()
         {
             if (AutoSizeRows)
             {
                 m_rowwidths.Clear();
-                foreach (var child in Children)
+                foreach (ControlBase child in Children)
                 {
                     if (child.IsHidden)
                         continue;
                     if (child is TableRow row)
                     {
-                        var widths = row.GetRowWidths();
+                        List<int> widths = row.GetRowWidths();
                         for (int i = 0; i < widths.Count; i++)
                         {
                             if (i >= m_rowwidths.Count)
@@ -97,7 +88,7 @@ namespace Gwen.Controls
             int xoffset = 0;
             for (int i = 0; i < row.cells.Length && i < m_cols; i++)
             {
-                var cell = row.cells[i];
+                TableRow.TableCell cell = row.cells[i];
                 int cellwidth = m_rowwidths[i];
                 int celly = 0;
                 int cellx = 0;
@@ -106,17 +97,17 @@ namespace Gwen.Controls
                     cell.MaximumSize = new Size(
                         cellwidth - cell.Margin.Width,
                         row.Height - cell.Margin.Height);
-                    cell.SizeToChildren(true, true);
+                    _ = cell.SizeToChildren(true, true);
 
                     if (cell.Height < row.Height)
                     {
-                        var d = row.Height - cell.Height;
-                        celly = (d / 2);//center child in row.
+                        int d = row.Height - cell.Height;
+                        celly = d / 2; // Center child in row.
                     }
                     if (cell.Width < cellwidth)
                     {
-                        var d = cellwidth - cell.Width;
-                        cellx = (d / 2);//center child in row.
+                        int d = cellwidth - cell.Width;
+                        cellx = d / 2; // Center child in row.
                     }
                     cell.SetPosition(xoffset + cellx, celly);
                 }
@@ -130,7 +121,7 @@ namespace Gwen.Controls
             size.Height -= Padding.Height;
             CalculateRows();
             int y = 0;
-            foreach (var child in Children)
+            foreach (ControlBase child in Children)
             {
                 if (child.IsHidden)
                     continue;

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 namespace linerider
 {
     public static class EntryPoint

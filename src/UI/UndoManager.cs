@@ -16,10 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using OpenTK;
-using System;
 using linerider.Game;
+using System;
+using System.Collections.Generic;
 namespace linerider
 {
     public class UndoManager : GameService
@@ -37,12 +36,12 @@ namespace linerider
                 if (beforeact == null && afteract == null)
                     throw new ArgumentNullException(
                         "undo action with no values");
-                // remove line
+                // Remove line
                 if (afteract == null)
                 {
                     track.RemoveLine(beforeact);
                 }
-                // add line
+                // Add line
                 else if (beforeact == null)
                 {
                     track.AddLine(afteract.Clone());
@@ -53,7 +52,7 @@ namespace linerider
                     track.RemoveLine(beforeact);
                     track.AddLine(afteract);
                 }
-                //move action
+                // Move action
                 else
                 {
                     track.ReplaceLine(beforeact, afteract.Clone());
@@ -62,7 +61,7 @@ namespace linerider
 
             }
             /// <summary>
-            /// undo previous action, returns true if physics are changed
+            /// Undo previous action, returns true if physics are changed
             /// </summary>
             public void Undo(TrackWriter track)
             {
@@ -91,7 +90,7 @@ namespace linerider
                 if (States != null && States.Count != 0)
                 {
                     string ret = "";
-                    foreach (var state in States)
+                    foreach (GameLine state in States)
                     {
                         ret += state.ToString() + "|";
                     }
@@ -102,9 +101,9 @@ namespace linerider
         }
         public int ActionCount { get; private set; }
         private int _position = 0;
-        private List<act> _actions = new List<act>();
+        private readonly List<act> _actions = new List<act>();
         private act _currentaction;
-        const int MaximumBufferSize = 10000;
+        private const int MaximumBufferSize = 10000;
         public UndoManager()
         {
         }
@@ -147,7 +146,7 @@ namespace linerider
             }
             if (_actions.Count > MaximumBufferSize)
             {
-                _actions.RemoveRange(0, _actions.Count - (MaximumBufferSize / 2));
+                _actions.RemoveRange(0, _actions.Count - MaximumBufferSize / 2);
             }
             _actions.Add(_currentaction);
             _position = _actions.Count;
@@ -160,7 +159,7 @@ namespace linerider
             {
                 _position--;
                 ActionCount--;
-                var action = _actions[_position];
+                act action = _actions[_position];
                 DoAction(action, true);
                 return action.UserHint;
             }
@@ -171,7 +170,7 @@ namespace linerider
         {
             if (_actions.Count > 0 && _position < _actions.Count)
             {
-                var action = _actions[_position];
+                act action = _actions[_position];
                 _position++;
                 ActionCount++;
                 DoAction(action, false);
@@ -181,7 +180,7 @@ namespace linerider
         }
         private void DoAction(act action, bool undo)
         {
-            using (var trk = game.Track.CreateTrackWriter())
+            using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
                 trk.DisableUndo();
                 trk.DisableExtensionUpdating();

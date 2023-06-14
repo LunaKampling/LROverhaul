@@ -1,4 +1,3 @@
-using System;
 using Gwen.Controls;
 
 namespace Gwen.ControlInternal
@@ -13,7 +12,7 @@ namespace Gwen.ControlInternal
             : base(parent)
         {
             AutoSizeToContents = false;
-            SetSize(16, 16);
+            _ = SetSize(16, 16);
         }
 
         /// <summary>

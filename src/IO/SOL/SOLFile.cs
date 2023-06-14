@@ -17,11 +17,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using OpenTK;
-using linerider.Game;
 namespace linerider.IO.SOL
 {
     internal class SOLFile
@@ -29,20 +26,22 @@ namespace linerider.IO.SOL
         public Amf0Object RootObject = new Amf0Object();
         public SOLFile(string location)
         {
-            var bytes = File.ReadAllBytes(location);
+            byte[] bytes = File.ReadAllBytes(location);
             BigEndianReader br = new BigEndianReader(bytes);
+
             ///HEADER///
-            br.ReadInt16();//sol_version
-            br.ReadInt32();//file length
-            if (br.ReadInt32() != 0x5443534F)//TCSO
+            _ = br.ReadInt16(); // sol_version
+            _ = br.ReadInt32(); // File length
+            if (br.ReadInt32() != 0x5443534F) // TCSO
                 throw new Exception("Invalid magic number, maybe this isn't an SOL file?");
-            br.ReadBytes(6);//padding
-            RootObject.name = Encoding.ASCII.GetString(br.ReadBytes(br.ReadInt16()));//shared object name
+            _ = br.ReadBytes(6); // Padding
+            RootObject.name = Encoding.ASCII.GetString(br.ReadBytes(br.ReadInt16())); // Shared object name
             if (RootObject.name != "savedLines")
                 throw new Exception("invalid root object");
             if (br.ReadInt32() != 0)
-                throw new Exception("Invalid AMF version");//amf version, we only support 0o
-                                                           ///items///			
+                throw new Exception("Invalid AMF version"); // AMF version, we only support 0o
+
+            ///Items///			
             Amf0 amf = new Amf0(br);
             RootObject.data = amf.ReadAmf0(true);
         }

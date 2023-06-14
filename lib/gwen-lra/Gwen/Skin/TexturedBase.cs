@@ -4,6 +4,8 @@ using System.Drawing;
 using System.IO;
 using Single = Gwen.Skin.Texturing.Single;
 
+#pragma warning disable IDE1006 // Naming Styles
+
 namespace Gwen.Skin
 {
     #region UI element textures
@@ -35,7 +37,6 @@ namespace Gwen.Skin
         #endregion Fields
 
         #region Structs
-
         public struct _CategoryList
         {
             #region Fields
@@ -457,7 +458,7 @@ namespace Gwen.Skin
     /// <summary>
     /// Base textured skin.
     /// </summary>
-    public class TexturedBase : Skin.SkinBase
+    public class TexturedBase : SkinBase
     {
         #region Constructors
         public TexturedBase(Renderer.RendererBase renderer, Stream textureData, string colorxml)
@@ -499,13 +500,13 @@ namespace Gwen.Skin
 
         private readonly Texture m_Texture;
 
-        private string _colorxml = null;
+        private readonly string _colorxml = null;
         #endregion Fields
 
         #region Initialization
         private Color LoadColor(System.Xml.XmlDocument read, string name)
         {
-            var culture = System.Globalization.CultureInfo.InvariantCulture;
+            System.Globalization.CultureInfo culture = System.Globalization.CultureInfo.InvariantCulture;
             return Color.FromArgb(255, Color.FromArgb(int.Parse(read.DocumentElement[name].InnerText, System.Globalization.NumberStyles.HexNumber, culture)));
         }
         private void InitializeColors()
@@ -533,26 +534,26 @@ namespace Gwen.Skin
             Colors.ModalBackground = Color.FromArgb(128, Colors.Background);
 
         }
-        private void InitializeDefaultColors()
-        {
-            Colors.Text.Contrast = Color.FromArgb(255, Color.FromArgb(0x0077cc));       // #0077cc
-            Colors.Text.ContrastLow = Color.FromArgb(255, Color.FromArgb(0x004d84));    // #004d84
-            Colors.Text.Foreground = Color.FromArgb(255, Color.FromArgb(0x374047));     // #374047
-            Colors.Text.Highlight = Color.FromArgb(255, Color.FromArgb(0xf8f9f9));      // #f8f9f9
-            Colors.Text.Inactive = Color.FromArgb(255, Color.FromArgb(0xbec4c8));       // #bec4c8
-            Colors.Text.Disabled = Color.FromArgb(255, Color.FromArgb(0x7f8a93));       // #7f8a93
-            Colors.Accent = Color.FromArgb(255, Color.FromArgb(0x0077cc));              // #0077cc
-            Colors.AccentHigh = Color.FromArgb(255, Color.FromArgb(0xc6e1f3));          // #c6e1f3
-            Colors.AccentLow = Color.FromArgb(255, Color.FromArgb(0x004d84));           // #004d84
-            Colors.Background = Color.FromArgb(255, Color.FromArgb(0xf8f9f9));          // #f8f9f9
-            Colors.BackgroundHighlight = Color.FromArgb(255, Color.FromArgb(0xebedee)); // #ebedee
-            Colors.Foreground = Color.FromArgb(255, Color.FromArgb(0x374047));          // #374047
-            Colors.ForegroundHighlight = Color.FromArgb(255, Color.FromArgb(0xdee1e3)); // #dee1e3
-            Colors.ForegroundInactive = Color.FromArgb(255, Color.FromArgb(0xbec4c8));  // #bec4c8
-            Colors.Text.AccentForeground = Colors.Background;
+        //private void InitializeDefaultColors()
+        //{
+        //    Colors.Text.Contrast = Color.FromArgb(255, Color.FromArgb(0x0077cc));       // #0077cc
+        //    Colors.Text.ContrastLow = Color.FromArgb(255, Color.FromArgb(0x004d84));    // #004d84
+        //    Colors.Text.Foreground = Color.FromArgb(255, Color.FromArgb(0x374047));     // #374047
+        //    Colors.Text.Highlight = Color.FromArgb(255, Color.FromArgb(0xf8f9f9));      // #f8f9f9
+        //    Colors.Text.Inactive = Color.FromArgb(255, Color.FromArgb(0xbec4c8));       // #bec4c8
+        //    Colors.Text.Disabled = Color.FromArgb(255, Color.FromArgb(0x7f8a93));       // #7f8a93
+        //    Colors.Accent = Color.FromArgb(255, Color.FromArgb(0x0077cc));              // #0077cc
+        //    Colors.AccentHigh = Color.FromArgb(255, Color.FromArgb(0xc6e1f3));          // #c6e1f3
+        //    Colors.AccentLow = Color.FromArgb(255, Color.FromArgb(0x004d84));           // #004d84
+        //    Colors.Background = Color.FromArgb(255, Color.FromArgb(0xf8f9f9));          // #f8f9f9
+        //    Colors.BackgroundHighlight = Color.FromArgb(255, Color.FromArgb(0xebedee)); // #ebedee
+        //    Colors.Foreground = Color.FromArgb(255, Color.FromArgb(0x374047));          // #374047
+        //    Colors.ForegroundHighlight = Color.FromArgb(255, Color.FromArgb(0xdee1e3)); // #dee1e3
+        //    Colors.ForegroundInactive = Color.FromArgb(255, Color.FromArgb(0xbec4c8));  // #bec4c8
+        //    Colors.Text.AccentForeground = Colors.Background;
 
-            Colors.ModalBackground = Color.FromArgb(128, Colors.Background);
-        }
+        //    Colors.ModalBackground = Color.FromArgb(128, Colors.Background);
+        //}
         private void InitializeTextures()
         {
             Textures.Shadow = new Bordered(m_Texture, 448, 0, 31, 31, Margin.Ten);
@@ -711,10 +712,7 @@ namespace Gwen.Skin
             Textures.Input.Button.Normal.Draw(Renderer, control.RenderBounds);
         }
 
-        public override void DrawCategoryHolder(Controls.ControlBase control)
-        {
-            Textures.CategoryList.Outer.Draw(Renderer, control.RenderBounds);
-        }
+        public override void DrawCategoryHolder(Controls.ControlBase control) => Textures.CategoryList.Outer.Draw(Renderer, control.RenderBounds);
 
         public override void DrawCategoryInner(Controls.ControlBase control, bool collapsed)
         {
@@ -741,10 +739,7 @@ namespace Gwen.Skin
                     Textures.CheckBox.Active.Normal.Draw(Renderer, control.RenderBounds);
             }
         }
-        public override void DrawPanel(Controls.ControlBase control, byte panelalpha)
-        {
-            Textures.Panel.Normal.Draw(Renderer, control.RenderBounds, Color.FromArgb(panelalpha, Color.White));
-        }
+        public override void DrawPanel(Controls.ControlBase control, byte panelalpha) => Textures.Panel.Normal.Draw(Renderer, control.RenderBounds, Color.FromArgb(panelalpha, Color.White));
         public override void DrawNotification(Controls.ControlBase control, float fade)
         {
             Color c = Color.FromArgb((int)Math.Round(255 * fade), Color.White);
@@ -797,11 +792,11 @@ namespace Gwen.Skin
         }
         public override void DrawDropDownArrow(Controls.ControlBase control, bool hovered, bool down, bool open, bool disabled)
         {
-            var bounds = control.RenderBounds;
+            Rectangle bounds = control.RenderBounds;
             bounds.Height = 15;
-            bounds.Y += (control.RenderBounds.Height / 2) - (bounds.Height / 2);
+            bounds.Y += control.RenderBounds.Height / 2 - bounds.Height / 2;
             bounds.Width = 15;
-            bounds.X += (control.RenderBounds.Width / 2) - (bounds.Width / 2);
+            bounds.X += control.RenderBounds.Width / 2 - bounds.Width / 2;
 
             if (disabled)
             {
@@ -838,19 +833,19 @@ namespace Gwen.Skin
 
             Renderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + 1, textStart - 3, 1));
             Renderer.DrawFilledRect(new Rectangle(rect.X + 1 + textStart + textWidth, rect.Y + 1, rect.Width - textStart + textWidth - 2, 1));
-            Renderer.DrawFilledRect(new Rectangle(rect.X + 1, (rect.Y + rect.Height) - 1, rect.X + rect.Width - 2, 1));
+            Renderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + rect.Height - 1, rect.X + rect.Width - 2, 1));
 
             Renderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + 1, 1, rect.Height));
-            Renderer.DrawFilledRect(new Rectangle((rect.X + rect.Width) - 2, rect.Y + 1, 1, rect.Height - 1));
+            Renderer.DrawFilledRect(new Rectangle(rect.X + rect.Width - 2, rect.Y + 1, 1, rect.Height - 1));
 
             Renderer.DrawColor = m_colDarker;
 
             Renderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y, textStart - 3, 1));
             Renderer.DrawFilledRect(new Rectangle(rect.X + 1 + textStart + textWidth, rect.Y, rect.Width - textStart - textWidth - 2, 1));
-            Renderer.DrawFilledRect(new Rectangle(rect.X + 1, (rect.Y + rect.Height) - 1, rect.X + rect.Width - 2, 1));
+            Renderer.DrawFilledRect(new Rectangle(rect.X + 1, rect.Y + rect.Height - 1, rect.X + rect.Width - 2, 1));
 
             Renderer.DrawFilledRect(new Rectangle(rect.X, rect.Y + 1, 1, rect.Height - 1));
-            Renderer.DrawFilledRect(new Rectangle((rect.X + rect.Width) - 1, rect.Y + 1, 1, rect.Height - 1));
+            Renderer.DrawFilledRect(new Rectangle(rect.X + rect.Width - 1, rect.Y + 1, 1, rect.Height - 1));
         }
 
         public override void DrawHighlight(Controls.ControlBase control)
@@ -869,15 +864,15 @@ namespace Gwen.Skin
             rect.Width -= offset * 2;
             rect.Height -= offset * 2;
 
-            //draw the top and bottom
+            // Draw the top and bottom
             bool skip = true;
             for (int i = 0; i < rect.Width * 0.5; i++)
             {
                 m_Renderer.DrawColor = Color.Black;
                 if (!skip)
                 {
-                    Renderer.DrawPixel(rect.X + (i * 2), rect.Y);
-                    Renderer.DrawPixel(rect.X + (i * 2), rect.Y + rect.Height - 1);
+                    Renderer.DrawPixel(rect.X + i * 2, rect.Y);
+                    Renderer.DrawPixel(rect.X + i * 2, rect.Y + rect.Height - 1);
                 }
                 else
                     skip = false;
@@ -891,10 +886,7 @@ namespace Gwen.Skin
             }
         }
 
-        public override void DrawListBox(Controls.ControlBase control)
-        {
-            Textures.Input.ListBox.Background.Draw(Renderer, control.RenderBounds);
-        }
+        public override void DrawListBox(Controls.ControlBase control) => Textures.Input.ListBox.Background.Draw(Renderer, control.RenderBounds);
 
         public override void DrawListBoxLine(Controls.ControlBase control, bool selected, bool even)
         {
@@ -951,15 +943,9 @@ namespace Gwen.Skin
                 Textures.Menu.Check.Draw(Renderer, new Rectangle(control.RenderBounds.X + 4, control.RenderBounds.Y + 3, 15, 15));
         }
 
-        public override void DrawMenuRightArrow(Controls.ControlBase control)
-        {
-            Textures.Menu.RightArrow.Draw(Renderer, control.RenderBounds);
-        }
+        public override void DrawMenuRightArrow(Controls.ControlBase control) => Textures.Menu.RightArrow.Draw(Renderer, control.RenderBounds);
 
-        public override void DrawMenuStrip(Controls.ControlBase control)
-        {
-            Textures.Menu.Strip.Draw(Renderer, control.RenderBounds);
-        }
+        public override void DrawMenuStrip(Controls.ControlBase control) => Textures.Menu.Strip.Draw(Renderer, control.RenderBounds);
 
         public override void DrawModalControl(Controls.ControlBase control)
         {
@@ -1023,7 +1009,7 @@ namespace Gwen.Skin
             if (horizontal)
             {
                 Textures.ProgressBar.Back.Draw(Renderer, rect);
-                var prevclip = ClipArea(new Rectangle(0, 0, (int)Math.Round(rect.Width * progress), rect.Height));
+                Rectangle prevclip = ClipArea(new Rectangle(0, 0, (int)Math.Round(rect.Width * progress), rect.Height));
                 // Renderer.ClipRegion = new Rectangle(Renderer.ClipRegion.X + rect.X, Renderer.ClipRegion.Y + rect.Y, Renderer.ClipRegion.Width, Renderer.ClipRegion.Height);
                 Textures.ProgressBar.Front.Draw(Renderer, rect);
                 Renderer.ClipRegion = prevclip;
@@ -1031,7 +1017,7 @@ namespace Gwen.Skin
             else
             {
                 Textures.ProgressBar.Back.Draw(Renderer, rect);
-                var prevclip = ClipArea(new Rectangle(0, (rect.Y + rect.Height) - (int)Math.Round(rect.Height * progress), rect.Width, (int)Math.Round(rect.Height * progress)));
+                Rectangle prevclip = ClipArea(new Rectangle(0, rect.Y + rect.Height - (int)Math.Round(rect.Height * progress), rect.Width, (int)Math.Round(rect.Height * progress)));
                 Textures.ProgressBar.Front.Draw(Renderer, rect);
                 Renderer.ClipRegion = prevclip;
             }
@@ -1113,9 +1099,12 @@ namespace Gwen.Skin
         public override void DrawScrollButton(Controls.ControlBase control, Pos direction, bool depressed, bool hovered, bool disabled)
         {
             int i = 0;
-            if (direction == Pos.Top) i = 1;
-            if (direction == Pos.Right) i = 2;
-            if (direction == Pos.Bottom) i = 3;
+            if (direction == Pos.Top)
+                i = 1;
+            if (direction == Pos.Right)
+                i = 2;
+            if (direction == Pos.Bottom)
+                i = 3;
 
             if (disabled)
             {
@@ -1152,11 +1141,11 @@ namespace Gwen.Skin
         {
             const int sliderbarsize = 15;
             Rectangle rect = control.RenderBounds;
-            var barrect = rect;
+            Rectangle barrect = rect;
             Renderer.DrawColor = Color.FromArgb(100, 0, 0, 0);
             if (horizontal)
             {
-                barrect.Y = (int)Math.Round((rect.Height / 2.0) - (sliderbarsize / 2.0));
+                barrect.Y = (int)Math.Round(rect.Height / 2.0 - sliderbarsize / 2.0);
                 barrect.Height = sliderbarsize;
                 barrect.X += (int)Math.Round(sliderbarsize / 2.0);
                 barrect.Width -= sliderbarsize;
@@ -1171,16 +1160,16 @@ namespace Gwen.Skin
                 if (!control.IsDisabled)
                 {
                     int w = (int)Math.Round(barrect.Width * val);
-                    var clip = ClipArea(new Rectangle(barrect.X, barrect.Y, w, barrect.Height));
+                    Rectangle clip = ClipArea(new Rectangle(barrect.X, barrect.Y, w, barrect.Height));
                     Textures.Input.Slider.H.Front.Draw(Renderer, barrect);
                     Renderer.ClipRegion = clip;
                 }
             }
             else
             {
-                barrect.X = (int)Math.Round((rect.Width / 2.0) - (sliderbarsize / 2.0));
+                barrect.X = (int)Math.Round(rect.Width / 2.0 - sliderbarsize / 2.0);
                 barrect.Width = sliderbarsize;
-                barrect.Y += (int)Math.Round((sliderbarsize) / 2.0);
+                barrect.Y += (int)Math.Round(sliderbarsize / 2.0);
                 barrect.Height -= sliderbarsize;
 
                 rect.Y += (int)(barSize * 0.5);
@@ -1194,7 +1183,7 @@ namespace Gwen.Skin
                 if (!control.IsDisabled)
                 {
                     int h = (int)Math.Round(barrect.Height * val);
-                    var prevclip = ClipArea(new Rectangle(barrect.X, barrect.Y + (rect.Height - h), barrect.Width, h));
+                    Rectangle prevclip = ClipArea(new Rectangle(barrect.X, barrect.Y + (rect.Height - h), barrect.Width, h));
                     Textures.Input.Slider.V.Front.Draw(Renderer, barrect);
                     Renderer.ClipRegion = prevclip;
                 }
@@ -1206,7 +1195,7 @@ namespace Gwen.Skin
         /// </summary>
         private Rectangle ClipArea(Rectangle newclip)
         {
-            var currentclip = Renderer.ClipRegion;
+            Rectangle currentclip = Renderer.ClipRegion;
             Renderer.AddClipRegion(newclip);
             return currentclip;
         }
@@ -1260,7 +1249,8 @@ namespace Gwen.Skin
 
         public void DrawSliderNotchesH(Rectangle rect, int numNotches, float dist)
         {
-            if (numNotches == 0) return;
+            if (numNotches == 0)
+                return;
 
             float iSpacing = rect.Width / (float)numNotches;
             for (int i = 0; i < numNotches + 1; i++)
@@ -1269,17 +1259,15 @@ namespace Gwen.Skin
 
         public void DrawSliderNotchesV(Rectangle rect, int numNotches, float dist)
         {
-            if (numNotches == 0) return;
+            if (numNotches == 0)
+                return;
 
             float iSpacing = rect.Height / (float)numNotches;
             for (int i = 0; i < numNotches + 1; i++)
                 Renderer.DrawFilledRect(Util.FloatRect(rect.X + dist - 2, rect.Y + iSpacing * i, 5, 1));
         }
 
-        public override void DrawStatusBar(Controls.ControlBase control)
-        {
-            Textures.StatusBar.Draw(Renderer, control.RenderBounds);
-        }
+        public override void DrawStatusBar(Controls.ControlBase control) => Textures.StatusBar.Draw(Renderer, control.RenderBounds);
 
         public override void DrawTabButton(Controls.ControlBase control, bool active, Pos dir)
         {
@@ -1311,11 +1299,7 @@ namespace Gwen.Skin
             }
         }
 
-        public override void DrawTabControl(Controls.ControlBase control)
-        {
-            Textures.Tab.Control.Draw(Renderer, control.RenderBounds);
-        }
-
+        public override void DrawTabControl(Controls.ControlBase control) => Textures.Tab.Control.Draw(Renderer, control.RenderBounds);
 
         public override void DrawTextBox(Controls.ControlBase control, bool focus)
         {
@@ -1331,10 +1315,7 @@ namespace Gwen.Skin
                 Textures.TextBox.Normal.Draw(Renderer, control.RenderBounds);
         }
 
-        public override void DrawToolTip(Controls.ControlBase control)
-        {
-            Textures.Tooltip.Draw(Renderer, control.RenderBounds);
-        }
+        public override void DrawToolTip(Controls.ControlBase control) => Textures.Tooltip.Draw(Renderer, control.RenderBounds);
 
         public override void DrawTreeButton(Controls.ControlBase control, bool open)
         {
@@ -1346,10 +1327,7 @@ namespace Gwen.Skin
                 Textures.Tree.Plus.Draw(Renderer, rect);
         }
 
-        public override void DrawTreeControl(Controls.ControlBase control)
-        {
-            Textures.Tree.Background.Draw(Renderer, control.RenderBounds);
-        }
+        public override void DrawTreeControl(Controls.ControlBase control) => Textures.Tree.Background.Draw(Renderer, control.RenderBounds);
 
         public override void DrawTreeNode(Controls.ControlBase ctrl, bool open, bool selected, int labelHeight, int labelWidth, int halfWay, int lastBranch, bool isRoot)
         {

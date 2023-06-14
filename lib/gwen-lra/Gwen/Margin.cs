@@ -12,29 +12,11 @@ namespace Gwen
         public int Bottom;
         public int Left;
         public int Right;
-        public int Width
-        {
-            get
-            {
-                return Left + Right;
-            }
-        }
-        public int Height
-        {
-            get
-            {
-                return Top + Bottom;
-            }
-        }
-        public Size Size
-        {
-            get
-            {
-                return new Size(Width, Height);
-            }
-        }
+        public int Width => Left + Right;
+        public int Height => Top + Bottom;
+        public Size Size => new Size(Width, Height);
 
-        // common values
+        // Common values
         public static Margin Zero = new Margin(0, 0, 0, 0);
         public static Margin One = new Margin(1, 1, 1, 1);
         public static Margin Two = new Margin(2, 2, 2, 2);
@@ -55,10 +37,7 @@ namespace Gwen
             Right = right;
         }
 
-        public bool Equals(Margin other)
-        {
-            return other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
-        }
+        public bool Equals(Margin other) => other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
 
         public static Margin operator +(Margin lhs, Margin rhs)
         {
@@ -86,12 +65,7 @@ namespace Gwen
             return !lhs.Equals(rhs);
         }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof(Margin)) return false;
-            return Equals((Margin)obj);
-        }
+        public override bool Equals(object obj) => !(obj is null) && obj.GetType() == typeof(Margin) && Equals((Margin)obj);
 
         public override int GetHashCode()
         {

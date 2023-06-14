@@ -16,17 +16,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using Gwen.Controls;
-using OpenTK;
-using OpenTK.Input;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using linerider.Game;
+using linerider.Rendering;
 using linerider.UI;
 using linerider.Utils;
+using OpenTK;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using linerider.Rendering;
+using System.Drawing;
 
 namespace linerider.Tools
 {
@@ -35,29 +33,17 @@ namespace linerider.Tools
         public override Bitmap Icon => GameResources.icon_tool_select.Bitmap;
         public override Hotkey Hotkey => Hotkey.EditorSelectTool;
         public override string Name => "Select Tool";
-        public override Swatch Swatch
-        {
-            get
-            {
-                return SharedSwatches.EraserAndSelectToolSwatch;
-            }
-        }
-        public override bool ShowSwatch
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override Swatch Swatch => SharedSwatches.EraserAndSelectToolSwatch;
+        public override bool ShowSwatch => true;
         public override string Tooltip
         {
             get
             {
                 if (_active && _selection != null && _selection.line != null)
                 {
-                    var vec = _selection.line.GetVector();
-                    var len = vec.Length;
-                    var angle = Angle.FromVector(vec);
+                    Vector2d vec = _selection.line.GetVector();
+                    double len = vec.Length;
+                    Angle angle = Angle.FromVector(vec);
                     angle.Degrees += 90;
                     string tooltip = "";
                     if (Settings.Editor.ShowLineLength)
@@ -74,19 +60,16 @@ namespace linerider.Tools
                 return "";
             }
         }
-        public override MouseCursor Cursor
-        {
-            get { return game.Cursors.List[CursorsHandler.Type.Select]; }
-        }
+        public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Select];
         protected override bool EnableSnap
         {
             get
             {
-                var toggle = InputUtils.CheckPressed(Hotkey.ToolToggleSnap);
+                bool toggle = InputUtils.CheckPressed(Hotkey.ToolToggleSnap);
                 return Settings.Editor.SnapMoveLine != toggle;
             }
         }
-        public bool CanLifelock => UI.InputUtils.Check(Hotkey.ToolLifeLock) &&
+        public bool CanLifelock => InputUtils.Check(Hotkey.ToolLifeLock) &&
         CurrentTools.CurrentTool == this;
         private Vector2d _clickstart;
         private bool _lifelocking = false;
@@ -95,30 +78,24 @@ namespace linerider.Tools
         private GameLine _hoverline = null;
         private bool _hoverknob = false;
         private bool _hoverknobjoint1;
-        private Stopwatch _hovertime = new Stopwatch();
+        private readonly Stopwatch _hovertime = new Stopwatch();
         private bool _hoverclick = false;
         public override bool Active
         {
-            get
-            {
-                return _active;
-            }
-            protected set
-            {
-                Debug.Fail($"Cannot set MoveTool.Active, use {nameof(_active)} instead");
-            }
+            get => _active;
+            protected set => Debug.Fail($"Cannot set MoveTool.Active, use {nameof(_active)} instead");
         }
         public SelectTool()
         {
         }
         private void UpdatePlayback(GameLine line)
         {
-            if (line is StandardLine && CanLifelock)
+            if (line is StandardLine stdline && CanLifelock)
             {
                 game.Track.NotifyTrackChanged();
-                using (var trk = game.Track.CreateTrackReader())
+                using (TrackReader trk = game.Track.CreateTrackReader())
                 {
-                    if (!LifeLock(trk, game.Track.Timeline, (StandardLine)line))
+                    if (!LifeLock(trk, game.Track.Timeline, stdline))
                     {
                         _lifelocking = true;
                     }
@@ -127,7 +104,6 @@ namespace linerider.Tools
                         DropLine();
                     }
                 }
-
             }
             else
             {
@@ -136,14 +112,14 @@ namespace linerider.Tools
         }
         private bool SelectLine(Vector2d gamepos)
         {
-            using (var trk = game.Track.CreateTrackReader())
+            using (TrackReader trk = game.Track.CreateTrackReader())
             {
-                var line = SelectLine(trk, gamepos, out bool knob);
+                GameLine line = SelectLine(trk, gamepos, out bool knob);
                 if (line != null)
                 {
                     _clickstart = gamepos;
                     _active = true;
-                    //is it a knob?
+                    // Is it a knob?
                     if (knob)
                     {
                         if (InputUtils.Check(Hotkey.ToolSelectBothJoints))
@@ -152,14 +128,14 @@ namespace linerider.Tools
                         }
                         else
                         {
-                            var knobpos = Utility.CloserPoint(
+                            Vector2d knobpos = Utility.CloserPoint(
                                 gamepos,
                                 line.Position1,
                                 line.Position2);
                             _selection = new LineSelection(line, knobpos);
                             _hoverclick = true;
                             _hovertime.Restart();
-                            foreach (var snap in LineEndsInRadius(trk, knobpos, 1))
+                            foreach (GameLine snap in LineEndsInRadius(trk, knobpos, 1))
                             {
                                 if ((snap.Position1 == knobpos ||
                                     snap.Position2 == knobpos) &&
@@ -184,14 +160,14 @@ namespace linerider.Tools
         {
             if (_selection != null)
             {
-                var line = _selection.line;
-                using (var trk = game.Track.CreateTrackWriter())
+                GameLine line = _selection.line;
+                using (TrackWriter trk = game.Track.CreateTrackWriter())
                 {
                     trk.DisableUndo();
-                    var joint1 = _selection.joint1
+                    Vector2d joint1 = _selection.joint1
                         ? _selection.clone.Position1 + (pos - _clickstart)
                         : line.Position1;
-                    var joint2 = _selection.joint2
+                    Vector2d joint2 = _selection.joint2
                         ? _selection.clone.Position2 + (pos - _clickstart)
                         : line.Position2;
                     bool mod = ApplyModifiers(ref joint1, ref joint2);
@@ -201,18 +177,18 @@ namespace linerider.Tools
                         SnapJoints(trk, line, ref joint1, ref joint2);
                     }
 
-                    /*GameLine newLine = line;
-                    if (UI.InputUtils.Check(Hotkey.DrawDebugCamera))
-                    {
-                        GameLine movedLine = line;
-                        movedLine.Position = joint1;
-                        movedLine.Position2 = joint2;
-                        newLine = FixNoFakie2(game.Track.Timeline, line, _selection.joint1 ? line.Position : line.Position2);
-                        joint1 = newLine.Position;
-                        joint2 = newLine.Position2;
-                        //trk.MoveLine(movedLine, newLine.Position, newLine.Position2);
-                        //line = newLine;
-                    }*/
+                    //GameLine newLine = line;
+                    //if (UI.InputUtils.Check(Hotkey.DrawDebugCamera))
+                    //{
+                    //    GameLine movedLine = line;
+                    //    movedLine.Position = joint1;
+                    //    movedLine.Position2 = joint2;
+                    //    newLine = FixNoFakie2(game.Track.Timeline, line, _selection.joint1 ? line.Position : line.Position2);
+                    //    joint1 = newLine.Position;
+                    //    joint2 = newLine.Position2;
+                    //    //trk.MoveLine(movedLine, newLine.Position, newLine.Position2);
+                    //    //line = newLine;
+                    //}
 
                     trk.MoveLine(
                         line,
@@ -220,10 +196,10 @@ namespace linerider.Tools
                         joint2);
                     //line = newLine;
 
-                    foreach (var sl in _selection.snapped)
+                    foreach (LineSelection sl in _selection.snapped)
                     {
-                        var snap = sl.line;
-                        var snapjoint = _selection.joint1 ? joint1 : joint2;
+                        GameLine snap = sl.line;
+                        Vector2d snapjoint = _selection.joint1 ? joint1 : joint2;
                         trk.MoveLine(
                             snap,
                             sl.joint1 ? snapjoint : snap.Position1,
@@ -236,25 +212,24 @@ namespace linerider.Tools
         }
         private void UpdateHoverline(Vector2d gamepos)
         {
-            var oldhover = _hoverline;
-            var oldhoverknob = _hoverknob;
+            GameLine oldhover = _hoverline;
             _hoverline = null;
             if (!_active)
             {
-                using (var trk = game.Track.CreateTrackReader())
+                using (TrackReader trk = game.Track.CreateTrackReader())
                 {
-                    var line = SelectLine(trk, gamepos, out bool knob);
+                    GameLine line = SelectLine(trk, gamepos, out bool knob);
                     if (line != null)
                     {
                         _hoverline = line;
                         if (knob)
                         {
-                            var point = Utility.CloserPoint(
+                            Vector2d point = Utility.CloserPoint(
                                 gamepos,
                                 line.Position1,
                                 line.Position2);
 
-                            var joint1 = point == line.Position1;
+                            bool joint1 = point == line.Position1;
 
                             if (_hoverline != oldhover ||
                             _hoverknobjoint1 != joint1 ||
@@ -274,9 +249,9 @@ namespace linerider.Tools
         public override void OnMouseDown(Vector2d mousepos)
         {
             base.OnMouseDown(mousepos);
-            var gamepos = ScreenToGameCoords(mousepos);
+            Vector2d gamepos = ScreenToGameCoords(mousepos);
 
-            Stop();//double check
+            Stop(); // Double check
             if (!SelectLine(gamepos))
             {
                 CurrentTools.SetTool(CurrentTools.SelectSubtool);
@@ -307,11 +282,11 @@ namespace linerider.Tools
 
         public override void OnMouseRightDown(Vector2d pos)
         {
-            Stop();//double check
-            var gamepos = ScreenToGameCoords(pos);
-            using (var trk = game.Track.CreateTrackWriter())
+            Stop(); // Double check
+            Vector2d gamepos = ScreenToGameCoords(pos);
+            using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
-                var line = SelectLine(trk, gamepos, out bool knob);
+                GameLine line = SelectLine(trk, gamepos, out bool knob);
                 if (line != null)
                 {
                     game.Canvas.ShowLineWindow(line, (int)pos.X, (int)pos.Y);
@@ -319,10 +294,7 @@ namespace linerider.Tools
             }
             base.OnMouseRightDown(pos);
         }
-        public override void OnChangingTool()
-        {
-            Stop();
-        }
+        public override void OnChangingTool() => Stop();
         public override void Render()
         {
             if (_hoverline != null)
@@ -346,10 +318,10 @@ namespace linerider.Tools
         private void DrawHover(GameLine line,
             bool knob1, bool knob2, bool selected = false)
         {
-            var start = line.Position1;
-            var end = line.Position2;
-            var width = line.Width;
-            var elapsed = _hovertime.ElapsedMilliseconds;
+            Vector2d start = line.Position1;
+            Vector2d end = line.Position2;
+            float width = line.Width;
+            long elapsed = _hovertime.ElapsedMilliseconds;
             int animtime = 250;
             if (_hovertime.IsRunning)
             {
@@ -371,17 +343,17 @@ namespace linerider.Tools
             }
             else
             {
-                hoverratio = Math.Min((Math.Min(animtime, elapsed) / (float)animtime), 0.5f);
+                hoverratio = Math.Min(Math.Min(animtime, elapsed) / (float)animtime, 0.5f);
             }
-            var both = knob1 == knob2 == true;
-            var linealpha = both ? 64 : 48;
+            bool both = knob1 == knob2 == true;
+            int linealpha = both ? 64 : 48;
             if (selected && both)
                 linealpha += 16;
             GameRenderer.RenderRoundedLine(
                 start,
                 end,
                 Color.FromArgb(linealpha, Color.FromArgb(127, 127, 127)),
-                (width * 2));
+                width * 2);
 
             bool canlifelock = CanLifelock && line.Type != LineType.Scenery;
             GameRenderer.DrawKnob(start, knob1, canlifelock, width, hoverratio);
@@ -403,7 +375,7 @@ namespace linerider.Tools
                 {
                     game.Track.UndoManager.BeginAction();
                     game.Track.UndoManager.AddChange(_selection.clone, _selection.line);
-                    foreach (var s in _selection.snapped)
+                    foreach (LineSelection s in _selection.snapped)
                     {
                         game.Track.UndoManager.AddChange(s.clone, s.line);
                     }
@@ -414,27 +386,24 @@ namespace linerider.Tools
             _active = false;
             _selection = null;
         }
-        public override void Cancel()
-        {
-            Stop();
-        }
+        public override void Cancel() => Stop();
         public override void Stop()
         {
             DropLine();
             _hoverline = null;
             _hoverclick = false;
         }
-        private bool ApplyModifiers(ref Vector2d joint1, ref Vector2d joint2) //Modifies the movement to account for angle locks & stuff
+        private bool ApplyModifiers(ref Vector2d joint1, ref Vector2d joint2) // Modifies the movement to account for angle locks & stuff
         {
             bool both = _selection.joint1 && _selection.joint2;
             bool modified = false;
             if (both)
             {
-                var axis = UI.InputUtils.CheckPressed(Hotkey.ToolAxisLock);
-                var perpendicularaxis = UI.InputUtils.CheckPressed(Hotkey.ToolPerpendicularAxisLock);
+                bool axis = InputUtils.CheckPressed(Hotkey.ToolAxisLock);
+                bool perpendicularaxis = InputUtils.CheckPressed(Hotkey.ToolPerpendicularAxisLock);
                 if (axis || perpendicularaxis)
                 {
-                    var angle = Angle.FromVector(_selection.clone.GetVector());
+                    Angle angle = Angle.FromVector(_selection.clone.GetVector());
                     if (perpendicularaxis)
                     {
                         angle.Degrees -= 90;
@@ -446,21 +415,21 @@ namespace linerider.Tools
             }
             else
             {
-                var start = _selection.joint1 ? joint2 : joint1;
-                var end = _selection.joint2 ? joint2 : joint1;
-                if (UI.InputUtils.Check(Hotkey.ToolAngleLock))
+                Vector2d start = _selection.joint1 ? joint2 : joint1;
+                Vector2d end = _selection.joint2 ? joint2 : joint1;
+                if (InputUtils.Check(Hotkey.ToolAngleLock))
                 {
                     end = Utility.AngleLock(start, end, Angle.FromVector(_selection.clone.GetVector()));
                     modified = true;
                 }
-                if (UI.InputUtils.CheckPressed(Hotkey.ToolXYSnap))
+                if (InputUtils.CheckPressed(Hotkey.ToolXYSnap))
                 {
                     end = Utility.SnapToDegrees(start, end);
                     modified = true;
                 }
-                if (UI.InputUtils.Check(Hotkey.ToolLengthLock))
+                if (InputUtils.Check(Hotkey.ToolLengthLock))
                 {
-                    var currentdelta = _selection.line.Position2 - _selection.line.Position1;
+                    Vector2d currentdelta = _selection.line.Position2 - _selection.line.Position1;
                     end = Utility.LengthLock(start, end, currentdelta.Length);
                     modified = true;
                 }
@@ -475,14 +444,16 @@ namespace linerider.Tools
         private void SnapJoints(TrackReader trk, GameLine line,
          ref Vector2d joint1, ref Vector2d joint2)
         {
-            HashSet<int> ignoreids = new HashSet<int>();
-            ignoreids.Add(_selection.line.ID);
-            foreach (var snapped in _selection.snapped)
+            HashSet<int> ignoreids = new HashSet<int>
             {
-                ignoreids.Add(snapped.line.ID);
+                _selection.line.ID
+            };
+            foreach (LineSelection snapped in _selection.snapped)
+            {
+                _ = ignoreids.Add(snapped.line.ID);
             }
-            var snapj1 = joint1;
-            var snapj2 = joint2;
+            Vector2d snapj1 = joint1;
+            Vector2d snapj2 = joint2;
 
             bool j1snapped = false;
             bool j2snapped = false;
@@ -506,8 +477,8 @@ namespace linerider.Tools
             }
             if (_selection.BothJoints)
             {
-                var j1diff = snapj1 - joint1;
-                var j2diff = snapj2 - joint2;
+                Vector2d j1diff = snapj1 - joint1;
+                Vector2d j2diff = snapj2 - joint2;
                 if (j1snapped && j2snapped)
                 {
                     if (j1diff.Length < j2diff.Length)

@@ -16,22 +16,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Drawing;
-using OpenTK;
 using linerider.Utils;
-using linerider.Game;
-using System.Diagnostics;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace linerider.Game
 {
     /// <summary>
-    /// a grid class specifically for tool operations etc
+    /// A grid class specifically for tool operations etc
     /// this grid accurately places lines in cells, compared to the sparse
     /// placement in the simulation grid.
     /// </summary>
@@ -39,7 +33,7 @@ namespace linerider.Game
     {
         private readonly ResourceSync Sync = new ResourceSync();
         private readonly Dictionary<int, EditorCell> Cells = new Dictionary<int, EditorCell>(4096);
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
         public const int CellSize = 32;
         private int GetCellKey(int x, int y)
         {
@@ -51,29 +45,18 @@ namespace linerider.Game
                 return hash;
             }
         }
-        public void Clear()
-        {
-            Cells.Clear();
-        }
+        public void Clear() => Cells.Clear();
         public EditorCell GetCell(int x, int y)
         {
-            EditorCell cell;
-            var pos = GetCellKey(x, y);
-            if (!Cells.TryGetValue(pos, out cell))
-                return null;
-            return cell;
-
+            int pos = GetCellKey(x, y);
+            return !Cells.TryGetValue(pos, out EditorCell cell) ? null : cell;
         }
 
-        public EditorCell GetCellFromPoint(Vector2d pos)
-        {
-            return GetCell((int)Math.Floor(pos.X / CellSize), (int)Math.Floor(pos.Y / CellSize));
-        }
+        public EditorCell GetCellFromPoint(Vector2d pos) => GetCell((int)Math.Floor(pos.X / CellSize), (int)Math.Floor(pos.Y / CellSize));
         private void Register(GameLine l, int x, int y)
         {
-            var key = GetCellKey(x, y);
-            EditorCell cell;
-            if (!Cells.TryGetValue(key, out cell))
+            int key = GetCellKey(x, y);
+            if (!Cells.TryGetValue(key, out EditorCell cell))
             {
                 cell = new EditorCell();
                 Cells[key] = cell;
@@ -83,21 +66,20 @@ namespace linerider.Game
 
         private void Unregister(GameLine l, int x, int y)
         {
-            EditorCell cell;
-            var pos = GetCellKey(x, y);
-            if (!Cells.TryGetValue(pos, out cell))
+            int pos = GetCellKey(x, y);
+            if (!Cells.TryGetValue(pos, out EditorCell cell))
                 return;
             cell.RemoveLine(l.ID);
         }
         public void AddLine(GameLine line)
         {
-            var pts = GetPointsOnLine(line.Position1.X / CellSize,
+            IEnumerable<GridPoint> pts = GetPointsOnLine(line.Position1.X / CellSize,
                 line.Position1.Y / CellSize,
                 line.Position2.X / CellSize,
                 line.Position2.Y / CellSize);
             using (Sync.AcquireWrite())
             {
-                foreach (var pos in pts)
+                foreach (GridPoint pos in pts)
                 {
                     Register(line, pos.X, pos.Y);
                 }
@@ -105,14 +87,14 @@ namespace linerider.Game
         }
         public void RemoveLine(GameLine line)
         {
-            var pts = GetPointsOnLine(line.Position1.X / CellSize,
+            IEnumerable<GridPoint> pts = GetPointsOnLine(line.Position1.X / CellSize,
                 line.Position1.Y / CellSize,
                 line.Position2.X / CellSize,
                 line.Position2.Y / CellSize);
 
             using (Sync.AcquireWrite())
             {
-                foreach (var pt in pts)
+                foreach (GridPoint pt in pts)
                 {
                     Unregister(line, pt.X, pt.Y);
                 }
@@ -131,7 +113,7 @@ namespace linerider.Game
                 {
                     for (int y = starty; y <= endy; y++)
                     {
-                        var cell = GetCell(x, y);
+                        EditorCell cell = GetCell(x, y);
                         if (cell != null)
                         {
                             ret.Combine(cell);
@@ -152,8 +134,8 @@ namespace linerider.Game
             double dx = Math.Abs(x1 - x0);
             double dy = Math.Abs(y1 - y0);
 
-            int x = (int)(Math.Floor(x0));
-            int y = (int)(Math.Floor(y0));
+            int x = (int)Math.Floor(x0);
+            int y = (int)Math.Floor(y0);
 
             int n = 1;
             int x_inc, y_inc;
@@ -167,13 +149,13 @@ namespace linerider.Game
             else if (x1 > x0)
             {
                 x_inc = 1;
-                n += (int)(Math.Floor(x1)) - x;
+                n += (int)Math.Floor(x1) - x;
                 error = (Math.Floor(x0) + 1 - x0) * dy;
             }
             else
             {
                 x_inc = -1;
-                n += x - (int)(Math.Floor(x1));
+                n += x - (int)Math.Floor(x1);
                 error = (x0 - Math.Floor(x0)) * dy;
             }
 
@@ -185,19 +167,19 @@ namespace linerider.Game
             else if (y1 > y0)
             {
                 y_inc = 1;
-                n += (int)(Math.Floor(y1)) - y;
+                n += (int)Math.Floor(y1) - y;
                 error -= (Math.Floor(y0) + 1 - y0) * dx;
             }
             else
             {
                 y_inc = -1;
-                n += y - (int)(Math.Floor(y1));
+                n += y - (int)Math.Floor(y1);
                 error -= (y0 - Math.Floor(y0)) * dx;
             }
 
             for (; n > 0; --n)
             {
-                hs.Add(new Game.GridPoint(x, y));
+                _ = hs.Add(new GridPoint(x, y));
 
                 if (error > 0)
                 {
@@ -216,9 +198,6 @@ namespace linerider.Game
         /// Takes the line (in double precision floating point) and finds all points on a 1x1 grid it interacts with.
         /// </summary>
         /// <remarks>The Vector2d and doublerect classes can be replaced with your own.</remarks>
-        public static IEnumerable<GridPoint> GetPointsOnLine(double x0, double y0, double x1, double y1)
-        {
-            return raytrace(x0, y0, x1, y1);
-        }
+        public static IEnumerable<GridPoint> GetPointsOnLine(double x0, double y0, double x1, double y1) => raytrace(x0, y0, x1, y1);
     }
 }

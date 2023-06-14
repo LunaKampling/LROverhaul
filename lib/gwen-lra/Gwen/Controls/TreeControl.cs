@@ -17,7 +17,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines if multiple nodes can be selected at the same time.
         /// </summary>
-        public bool AllowMultiSelect { get { return m_MultiSelect; } set { m_MultiSelect = value; } }
+        public bool AllowMultiSelect { get; set; }
 
         public List<TreeNode> SelectedChildren
         {
@@ -27,8 +27,7 @@ namespace Gwen.Controls
 
                 foreach (ControlBase child in Children)
                 {
-                    TreeNode node = child as TreeNode;
-                    if (node == null)
+                    if (!(child is TreeNode node))
                         continue;
                     Trees.AddRange(node.SelectedChildren);
                 }
@@ -48,7 +47,7 @@ namespace Gwen.Controls
             : base(parent)
         {
             KeyboardInputEnabled = true;
-            m_MultiSelect = false;
+            AllowMultiSelect = false;
             m_Panel.BoundsOutlineColor = System.Drawing.Color.Red;
             m_Panel.AutoSizeToContents = true;
         }
@@ -63,8 +62,10 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public TreeNode AddNode(string label)
         {
-            TreeNode node = new TreeNode(this);
-            node.Text = label;
+            TreeNode node = new TreeNode(this)
+            {
+                Text = label
+            };
 
             return node;
         }
@@ -88,10 +89,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Removes all child nodes.
         /// </summary>
-        public virtual void RemoveAll()
-        {
-            DeleteAll();
-        }
+        public virtual void RemoveAll() => DeleteAll();
         /// <summary>
         /// Opens the node and all child nodes.
         /// </summary>
@@ -99,8 +97,7 @@ namespace Gwen.Controls
         {
             foreach (ControlBase child in Children)
             {
-                TreeNode node = child as TreeNode;
-                if (node == null)
+                if (!(child is TreeNode node))
                     continue;
                 node.ExpandAll();
             }
@@ -112,20 +109,13 @@ namespace Gwen.Controls
         {
             foreach (ControlBase child in Children)
             {
-                TreeNode node = child as TreeNode;
-                if (node == null)
+                if (!(child is TreeNode node))
                     continue;
                 node.UnselectAll();
             }
         }
 
-        internal virtual void OnSelectionChanged(ControlBase sender, EventArgs args)
-		{
-            if (SelectionChanged != null)
-            {
-                SelectionChanged.Invoke(sender, EventArgs.Empty);
-            }
-        }
+        internal virtual void OnSelectionChanged(ControlBase sender, EventArgs args) => SelectionChanged?.Invoke(sender, EventArgs.Empty);
 
         /// <summary>
         /// Renders the control using specified skin.
@@ -140,8 +130,6 @@ namespace Gwen.Controls
         #endregion Methods
 
         #region Fields
-
-        private bool m_MultiSelect;
 
         #endregion Fields
     }

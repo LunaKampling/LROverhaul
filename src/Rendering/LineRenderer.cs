@@ -1,13 +1,11 @@
+using linerider.Drawing;
+using linerider.Game;
+using linerider.Utils;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
-using System.Drawing;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using OpenTK;
-using linerider.Drawing;
-using linerider.Utils;
-using linerider.Game;
-using System.Diagnostics;
+using System.Drawing;
 
 namespace linerider.Rendering
 {
@@ -19,19 +17,17 @@ namespace linerider.Rendering
         public KnobState KnobState = KnobState.Hidden;
         public bool Overlay = false;
         public float Scale = 1.0f;
-        private Shader _shader;
-        private GLBuffer<LineVertex> _vbo;
-        private GLBuffer<int> _ibo;
-        private AutoArray<int> _indices = new AutoArray<int>(StartingLineCount * linesize);
-        private Queue<int> freevertices = new Queue<int>();
+        private readonly Shader _shader;
+        private readonly GLBuffer<LineVertex> _vbo;
+        private readonly GLBuffer<int> _ibo;
+        private readonly AutoArray<int> _indices = new AutoArray<int>(StartingLineCount * linesize);
+        private readonly Queue<int> freevertices = new Queue<int>();
         private int _vertexcount = 0;
-        const int linesize = 6;
-        const int nullindex = 0;
+        private const int linesize = 6;
+        private const int nullindex = 0;
         public LineRenderer(Shader sh)
         {
-            if (sh == null)
-                throw new ArgumentNullException("shader");
-            _shader = sh;
+            _shader = sh ?? throw new ArgumentNullException("shader");
             _vbo = new GLBuffer<LineVertex>(BufferTarget.ArrayBuffer);
             _ibo = new GLBuffer<int>(BufferTarget.ElementArrayBuffer);
             _vbo.Bind();
@@ -70,7 +66,7 @@ namespace linerider.Rendering
             _indices.EnsureCapacity(vertices.Length);
             for (int ix = 0; ix < lines.Count; ix++)
             {
-                var baseoffset = (ix * linesize);
+                int baseoffset = ix * linesize;
                 for (int i = 0; i < linesize; i++)
                 {
                     _indices.Add(startvert + baseoffset + i);
@@ -100,7 +96,7 @@ namespace linerider.Rendering
                     "Lines are expected to have " + linesize + " vertices");
             _vbo.Bind();
             _ibo.Bind();
-            var vertbase = GetVertexBase();
+            int vertbase = GetVertexBase();
             int ret = _indices.Count;
             _vbo.SetData(line, 0, vertbase, linesize);
             for (int i = 0; i < linesize; i++)
@@ -169,11 +165,11 @@ namespace linerider.Rendering
         {
             _vbo.Bind();
             _shader.Use();
-            var in_vertex = _shader.GetAttrib("in_vertex");
-            var in_color = _shader.GetAttrib("in_color");
-            var in_circle = _shader.GetAttrib("in_circle");
-            var in_selectflags = _shader.GetAttrib("in_selectflags");
-            var in_linesize = _shader.GetAttrib("in_linesize");
+            int in_vertex = _shader.GetAttrib("in_vertex");
+            int in_color = _shader.GetAttrib("in_color");
+            int in_circle = _shader.GetAttrib("in_circle");
+            int in_selectflags = _shader.GetAttrib("in_selectflags");
+            int in_linesize = _shader.GetAttrib("in_linesize");
             GL.EnableVertexAttribArray(in_vertex);
             GL.EnableVertexAttribArray(in_color);
             GL.EnableVertexAttribArray(in_circle);
@@ -189,8 +185,7 @@ namespace linerider.Rendering
             GL.VertexAttribPointer(in_selectflags, 1, VertexAttribPointerType.Byte, false, LineVertex.Size, counter);
             counter += 2;
             GL.VertexAttribPointer(in_linesize, 2, VertexAttribPointerType.Float, false, LineVertex.Size, counter);
-            counter += 8;
-            var global = OverrideColor;
+            Color global = OverrideColor;
             if (!Overlay)
                 GL.Uniform4(_shader.GetUniform("u_color"),
                     global.R / 255f, global.G / 255f, global.B / 255f, OverridePriority / 255f);
@@ -239,7 +234,7 @@ namespace linerider.Rendering
             }
         }
         /// <summary>
-        /// checks if a line in the index buffer was 'removed'
+        /// Checks if a line in the index buffer was 'removed'
         /// basically nulled out
         /// </summary>
         private bool IsNulled(int index)
@@ -253,10 +248,10 @@ namespace linerider.Rendering
         }
         public static LineVertex[] CreateTrackLine(Vector2d lnstart, Vector2d lnend, float size, int color = 0, byte selectflags = 0)
         {
-            var d = lnend - lnstart;
-            var rad = Angle.FromVector(d);
-            var c = new Vector2d(rad.Cos, rad.Sin);
-            //create line cap ends
+            Vector2d d = lnend - lnstart;
+            Angle rad = Angle.FromVector(d);
+            Vector2d c = new Vector2d(rad.Cos, rad.Sin);
+            // Create line cap ends
             lnstart += c * (-1 * (size / 2));
             lnend += c * (1 * (size / 2));
 
@@ -264,20 +259,20 @@ namespace linerider.Rendering
         }
         public static LineVertex[] CreateLine(Vector2d lnstart, Vector2d lnend, float size, int color = 0, byte selectflags = 0)
         {
-            var d = lnend - lnstart;
-            var rad = Angle.FromVector(d);
+            Vector2d d = lnend - lnstart;
+            Angle rad = Angle.FromVector(d);
 
             return CreateLine(lnstart, lnend, size, rad, color, selectflags);
         }
         public static LineVertex[] CreateLine(Vector2d lnstart, Vector2d lnend, float size, Angle angle, int color = 0, byte selectflags = 0)
         {
             LineVertex[] ret = new LineVertex[6];
-            var start = (Vector2)lnstart;
-            var end = (Vector2)lnend;
-            var len = (end - start).Length;
+            Vector2 start = (Vector2)lnstart;
+            Vector2 end = (Vector2)lnend;
+            float len = (end - start).Length;
 
-            var l = Utility.GetThickLine(start, end, angle, size);
-            var scale = size / 2;
+            Vector2[] l = Utility.GetThickLine(start, end, angle, size);
+            float scale = size / 2;
             ret[0] = new LineVertex() { Position = l[0], u = 0, v = 0, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
             ret[1] = new LineVertex() { Position = l[1], u = 0, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
             ret[2] = new LineVertex() { Position = l[2], u = 1, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };

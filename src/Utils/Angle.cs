@@ -41,7 +41,7 @@ namespace linerider.Utils
                     _degrees %= 360;
                     if (_degrees < 0)
                     {
-                        _degrees = _degrees % -360;
+                        _degrees %= -360;
                         _degrees = 360 + _degrees;
                     }
                 }
@@ -53,10 +53,10 @@ namespace linerider.Utils
                 _degrees %= 360;
                 if (_degrees < 0)
                 {
-                    _degrees = _degrees % -360;
+                    _degrees %= -360;
                     _degrees = 360 + _degrees;
                 }
-                _radians = double.NaN;//invalidate
+                _radians = double.NaN; // Invalidate
                 _coscached = double.NaN;
                 _sincached = double.NaN;
             }
@@ -78,10 +78,10 @@ namespace linerider.Utils
                 _radians %= Math.PI * 2;
                 if (_radians < 0)
                 {
-                    _radians = _radians % -(Math.PI * 2);
-                    _radians = (Math.PI * 2) + _radians;
+                    _radians %= -(Math.PI * 2);
+                    _radians = Math.PI * 2 + _radians;
                 }
-                _degrees = double.NaN;//invalidate
+                _degrees = double.NaN; // Invalidate
                 _coscached = double.NaN;
                 _sincached = double.NaN;
             }
@@ -116,7 +116,7 @@ namespace linerider.Utils
             _degrees %= 360;
             if (_degrees < 0)
             {
-                _degrees = _degrees % -360;
+                _degrees %= -360;
                 _degrees = 360 + _degrees;
             }
             _radians = double.NaN;
@@ -125,10 +125,7 @@ namespace linerider.Utils
         private Angle()
         {
         }
-        public Vector2d MovePoint(Vector2d input, double length)
-        {
-            return new Vector2d(input.X + (length * Cos),input.Y + (length * Sin));
-        }
+        public Vector2d MovePoint(Vector2d input, double length) => new Vector2d(input.X + length * Cos, input.Y + length * Sin);
         public static Angle operator +(Angle a1, Angle a2)
         {
             return FromDegrees(a1.Degrees + a2.Degrees);
@@ -137,60 +134,24 @@ namespace linerider.Utils
         {
             return FromDegrees(a1.Degrees - a2.Degrees);
         }
-        public double Difference(Angle a2)
-        {
-            return (360 - (Degrees - a2.Degrees)) % 360;
-        }
-        public double UnsignedDifference(Angle a2)
-        {
-            return 180.0 - Math.Abs(Math.Abs(Degrees - a2.Degrees) - 180.0);
-        }
-        public static Angle FromRadians(double radians)
-        {
-            return new Angle() { Radians = radians };
-        }
-        public static Angle FromDegrees(double Degrees)
-        {
-            return new Angle(Degrees);
-        }
+        public double Difference(Angle a2) => (360 - (Degrees - a2.Degrees)) % 360;
+        public double UnsignedDifference(Angle a2) => 180.0 - Math.Abs(Math.Abs(Degrees - a2.Degrees) - 180.0);
+        public static Angle FromRadians(double radians) => new Angle() { Radians = radians };
+        public static Angle FromDegrees(double Degrees) => new Angle(Degrees);
 
-        public static Angle FromRadians(float radians)
-        {
-            return new Angle() { Radians = radians };
-        }
+        public static Angle FromRadians(float radians) => new Angle() { Radians = radians };
 
-        public static Angle FromVector(Vector2d p1)
-        {
-            return FromRadians(Math.Atan2(p1.Y, p1.X));
-        }
+        public static Angle FromVector(Vector2d p1) => FromRadians(Math.Atan2(p1.Y, p1.X));
 
-        public static Angle FromLine(Vector2d p1, Vector2d p2)
-        {
-            return FromVector(p2 - p1);
-        }
-        public static Angle FromLine(Line line)
-        {
-            return FromVector(line.Position2 - line.Position1);
-        }
+        public static Angle FromLine(Vector2d p1, Vector2d p2) => FromVector(p2 - p1);
+        public static Angle FromLine(Line line) => FromVector(line.Position2 - line.Position1);
 
-        public static Angle FromVector(Vector2 p1)
-        {
-            return FromRadians(Math.Atan2(p1.Y, p1.X));
-        }
+        public static Angle FromVector(Vector2 p1) => FromRadians(Math.Atan2(p1.Y, p1.X));
 
-        public static Angle FromLine(Vector2 p1, Vector2 p2)
-        {
-            return FromVector(p2 - p1);
-        }
+        public static Angle FromLine(Vector2 p1, Vector2 p2) => FromVector(p2 - p1);
 
-        private static double DegreesToRadians(double degrees)
-        {
-            return degrees * 0.0174532924f;
-        }
+        private static double DegreesToRadians(double degrees) => degrees * 0.0174532924f;
 
-        private static double RadiansToDegrees(double radians)
-        {
-            return radians * 57.2957764f;
-        }
+        private static double RadiansToDegrees(double radians) => radians * 57.2957764f;
     }
 }

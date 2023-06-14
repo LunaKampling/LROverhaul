@@ -16,11 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace linerider.Audio
 {
     public struct Song
@@ -37,8 +32,9 @@ namespace linerider.Audio
         }
         public override string ToString()
         {
-            //note: .trk spec mandates \r\n newline here
-            return Location + "\r\n" + Offset.ToString(Program.Culture);;
+            // NOTE: .trk spec mandates \r\n newline here
+            return Location + "\r\n" + Offset.ToString(Program.Culture);
+            ;
         }
     }
 }

@@ -17,7 +17,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using OpenTK;
-using linerider.Game;
 namespace linerider.Game
 {
     public class RedLine : StandardLine
@@ -27,31 +26,20 @@ namespace linerider.Game
         private int _multiplier = 1;
         public int Multiplier
         {
-            get
-            {
-                return _multiplier;
-            }
+            get => _multiplier;
             set
             {
                 _multiplier = value;
                 CalculateConstants();
             }
         }
-        public override LineType Type
-        {
-            get
-            {
-                return LineType.Acceleration;
-            }
-        }
+        public override LineType Type => LineType.Acceleration;
         public override System.Drawing.Color Color => Settings.Colors.AccelerationLine;
         protected RedLine() : base()
         {
         }
         public RedLine(Vector2d p1, Vector2d p2, bool inv = false) : base(p1, p2, inv) { }
-        public override string ToString()
-        {
-            return "{" +
+        public override string ToString() => "{" +
                 "\"type\":1," +
                 $"\"x1\":{Position1.X}," +
                 $"\"y1\":{Position1.Y}," +
@@ -62,7 +50,6 @@ namespace linerider.Game
                 $"\"rightExtended\":{(Extension == Ext.Right || Extension == Ext.Both ? "true" : "false")}," +
                 $"\"multiplier\":{Multiplier}" +
                 "}";
-        }
         public override void CalculateConstants()
         {
             base.CalculateConstants();
@@ -73,7 +60,7 @@ namespace linerider.Game
         {
             if (base.Interact(ref p))
             {
-                p = p.Replace(p.Location,p.Previous + _acc);
+                p = p.Replace(p.Location, p.Previous + _acc);
                 return true;
             }
             return false;

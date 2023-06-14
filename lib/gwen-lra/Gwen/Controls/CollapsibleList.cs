@@ -28,7 +28,7 @@ namespace Gwen.Controls
             AutoHideBars = true;
         }
 
-        // todo: iterator, make this as function? check if works
+        // TODO: iterator, make this as function? check if works
 
         /// <summary>
         /// Selected entry.
@@ -37,8 +37,7 @@ namespace Gwen.Controls
         {
             foreach (ControlBase child in Children)
             {
-                CollapsibleCategory cat = child as CollapsibleCategory;
-                if (cat == null)
+                if (!(child is CollapsibleCategory cat))
                     continue;
 
                 Button button = cat.GetSelectedButton();
@@ -49,7 +48,7 @@ namespace Gwen.Controls
 
             return null;
         }
-        
+
         protected override void OnChildAdded(ControlBase child)
         {
             base.OnChildAdded(child);
@@ -75,10 +74,7 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="categoryName">Name of the category.</param>
         /// <returns>Newly created control.</returns>
-        public virtual CollapsibleCategory Add(string categoryName)
-        {
-            return new CollapsibleCategory(this) { Text = categoryName };
-        }
+        public virtual CollapsibleCategory Add(string categoryName) => new CollapsibleCategory(this) { Text = categoryName };
 
         /// <summary>
         /// Renders the control using specified skin.
@@ -97,8 +93,7 @@ namespace Gwen.Controls
         {
             foreach (ControlBase child in Children)
             {
-                CollapsibleCategory cat = child as CollapsibleCategory;
-                if (cat == null)
+                if (!(child is CollapsibleCategory cat))
                     continue;
 
                 cat.UnselectAll();
@@ -111,11 +106,10 @@ namespace Gwen.Controls
         /// <param name="control">Event source: <see cref="CollapsibleList"/>.</param>
 		protected virtual void OnCategorySelected(ControlBase control, EventArgs args)
         {
-            CollapsibleCategory cat = control as CollapsibleCategory;
-            if (cat == null) return;
+            if (!(control is CollapsibleCategory cat))
+                return;
 
-            if (ItemSelected != null)
-                ItemSelected.Invoke(this, new ItemSelectedEventArgs(cat));
+            ItemSelected?.Invoke(this, new ItemSelectedEventArgs(cat));
         }
 
         /// <summary>
@@ -124,11 +118,10 @@ namespace Gwen.Controls
         /// <param name="control">Event source: <see cref="CollapsibleCategory"/>.</param>
         protected virtual void OnCategoryCollapsed(ControlBase control, EventArgs args)
         {
-            CollapsibleCategory cat = control as CollapsibleCategory;
-            if (cat == null) return;
+            if (!(control is CollapsibleCategory cat))
+                return;
 
-            if (CategoryCollapsed != null)
-                CategoryCollapsed.Invoke(control, EventArgs.Empty);
+            CategoryCollapsed?.Invoke(control, EventArgs.Empty);
         }
     }
 }

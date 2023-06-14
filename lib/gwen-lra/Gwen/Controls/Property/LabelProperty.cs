@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.Skin;
+﻿using Gwen.Skin;
 
 namespace Gwen.Controls
 {
@@ -8,15 +7,15 @@ namespace Gwen.Controls
     /// </summary>
     public class LabelProperty : PropertyBase
     {
-        protected readonly Gwen.Controls.Label m_text;
+        protected readonly Label m_text;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LabelProperty"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public LabelProperty(Gwen.Controls.ControlBase parent) : base(parent)
+        public LabelProperty(ControlBase parent) : base(parent)
         {
-            m_text = new Gwen.Controls.Label(this)
+            m_text = new Label(this)
             {
                 Dock = Dock.Fill,
                 ShouldDrawBackground = false,
@@ -32,7 +31,7 @@ namespace Gwen.Controls
         /// </summary>
         public override string Value
         {
-            get { return m_text.Text; }
+            get => m_text.Text;
             set
             {
                 base.Value = value;
@@ -41,21 +40,15 @@ namespace Gwen.Controls
         }
         public Font Font
         {
-            get
-            {
-                return m_text.Font;
-            }
-            set
-            {
-                m_text.Font = value;
-            }
+            get => m_text.Font;
+            set => m_text.Font = value;
         }
         protected override void Render(SkinBase skin)
         {
             if (ShouldDrawBackground)
             {
                 skin.Renderer.DrawColor = Skin.Colors.ForegroundHighlight;
-                var r = this.RenderBounds;
+                System.Drawing.Rectangle r = RenderBounds;
                 skin.Renderer.DrawFilledRect(r);
             }
             base.Render(skin);
@@ -65,25 +58,16 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="value">Value to set.</param>
         /// <param name="fireEvents">Determines whether to fire "value changed" event.</param>
-        public override void SetValue(string value, bool fireEvents = false)
-        {
-            m_text.SetText(value, fireEvents);
-        }
+        public override void SetValue(string value, bool fireEvents = false) => m_text.SetText(value, fireEvents);
 
         /// <summary>
         /// Indicates whether the property value is being edited.
         /// </summary>
-        public override bool IsEditing
-        {
-            get { return m_text.HasFocus; }
-        }
+        public override bool IsEditing => m_text.HasFocus;
 
         /// <summary>
         /// Indicates whether the control is hovered by mouse pointer.
         /// </summary>
-        public override bool IsHovered
-        {
-            get { return base.IsHovered | m_text.IsHovered; }
-        }
+        public override bool IsHovered => base.IsHovered | m_text.IsHovered;
     }
 }

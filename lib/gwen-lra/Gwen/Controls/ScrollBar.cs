@@ -1,5 +1,5 @@
-﻿using System;
-using Gwen.ControlInternal;
+﻿using Gwen.ControlInternal;
+using System;
 
 namespace Gwen.Controls
 {
@@ -30,25 +30,19 @@ namespace Gwen.Controls
         /// <summary>
         /// Bar position (in pixels).
         /// </summary>
-        public virtual int BarPos { get { return 0; } }
+        public virtual int BarPos => 0;
 
         /// <summary>
         /// Button size (in pixels).
         /// </summary>
-        public virtual int ButtonSize { get { return 0; } }
+        public virtual int ButtonSize => 0;
 
-        public virtual float NudgeAmount { set { m_NudgeAmount = value; } }
-        public virtual float NudgePercent
-        {
-            get
-            {
-                return m_NudgeAmount / (ContentSize - ViewableContentSize);
-            }
-        }
-        public float ScrollAmount { get { return m_ScrollAmount; } }
+        public virtual float NudgeAmount { set => m_NudgeAmount = value; }
+        public virtual float NudgePercent => m_NudgeAmount / (ContentSize - ViewableContentSize);
+        public float ScrollAmount => m_ScrollAmount;
         public float ContentSize
         {
-            get { return m_ContentSize; }
+            get => m_ContentSize;
             set
             {
                 if (m_ContentSize != value)
@@ -57,7 +51,7 @@ namespace Gwen.Controls
                         m_ScrollAmount = 0;
                     else
                     {
-                        var unscaled = m_ScrollAmount * (m_ContentSize - ViewableContentSize);
+                        float unscaled = m_ScrollAmount * (m_ContentSize - ViewableContentSize);
                         m_ScrollAmount = Util.Clamp(unscaled / (value - ViewableContentSize), 0, 1);
                     }
                     Invalidate();
@@ -65,12 +59,20 @@ namespace Gwen.Controls
                 m_ContentSize = value;
             }
         }
-        public float ViewableContentSize { get { return m_ViewableContentSize; } set { if (m_ViewableContentSize != value) Invalidate(); m_ViewableContentSize = value; } }
+        public float ViewableContentSize
+        {
+            get => m_ViewableContentSize; set
+            {
+                if (m_ViewableContentSize != value)
+                    Invalidate();
+                m_ViewableContentSize = value;
+            }
+        }
 
         /// <summary>
         /// Indicates whether the bar is horizontal.
         /// </summary>
-        public virtual bool IsHorizontal { get { return false; } }
+        public virtual bool IsHorizontal => false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScrollBar"/> class.
@@ -84,7 +86,7 @@ namespace Gwen.Controls
 
             m_Bar = new ScrollBarBar(this);
 
-            SetBounds(0, 0, 15, 15);
+            _ = SetBounds(0, 0, 15, 15);
             m_Depressed = false;
 
             m_ScrollAmount = 0;
@@ -124,30 +126,17 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawScrollBar(this, IsHorizontal, m_Depressed);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawScrollBar(this, IsHorizontal, m_Depressed);
 
         /// <summary>
         /// Handler for the BarMoved event.
         /// </summary>
         /// <param name="control">The control.</param>
-		protected virtual void OnBarMoved(ControlBase control, EventArgs args)
-        {
-            if (BarMoved != null)
-                BarMoved.Invoke(this, EventArgs.Empty);
-        }
+		protected virtual void OnBarMoved(ControlBase control, EventArgs args) => BarMoved?.Invoke(this, EventArgs.Empty);
 
-        protected virtual float CalculateScrolledAmount()
-        {
-            return 0;
-        }
+        protected virtual float CalculateScrolledAmount() => 0;
 
-        protected virtual int CalculateBarSize()
-        {
-            return 0;
-        }
+        protected virtual int CalculateBarSize() => 0;
 
         public virtual void ScrollToLeft() { }
         public virtual void ScrollToRight() { }

@@ -22,26 +22,11 @@ namespace linerider.Drawing.RiderModel
         public bool Legacy { get; protected set; }
         protected RegionsCache Cache { get; }
 
-        public List<Rectangle> RegionsBody
-        {
-            get => Cache.RegionsBody;
-        }
-        public List<Rectangle> RegionsBodyDead
-        {
-            get => Cache.RegionsBodyDead;
-        }
-        public bool HasPalette
-        {
-            get => Palette != null;
-        }
-        public bool HasRegions
-        {
-            get => RegionsBody.Any() && RegionsBodyDead.Any();
-        }
-        public bool HasRope
-        {
-            get => Rope != null;
-        }
+        public List<Rectangle> RegionsBody => Cache.RegionsBody;
+        public List<Rectangle> RegionsBodyDead => Cache.RegionsBodyDead;
+        public bool HasPalette => Palette != null;
+        public bool HasRegions => RegionsBody.Any() && RegionsBodyDead.Any();
+        public bool HasRope => Rope != null;
 
         public Resources()
         {
@@ -49,9 +34,6 @@ namespace linerider.Drawing.RiderModel
             Cache.SetFilenames(Filenames);
         }
 
-        public virtual void Load()
-        {
-            throw new NotImplementedException();
-        }
+        public virtual void Load() => throw new NotImplementedException();
     }
 }

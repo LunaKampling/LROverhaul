@@ -1,12 +1,12 @@
-﻿using OpenTK;
+﻿using linerider.Utils;
+using OpenTK;
+using Svg;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Drawing;
-using Svg;
-using System.Xml;
+using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
-using linerider.Utils;
+using System.Xml;
 
 namespace linerider.UI
 {
@@ -60,10 +60,7 @@ namespace linerider.UI
             AddSvgCursor(Type.Beam, GameResources.cursor_beam);
         }
 
-        internal void Refresh(GameCanvas canvas)
-        {
-            canvas.Platform.SetCursor(Gwen.Cursors.Default);
-        }
+        internal void Refresh(GameCanvas canvas) => canvas.Platform.SetCursor(Gwen.Cursors.Default);
         private void AddSvgCursor(Type name, GameResources.VectorResource res)
         {
             XmlDocument doc = new XmlDocument();
@@ -93,11 +90,13 @@ namespace linerider.UI
             Bitmap shadow = new Bitmap(bitmap.Width, bitmap.Height);
             using (Graphics g = Graphics.FromImage(shadow))
             {
-                ColorMatrix colorMatrix = new ColorMatrix();
-                colorMatrix.Matrix00 = 0f;
-                colorMatrix.Matrix11 = 0f;
-                colorMatrix.Matrix22 = 0f;
-                colorMatrix.Matrix33 = shadowOpacity;
+                ColorMatrix colorMatrix = new ColorMatrix
+                {
+                    Matrix00 = 0f,
+                    Matrix11 = 0f,
+                    Matrix22 = 0f,
+                    Matrix33 = shadowOpacity
+                };
                 ImageAttributes imageAttributes = new ImageAttributes();
                 imageAttributes.SetColorMatrix(colorMatrix);
 
@@ -169,16 +168,16 @@ namespace linerider.UI
             while (xmlNode != null)
             {
                 xmlNode2 = xmlNode.NextSibling;
-                doc.DocumentElement.RemoveChild(xmlNode);
+                _ = doc.DocumentElement.RemoveChild(xmlNode);
                 xmlNode = xmlNode2;
             }
 
             // Append required layers back
-            cursorLayer.Attributes.RemoveNamedItem("display");
-            cursorLayer.Attributes.RemoveNamedItem("class");
+            _ = cursorLayer.Attributes.RemoveNamedItem("display");
+            _ = cursorLayer.Attributes.RemoveNamedItem("class");
             if (styleNode != null)
-                doc.DocumentElement.AppendChild(styleNode);
-            doc.DocumentElement.AppendChild(cursorLayer);
+                _ = doc.DocumentElement.AppendChild(styleNode);
+            _ = doc.DocumentElement.AppendChild(cursorLayer);
         }
 
         private Point GetSvgHotSpot(XmlDocument doc)

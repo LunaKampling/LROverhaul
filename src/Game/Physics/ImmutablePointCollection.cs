@@ -17,34 +17,20 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
-using linerider.Utils;
 
 namespace linerider.Game
 {
     public struct ImmutablePointCollection
     {
-        public SimulationPoint this[int index]
-        {
-            get
-            {
-                return _points[index];
-            }
-        }
-        public int Length
-        {
-            get
-            {
-                return _points.Length;
-            }
-        }
+        public SimulationPoint this[int index] => _points[index];
+        public int Length => _points.Length;
         private readonly SimulationPoint[] _points;
         public ImmutablePointCollection(SimulationPoint[] points)
         {
             _points = points;
         }
         /// <summary>
-        /// fast compare method for two collections so we can bypass
+        /// Fast compare method for two collections so we can bypass
         /// struct copies
         /// </summary>
         public bool CompareTo(ImmutablePointCollection comparand)
@@ -67,14 +53,7 @@ namespace linerider.Game
             SimulationPoint[] ret = new SimulationPoint[len];
             for (int i = 0; i < len; i++)
             {
-                if (!friction)
-                {
-                    ret[i] = _points[i].Step();
-                }
-                else
-                {
-                    ret[i] = _points[i].StepFriction();
-                }
+                ret[i] = !friction ? _points[i].Step() : _points[i].StepFriction();
             }
             return ret;
         }

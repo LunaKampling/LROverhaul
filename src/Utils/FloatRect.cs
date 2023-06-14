@@ -16,9 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using OpenTK;
-using OpenTK.Graphics;
+using System;
 namespace linerider.Utils
 {
     public struct FloatRect : IEquatable<FloatRect>
@@ -27,60 +26,33 @@ namespace linerider.Utils
         public float Top;
         public float Width;
         public float Height;
-        public Vector2 Vector
-        {
-            get
-            {
-                return new Vector2(Left, Top);
-            }
-        }
-        public Vector2 Size
-        {
-            get
-            {
-                return new Vector2(Width, Height);
-            }
-        }
-        public float Right
-        {
-            get
-            {
-                return Left + Width;
-            }
-        }
-        public float Bottom
-        {
-            get
-            {
-                return Top + Height;
-            }
-        }
+        public Vector2 Vector => new Vector2(Left, Top);
+        public Vector2 Size => new Vector2(Width, Height);
+        public float Right => Left + Width;
+        public float Bottom => Top + Height;
         public FloatRect(float left, float top, float width, float height)
         {
-            this.Left = left;
-            this.Top = top;
-            this.Width = width;
-            this.Height = height;
+            Left = left;
+            Top = top;
+            Width = width;
+            Height = height;
         }
         public FloatRect(Vector2 position, Vector2 size)
         {
             this = new FloatRect(position.X, position.Y, size.X, size.Y);
         }
 
-        public static FloatRect FromLRTB(float left, float right, float top, float bottom)
-        {
-            return new FloatRect(left, top, right - left, bottom - top);
-        }
+        public static FloatRect FromLRTB(float left, float right, float top, float bottom) => new FloatRect(left, top, right - left, bottom - top);
         public Vector2 EllipseClamp(Vector2 position)
         {
-            var center = Vector + (Size / 2);
-            var xrad = Width / 2;
-            var yrad = Height / 2;
+            Vector2 center = Vector + Size / 2;
+            float xrad = Width / 2;
+            float yrad = Height / 2;
 
-            var diff = position - center;
-            if ((((diff.X * diff.X) / (xrad * xrad)) + ((diff.Y * diff.Y) / (yrad * yrad))) > 1.0)
+            Vector2 diff = position - center;
+            if ((diff.X * diff.X / (xrad * xrad) + diff.Y * diff.Y / (yrad * yrad)) > 1.0)
             {
-                var m = Math.Atan2(diff.Y * xrad / yrad, diff.X);
+                double m = Math.Atan2(diff.Y * xrad / yrad, diff.X);
                 return new Vector2(
                     (float)(center.X + xrad * Math.Cos(m)),
                     (float)(center.Y + yrad * Math.Sin(m)));
@@ -92,10 +64,10 @@ namespace linerider.Utils
         {
             if (!Contains(v.X, v.Y))
             {
-                var l = Left;
-                var t = Top;
-                var r = l + Width;
-                var b = t + Height;
+                float l = Left;
+                float t = Top;
+                float r = l + Width;
+                float b = t + Height;
                 v.X = MathHelper.Clamp(v.X, l, r);
                 v.Y = MathHelper.Clamp(v.Y, t, b);
             }
@@ -104,7 +76,7 @@ namespace linerider.Utils
 
         public FloatRect Inflate(float width, float height)
         {
-            var rect = this;
+            FloatRect rect = this;
 
             rect.Left -= width;
             rect.Top -= height;
@@ -115,23 +87,19 @@ namespace linerider.Utils
 
         public bool Contains(float x, float y)
         {
-            float num = Math.Min(this.Left, this.Left + this.Width);
-            float num2 = Math.Max(this.Left, this.Left + this.Width);
-            float num3 = Math.Min(this.Top, this.Top + this.Height);
-            float num4 = Math.Max(this.Top, this.Top + this.Height);
+            float num = Math.Min(Left, Left + Width);
+            float num2 = Math.Max(Left, Left + Width);
+            float num3 = Math.Min(Top, Top + Height);
+            float num4 = Math.Max(Top, Top + Height);
             return x >= num && x < num2 && y >= num3 && y < num4;
         }
-        public bool Intersects(FloatRect rect)
-        {
-            FloatRect floatRect;
-            return this.Intersects(rect, out floatRect);
-        }
+        public bool Intersects(FloatRect rect) => Intersects(rect, out _);
         public bool Intersects(FloatRect rect, out FloatRect overlap)
         {
-            float val = Math.Min(this.Left, this.Left + this.Width);
-            float val2 = Math.Max(this.Left, this.Left + this.Width);
-            float val3 = Math.Min(this.Top, this.Top + this.Height);
-            float val4 = Math.Max(this.Top, this.Top + this.Height);
+            float val = Math.Min(Left, Left + Width);
+            float val2 = Math.Max(Left, Left + Width);
+            float val3 = Math.Min(Top, Top + Height);
+            float val4 = Math.Max(Top, Top + Height);
             float val5 = Math.Min(rect.Left, rect.Left + rect.Width);
             float val6 = Math.Max(rect.Left, rect.Left + rect.Width);
             float val7 = Math.Min(rect.Top, rect.Top + rect.Height);
@@ -154,33 +122,21 @@ namespace linerider.Utils
             overlap.Height = 0f;
             return false;
         }
-        public override string ToString()
-        {
-            return string.Concat(new object[]
+        public override string ToString() => string.Concat(new object[]
                 {
                     "[FloatRect] Left(",
-                    this.Left,
+                    Left,
                     ") Top(",
-                    this.Top,
+                    Top,
                     ") Width(",
-                    this.Width,
+                    Width,
                     ") Height(",
-                    this.Height,
+                    Height,
                     ")"
                 });
-        }
-        public override bool Equals(object obj)
-        {
-            return obj is FloatRect && obj.Equals(this);
-        }
-        public bool Equals(FloatRect other)
-        {
-            return this.Left == other.Left && this.Top == other.Top && this.Width == other.Width && this.Height == other.Height;
-        }
-        public override int GetHashCode()
-        {
-            return (int)((uint)this.Left ^ ((uint)this.Top << 13 | (uint)this.Top >> 19) ^ ((uint)this.Width << 26 | (uint)this.Width >> 6) ^ ((uint)this.Height << 7 | (uint)this.Height >> 25));
-        }
+        public override bool Equals(object obj) => obj is FloatRect && obj.Equals(this);
+        public bool Equals(FloatRect other) => Left == other.Left && Top == other.Top && Width == other.Width && Height == other.Height;
+        public override int GetHashCode() => (int)((uint)Left ^ ((uint)Top << 13 | (uint)Top >> 19) ^ ((uint)Width << 26 | (uint)Width >> 6) ^ ((uint)Height << 7 | (uint)Height >> 25));
         public static bool operator ==(FloatRect r1, FloatRect r2)
         {
             return r1.Equals(r2);

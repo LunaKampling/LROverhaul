@@ -1,6 +1,6 @@
 using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Gwen.Controls
 {
@@ -10,20 +10,14 @@ namespace Gwen.Controls
         {
             public override bool AutoSizeToContents
             {
-                get
-                {
-                    return false;
-                }
+                get => false;
                 set
                 {
                 }
             }
             public override Dock Dock
             {
-                get
-                {
-                    return Dock.None;
-                }
+                get => Dock.None;
                 set
                 {
                     if (value != Dock.None)
@@ -31,17 +25,17 @@ namespace Gwen.Controls
                             "Cannot set Dock of tablecell");
                 }
             }
-            private TableRow m_parent;
-            private TableLayout m_parentlayout;
+            private readonly TableRow m_parent;
+            private readonly TableLayout m_parentlayout;
             public TableCell(TableRow parent) : base(parent)
             {
                 m_parent = parent;
                 m_parentlayout = m_parent.m_parent;
-               Margin = Margin.One;
+                Margin = Margin.One;
             }
             protected override void OnChildBoundsChanged(Rectangle oldChildBounds, ControlBase child)
             {
-                base.OnChildBoundsChanged(oldChildBounds,child);
+                base.OnChildBoundsChanged(oldChildBounds, child);
                 m_parentlayout.Invalidate();
             }
             protected override void OnChildAdded(ControlBase child)
@@ -55,13 +49,11 @@ namespace Gwen.Controls
                 m_parentlayout.Invalidate();
             }
         }
-        private TableLayout m_parent;
+        private readonly TableLayout m_parent;
         internal TableCell[] cells = new TableCell[0];
         public TableRow(TableLayout parent) : base(parent)
         {
-            if (parent == null)
-                throw new Exception("Table layout parent cannot be null");
-            m_parent = parent;
+            m_parent = parent ?? throw new Exception("Table layout parent cannot be null");
         }
         /// <summary>
         /// Handler invoked when a child is added.
@@ -77,7 +69,7 @@ namespace Gwen.Controls
         public List<int> GetRowWidths()
         {
             List<int> ret = new List<int>();
-            foreach (var child in cells)
+            foreach (TableCell child in cells)
             {
                 if (child == null)
                 {
@@ -94,7 +86,7 @@ namespace Gwen.Controls
         public int GetRowHeight()
         {
             int rowheight = 0;
-            foreach (var child in cells)
+            foreach (TableCell child in cells)
             {
                 if (child == null)
                     continue;
@@ -107,14 +99,14 @@ namespace Gwen.Controls
         }
         protected override void ProcessLayout(Size size)
         {
-            //we dont do any docking, etc, so this is empty.
+            // We dont do any docking, etc, so this is empty.
         }
         public TableCell GetCell(int index)
         {
             int mincells = Math.Max(index, m_parent.ColumnCount);
             if (mincells >= cells.Length)
             {
-                var newcells = new TableCell[mincells];
+                TableCell[] newcells = new TableCell[mincells];
                 for (int i = 0; i < cells.Length; i++)
                 {
                     newcells[i] = cells[i];

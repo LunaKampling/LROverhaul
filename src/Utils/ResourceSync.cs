@@ -17,13 +17,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace linerider.Utils
 {
@@ -32,18 +28,18 @@ namespace linerider.Utils
         public sealed class ResourceLock : IDisposable
         {
             private bool _disposed = false;
-            private bool _upgradableread = false;
-            private bool _read;
+            private readonly bool _upgradableread = false;
+            private readonly bool _read;
             private bool _write;
-            private ResourceSync _parent;
+            private readonly ResourceSync _parent;
             public bool WaitedOn
             {
                 get
                 {
-                    var l = _parent._lock;
-                    return (l.WaitingReadCount > 0 ||
+                    ReaderWriterLockSlim l = _parent._lock;
+                    return l.WaitingReadCount > 0 ||
                     l.WaitingUpgradeCount > 0 ||
-                    l.WaitingWriteCount > 0);
+                    l.WaitingWriteCount > 0;
                 }
             }
             /// <summary>
@@ -60,18 +56,9 @@ namespace linerider.Utils
                 _parent = parent;
                 _upgradableread = upgradableread;
             }
-            public static ResourceLock Reader(ResourceSync parent)
-            {
-                return new ResourceLock(true, false, false, parent);
-            }
-            public static ResourceLock Writer(ResourceSync parent)
-            {
-                return new ResourceLock(false, true, false, parent);
-            }
-            public static ResourceLock UpgradableReader(ResourceSync parent)
-            {
-                return new ResourceLock(false, false, true, parent);
-            }
+            public static ResourceLock Reader(ResourceSync parent) => new ResourceLock(true, false, false, parent);
+            public static ResourceLock Writer(ResourceSync parent) => new ResourceLock(false, true, false, parent);
+            public static ResourceLock UpgradableReader(ResourceSync parent) => new ResourceLock(false, false, true, parent);
             public void UpgradeToWriter()
             {
                 if (_disposed)
@@ -95,7 +82,7 @@ namespace linerider.Utils
                 int count = 0;
                 while (WaitedOn)
                 {
-                    Debug.Assert(count++ != 10000,"Wait release in possible infinite loop");
+                    Debug.Assert(count++ != 10000, "Wait release in possible infinite loop");
                     Release();
                     Acquire();
                 }
@@ -151,14 +138,7 @@ namespace linerider.Utils
             }
         }
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        public ResourceLock TryAcquireRead()
-        {
-            if (_lock.TryEnterReadLock(0))
-            {
-                return ResourceLock.Reader(this);
-            }
-            return null;
-        }
+        public ResourceLock TryAcquireRead() => _lock.TryEnterReadLock(0) ? ResourceLock.Reader(this) : null;
         public ResourceLock AcquireRead()
         {
             UnsafeEnterRead();
@@ -176,36 +156,18 @@ namespace linerider.Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnsafeEnterRead()
-        {
-            _lock.EnterReadLock();
-        }
+        public void UnsafeEnterRead() => _lock.EnterReadLock();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnsafeExitRead()
-        {
-            _lock.ExitReadLock();
-        }
+        public void UnsafeExitRead() => _lock.ExitReadLock();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnsafeEnterWrite()
-        {
-            _lock.EnterWriteLock();
-        }
+        public void UnsafeEnterWrite() => _lock.EnterWriteLock();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnsafeExitWrite()
-        {
-            _lock.ExitWriteLock();
-        }
+        public void UnsafeExitWrite() => _lock.ExitWriteLock();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnsafeEnterUpgradableRead()
-        {
-            _lock.EnterUpgradeableReadLock();
-        }
+        public void UnsafeEnterUpgradableRead() => _lock.EnterUpgradeableReadLock();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UnsafeExitUpgradableRead()
-        {
-            _lock.ExitUpgradeableReadLock();
-        }
+        public void UnsafeExitUpgradableRead() => _lock.ExitUpgradeableReadLock();
     }
 }

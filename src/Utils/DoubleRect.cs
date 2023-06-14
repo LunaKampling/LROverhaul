@@ -16,9 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using OpenTK;
-using OpenTK.Graphics;
+using System;
 namespace linerider.Utils
 {
     public struct DoubleRect : IEquatable<DoubleRect>
@@ -30,10 +29,7 @@ namespace linerider.Utils
         public double Height;
         public Vector2d Vector
         {
-            get
-            {
-                return new Vector2d(Left, Top);
-            }
+            get => new Vector2d(Left, Top);
             set
             {
                 Left = value.X;
@@ -42,43 +38,28 @@ namespace linerider.Utils
         }
         public Vector2d Size
         {
-            get
-            {
-                return new Vector2d(Width, Height);
-            }
+            get => new Vector2d(Width, Height);
             set
             {
                 Width = value.X;
                 Height = value.Y;
             }
         }
-        public double Right
-        {
-            get
-            {
-                return Left + Width;
-            }
-        }
-        public double Bottom
-        {
-            get
-            {
-                return Top + Height;
-            }
-        }
+        public double Right => Left + Width;
+        public double Bottom => Top + Height;
         public DoubleRect(double left, double top, double width, double height)
         {
-            this.Left = left;
-            this.Top = top;
-            this.Width = width;
-            this.Height = height;
+            Left = left;
+            Top = top;
+            Width = width;
+            Height = height;
         }
         public DoubleRect(Vector2d Position, Vector2d Size)
         {
-            this.Left = Position.X;
-            this.Top = Position.Y;
-            this.Width = Size.X;
-            this.Height = Size.Y;
+            Left = Position.X;
+            Top = Position.Y;
+            Width = Size.X;
+            Height = Size.Y;
         }
         /// <summary>
         /// Forces LRTB layout
@@ -86,34 +67,28 @@ namespace linerider.Utils
         /// <returns></returns>
         public DoubleRect MakeLRTB()
         {
-            var vec1 = Vector;
-            var vec2 = vec1 + Size;
-            var topleft = new Vector2d(
+            Vector2d vec1 = Vector;
+            Vector2d vec2 = vec1 + Size;
+            Vector2d topleft = new Vector2d(
                 Math.Min(vec1.X, vec2.X), Math.Min(vec1.Y, vec2.Y));
-            var bottomright = new Vector2d(
+            Vector2d bottomright = new Vector2d(
                 Math.Max(vec1.X, vec2.X), Math.Max(vec1.Y, vec2.Y));
             return new DoubleRect(topleft, bottomright - topleft);
         }
-        public static DoubleRect FromLRTB(double left, double right, double top, double bottom)
-        {
-            return new DoubleRect(left, top, right - left, bottom - top);
-        }
+        public static DoubleRect FromLRTB(double left, double right, double top, double bottom) => new DoubleRect(left, top, right - left, bottom - top);
 
-        public FloatRect ToFloatRect()
-        {
-            return new FloatRect((float)Left, (float)Top, (float)Width, (float)Height);
-        }
+        public FloatRect ToFloatRect() => new FloatRect((float)Left, (float)Top, (float)Width, (float)Height);
 
         public Vector2d EllipseClamp(Vector2d position)
         {
-            var center = Vector + (Size / 2);
-            var xrad = Width / 2;
-            var yrad = Height / 2;
+            Vector2d center = Vector + Size / 2;
+            double xrad = Width / 2;
+            double yrad = Height / 2;
 
-            var diff = position - center;
-            if ((((diff.X * diff.X) / (xrad * xrad)) + ((diff.Y * diff.Y) / (yrad * yrad))) > 1.0)
+            Vector2d diff = position - center;
+            if ((diff.X * diff.X / (xrad * xrad) + diff.Y * diff.Y / (yrad * yrad)) > 1.0)
             {
-                var m = Math.Atan2(diff.Y * xrad / yrad, diff.X);
+                double m = Math.Atan2(diff.Y * xrad / yrad, diff.X);
                 return new Vector2d(
                     center.X + xrad * Math.Cos(m),
                     center.Y + yrad * Math.Sin(m));
@@ -123,10 +98,10 @@ namespace linerider.Utils
 
         public Vector2d Clamp(Vector2d v)
         {
-            var l = Left;
-            var t = Top;
-            var r = l + Width;
-            var b = t + Height;
+            double l = Left;
+            double t = Top;
+            double r = l + Width;
+            double b = t + Height;
             return new Vector2d(
                 MathHelper.Clamp(v.X, l, r),
                 MathHelper.Clamp(v.Y, t, b)
@@ -135,7 +110,7 @@ namespace linerider.Utils
 
         public DoubleRect Inflate(double width, double height)
         {
-            var rect = this;
+            DoubleRect rect = this;
 
             rect.Left -= width;
             rect.Top -= height;
@@ -145,50 +120,46 @@ namespace linerider.Utils
         }
         public DoubleRect Scale(double scale)
         {
-            var rect = this;
+            DoubleRect rect = this;
 
-            var width = (Right - Left) * scale;
-            rect.Left -= (width / 2) - (Width / 2);
+            double width = (Right - Left) * scale;
+            rect.Left -= width / 2 - Width / 2;
             rect.Width = width;
 
-            var height = (Bottom - Top) * scale;
-            rect.Top -= (height / 2) - (Height / 2);
+            double height = (Bottom - Top) * scale;
+            rect.Top -= height / 2 - Height / 2;
             rect.Height = height;
             return rect;
         }
         public DoubleRect Scale(double x, double y)
         {
-            var rect = this;
+            DoubleRect rect = this;
 
-            var width = (Right - Left) * x;
-            rect.Left -= (width / 2) - (Width / 2);
+            double width = (Right - Left) * x;
+            rect.Left -= width / 2 - Width / 2;
             rect.Width = width;
 
-            var height = (Bottom - Top) * y;
-            rect.Top -= (height / 2) - (Height / 2);
+            double height = (Bottom - Top) * y;
+            rect.Top -= height / 2 - Height / 2;
             rect.Height = height;
             return rect;
         }
 
         public bool Contains(double x, double y)
         {
-            double num = Math.Min(this.Left, this.Left + this.Width);
-            double num2 = Math.Max(this.Left, this.Left + this.Width);
-            double num3 = Math.Min(this.Top, this.Top + this.Height);
-            double num4 = Math.Max(this.Top, this.Top + this.Height);
+            double num = Math.Min(Left, Left + Width);
+            double num2 = Math.Max(Left, Left + Width);
+            double num3 = Math.Min(Top, Top + Height);
+            double num4 = Math.Max(Top, Top + Height);
             return x >= num && x < num2 && y >= num3 && y < num4;
         }
-        public bool Intersects(DoubleRect rect)
-        {
-            DoubleRect floatRect;
-            return this.Intersects(rect, out floatRect);
-        }
+        public bool Intersects(DoubleRect rect) => Intersects(rect, out _);
         public bool Intersects(DoubleRect rect, out DoubleRect overlap)
         {
-            double val = Math.Min(this.Left, this.Left + this.Width);
-            double val2 = Math.Max(this.Left, this.Left + this.Width);
-            double val3 = Math.Min(this.Top, this.Top + this.Height);
-            double val4 = Math.Max(this.Top, this.Top + this.Height);
+            double val = Math.Min(Left, Left + Width);
+            double val2 = Math.Max(Left, Left + Width);
+            double val3 = Math.Min(Top, Top + Height);
+            double val4 = Math.Max(Top, Top + Height);
             double val5 = Math.Min(rect.Left, rect.Left + rect.Width);
             double val6 = Math.Max(rect.Left, rect.Left + rect.Width);
             double val7 = Math.Min(rect.Top, rect.Top + rect.Height);
@@ -211,33 +182,21 @@ namespace linerider.Utils
             overlap.Height = 0f;
             return false;
         }
-        public override string ToString()
-        {
-            return string.Concat(new object[]
+        public override string ToString() => string.Concat(new object[]
                 {
                     "[DoubleRect] Left(",
-                    this.Left,
+                    Left,
                     ") Top(",
-                    this.Top,
+                    Top,
                     ") Width(",
-                    this.Width,
+                    Width,
                     ") Height(",
-                    this.Height,
+                    Height,
                     ")"
                 });
-        }
-        public override bool Equals(object obj)
-        {
-            return obj is FloatRect && obj.Equals(this);
-        }
-        public bool Equals(DoubleRect other)
-        {
-            return this.Left == other.Left && this.Top == other.Top && this.Width == other.Width && this.Height == other.Height;
-        }
-        public override int GetHashCode()
-        {
-            return (int)((uint)this.Left ^ ((uint)this.Top << 13 | (uint)this.Top >> 19) ^ ((uint)this.Width << 26 | (uint)this.Width >> 6) ^ ((uint)this.Height << 7 | (uint)this.Height >> 25));
-        }
+        public override bool Equals(object obj) => obj is FloatRect && obj.Equals(this);
+        public bool Equals(DoubleRect other) => Left == other.Left && Top == other.Top && Width == other.Width && Height == other.Height;
+        public override int GetHashCode() => (int)((uint)Left ^ ((uint)Top << 13 | (uint)Top >> 19) ^ ((uint)Width << 26 | (uint)Width >> 6) ^ ((uint)Height << 7 | (uint)Height >> 25));
         public static bool operator ==(DoubleRect r1, DoubleRect r2)
         {
             return r1.Equals(r2);

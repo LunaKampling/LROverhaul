@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -8,21 +7,12 @@ namespace Gwen.ControlInternal
     /// </summary>
     public class CategoryHeaderButton : Button
     {
-        protected override System.Drawing.Color CurrentColor
-        {
-            get
-            {
-                if (IsDepressed || ToggleState)
-                    return Skin.Colors.Text.Highlight;
-                else
-                    return Skin.Colors.Text.Highlight;
-            }
-        }
+        protected override System.Drawing.Color CurrentColor => IsDepressed || ToggleState ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Highlight;
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryHeaderButton"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public CategoryHeaderButton(Controls.ControlBase parent)
+        public CategoryHeaderButton(ControlBase parent)
             : base(parent)
         {
             ShouldDrawBackground = false;

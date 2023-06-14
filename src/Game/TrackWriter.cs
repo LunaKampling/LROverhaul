@@ -16,18 +16,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Game;
+using linerider.Rendering;
+using linerider.Utils;
+using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using OpenTK;
-using System.IO;
-using System.Threading;
 using System.Diagnostics;
-using linerider.Tools;
-using linerider.Rendering;
-using linerider.Game;
-using linerider.Utils;
 namespace linerider
 {
     /// <summary>
@@ -37,7 +32,7 @@ namespace linerider
     /// </summary>
     public class TrackWriter : TrackReader
     {
-        private bool _disposed = false;
+        private readonly bool _disposed = false;
         private bool _updateextensions = true;
         private UndoManager _undo;
         private Timeline _timeline;
@@ -47,35 +42,14 @@ namespace linerider
         /// </summary>
         public override string Name
         {
-            get { return Track.Name; }
-            set { Track.Name = value; }
+            get => Track.Name;
+            set => Track.Name = value;
         }
-        public Track Track
-        {
-            get
-            {
-                if (_disposed)
-                    throw new ObjectDisposedException("TrackWriter");
-                return _track;
-            }
-        }
-        public EditorGrid Cells
-        {
-            get
-            {
-                if (_disposed)
-                    throw new ObjectDisposedException("TrackWriter");
-                return _editorcells;
-            }
-        }
+        public Track Track => _disposed ? throw new ObjectDisposedException("TrackWriter") : _track;
+        public EditorGrid Cells => _disposed ? throw new ObjectDisposedException("TrackWriter") : _editorcells;
         public List<GameTrigger> Triggers
         {
-            get
-            {
-                if (_disposed)
-                    throw new ObjectDisposedException("TrackWriter");
-                return _track.Triggers;
-            }
+            get => _disposed ? throw new ObjectDisposedException("TrackWriter") : _track.Triggers;
             set
             {
                 if (_disposed)
@@ -95,35 +69,23 @@ namespace linerider
             SimulationRenderer renderer,
             UndoManager undo,
             Timeline timeline,
-            EditorGrid cells)
-        {
-            return new TrackWriter(sync.AcquireWrite(), track)
+            EditorGrid cells) => new TrackWriter(sync.AcquireWrite(), track)
             {
                 _undo = undo,
                 _renderer = renderer,
                 _timeline = timeline,
                 _editorcells = cells
             };
-        }
-        public void NotifyTrackChanged()
-        {
-            game.Track.NotifyTrackChanged();
-        }
+        public void NotifyTrackChanged() => game.Track.NotifyTrackChanged();
         /// <summary>
         /// Disables saving changes to the undo buffer.
         /// </summary>
-        public void DisableUndo()
-        {
-            _undo = null;
-        }
+        public void DisableUndo() => _undo = null;
         /// <summary>
         /// A function in place so the undo manager can restore states without
         /// fooling with the original extensions.
         /// </summary>
-        public void DisableExtensionUpdating()
-        {
-            _updateextensions = false;
-        }
+        public void DisableExtensionUpdating() => _updateextensions = false;
         /// <summary>
         /// Adds the line to the track, grid, and renderer. 
         /// Updates extensions
@@ -154,9 +116,8 @@ namespace linerider
         {
             if (line.Position1 != pos1 || line.Position2 != pos2)
             {
-                var clone = line.Clone();
-                var std = line as StandardLine;
-                if (std != null)
+                GameLine clone = line.Clone();
+                if (line is StandardLine std)
                 {
                     SaveCells(line.Position1, line.Position2);
                     SaveCells(pos1, pos2);
@@ -190,17 +151,16 @@ namespace linerider
                 throw new Exception("can only replace lines with the same id");
             RegisterUndoAction(oldline, newline);
 
-            var std = oldline as StandardLine;
-            if (std != null)
+            if (oldline is StandardLine std)
             {
                 SaveCells(oldline.Position1, oldline.Position2);
                 SaveCells(newline.Position1, newline.Position2);
                 if (_updateextensions)
                     RemoveExtensions(std);
-                var newstd = (StandardLine)newline;
+                StandardLine newstd = (StandardLine)newline;
                 using (Track.Grid.Sync.AcquireWrite())
                 {
-                    // this could be a moveline, i think.
+                    // This could be a moveline, i think.
                     Track.Grid.RemoveLine(std);
                     Track.Grid.AddLine(newstd);
                 }
@@ -241,29 +201,23 @@ namespace linerider
             _editorcells.RemoveLine(line);
             _renderer.RemoveLine(line);
         }
-        private void AddExtensions(StandardLine input)
-        {
-            UpdateExtensions(input, true);
-        }
-        private void RemoveExtensions(StandardLine input)
-        {
-            UpdateExtensions(input, false);
-        }
+        private void AddExtensions(StandardLine input) => UpdateExtensions(input, true);
+        private void RemoveExtensions(StandardLine input) => UpdateExtensions(input, false);
         private SimulationCell GetPairs(StandardLine input)
         {
-            var list = new SimulationCell();
-            var c1 = _editorcells.GetCellFromPoint(input.Position1);
-            var c2 = _editorcells.GetCellFromPoint(input.Position2);
-            var cells = new LineContainer<GameLine>[]
+            SimulationCell list = new SimulationCell();
+            EditorCell c1 = _editorcells.GetCellFromPoint(input.Position1);
+            EditorCell c2 = _editorcells.GetCellFromPoint(input.Position2);
+            LineContainer<GameLine>[] cells = new LineContainer<GameLine>[]
             {
                 c1,
                 c1 == c2 ? null : c2
             };
-            foreach (var cell in cells)
+            foreach (LineContainer<GameLine> cell in cells)
             {
                 if (cell == null)
                     continue;
-                foreach (var line in cell)
+                foreach (GameLine line in cell)
                 {
                     if (line.Type == LineType.Scenery)
                         continue;
@@ -288,28 +242,28 @@ namespace linerider
         /// <param name="add">should extensions be added or removed</param>
         private void UpdateExtensions(StandardLine input, bool add)
         {
-            //todo this method could be faster. its now called on every moveline
-            //etc
+            // TODO: this method could be faster. Its now called on every moveline
+            // etc
             Debug.Assert(
                 input != null,
                 "passed null line to update extensions");
 
-            var list = GetPairs(input);
-            var inputangle = Angle.FromVector(input.End - input.Start).Degrees;
-            var inputclone = input.Clone();
+            SimulationCell list = GetPairs(input);
+            double inputangle = Angle.FromVector(input.End - input.Start).Degrees;
+            GameLine inputclone = input.Clone();
             bool changemade = false;
-            foreach (var connected in list)
+            foreach (StandardLine connected in list)
             {
-                var angle2 = Angle.FromVector(
+                double angle2 = Angle.FromVector(
                     connected.End - connected.Start)
                     .Degrees;
                 bool startlink = input.Start == connected.End;
-                var diff = startlink
+                double diff = startlink
                 ? new Angle(angle2 - inputangle).Degrees
                 : new Angle(inputangle - angle2).Degrees;
                 if (diff > 0 && diff <= 180)
                 {
-                    var clone = connected.Clone();
+                    GameLine clone = connected.Clone();
                     if (!changemade)
                     {
                         SaveCells(input.Position1, input.Position1);
@@ -317,10 +271,10 @@ namespace linerider
                     }
                     SaveCells(connected.Position1, connected.Position1);
 
-                    var inputflag = (startlink ^ input.inv)
+                    StandardLine.Ext inputflag = (startlink ^ input.inv)
                         ? StandardLine.Ext.Left
                         : StandardLine.Ext.Right;
-                    var connectedflag = (startlink ^ connected.inv)
+                    StandardLine.Ext connectedflag = (startlink ^ connected.inv)
                         ? StandardLine.Ext.Right
                         : StandardLine.Ext.Left;
                     if (add)
@@ -336,18 +290,15 @@ namespace linerider
                     RegisterUndoAction(clone, connected);
                 }
             }
-            //we do this outside of loop in case we lose both extensions!
+            // We do this outside of loop in case we lose both extensions!
             if (changemade)
                 RegisterUndoAction(inputclone, input);
         }
         /// <summary>
-        /// state a change to the undo manager
+        /// State a change to the undo manager
         /// always needs to be in PAIRS with a before and after
         /// </summary>
-        private void RegisterUndoAction(GameLine before, GameLine after)
-        {
-            _undo?.AddChange(before, after);
-        }
+        private void RegisterUndoAction(GameLine before, GameLine after) => _undo?.AddChange(before, after);
         /// <summary>
         /// State a change to the timeline manager
         /// call this before making the change, as the timeline manager
@@ -355,9 +306,6 @@ namespace linerider
         /// </summary>
         /// <param name="linestart">line.Position</param>
         /// <param name="lineend">line.Position2</param>
-        private void SaveCells(Vector2d linestart, Vector2d lineend)
-        {
-            _timeline.SaveCells(linestart, lineend);
-        }
+        private void SaveCells(Vector2d linestart, Vector2d lineend) => _timeline.SaveCells(linestart, lineend);
     }
 }

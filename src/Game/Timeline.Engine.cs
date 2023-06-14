@@ -16,26 +16,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Text;
-using OpenTK;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using linerider.Tools;
-using linerider.Rendering;
-using linerider.Game;
-using linerider.UI;
 using linerider.Utils;
-using System.Diagnostics;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace linerider.Game
 {
     /// <summary>
-    /// playback scrubber/buffer manager
+    /// Playback scrubber/buffer manager
     /// properties:
     /// has full access to track.RiderStates at all times
     /// calls thread safe access to createtrackreader to simulate
@@ -43,21 +33,21 @@ namespace linerider.Game
     public partial class Timeline
     {
         private readonly ResourceSync changesync = new ResourceSync();
-        private HashSet<GridPoint> _changedcells = new HashSet<GridPoint>();
-        private SimulationGridOverlay _savedcells = new SimulationGridOverlay();
+        private readonly HashSet<GridPoint> _changedcells = new HashSet<GridPoint>();
+        private readonly SimulationGridOverlay _savedcells = new SimulationGridOverlay();
         private int _first_invalid_frame = 1;
         /// <summary>
         /// Backs up all the grid cells on a line for the recompute engine.
         /// </summary>
         public void SaveCells(Vector2d start, Vector2d end)
         {
-            var positions = SimulationGrid.GetGridPositions(start, end, _track.Grid.GridVersion);
+            List<CellLocation> positions = SimulationGrid.GetGridPositions(start, end, _track.Grid.GridVersion);
             using (changesync.AcquireWrite())
             {
-                foreach (var cellpos in positions)
+                foreach (CellLocation cellpos in positions)
                 {
-                    _savedcells.AddOverlay(cellpos.Point, _track.Grid.GetCell(cellpos.X, cellpos.Y));
-                    _changedcells.Add(cellpos.Point);
+                    _ = _savedcells.AddOverlay(cellpos.Point, _track.Grid.GetCell(cellpos.X, cellpos.Y));
+                    _ = _changedcells.Add(cellpos.Point);
                 }
             }
         }
@@ -77,7 +67,7 @@ namespace linerider.Game
                 }
                 else
                 {
-                    // every single change has no effect on physics
+                    // Every single change has no effect on physics
                     // our backup has no value
                     _savedcells.Clear();
                 }
@@ -88,7 +78,7 @@ namespace linerider.Game
             if (_changedcells.Count == 0)
                 return -1;
             RectLRTB changebounds = new RectLRTB(_changedcells.First());
-            foreach (var cell in _changedcells)
+            foreach (GridPoint cell in _changedcells)
             {
                 changebounds.left = Math.Min(cell.X, changebounds.left);
                 changebounds.top = Math.Min(cell.Y, changebounds.top);
@@ -104,13 +94,13 @@ namespace linerider.Game
             {
                 if (!changebounds.Intersects(_frames[frame].Rider.PhysicsBounds))
                     continue;
-                foreach (var change in _changedcells)
+                foreach (GridPoint change in _changedcells)
                 {
                     if (_frames[frame].Rider.PhysicsBounds.ContainsPoint(change))
                     {
                         if (CheckInteraction(frame))
                             return frame;
-                        // we dont have to check this rider more than once!
+                        // We dont have to check this rider more than once!
                         break;
                     }
                 }
@@ -119,20 +109,15 @@ namespace linerider.Game
         }
         private bool CheckInteraction(int frame)
         {
-            // even though its this frame that may need changing, we have to 
+            // Even though its this frame that may need changing, we have to 
             // regenerate it using the previos frame.
-            var newsimulated = _frames[frame - 1].Rider.Simulate(
+            Rider newsimulated = _frames[frame - 1].Rider.Simulate(
                 _track.Grid,
                 _track.Bones,
                 null,
                 6,
                 false);
-            if (!newsimulated.Body.CompareTo(_frames[frame].Rider.Body))
-            {
-                return true;
-            }
-
-            return false;
+            return !newsimulated.Body.CompareTo(_frames[frame].Rider.Body);
         }
     }
 }

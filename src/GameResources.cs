@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.UI;
 using Svg;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using linerider.UI;
+
+#pragma warning disable IDE1006 // Naming Styles
 
 namespace linerider
 {
@@ -35,74 +37,61 @@ namespace linerider
         {
             public string Raw;
             public Size BaseSize;
-            public Size Size
-            {
-                get => new Size(
-                    (int)Math.Round(BaseSize.Width * Settings.Computed.UIScale),
-                    (int)Math.Round(BaseSize.Height * Settings.Computed.UIScale)
-                );
-            }
-            public Bitmap Bitmap
-            {
-                get => SvgDocument.FromSvg<SvgDocument>(Raw).Draw(Size.Width, Size.Height);
-            }
+            public Size Size => new Size(
+                (int)Math.Round(BaseSize.Width * Settings.Computed.UIScale),
+                (int)Math.Round(BaseSize.Height * Settings.Computed.UIScale)
+            );
+            public Bitmap Bitmap => SvgDocument.FromSvg<SvgDocument>(Raw).Draw(Size.Width, Size.Height);
         }
         private static Assembly Assembly = null;
         private static Dictionary<string, object> _lookuptable = null;
         public static void Init()
         {
             if (Assembly == null)
-            {
                 Assembly = typeof(GameResources).Assembly;
-            }
             if (_lookuptable == null)
-            {
                 _lookuptable = new Dictionary<string, object>();
-            }
         }
         #endregion
         #region Getters
         public static Bitmap GetBitmap(string name)
         {
-            object lookup;
-            if (_lookuptable.TryGetValue(name, out lookup))
+            if (_lookuptable.TryGetValue(name, out object lookup))
             {
                 return (Bitmap)lookup;
             }
-            using (var stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
+            using (Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
             {
-                var ret = new Bitmap(stream);
+                Bitmap ret = new Bitmap(stream);
                 _lookuptable[name] = ret;
                 return ret;
             }
         }
         private static byte[] GetBytes(string name)
         {
-            object lookup;
-            if (_lookuptable.TryGetValue(name, out lookup))
+            if (_lookuptable.TryGetValue(name, out object lookup))
             {
-                return ((byte[])lookup).ToArray();//prevent writing to resource
+                return ((byte[])lookup).ToArray(); // Prevent writing to resource
             }
-            using (var stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
+            using (Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
             {
                 byte[] ret = new byte[stream.Length];
-                stream.Read(ret, 0, ret.Length);
+                _ = stream.Read(ret, 0, ret.Length);
                 _lookuptable[name] = ret;
                 return ret;
             }
         }
         private static string GetString(string name)
         {
-            object lookup;
-            if (_lookuptable.TryGetValue(name, out lookup))
+            if (_lookuptable.TryGetValue(name, out object lookup))
             {
-                return (string)lookup;//strings are immutable so there's no chance of writing to resource
+                return (string)lookup; // Strings are immutable so there's no chance of writing to resource
             }
-            using (var stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
+            using (Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
             {
-                using (var reader = new StreamReader(stream))
+                using (StreamReader reader = new StreamReader(stream))
                 {
-                    var ret = reader.ReadToEnd();
+                    string ret = reader.ReadToEnd();
                     _lookuptable[name] = ret;
                     return ret;
                 }
@@ -148,381 +137,78 @@ namespace linerider
         }
         #endregion
         #region Resources: Generic
-        internal static byte[] beep
-        {
-            get
-            {
-                return GetBytes("beep.wav");
-            }
-        }
-        internal static System.Drawing.Bitmap defaultskin
-        {
-            get
-            {
-                return GetBitmap("DefaultSkin.png");
-            }
-        }
-
-        internal static byte[] icon
-        {
-            get
-            {
-                return GetBytes("icon.ico");
-            }
-        }
-        internal static string defaultcolors
-        {
-            get
-            {
-                return GetString("DefaultColors.xml");
-            }
-        }
+        internal static byte[] beep => GetBytes("beep.wav");
+        internal static Bitmap defaultskin => GetBitmap("DefaultSkin.png");
+        internal static byte[] icon => GetBytes("icon.ico");
+        internal static string defaultcolors => GetString("DefaultColors.xml");
         #endregion
         #region Resources: Fonts
-        internal static Fonts font_liberation_sans_15
-        {
-            get
-            {
-                return GetFont("fonts.liberation_sans_15");
-            }
-        }
+        internal static Fonts font_liberation_sans_15 => GetFont("fonts.liberation_sans_15");
         #endregion
         #region Resources: Rider
-        internal static Bitmap rider_sled
-        {
-            get
-            {
-                return GetBitmap("rider.sled.png");
-            }
-        }
-        internal static Bitmap rider_sledbroken
-        {
-            get
-            {
-                return GetBitmap("rider.sledbroken.png");
-            }
-        }
-        internal static Bitmap rider_arm
-        {
-            get
-            {
-                return GetBitmap("rider.arm.png");
-            }
-        }
-        internal static Bitmap rider_leg
-        {
-            get
-            {
-                return GetBitmap("rider.leg.png");
-            }
-        }
-        internal static Bitmap rider_body
-        {
-            get
-            {
-                return GetBitmap("rider.body.png");
-            }
-        }
-        internal static Bitmap rider_bodydead
-        {
-            get
-            {
-                return GetBitmap("rider.bodydead.png");
-            }
-        }
-        internal static Bitmap rider_rope
-        {
-            get
-            {
-                return GetBitmap("rider.rope.png");
-            }
-        }
-        internal static string rider_regions_file
-        {
-            get
-            {
-                return GetString("rider..regions");
-            }
-        }
+        internal static Bitmap rider_sled => GetBitmap("rider.sled.png");
+        internal static Bitmap rider_sledbroken => GetBitmap("rider.sledbroken.png");
+        internal static Bitmap rider_arm => GetBitmap("rider.arm.png");
+        internal static Bitmap rider_leg => GetBitmap("rider.leg.png");
+        internal static Bitmap rider_body => GetBitmap("rider.body.png");
+        internal static Bitmap rider_bodydead => GetBitmap("rider.bodydead.png");
+        internal static Bitmap rider_rope => GetBitmap("rider.rope.png");
+        internal static string rider_regions_file => GetString("rider..regions");
         #endregion
         #region Resources: Cursors
-
-
-        internal static VectorResource cursor_hand
-        {
-            get
-            {
-                return GetVectorImage("cursors.hand.svg");
-            }
-        }
-        internal static VectorResource cursor_drag_inactive
-        {
-            get
-            {
-                return GetVectorImage("cursors.drag-inactive.svg");
-            }
-        }
-        internal static VectorResource cursor_drag_active
-        {
-            get
-            {
-                return GetVectorImage("cursors.drag-active.svg");
-            }
-        }
-        internal static VectorResource cursor_select
-        {
-            get
-            {
-                return GetVectorImage("cursors.select.svg");
-            }
-        }
-        internal static VectorResource cursor_line
-        {
-            get
-            {
-                return GetVectorImage("cursors.line.svg");
-            }
-        }
-        internal static VectorResource cursor_eraser
-        {
-            get
-            {
-                return GetVectorImage("cursors.eraser.svg");
-            }
-        }
-        internal static VectorResource cursor_pencil
-        {
-            get
-            {
-                return GetVectorImage("cursors.pencil.svg");
-            }
-        }
-        internal static VectorResource cursor_size_swne
-        {
-            get
-            {
-                return GetVectorImage("cursors.size-swne.svg");
-            }
-        }
-        internal static VectorResource cursor_size_nwse
-        {
-            get
-            {
-                return GetVectorImage("cursors.size-nwse.svg");
-            }
-        }
-        internal static VectorResource cursor_size_we
-        {
-            get
-            {
-                return GetVectorImage("cursors.size-we.svg");
-            }
-        }
-        internal static VectorResource cursor_size_ns
-        {
-            get
-            {
-                return GetVectorImage("cursors.size-ns.svg");
-            }
-        }
-        internal static VectorResource cursor_zoom
-        {
-            get
-            {
-                return GetVectorImage("cursors.zoom.svg");
-            }
-        }
-        internal static VectorResource cursor_beam
-        {
-            get
-            {
-                return GetVectorImage("cursors.beam.svg");
-            }
-        }
-        internal static VectorResource cursor_default
-        {
-            get
-            {
-                return GetVectorImage("cursors.default.svg");
-            }
-        }
+        internal static VectorResource cursor_hand => GetVectorImage("cursors.hand.svg");
+        internal static VectorResource cursor_drag_inactive => GetVectorImage("cursors.drag-inactive.svg");
+        internal static VectorResource cursor_drag_active => GetVectorImage("cursors.drag-active.svg");
+        internal static VectorResource cursor_select => GetVectorImage("cursors.select.svg");
+        internal static VectorResource cursor_line => GetVectorImage("cursors.line.svg");
+        internal static VectorResource cursor_eraser => GetVectorImage("cursors.eraser.svg");
+        internal static VectorResource cursor_pencil => GetVectorImage("cursors.pencil.svg");
+        internal static VectorResource cursor_size_swne => GetVectorImage("cursors.size-swne.svg");
+        internal static VectorResource cursor_size_nwse => GetVectorImage("cursors.size-nwse.svg");
+        internal static VectorResource cursor_size_we => GetVectorImage("cursors.size-we.svg");
+        internal static VectorResource cursor_size_ns => GetVectorImage("cursors.size-ns.svg");
+        internal static VectorResource cursor_zoom => GetVectorImage("cursors.zoom.svg");
+        internal static VectorResource cursor_beam => GetVectorImage("cursors.beam.svg");
+        internal static VectorResource cursor_default => GetVectorImage("cursors.default.svg");
         #endregion
         #region Resources: Shaders
-        internal static string simline_frag
-        {
-            get
-            {
-                return GetString("shaders.simline.frag");
-            }
-        }
-        internal static string simline_vert
-        {
-            get
-            {
-                return GetString("shaders.simline.vert");
-            }
-        }
-        internal static string rider_frag
-        {
-            get
-            {
-                return GetString("shaders.rider.frag");
-            }
-        }
-        internal static string rider_vert
-        {
-            get
-            {
-                return GetString("shaders.rider.vert");
-            }
-        }
-        internal static string simgrid_frag
-        {
-            get
-            {
-                return GetString("shaders.simgrid.frag");
-            }
-        }
-        internal static string simgrid_vert
-        {
-            get
-            {
-                return GetString("shaders.simgrid.vert");
-            }
-        }
-
-        internal static string floatgrid_vert
-        {
-            get
-            {
-                return GetString("shaders.floatgrid.vert");
-            }
-        }
-
-        internal static string floatgrid_frag
-        {
-            get
-            {
-                return GetString("shaders.floatgrid.frag");
-            }
-        }
-
+        internal static string simline_frag => GetString("shaders.simline.frag");
+        internal static string simline_vert => GetString("shaders.simline.vert");
+        internal static string rider_frag => GetString("shaders.rider.frag");
+        internal static string rider_vert => GetString("shaders.rider.vert");
+        internal static string simgrid_frag => GetString("shaders.simgrid.frag");
+        internal static string simgrid_vert => GetString("shaders.simgrid.vert");
+        internal static string floatgrid_vert => GetString("shaders.floatgrid.vert");
+        internal static string floatgrid_frag => GetString("shaders.floatgrid.frag");
         #endregion
         #region Resources: Icons
-        internal static System.Drawing.Bitmap swatch
-        {
-            get
-            {
-                return GetBitmap("icons.swatch.png");
-            }
-        }
-
-        internal static VectorResource icon_tool_pencil
-        {
-            get => GetVectorImage("icons.tool_pencil.svg");
-        }
-        internal static VectorResource icon_tool_smooth_pencil
-        {
-            get => GetVectorImage("icons.tool_smooth_pencil.svg");
-        }
-        internal static VectorResource icon_tool_line
-        {
-            get => GetVectorImage("icons.tool_line.svg");
-        }
-        internal static VectorResource icon_tool_bezier
-        {
-            get => GetVectorImage("icons.tool_bezier.svg");
-        }
-        internal static VectorResource icon_tool_eraser
-        {
-            get => GetVectorImage("icons.tool_eraser.svg");
-        }
-        internal static VectorResource icon_tool_select
-        {
-            get => GetVectorImage("icons.tool_select.svg");
-        }
-        internal static VectorResource icon_tool_pan
-        {
-            get => GetVectorImage("icons.tool_pan.svg");
-        }
-        internal static VectorResource icon_play
-        {
-            get => GetVectorImage("icons.play.svg");
-        }
-        internal static VectorResource icon_pause
-        {
-            get => GetVectorImage("icons.pause.svg");
-        }
-        internal static VectorResource icon_stop
-        {
-            get => GetVectorImage("icons.stop.svg");
-        }
-        internal static VectorResource icon_flag
-        {
-            get => GetVectorImage("icons.flag.svg");
-        }
-        internal static VectorResource icon_generators
-        {
-            get => GetVectorImage("icons.generators.svg");
-        }
-        internal static VectorResource icon_menu
-        {
-            get => GetVectorImage("icons.menu.svg");
-        }
-        internal static VectorResource icon_reset_camera
-        {
-            get => GetVectorImage("icons.reset_camera.svg");
-        }
-        internal static VectorResource icon_speedup
-        {
-            get => GetVectorImage("icons.speedup.svg");
-        }
-        internal static VectorResource icon_slowdown
-        {
-            get => GetVectorImage("icons.slowdown.svg");
-        }
+        internal static VectorResource icon_tool_pencil => GetVectorImage("icons.tool_pencil.svg");
+        internal static VectorResource icon_tool_smooth_pencil => GetVectorImage("icons.tool_smooth_pencil.svg");
+        internal static VectorResource icon_tool_line => GetVectorImage("icons.tool_line.svg");
+        internal static VectorResource icon_tool_bezier => GetVectorImage("icons.tool_bezier.svg");
+        internal static VectorResource icon_tool_eraser => GetVectorImage("icons.tool_eraser.svg");
+        internal static VectorResource icon_tool_select => GetVectorImage("icons.tool_select.svg");
+        internal static VectorResource icon_tool_pan => GetVectorImage("icons.tool_pan.svg");
+        internal static VectorResource icon_play => GetVectorImage("icons.play.svg");
+        internal static VectorResource icon_pause => GetVectorImage("icons.pause.svg");
+        internal static VectorResource icon_stop => GetVectorImage("icons.stop.svg");
+        internal static VectorResource icon_flag => GetVectorImage("icons.flag.svg");
+        internal static VectorResource icon_generators => GetVectorImage("icons.generators.svg");
+        internal static VectorResource icon_menu => GetVectorImage("icons.menu.svg");
+        internal static VectorResource icon_reset_camera => GetVectorImage("icons.reset_camera.svg");
+        internal static VectorResource icon_speedup => GetVectorImage("icons.speedup.svg");
+        internal static VectorResource icon_slowdown => GetVectorImage("icons.slowdown.svg");
         #endregion
-
         #region Resources: UX
-        internal static System.Drawing.Bitmap ux_flagmarker
-        {
-            get
-            {
-                return GetBitmap("ux.flagmarker.png");
-            }
-        }
-        internal static System.Drawing.Bitmap ux_playheadmarker
-        {
-            get
-            {
-                return GetBitmap("ux.playheadmarker.png");
-            }
-        }
+        internal static Bitmap ux_flagmarker => GetBitmap("ux.flagmarker.png");
+        internal static Bitmap ux_playheadmarker => GetBitmap("ux.playheadmarker.png");
 
-        internal static VectorResource ux_loading
-        {
-            get => GetVectorImage("ux.loading.svg");
-        }
-        internal static VectorResource ux_widget_background
-        {
-            get => GetVectorImage("ux.widget_background.svg");
-        }
-        internal static VectorResource ux_tool_background
-        {
-            get => GetVectorImage("ux.tool_background.svg");
-        }
-        internal static VectorResource ux_swatch
-        {
-            get => GetVectorImage("ux.swatch.svg");
-        }
-        internal static VectorResource ux_swatch_active
-        {
-            get => GetVectorImage("ux.swatch_active.svg");
-        }
-        internal static VectorResource icon_multitool_indicator
-        {
-            get => GetVectorImage("ux.multitool_indicator.svg");
-        }
+        internal static VectorResource ux_loading => GetVectorImage("ux.loading.svg");
+        internal static VectorResource ux_widget_background => GetVectorImage("ux.widget_background.svg");
+        internal static VectorResource ux_tool_background => GetVectorImage("ux.tool_background.svg");
+        internal static VectorResource ux_swatch => GetVectorImage("ux.swatch.svg");
+        internal static VectorResource ux_swatch_active => GetVectorImage("ux.swatch_active.svg");
+        internal static VectorResource ux_multitool_indicator => GetVectorImage("ux.multitool_indicator.svg");
         #endregion
     }
 }

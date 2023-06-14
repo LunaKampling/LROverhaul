@@ -1,5 +1,5 @@
-﻿using System;
-using Gwen.Controls;
+﻿using Gwen.Controls;
+using System;
 namespace Gwen.ControlInternal
 {
     /// <summary>
@@ -14,10 +14,11 @@ namespace Gwen.ControlInternal
         /// </summary>
         public bool IsChecked
         {
-            get { return m_Checked; } 
+            get => m_Checked;
             set
             {
-                if (m_Checked == value) return;
+                if (m_Checked == value)
+                    return;
                 m_Checked = value;
                 OnCheckChanged();
             }
@@ -32,8 +33,8 @@ namespace Gwen.ControlInternal
         {
             AutoSizeToContents = false;
             ShouldDrawBackground = false;
-            SetSize(15, 15);
-			IsToggle = true;
+            _ = SetSize(15, 15);
+            IsToggle = true;
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Determines whether unchecking is allowed.
         /// </summary>
-        protected virtual bool AllowUncheck { get { return true; } }
+        protected virtual bool AllowUncheck => true;
 
         /// <summary>
         /// Handler for CheckChanged event.
@@ -71,18 +72,15 @@ namespace Gwen.ControlInternal
         protected virtual void OnCheckChanged()
         {
             if (IsChecked)
-            { 
-                if (Checked != null)
-					Checked.Invoke(this, EventArgs.Empty);
+            {
+                Checked?.Invoke(this, EventArgs.Empty);
             }
             else
             {
-                if (UnChecked != null)
-					UnChecked.Invoke(this, EventArgs.Empty);
+                UnChecked?.Invoke(this, EventArgs.Empty);
             }
 
-            if (CheckChanged != null)
-				CheckChanged.Invoke(this, EventArgs.Empty);
+            CheckChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -102,13 +100,13 @@ namespace Gwen.ControlInternal
         {
             if (IsDisabled)
                 return;
-            
+
             if (IsChecked && !AllowUncheck)
             {
                 return;
             }
 
-			base.OnClicked(x, y);
+            base.OnClicked(x, y);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-namespace linerider.IO
+﻿namespace linerider.IO
 {
     public class TrackSave
     {

@@ -16,15 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using linerider.Game;
-using linerider.Rendering;
-using OpenTK;
 using linerider.Utils;
-using System.Diagnostics;
+using OpenTK;
+using System;
 
 namespace linerider.Game
 {
@@ -32,7 +26,7 @@ namespace linerider.Game
     {
         protected AutoArray<CameraEntry> _frames = new AutoArray<CameraEntry>();
         private const int cacherate = 40;
-        private AutoArray<Vector2d> _framecache = new AutoArray<Vector2d>();
+        private readonly AutoArray<Vector2d> _framecache = new AutoArray<Vector2d>();
         private Vector2d _prevcamera = Vector2d.Zero;
         private int _prevframe = -1;
         private float _cachezoom = 1;
@@ -71,7 +65,7 @@ namespace linerider.Game
                 if (_prevframe <= frame)
                     _prevframe = -1;
             }
-            var cachepos = (frame / cacherate);
+            int cachepos = frame / cacherate;
             if (frame % cacherate != 0)
                 cachepos++;
 
@@ -82,7 +76,7 @@ namespace linerider.Game
             if (frame == 1)
             {
                 Rider firstframe = _timeline.GetFrame(0);
-                var entry = new CameraEntry(firstframe.CalculateCenter());
+                CameraEntry entry = new CameraEntry(firstframe.CalculateCenter());
                 _frames[0] = entry;
                 _framecache[0] = Vector2d.Zero;
             }
@@ -96,7 +90,7 @@ namespace linerider.Game
                 _framecache.UnsafeSetCount(1);
             }
             EnsureFrame(frame);
-            var offset = CalculateOffset(frame);
+            Vector2d offset = CalculateOffset(frame);
             _prevframe = frame;
             _prevcamera = offset;
             return _frames[frame].RiderCenter + offset;
@@ -155,9 +149,9 @@ namespace linerider.Game
             int maxwidth,
             int maxheight)
         {
-            var center = GetCenter();
+            Vector2d center = GetCenter();
             Vector2d size = new Vector2d(maxwidth / zoom, maxheight / zoom);
-            var origin = center - (size / 2);
+            Vector2d origin = center - size / 2;
             return new DoubleRect(origin, size);
         }
         public void OnResize()
@@ -167,9 +161,9 @@ namespace linerider.Game
         }
         public DoubleRect getclamp(float zoom, int width, int height)
         {
-            var ret = GetViewport(zoom, width, height);
-            var pos = ret.Vector + (ret.Size / 2);
-            var b = new CameraBoundingBox(pos);
+            DoubleRect ret = GetViewport(zoom, width, height);
+            Vector2d pos = ret.Vector + ret.Size / 2;
+            CameraBoundingBox b = new CameraBoundingBox(pos);
             if (Settings.SmoothCamera || Settings.RoundLegacyCamera)
             {
                 b.SetupSmooth(GetPPF(_currentframe), _zoom);
@@ -183,19 +177,19 @@ namespace linerider.Game
         }
         protected void EnsureFrame(int frame)
         {
-            //ensure timeline has the frames for us
-            //also timeline might invalidate our prev frames when calling
-            //so we do this at the top so it doesnt invalidate while calculating
-            _timeline.GetFrame(frame);
+            // Ensure timeline has the frames for us.
+            // Also timeline might invalidate our prev frames when calling
+            // so we do this at the top so it doesnt invalidate while calculating.
+            _ = _timeline.GetFrame(frame);
             if (frame >= _frames.Count)
             {
-                var diff = frame - (_frames.Count - 1);
-                var frames = _timeline.GetFrames(_frames.Count, diff);
-                var camoffset = _frames[_frames.Count - 1];
+                int diff = frame - (_frames.Count - 1);
+                Rider[] frames = _timeline.GetFrames(_frames.Count, diff);
+                CameraEntry camoffset = _frames[_frames.Count - 1];
                 for (int i = 0; i < diff; i++)
                 {
-                    var center = frames[i].CalculateCenter();
-                    var offset = camoffset.RiderCenter - center;
+                    Vector2d center = frames[i].CalculateCenter();
+                    Vector2d offset = camoffset.RiderCenter - center;
                     camoffset = new CameraEntry(center, offset, Vector2d.Zero);
                     _frames.Add(camoffset);
                 }
@@ -203,7 +197,7 @@ namespace linerider.Game
         }
         protected Vector2d CalculateOffset(int frame)
         {
-            var box = CameraBoundingBox.Create(Vector2d.Zero, _zoom);
+            CameraBoundingBox box = CameraBoundingBox.Create(Vector2d.Zero, _zoom);
             if (_prevframe != -1 &&
                 _prevframe <= frame &&
                 (frame - _prevframe) <= 1)
@@ -228,9 +222,6 @@ namespace linerider.Game
             // Debug.WriteLine("Calculating " + framestart + "-" + (frame) + " for legacy camera");
             return box.Clamp(start);
         }
-        protected virtual double GetPPF(int frame)
-        {
-            return 0;
-        }
+        protected virtual double GetPPF(int frame) => 0;
     }
 }

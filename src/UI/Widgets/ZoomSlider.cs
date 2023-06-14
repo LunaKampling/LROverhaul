@@ -15,19 +15,19 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Drawing;
 using Gwen.Controls;
 using linerider.UI.Components;
 using linerider.Utils;
 using OpenTK;
+using System;
+using System.Drawing;
 
 namespace linerider.UI
 {
     public class ZoomSlider : VerticalSlider
     {
-        private Editor _editor;
-        private Tooltip _tooltip;
+        private readonly Editor _editor;
+        private readonly Tooltip _tooltip;
         public ZoomSlider(ControlBase parent, Editor editor) : base(parent)
         {
             TooltipDelay = 0;
@@ -36,8 +36,10 @@ namespace linerider.UI
             _editor = editor;
             Height = 125;
             Width = 30;
-            _tooltip = new Tooltip(parent.GetCanvas());
-            _tooltip.IsHidden = true;
+            _tooltip = new Tooltip(parent.GetCanvas())
+            {
+                IsHidden = true
+            };
             Positioner = (o) =>
             {
                 return new Point(Parent.Width - Width - WidgetContainer.WidgetMargin, Parent.Height - Height - 50 - WidgetContainer.WidgetMargin);
@@ -47,7 +49,7 @@ namespace linerider.UI
             {
                 if (Held)
                 {
-                    var val = Value;
+                    double val = Value;
                     _editor.Zoom = (float)MathHelper.Clamp(Value, Constants.MinimumZoom, Settings.Local.MaxZoom);
                 }
                 UpdateTooltip();
@@ -76,7 +78,7 @@ namespace linerider.UI
                 UpdateTooltip();
             };
             Value = editor.Zoom;
-            OnThink += (o, e)=>
+            OnThink += (o, e) =>
             {
                 Value = editor.Zoom;
             };
@@ -85,8 +87,9 @@ namespace linerider.UI
         {
             if (!_tooltip.IsHidden)
             {
-                var loc = LocalPosToCanvas(new Point(0, m_SliderBar.Y));
-                _tooltip.Text = Math.Round(_editor.Zoom, 2) + "x"; ;
+                Point loc = LocalPosToCanvas(new Point(0, m_SliderBar.Y));
+                _tooltip.Text = Math.Round(_editor.Zoom, 2) + "x";
+                ;
                 _tooltip.Layout();
                 _tooltip.SetPosition(loc.X - _tooltip.Width, loc.Y);
             }

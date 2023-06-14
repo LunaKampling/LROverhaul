@@ -2,11 +2,11 @@
 
 namespace Gwen.Anim.Size
 {
-    class Width : TimedAnimation
+    internal class Width : TimedAnimation
     {
-        private int m_StartSize;
-        private int m_Delta;
-        private bool m_Hide;
+        private readonly int m_StartSize;
+        private readonly int m_Delta;
+        private readonly bool m_Hide;
 
         public Width(int startSize, int endSize, float length, bool hide = false, float delay = 0.0f, float ease = 1.0f)
             : base(length, delay, ease)
@@ -25,7 +25,7 @@ namespace Gwen.Anim.Size
         protected override void Run(float delta)
         {
             base.Run(delta);
-            m_Control.Width = (int)Math.Round(m_StartSize + (m_Delta * delta));
+            m_Control.Width = (int)Math.Round(m_StartSize + m_Delta * delta);
         }
 
         protected override void OnFinish()

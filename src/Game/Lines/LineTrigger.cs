@@ -16,8 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-
 namespace linerider.Game
 {
     public class LineTrigger
@@ -29,14 +27,10 @@ namespace linerider.Game
         public LineTrigger()
         {
         }
-        public bool CompareTo(LineTrigger other)
-        {
-            if (other == null)
-                return false;
-            return ZoomTrigger == other.ZoomTrigger &&
+        public bool CompareTo(LineTrigger other) => other != null
+&& ZoomTrigger == other.ZoomTrigger &&
             ZoomTarget == other.ZoomTarget &&
             ZoomFrames == other.ZoomFrames;
-        }
         public bool Activate(int hitdelta, ref float currentzoom)
         {
             bool handled = false;
@@ -46,8 +40,8 @@ namespace linerider.Game
                 {
                     if (hitdelta >= 0 && hitdelta < ZoomFrames)
                     {
-                        var diff = ZoomTarget - currentzoom;
-                        currentzoom = currentzoom + (diff / (ZoomFrames - hitdelta));
+                        float diff = ZoomTarget - currentzoom;
+                        currentzoom += diff / (ZoomFrames - hitdelta);
                         handled = true;
                     }
                     else

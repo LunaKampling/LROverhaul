@@ -43,10 +43,10 @@ namespace Gwen.Controls
         /// <param name="font">Font to use.</param>
         public void AddText(string text, Color color, Font font = null)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
                 return;
 
-            var lines = text.Split(newline, StringSplitOptions.None);
+            string[] lines = text.Split(newline, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {
                 if (i > 0)
@@ -110,7 +110,7 @@ namespace Gwen.Controls
             label.TextColorOverride = block.Color;
             label.Font = font;
             label.SetPosition(x, y);
-            //todo richlabel untested
+            // TODO: richlabel untested
             //lineheight = (lineheight + pLabel.Height()) / 2;
 
             x += label.TextWidth;
@@ -133,7 +133,7 @@ namespace Gwen.Controls
             if (m_NeedsRebuild)
                 Rebuild();
 
-            // align bottoms. this is still not ideal, need to take font metrics into account.
+            // Align bottoms. this is still not ideal, need to take font metrics into account.
             ControlBase prev = null;
             foreach (ControlBase child in Children)
             {
@@ -163,7 +163,7 @@ namespace Gwen.Controls
             int y = 0;
             int lineHeight = -1;
 
-            foreach (var block in m_TextBlocks)
+            foreach (TextBlock block in m_TextBlocks)
             {
                 if (block.Type == BlockType.NewLine)
                 {
@@ -183,7 +183,7 @@ namespace Gwen.Controls
 
         protected void SplitLabel(string text, Font font, TextBlock block, ref int x, ref int y, ref int lineHeight)
         {
-            var spaced = Util.SplitAndKeep(text, " ");
+            string[] spaced = Util.SplitAndKeep(text, " ");
             if (spaced.Length == 0)
                 return;
 
@@ -211,7 +211,7 @@ namespace Gwen.Controls
                 return;
             }
 
-            string newString = String.Empty;
+            string newString = string.Empty;
             for (int i = 0; i < spaced.Length; i++)
             {
                 wordSize = Skin.Renderer.MeasureText(font, newString + spaced[i]);

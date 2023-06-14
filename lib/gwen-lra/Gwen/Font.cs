@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Gwen
 {
@@ -64,10 +64,7 @@ namespace Gwen
             //Bold = false;
             //DropShadow = false;
         }
-        public virtual List<string> WordWrap(string input, int maxpx)
-        {
-            return new List<string>() { input };
-        }
+        public virtual List<string> WordWrap(string input, int maxpx) => new List<string>() { input };
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -81,7 +78,7 @@ namespace Gwen
 #if DEBUG
         ~Font()
         {
-            Debug.WriteLine(String.Format("IDisposable object finalized: {0}", GetType()));
+            Debug.WriteLine(string.Format("IDisposable object finalized: {0}", GetType()));
         }
 #endif
 
@@ -91,10 +88,12 @@ namespace Gwen
         /// <returns></returns>
         public Font Copy()
         {
-            Font f = new Font(m_Renderer, FaceName);
-            f.Size = Size;
-            f.RealSize = RealSize;
-            f.RendererData = null; // must be reinitialized
+            Font f = new Font(m_Renderer, FaceName)
+            {
+                Size = Size,
+                RealSize = RealSize,
+                RendererData = null // Must be reinitialized
+            };
             //f.Bold = Bold;
             //f.DropShadow = DropShadow;
 

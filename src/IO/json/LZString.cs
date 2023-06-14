@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.CompilerServices;
-using System.Diagnostics;
+using System.Text;
 
 namespace linerider.IO.json
 {
@@ -11,9 +9,9 @@ namespace linerider.IO.json
     // https://github.com/pieroxy/lz-string
     public class LZString
     {
-        static string keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-        static Dictionary<string, Dictionary<char, int>> baseReverseDic = new Dictionary<string, Dictionary<char, int>>();
-        static int[] base64Dictionary = null;
+        private static readonly string keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        private static readonly Dictionary<string, Dictionary<char, int>> baseReverseDic = new Dictionary<string, Dictionary<char, int>>();
+        private static int[] base64Dictionary = null;
 
         private static int getBaseValue(string alphabet, char character)
         {
@@ -41,13 +39,7 @@ namespace linerider.IO.json
             return base64Dictionary[character];
         }
 
-        public static string decompress(string compressed)
-        {
-            if (compressed == null) return "";
-            if (compressed == "") return null;
-            return _decompress(compressed.Length, 32768, compressed);
-        }
-
+        public static string decompress(string compressed) => compressed == null ? "" : compressed == "" ? null : Decompress(compressed.Length, 32768, compressed);
 
         private struct dec_data
         {
@@ -59,10 +51,9 @@ namespace linerider.IO.json
         {
             int bits = 0;
             int power = 1;
-            int resb = 0;
             while (power != maxpower)
             {
-                resb = data.val & data.position;
+                int resb = data.val & data.position;
                 data.position >>= 1;
                 if (data.position == 0)
                 {
@@ -80,36 +71,31 @@ namespace linerider.IO.json
             if (size >= array.Length)
                 Array.Resize(ref array, size * 4);
         }
-        public static string decompressBase64(string compressed)
+        public static string DecompressBase64(string compressed) => decompress(GetString(Convert.FromBase64String(compressed)));
+        public static string GetString(byte[] compressed)
         {
-            return decompress(getstring(Convert.FromBase64String(compressed)));
-        }
-        public static string getstring(byte[] compressed)
-        {
-            if (compressed == null) return "";
+            if (compressed == null)
+                return "";
             else
             {
                 int[] buf = new int[compressed.Length / 2];
                 for (int i = 0, TotalLen = buf.Length; i < TotalLen; i++)
                 {
-                    buf[i] = ((int)compressed[i * 2]) * 256 + ((int)compressed[i * 2 + 1]);
+                    buf[i] = compressed[i * 2] * 256 + compressed[i * 2 + 1];
                 }
                 char[] result = new char[buf.Length];
                 for (int i = 0; i < buf.Length; i++)
                 {
-                    result[i] = (char)(buf[i]);
+                    result[i] = (char)buf[i];
                 }
                 return new string(result);
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int NextValue(ref dec_data data)
+        private static int NextValue(ref dec_data data) => data.input[data.index++];
+        private static unsafe string Decompress(int length, int resetValue, string input)
         {
-            return data.input[data.index++];
-        }
-        private unsafe static string _decompress(int length, int resetValue, string input)
-        {
-            var powers = stackalloc int[32];
+            int* powers = stackalloc int[32];
             for (int i = 0; i < 32; i++)
             {
                 powers[i] = (int)Math.Pow(2, i);
@@ -123,7 +109,7 @@ namespace linerider.IO.json
             int enlargeIn = 4;
             int numBits = 3;
             int c = 0;
-            var data = new dec_data() { position = resetValue, index = 0, input = input };
+            dec_data data = new dec_data() { position = resetValue, index = 0, input = input };
             data.val = NextValue(ref data);
             EnsureSize(ref dictionary, dictSize + 4);
             EnsureSize(ref result, resultArraySize + 2);
@@ -137,11 +123,11 @@ namespace linerider.IO.json
             {
                 case 0:
                     bits = new_bits(powers[8], ref data);
-                    c = (char)(bits);
+                    c = (char)bits;
                     break;
                 case 1:
                     bits = new_bits(powers[16], ref data);
-                    c = (char)(bits);
+                    c = (char)bits;
                     break;
                 case 2:
                     return "";
@@ -165,21 +151,21 @@ namespace linerider.IO.json
                 {
                     case 0:
                         bits = new_bits(powers[8], ref data);
-                        dictionary[dictSize++] = new char[] { (char)(bits) };
+                        dictionary[dictSize++] = new char[] { (char)bits };
                         c = (char)(dictSize - 1);
                         enlargeIn--;
                         break;
                     case 1:
                         bits = new_bits(powers[16], ref data);
-                        dictionary[dictSize++] = new char[] { (char)(bits) };
+                        dictionary[dictSize++] = new char[] { (char)bits };
                         c = (char)(dictSize - 1);
                         enlargeIn--;
                         break;
                     case 2:
                         StringBuilder ret = new StringBuilder(charstoreturn);
-                        foreach (var str in result)
+                        foreach (char[] str in result)
                         {
-                            ret.Append(str);
+                            _ = ret.Append(str);
                         }
                         return ret.ToString();
                 }
@@ -223,9 +209,9 @@ namespace linerider.IO.json
         }
         private static readonly int machinebits = IntPtr.Size * 8;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe static char[] add(char[] w, char c)
+        private static unsafe char[] add(char[] w, char c)
         {
-            var wlen = w.Length;
+            int wlen = w.Length;
             char[] wplus0 = new char[wlen + 1];
             fixed (char* ptr = wplus0)
             {

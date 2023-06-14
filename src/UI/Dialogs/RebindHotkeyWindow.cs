@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
-using linerider.IO;
+using System;
 
 namespace linerider.UI
 {
@@ -23,7 +17,7 @@ namespace linerider.UI
             _binding = new Keybinding();
             _lasthit = _binding;
             Title = $"Rebind \"{label}\" (ESC to cancel)";
-            SetSize(350, 110);
+            _ = SetSize(350, 110);
             DisableResizing();
             MakeModal(true);
             Setup();
@@ -33,14 +27,14 @@ namespace linerider.UI
 
         protected override bool OnKeyEscape(bool down)
         {
-            Close();
+            _ = Close();
             return true;
         }
         protected override bool OnKeyReturn(bool down)
         {
             if (down)
             {
-                Close();
+                _ = Close();
                 if (!_binding.IsEmpty && KeybindChanged != null)
                 {
                     KeybindChanged.Invoke(this, _binding);
@@ -50,7 +44,7 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            var labeldesc = new Label(this)
+            _ = new Label(this)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
@@ -77,7 +71,7 @@ namespace linerider.UI
             base.Think();
             if (IsOnTop)
             {
-                var hk = InputUtils.ReadHotkey();
+                Keybinding hk = InputUtils.ReadHotkey();
                 bool changemade = false;
                 if (ModifierOnly)
                 {
@@ -94,16 +88,16 @@ namespace linerider.UI
                     {
                         if (hk.UsesModifiers)
                         {
-                            var mods = InputUtils.SplitModifiers(hk.Modifiers);
-                            var oldmods = InputUtils.SplitModifiers(_binding.Modifiers);
-                            foreach (var v in mods)
+                            System.Collections.Generic.List<OpenTK.Input.KeyModifiers> mods = InputUtils.SplitModifiers(hk.Modifiers);
+                            System.Collections.Generic.List<OpenTK.Input.KeyModifiers> oldmods = InputUtils.SplitModifiers(_binding.Modifiers);
+                            foreach (OpenTK.Input.KeyModifiers v in mods)
                             {
                                 if (!oldmods.Contains(v))
                                     changemade = true;
                             }
                         }
-                        if (hk.UsesKeys && hk.Key != _binding.Key ||
-                            hk.UsesMouse && hk.MouseButton != _binding.MouseButton)
+                        if ((hk.UsesKeys && hk.Key != _binding.Key) ||
+                            (hk.UsesMouse && hk.MouseButton != _binding.MouseButton))
                         {
                             changemade = true;
                         }

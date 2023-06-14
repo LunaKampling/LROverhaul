@@ -16,17 +16,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Utils;
+using OpenTK.Audio.OpenAL;
+using OpenTK.Input;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Collections.Generic;
-using OpenTK;
-using OpenTK.Input;
-using OpenTK.Audio;
-using OpenTK.Audio.OpenAL;
-using linerider.Audio;
-using linerider.Utils;
 
 namespace linerider.Audio
 {
@@ -35,7 +32,7 @@ namespace linerider.Audio
         private static string _currentsong = null;
         private static AudioDevice _device;
         private static AudioStreamer _musicplayer;
-        private static Stopwatch _audiosync_timer = Stopwatch.StartNew();
+        private static readonly Stopwatch _audiosync_timer = Stopwatch.StartNew();
 
         private static Dictionary<string, AudioSource> _sfx;
 
@@ -45,8 +42,10 @@ namespace linerider.Audio
             {
                 _device = new AudioDevice();
                 _musicplayer = new AudioStreamer();
-                _sfx = new Dictionary<string, AudioSource>();
-                _sfx["beep"] = new AudioSource(new NVorbis.VorbisReader(new MemoryStream(GameResources.beep), true));
+                _sfx = new Dictionary<string, AudioSource>
+                {
+                    ["beep"] = new AudioSource(new NVorbis.VorbisReader(new MemoryStream(GameResources.beep), true))
+                };
             }
         }
         private static void PlayClip(AudioSource audio)
@@ -61,7 +60,7 @@ namespace linerider.Audio
                     int len = audio.ReadBuffer();
                     if (len > 0)
                     {
-                        var bufferid = AL.GenBuffer();
+                        int bufferid = AL.GenBuffer();
                         AudioDevice.Check();
                         bufs.Add(bufferid);
                         AL.BufferData(bufferid, audio.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, audio.Buffer, len * sizeof(short), audio.SampleRate);
@@ -75,7 +74,7 @@ namespace linerider.Audio
             }
             catch
             {
-                //not that big of a deal...
+                // Not that big of a deal...
             }
             finally
             {
@@ -128,20 +127,11 @@ namespace linerider.Audio
             }
         }
 
-        public static void Pause()
-        {
-            _musicplayer?.Pause();
-        }
+        public static void Pause() => _musicplayer?.Pause();
 
-        public static void Resume(float seconds, float rate)
-        {
-            _musicplayer?.Play(seconds, rate);
-        }
+        public static void Resume(float seconds, float rate) => _musicplayer?.Play(seconds, rate);
 
-        public static void Stop()
-        {
-            _musicplayer?.Pause();
-        }
+        public static void Stop() => _musicplayer?.Pause();
 
         public static void CloseDevice()
         {
@@ -158,12 +148,12 @@ namespace linerider.Audio
             TimeSpan duration = TimeSpan.Zero;
             file = IO.ffmpeg.FFMPEG.ConvertSongToOgg(file, (string obj) =>
             {
-                var idx = obj.IndexOf("Duration: ", StringComparison.InvariantCulture);
+                int idx = obj.IndexOf("Duration: ", StringComparison.InvariantCulture);
                 if (idx != -1)
                 {
                     idx += "Duration: ".Length;
                     string length = obj.Substring(idx, obj.IndexOf(",", idx, StringComparison.InvariantCulture) - idx);
-                    var ts = TimeSpan.Parse(length);
+                    TimeSpan ts = TimeSpan.Parse(length);
                     duration = ts;
                 }
                 idx = obj.IndexOf("time=", StringComparison.InvariantCulture);
@@ -171,7 +161,7 @@ namespace linerider.Audio
                 {
                     idx += "time=".Length;
                     string length = obj.Substring(idx, obj.IndexOf(" ", idx, StringComparison.InvariantCulture) - idx);
-                    var ts = TimeSpan.Parse(length);
+                    TimeSpan ts = TimeSpan.Parse(length);
                     game.Title = Program.WindowTitle + string.Format(" [Converting song | {0:P}% | Hold ESC to cancel]", ts.TotalSeconds / duration.TotalSeconds);// "[" + (ts.TotalSeconds / duration.TotalSeconds) + "% converting song]";
                 }
 
@@ -183,23 +173,21 @@ namespace linerider.Audio
                 return true;
             });
             game.Title = Program.WindowTitle;
-            if (hardexit)
-                return null;
-            return file;
+            return hardexit ? null : file;
         }
         public static void EnsureSync()
         {
-            var editor = game.Track;
+            Editor editor = game.Track;
             if (Settings.MuteAudio ||
                 string.IsNullOrEmpty(editor.Song.Location) ||
                 !editor.Song.Enabled)
                 return;
 
-            var updaterate = (float)editor.Scheduler.UpdatesPerSecond;
-            var updatepercent = (float)editor.Scheduler.ElapsedPercent;
-            var expectedtime = editor.Song.Offset +
-                (editor.Offset / (float)Constants.PhysicsRate) +
-                (updatepercent / (float)Constants.PhysicsRate);
+            float updaterate = editor.Scheduler.UpdatesPerSecond;
+            float updatepercent = (float)editor.Scheduler.ElapsedPercent;
+            float expectedtime = editor.Song.Offset +
+                editor.Offset / (float)Constants.PhysicsRate +
+                updatepercent / Constants.PhysicsRate;
 
             bool shouldplay =
                 _musicplayer != null &&
@@ -208,26 +196,26 @@ namespace linerider.Audio
 
             if (shouldplay && !game.Canvas.Scrubbing)
             {
-                float rate = (updaterate / Constants.PhysicsRate);
+                float rate = updaterate / Constants.PhysicsRate;
                 if (rate > 2)
-                    AudioService.Pause();
+                    Pause();
                 else
                 {
                     if (game.ReversePlayback)
                         rate = -rate;
                     if (_musicplayer.Speed != rate || !_musicplayer.Playing)
                     {
-                        AudioService.Resume(
+                        Resume(
                             expectedtime,
                             rate);
                     }
                     else if (_musicplayer.Playing)
                     {
-                        var sp = _musicplayer.SongPosition;
-                        var syncrate = Math.Abs(expectedtime - sp);
+                        double sp = _musicplayer.SongPosition;
+                        double syncrate = Math.Abs(expectedtime - sp);
                         if (syncrate > 0.1)
                         {
-                            AudioService.Resume(
+                            Resume(
                                 expectedtime,
                                 rate);
                             _audiosync_timer.Restart();
@@ -241,7 +229,7 @@ namespace linerider.Audio
             }
             else
             {
-                AudioService.Pause();
+                Pause();
             }
         }
     }

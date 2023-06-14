@@ -25,21 +25,15 @@ namespace Gwen.Controls
         /// </summary>
         public int SplitWidth
         {
-            get
-            {
-                return m_SplitterBar.X;
-            }
-            set
-            {
-                m_SplitterBar.X = value;
-            }
+            get => m_SplitterBar.X;
+            set => m_SplitterBar.X = value;
         }
 
         #endregion Properties
 
         #region Constructors
 
-        // todo: rename?
+        // TODO: rename?
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyTable"/> class.
         /// </summary>
@@ -69,8 +63,8 @@ namespace Gwen.Controls
         /// <returns>Newly created row.</returns>
         public PropertyRow Add(string label, string value = "")
         {
-            var tx = new TextProperty(this);
-            var ret = Add(label, tx);
+            TextProperty tx = new TextProperty(this);
+            PropertyRow ret = Add(label, tx);
             tx.Value = value;
             return ret;
         }
@@ -82,8 +76,8 @@ namespace Gwen.Controls
         /// <returns>Newly created row.</returns>
         public PropertyRow AddLabel(string label, string value)
         {
-            var tx = new LabelProperty(this);
-            var ret = Add(label, tx);
+            LabelProperty tx = new LabelProperty(this);
+            PropertyRow ret = Add(label, tx);
             tx.Value = value;
             return ret;
         }
@@ -96,39 +90,34 @@ namespace Gwen.Controls
         /// <returns>Newly created row.</returns>
         public PropertyRow Add(string label, PropertyBase prop)
         {
-            PropertyRow row = new PropertyRow(this, prop);
-            row.Dock = Dock.Top;
-            row.Label = label;
+            PropertyRow row = new PropertyRow(this, prop)
+            {
+                Dock = Dock.Top,
+                Label = label
+            };
             row.ValueChanged += OnRowValueChanged;
             m_SplitterBar.BringToFront();
             return row;
         }
 
-
         /// <summary>
         /// Deletes all rows.
         /// </summary>
-        public void DeleteAll()
-        {
-            m_Panel.DeleteAllChildren();
-        }
+        public void DeleteAll() => m_Panel.DeleteAllChildren();
 
         /// <summary>
         /// Handles the splitter moved event.
         /// </summary>
         /// <param name="control">Event source.</param>
-        protected virtual void OnSplitterMoved(ControlBase control, EventArgs args)
+        protected virtual void OnSplitterMoved(ControlBase control, EventArgs args) => InvalidateChildren();
+        protected override void ProcessLayout(Size size)
         {
-            InvalidateChildren();
-        }
-        protected override void ProcessLayout(System.Drawing.Size size)
-        {
-            m_SplitterBar.SetSize(5, Height);
+            _ = m_SplitterBar.SetSize(5, Height);
             base.ProcessLayout(size);
         }
         public override Size GetSizeToFitContents()
         {
-            var ret = base.GetSizeToFitContents();
+            Size ret = base.GetSizeToFitContents();
             ret.Width = Math.Max(m_SplitterBar.X + 50, ret.Width);
             return ret;
         }
@@ -141,10 +130,6 @@ namespace Gwen.Controls
 
         #endregion Fields
 
-        private void OnRowValueChanged(ControlBase control, EventArgs args)
-        {
-            if (ValueChanged != null)
-                ValueChanged.Invoke(control, EventArgs.Empty);
-        }
+        private void OnRowValueChanged(ControlBase control, EventArgs args) => ValueChanged?.Invoke(control, EventArgs.Empty);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -17,31 +16,18 @@ namespace Gwen.ControlInternal
                     return Skin.Colors.Text.Disabled;
                 }
 
-                if (Parent is TreeNode node && node.IsSelected)
-                {
-                    return Skin.Colors.Text.AccentForeground;
-                }
-                if (IsDepressed)
-                {
-                    return Skin.Colors.Text.Contrast;
-                }
-                if (ToggleState)
-                {
-                    return Skin.Colors.Text.Highlight;
-                }
-
-                if (IsHovered)
-                {
-                    return Skin.Colors.Text.ContrastLow;
-                }
-                return Skin.Colors.Text.Foreground;
+                return Parent is TreeNode node && node.IsSelected
+                    ? Skin.Colors.Text.AccentForeground
+                    : IsDepressed
+                    ? Skin.Colors.Text.Contrast
+                    : ToggleState ? Skin.Colors.Text.Highlight : IsHovered ? Skin.Colors.Text.ContrastLow : Skin.Colors.Text.Foreground;
             }
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="TreeNodeLabel"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TreeNodeLabel(Controls.ControlBase parent)
+        public TreeNodeLabel(ControlBase parent)
             : base(parent)
         {
             Alignment = Pos.Left | Pos.CenterV;

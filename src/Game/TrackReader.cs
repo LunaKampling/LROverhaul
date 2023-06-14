@@ -16,50 +16,30 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
-using OpenTK;
-using System.IO;
-using System.Threading;
-using System.Diagnostics;
-using System.Collections.Generic;
-using linerider.Tools;
-using linerider.Rendering;
 using linerider.Game;
-using linerider.Utils;
 using linerider.IO;
+using linerider.Utils;
+using System;
+using System.Collections.Generic;
 namespace linerider
 {
     public class TrackReader : GameService, IDisposable
     {
         protected ResourceSync.ResourceLock _sync;
         protected Track _track;
-        private Track Track
-        {
-            get
-            {
-                if (_disposed)
-                    throw new ObjectDisposedException("TrackWriter");
-                return _track;
-            }
-        }
+        private Track Track => _disposed ? throw new ObjectDisposedException("TrackWriter") : _track;
         /// <summary>
         /// Returns the read-only track name.
         /// </summary>
         public virtual string Name
         {
-            get { return Track.Name; }
-            set { throw new NotSupportedException("Track reader cannot set Name"); }
+            get => Track.Name;
+            set => throw new NotSupportedException("Track reader cannot set Name");
         }
         /// <summary>
         /// The loaded track filename, if any
         /// </summary>
-        public string Filename
-        {
-            get { return Track.Filename; }
-        }
+        public string Filename => Track.Filename;
         protected EditorGrid _editorcells;
         private bool _disposed = false;
         protected TrackReader(ResourceSync.ResourceLock sync, Track track)
@@ -67,33 +47,20 @@ namespace linerider
             _track = track;
             _sync = sync;
         }
-        public static TrackReader AcquireRead(ResourceSync sync, Track track, EditorGrid cells)
-        {
-            return new TrackReader(sync.AcquireRead(), track) { _editorcells = cells };
-        }
+        public static TrackReader AcquireRead(ResourceSync sync, Track track, EditorGrid cells) => new TrackReader(sync.AcquireRead(), track) { _editorcells = cells };
 
-        public GameLine GetNewestLine()
-        {
-            if (Track.Lines.Count == 0)
-                return null;
-            return Track.LineLookup[Track.Lines.First.Value];
-        }
+        public GameLine GetNewestLine() => Track.Lines.Count == 0 ? null : Track.LineLookup[Track.Lines.First.Value];
 
-        public GameLine GetOldestLine()
-        {
-            if (Track.Lines.Count == 0)
-                return null;
-            return Track.LineLookup[Track.Lines.Last.Value];
-        }
+        public GameLine GetOldestLine() => Track.Lines.Count == 0 ? null : Track.LineLookup[Track.Lines.Last.Value];
         public IEnumerable<GameLine> GetLinesInRect(DoubleRect rect, bool precise)
         {
-            var ret = _editorcells.LinesInRect(rect);
+            EditorCell ret = _editorcells.LinesInRect(rect);
             if (precise)
             {
-                var newret = new List<GameLine>(ret.Count);
-                foreach (var line in ret)
+                List<GameLine> newret = new List<GameLine>(ret.Count);
+                foreach (GameLine line in ret)
                 {
-                    if (GameLine.DoesLineIntersectRect(
+                    if (Line.DoesLineIntersectRect(
                         line,
                         new DoubleRect(
                             rect.Left,
@@ -113,18 +80,9 @@ namespace linerider
         /// <summary>
         /// Ticks the rider in the simulation
         /// </summary>
-        public Rider TickBasic(Rider state, int maxiteration = 6)
-        {
-            return state.Simulate(_track.Grid, _track.Bones, null, maxiteration);
-        }
-        public string SaveTrackTrk(string savename)
-        {
-            return TRKWriter.SaveTrack(_track, savename);
-        }
-        public Dictionary<string, bool> GetFeatures()
-        {
-            return TrackIO.GetTrackFeatures(Track);
-        }
+        public Rider TickBasic(Rider state, int maxiteration = 6) => state.Simulate(_track.Grid, _track.Bones, null, maxiteration);
+        public string SaveTrackTrk(string savename) => TRKWriter.SaveTrack(_track, savename);
+        public Dictionary<string, bool> GetFeatures() => TrackIO.GetTrackFeatures(Track);
         public void Dispose()
         {
             if (!_disposed)

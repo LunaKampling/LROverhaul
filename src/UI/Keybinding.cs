@@ -1,5 +1,5 @@
-using System.Globalization;
 using OpenTK.Input;
+using System.Globalization;
 namespace linerider.UI
 {
     public class Keybinding
@@ -34,8 +34,8 @@ namespace linerider.UI
                 }
             }
         }
-        public KeyModifiers Modifiers = (KeyModifiers)(0);
-        public bool IsEmpty => (Modifiers == (KeyModifiers)(0) && Key == (Key)(-1) && MouseButton == (MouseButton)(-1));
+        public KeyModifiers Modifiers = 0;
+        public bool IsEmpty => Modifiers == 0 && Key == (Key)(-1) && MouseButton == (MouseButton)(-1);
         public int KeysDown
         {
             get
@@ -52,18 +52,9 @@ namespace linerider.UI
                 return ret;
             }
         }
-        public bool UsesModifiers
-        {
-            get => Modifiers != (KeyModifiers)(0);
-        }
-        public bool UsesKeys
-        {
-            get => Key != (Key)(-1);
-        }
-        public bool UsesMouse
-        {
-            get => MouseButton != (MouseButton)(-1);
-        }
+        public bool UsesModifiers => Modifiers != 0;
+        public bool UsesKeys => Key != (Key)(-1);
+        public bool UsesMouse => MouseButton != (MouseButton)(-1);
         public Keybinding()
         {
         }
@@ -89,12 +80,7 @@ namespace linerider.UI
             MouseButton = mouse;
             Modifiers = modifiers;
         }
-        public bool IsBindingEqual(Keybinding other)
-        {
-            if (other == null)
-                return false;
-            return other.Key == Key && other.Modifiers == Modifiers && other.MouseButton == MouseButton;
-        }
+        public bool IsBindingEqual(Keybinding other) => other != null && other.Key == Key && other.Modifiers == Modifiers && other.MouseButton == MouseButton;
         public override string ToString()
         {
             if (IsEmpty)
@@ -214,21 +200,16 @@ namespace linerider.UI
                 case Key.BackSlash:
                     return "\\";
                 default:
-                    var trans = TranslateChar(key);
+                    char trans = TranslateChar(key);
                     if (trans == ' ')
                         return key.ToString();
                     return trans.ToString();
             }
         }
-        private static char TranslateChar(Key key)
-        {
-            if (key >= Key.A && key <= Key.Z)
-                return (char)('A' + ((int)key - (int)Key.A));
-            if (key >= Key.Number0 && key <= Key.Number9)
-                return (char)('0' + ((int)key - (int)Key.Number0));
-            if (key >= Key.Keypad0 && key <= Key.Keypad9)
-                return (char)('0' + ((int)key - (int)Key.Keypad0));
-            return ' ';
-        }
+        private static char TranslateChar(Key key) => key >= Key.A && key <= Key.Z
+                ? (char)('A' + ((int)key - (int)Key.A))
+                : key >= Key.Number0 && key <= Key.Number9
+                ? (char)('0' + ((int)key - (int)Key.Number0))
+                : key >= Key.Keypad0 && key <= Key.Keypad9 ? (char)('0' + ((int)key - (int)Key.Keypad0)) : ' ';
     }
 }

@@ -16,13 +16,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using OpenTK.Graphics.OpenGL;
 using linerider.Utils;
+using OpenTK.Graphics.OpenGL;
+using System;
 
 namespace linerider.Drawing
 {
-    static class SafeFrameBuffer
+    internal static class SafeFrameBuffer
     {
         private enum Fbosupport
         {
@@ -37,20 +37,20 @@ namespace linerider.Drawing
         private static Fbosupport blit;
         public static void Initialize()
         {
-            var glstr = GL.GetString(StringName.Extensions).ToUpperInvariant();
-            var _version = new Version();
+            string glstr = GL.GetString(StringName.Extensions).ToUpperInvariant();
+            Version _version = new Version();
             try
             {
-                //this can fail for any number of reasons
-                var version = GL.GetString(StringName.Version).Split('.');
-                var major = int.Parse(version[0]);
-                var minor = int.Parse(version[1]);
+                // This can fail for any number of reasons
+                string[] version = GL.GetString(StringName.Version).Split('.');
+                int major = int.Parse(version[0]);
+                int minor = int.Parse(version[1]);
                 _version = new Version(major, minor);
-                System.Diagnostics.Debug.WriteLine("Using OpenGL Version "+_version);
+                System.Diagnostics.Debug.WriteLine("Using OpenGL Version " + _version);
             }
             catch
             {
-                //ignored
+                // Ignored
             }
             if (glstr.Contains("GL_ARB_FRAMEBUFFER_OBJECT") || _version >= new Version(3, 0))
             {
@@ -73,17 +73,17 @@ namespace linerider.Drawing
         }
 
         public static void RenderbufferStorageMultisample(RenderbufferTarget target, int samples,
-            RenderbufferStorage internalformat, Int32 width, Int32 height)
+            RenderbufferStorage internalformat, int width, int height)
         {
-            
+
             /*
             https://www.khronos.org/opengles/sdk/docs/man3/docbook4/xhtml/glRenderbufferStorageMultisample.xml
             samples must be must be less than or equal to
                         the maximum number of samples supported for internalformat.
                         (see glGetInternalformativ).
         */
-           // GL.GetInternalformat( ImageTarget.Renderbuffer, SizedInternalFormat.Rgba8, InternalFormatParameter.Samples,1,out samples);
-           // ErrorLog.WriteLine("sup" + support + "blit" + blit + "renderbuf" + renderbuffer + " samples" + samples);
+            // GL.GetInternalformat( ImageTarget.Renderbuffer, SizedInternalFormat.Rgba8, InternalFormatParameter.Samples,1,out samples);
+            // ErrorLog.WriteLine("sup" + support + "blit" + blit + "renderbuf" + renderbuffer + " samples" + samples);
             switch (renderbuffer)
             {
                 case Fbosupport.Full:
@@ -96,15 +96,14 @@ namespace linerider.Drawing
                     RenderbufferStorage(target, internalformat, width, height);
                     break;
             }
-            var err = GL.GetError();
+            ErrorCode err = GL.GetError();
             if (err != ErrorCode.NoError)
             {
                 ErrorLog.WriteLine("RenderBufferStorageMultisample Error " + err);
             }
-
         }
         public static void RenderbufferStorage(RenderbufferTarget target,
-            RenderbufferStorage internalformat, Int32 width, Int32 height)
+            RenderbufferStorage internalformat, int width, int height)
         {
             switch (support)
             {
@@ -119,7 +118,7 @@ namespace linerider.Drawing
             }
         }
 
-        public static void DeleteRenderbuffers(Int32 n, Int32[] renderbuffers)
+        public static void DeleteRenderbuffers(int n, int[] renderbuffers)
         {
 
             switch (support)
@@ -135,7 +134,7 @@ namespace linerider.Drawing
             }
         }
 
-        public static void DeleteFramebuffer(Int32 framebuffers)
+        public static void DeleteFramebuffer(int framebuffers)
         {
             switch (support)
             {
@@ -150,7 +149,7 @@ namespace linerider.Drawing
             }
         }
 
-        public static void BindRenderbuffer(RenderbufferTarget target, Int32 renderbuffer)
+        public static void BindRenderbuffer(RenderbufferTarget target, int renderbuffer)
         {
             switch (support)
             {
@@ -165,7 +164,7 @@ namespace linerider.Drawing
             }
         }
 
-        public static Int32 GenRenderbuffer()
+        public static int GenRenderbuffer()
         {
             switch (support)
             {
@@ -178,9 +177,8 @@ namespace linerider.Drawing
             }
         }
 
-
-        public static void BlitFramebuffer(Int32 srcX0, Int32 srcY0, Int32 srcX1, Int32 srcY1, Int32 dstX0, Int32 dstY0,
-            Int32 dstX1, Int32 dstY1, ClearBufferMask mask,
+        public static void BlitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0,
+            int dstX1, int dstY1, ClearBufferMask mask,
             BlitFramebufferFilter filter)
         {
             switch (blit)
@@ -213,7 +211,7 @@ namespace linerider.Drawing
 
         public static void FramebufferRenderbuffer(FramebufferTarget target,
             FramebufferAttachment attachment,
-            RenderbufferTarget renderbuffertarget, Int32 renderbuffer)
+            RenderbufferTarget renderbuffertarget, int renderbuffer)
         {
             switch (support)
             {
@@ -237,7 +235,7 @@ namespace linerider.Drawing
             }
             return 0;
         }
-        public static void BindFramebuffer(FramebufferTarget target, Int32 framebuffer)
+        public static void BindFramebuffer(FramebufferTarget target, int framebuffer)
         {
             switch (support)
             {

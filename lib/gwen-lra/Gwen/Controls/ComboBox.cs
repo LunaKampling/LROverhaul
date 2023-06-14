@@ -1,6 +1,6 @@
 ﻿using Gwen.ControlInternal;
-using System;
 using System.Drawing;
+using System.Linq;
 
 namespace Gwen.Controls
 {
@@ -23,7 +23,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Indicates whether the combo menu is open.
         /// </summary>
-        public bool IsOpen { get { return m_Menu != null && !m_Menu.IsHidden; } }
+        public bool IsOpen => m_Menu != null && !m_Menu.IsHidden;
 
         /// <summary>
         /// Selected item.
@@ -31,7 +31,7 @@ namespace Gwen.Controls
         /// <remarks>Not just String property, because items also have internal names.</remarks>
         public MenuItem SelectedItem
         {
-            get { return m_SelectedItem; }
+            get => m_SelectedItem;
             set
             {
                 if (value != null && value.Parent == m_Menu)
@@ -54,16 +54,18 @@ namespace Gwen.Controls
             : base(parent)
         {
             AutoSizeToContents = false;
-            SetSize(100, 20);
-            m_Menu = new Menu(this);
-            m_Menu.IsHidden = true;
-            m_Menu.IconMarginDisabled = true;
-            m_Menu.IsTabable = false;
+            _ = SetSize(100, 20);
+            m_Menu = new Menu(this)
+            {
+                IsHidden = true,
+                IconMarginDisabled = true,
+                IsTabable = false
+            };
             ComboBoxArrow arrow = new ComboBoxArrow(this);
             m_Button = arrow;
 
             Alignment = Pos.Left | Pos.CenterV;
-            Text = String.Empty;
+            Text = string.Empty;
 
             IsTabable = true;
             KeyboardInputEnabled = true;
@@ -81,7 +83,7 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public virtual MenuItem AddItem(string label, string name = "", object UserData = null)
         {
-            MenuItem item = m_Menu.AddItem(label, String.Empty);
+            MenuItem item = m_Menu.AddItem(label, string.Empty);
             item.Name = name;
             item.Selected += OnItemSelected;
             item.UserData = UserData;
@@ -106,11 +108,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Removes all items.
         /// </summary>
-        public virtual void DeleteAll()
-        {
-            if (m_Menu != null)
-                m_Menu.DeleteAll();
-        }
+        public virtual void DeleteAll() => m_Menu?.DeleteAll();
 
         public override void Disable()
         {
@@ -125,7 +123,8 @@ namespace Gwen.Controls
         {
             if (!IsDisabled)
             {
-                if (null == m_Menu || m_Menu.Children.Count == 0) return;
+                if (null == m_Menu || m_Menu.Children.Count == 0)
+                    return;
 
                 m_Menu.Parent = GetCanvas();
                 m_Menu.IsHidden = false;
@@ -133,7 +132,7 @@ namespace Gwen.Controls
 
                 Point p = LocalPosToCanvas(Point.Empty);
                 m_Menu.MinimumSize = new Size(Width, m_Menu.MinimumSize.Height);
-                m_Menu.SetBounds(new Rectangle(p.X, p.Y + Height, Width, m_Menu.Height));
+                _ = m_Menu.SetBounds(new Rectangle(p.X, p.Y + Height, Width, m_Menu.Height));
             }
         }
 
@@ -144,7 +143,7 @@ namespace Gwen.Controls
         /// <param name="name">The internal name to look for. To select by what is displayed to the user, use "SelectByText".</param>
         public void SelectByName(string name)
         {
-            foreach (MenuItem item in m_Menu.Children)
+            foreach (MenuItem item in m_Menu.Children.Cast<MenuItem>())
             {
                 if (item.Name == name)
                 {
@@ -161,7 +160,7 @@ namespace Gwen.Controls
         /// <param name="label">The label to look for, this is what is shown to the user.</param>
         public void SelectByText(string text)
         {
-            foreach (MenuItem item in m_Menu.Children)
+            foreach (MenuItem item in m_Menu.Children.Cast<MenuItem>())
             {
                 if (item.Text == text)
                 {
@@ -179,7 +178,7 @@ namespace Gwen.Controls
         /// If null is passed in, it will look for null/unset UserData.</param>
         public void SelectByUserData(object userdata)
         {
-            foreach (MenuItem item in m_Menu.Children)
+            foreach (MenuItem item in m_Menu.Children.Cast<MenuItem>())
             {
                 if (userdata == null)
                 {
@@ -199,14 +198,10 @@ namespace Gwen.Controls
 
         #endregion Methods
 
-        internal override bool IsMenuComponent
-        {
-            get { return true; }
-        }
+        internal override bool IsMenuComponent => true;
         protected override void ProcessLayout(Size size)
         {
-            if (m_Button != null)
-                m_Button.AlignToEdge(Pos.Right | Pos.CenterV, 4, 0);
+            m_Button?.AlignToEdge(Pos.Right | Pos.CenterV, 4, 0);
             base.ProcessLayout(size);
         }
 
@@ -241,16 +236,15 @@ namespace Gwen.Controls
         {
             if (!IsDisabled)
             {
-                //Convert selected to a menu item
-                MenuItem item = args.SelectedItem as MenuItem;
-                if (null == item) return;
+                // Convert selected to a menu item
+                if (!(args.SelectedItem is MenuItem item))
+                    return;
 
                 m_SelectedItem = item;
                 Text = m_SelectedItem.Text;
                 m_Menu.IsHidden = true;
 
-                if (ItemSelected != null)
-                    ItemSelected.Invoke(this, args);
+                ItemSelected?.Invoke(this, args);
 
                 Focus();
                 Invalidate();
@@ -260,11 +254,9 @@ namespace Gwen.Controls
         /// <summary>
         /// Handler for gaining keyboard focus.
         /// </summary>
-        protected override void OnKeyboardFocus()
-        {
-            //Until we add the blue highlighting again
+        protected override void OnKeyboardFocus() =>
+            // Until we add the blue highlighting again
             TextColor = Color.Black;
-        }
 
         /// <summary>
         /// Handler for Down Arrow keyboard event.
@@ -315,19 +307,13 @@ namespace Gwen.Controls
         /// <summary>
         /// Handler for losing keyboard focus.
         /// </summary>
-        protected override void OnLostKeyboardFocus()
-        {
-            Redraw();
-        }
+        protected override void OnLostKeyboardFocus() => Redraw();
 
         /// <summary>
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawComboBox(this, IsDepressed, IsOpen);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawComboBox(this, IsDepressed, IsOpen);
 
         /// <summary>
         /// Renders the focus overlay.

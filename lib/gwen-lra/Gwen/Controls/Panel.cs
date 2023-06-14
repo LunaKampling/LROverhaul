@@ -1,6 +1,3 @@
-using System;
-using System.Drawing;
-
 namespace Gwen.Controls
 {
     /// <summary>
@@ -11,10 +8,7 @@ namespace Gwen.Controls
         private byte _backgroundalpha = 255;
         public byte BackgroundAlpha
         {
-            get
-            {
-                return _backgroundalpha;
-            }
+            get => _backgroundalpha;
             set
             {
                 if (_backgroundalpha != value)

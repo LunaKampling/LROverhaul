@@ -16,14 +16,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Game;
 using linerider.Rendering;
+using linerider.UI;
 using OpenTK;
 using System;
-using Color = System.Drawing.Color;
-using OpenTK.Input;
-using linerider.Game;
-using linerider.UI;
 using System.Drawing;
+using Color = System.Drawing.Color;
 
 namespace linerider.Tools
 {
@@ -31,24 +30,9 @@ namespace linerider.Tools
     {
         public override Bitmap Icon => GameResources.icon_tool_line.Bitmap;
         public override string Name => "Line Tool";
-        public override MouseCursor Cursor
-        {
-            get { return game.Cursors.List[CursorsHandler.Type.Line]; }
-        }
-        public override Swatch Swatch
-        {
-            get
-            {
-                return SharedSwatches.DrawingToolsSwatch;
-            }
-        }
-        public override bool ShowSwatch
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Line];
+        public override Swatch Swatch => SharedSwatches.DrawingToolsSwatch;
+        public override bool ShowSwatch => true;
         public bool Snapped = false;
         private const float MINIMUM_LINE = 0.01f;
         private bool _addflip;
@@ -60,19 +44,16 @@ namespace linerider.Tools
             Swatch.Selected = LineType.Standard;
         }
 
-        public override void OnChangingTool()
-        {
-            Stop();
-        }
+        public override void OnChangingTool() => Stop();
         public override void OnMouseDown(Vector2d pos)
         {
             Active = true;
-            var gamepos = ScreenToGameCoords(pos);
+            Vector2d gamepos = ScreenToGameCoords(pos);
             if (EnableSnap)
             {
-                using (var trk = game.Track.CreateTrackReader())
+                using (TrackReader trk = game.Track.CreateTrackReader())
                 {
-                    var snap = TrySnapPoint(trk, gamepos, out bool success);
+                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
                     if (success)
                     {
                         _start = snap;
@@ -91,8 +72,7 @@ namespace linerider.Tools
                 Snapped = false;
             }
 
-
-            _addflip = UI.InputUtils.Check(UI.Hotkey.LineToolFlipLine);
+            _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
             _end = _start;
             game.Invalidate();
             base.OnMouseDown(pos);
@@ -109,9 +89,9 @@ namespace linerider.Tools
                 }
                 else if (EnableSnap)
                 {
-                    using (var trk = game.Track.CreateTrackReader())
+                    using (TrackReader trk = game.Track.CreateTrackReader())
                     {
-                        var snap = TrySnapPoint(trk, _end, out bool snapped);
+                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
                         if (snapped && snap != _start)
                         {
                             _end = snap;
@@ -129,9 +109,9 @@ namespace linerider.Tools
             if (Active)
             {
                 Active = false;
-                var diff = _end - _start;
-                var x = diff.X;
-                var y = diff.Y;
+                Vector2d diff = _end - _start;
+                double x = diff.X;
+                double y = diff.Y;
                 if (Math.Abs(x) + Math.Abs(y) < MINIMUM_LINE)
                     return;
                 if (game.ShouldXySnap())
@@ -140,9 +120,9 @@ namespace linerider.Tools
                 }
                 else if (EnableSnap)
                 {
-                    using (var trk = game.Track.CreateTrackWriter())
+                    using (TrackWriter trk = game.Track.CreateTrackWriter())
                     {
-                        var snap = TrySnapPoint(trk, _end, out bool snapped);
+                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
                         if (snapped && snap != _start)
                         {
                             _end = snap;
@@ -151,10 +131,10 @@ namespace linerider.Tools
                 }
                 if ((_end - _start).Length >= MINIMUM_LINE)
                 {
-                    using (var trk = game.Track.CreateTrackWriter())
+                    using (TrackWriter trk = game.Track.CreateTrackWriter())
                     {
                         game.Track.UndoManager.BeginAction();
-                        var added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
+                        GameLine added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
                             Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                         game.Track.UndoManager.EndAction();
                         if (added is StandardLine)
@@ -173,14 +153,14 @@ namespace linerider.Tools
             base.Render();
             if (Active)
             {
-                var diff = _end - _start;
-                var x = diff.X;
-                var y = diff.Y;
+                Vector2d diff = _end - _start;
+                double x = diff.X;
+                double y = diff.Y;
                 Color c = Color.FromArgb(200, 150, 150, 150);
                 if (Math.Abs(x) + Math.Abs(y) < MINIMUM_LINE)
                 {
                     c = Color.Red;
-                    var sz = 2f;
+                    float sz = 2f;
                     if (Swatch.Selected == LineType.Scenery)
                         sz *= Swatch.GreenMultiplier;
                     GameRenderer.RenderRoundedLine(_start, _end, c, sz);
@@ -196,8 +176,10 @@ namespace linerider.Tools
                             break;
 
                         case LineType.Acceleration:
-                            RedLine rl = new RedLine(_start, _end, _addflip);
-                            rl.Multiplier = Swatch.RedMultiplier;
+                            RedLine rl = new RedLine(_start, _end, _addflip)
+                            {
+                                Multiplier = Swatch.RedMultiplier
+                            };
                             rl.CalculateConstants();
                             GameRenderer.DrawTrackLine(rl, c, Settings.Editor.RenderGravityWells, true);
                             break;
@@ -210,13 +192,7 @@ namespace linerider.Tools
             }
         }
 
-        public override void Cancel()
-        {
-            Stop();
-        }
-        public override void Stop()
-        {
-            Active = false;
-        }
+        public override void Cancel() => Stop();
+        public override void Stop() => Active = false;
     }
 }

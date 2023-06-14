@@ -1,10 +1,4 @@
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
 
 namespace linerider.UI
 {

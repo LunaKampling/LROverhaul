@@ -1,4 +1,3 @@
-using System;
 namespace Gwen
 {
     public class Cursor

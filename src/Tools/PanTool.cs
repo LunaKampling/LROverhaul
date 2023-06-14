@@ -15,11 +15,9 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Drawing;
 using linerider.UI;
 using OpenTK;
-using OpenTK.Input;
+using System.Drawing;
 
 namespace linerider.Tools
 {
@@ -35,17 +33,9 @@ namespace linerider.Tools
         public override Bitmap Icon => GameResources.icon_tool_pan.Bitmap;
         public override Hotkey Hotkey => Hotkey.EditorPanTool;
         public override string Name => "Hand Tool";
-        public override MouseCursor Cursor
-        {
-            get
-            {
-                if (Active)
-                {
-                    return zoom ? game.Cursors.List[CursorsHandler.Type.Zoom] : game.Cursors.List[CursorsHandler.Type.DragActive];
-                }
-                return game.Cursors.List[CursorsHandler.Type.DragInactive];
-            }
-        }
+        public override MouseCursor Cursor => Active
+                    ? zoom ? game.Cursors.List[CursorsHandler.Type.Zoom] : game.Cursors.List[CursorsHandler.Type.DragActive]
+                    : game.Cursors.List[CursorsHandler.Type.DragInactive];
 
         public PanTool() : base()
         {
@@ -95,10 +85,10 @@ namespace linerider.Tools
                 }
                 else
                 {
-                    var newcenter =
+                    Vector2d newcenter =
                         CameraStart -
-                        ((pos / game.Track.Zoom) -
-                        (startposition / game.Track.Zoom));
+                        (pos / game.Track.Zoom -
+                        startposition / game.Track.Zoom);
                     game.Track.Camera.SetFrameCenter(newcenter);
                 }
                 game.Invalidate();

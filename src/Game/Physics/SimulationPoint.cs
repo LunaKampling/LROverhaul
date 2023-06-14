@@ -1,7 +1,5 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using OpenTK;
 using System.Runtime.InteropServices;
-using OpenTK;
 namespace linerider.Game
 {
     [StructLayout(LayoutKind.Sequential)]
@@ -21,38 +19,20 @@ namespace linerider.Game
         }
         public SimulationPoint Step()
         {
-            var momentum = Location - Previous + RiderConstants.Gravity;
+            Vector2d momentum = Location - Previous + RiderConstants.Gravity;
             return new SimulationPoint(Location + momentum, Location, momentum, Friction);
         }
         public SimulationPoint StepFriction()
         {
-            var momentum = (Location - Previous) * Friction + RiderConstants.Gravity;
+            Vector2d momentum = (Location - Previous) * Friction + RiderConstants.Gravity;
             return new SimulationPoint(Location + momentum, Location, momentum, Friction);
         }
-        public SimulationPoint AddPosition(Vector2d add)
-        {
-            return new SimulationPoint(Location + add, Previous, Momentum, Friction);
-        }
-        public SimulationPoint Replace(Vector2d location)
-        {
-            return new SimulationPoint(location, Previous, Momentum, Friction);
-        }
-        public SimulationPoint Replace(Vector2d location, Vector2d prev)
-        {
-            return new SimulationPoint(location, prev, Momentum, Friction);
-        }
-        public override bool Equals(Object obj)
-        {
-            return obj is SimulationPoint && this == (SimulationPoint)obj;
-        }
-        public override int GetHashCode()
-        {
-            return Location.GetHashCode() ^ Previous.GetHashCode();
-        }
-        public static bool FastEquals(ref SimulationPoint a, ref SimulationPoint b)
-        {
-            return a.Location == b.Location && a.Previous == b.Previous;
-        }
+        public SimulationPoint AddPosition(Vector2d add) => new SimulationPoint(Location + add, Previous, Momentum, Friction);
+        public SimulationPoint Replace(Vector2d location) => new SimulationPoint(location, Previous, Momentum, Friction);
+        public SimulationPoint Replace(Vector2d location, Vector2d prev) => new SimulationPoint(location, prev, Momentum, Friction);
+        public override bool Equals(object obj) => obj is SimulationPoint && this == (SimulationPoint)obj;
+        public override int GetHashCode() => Location.GetHashCode() ^ Previous.GetHashCode();
+        public static bool FastEquals(ref SimulationPoint a, ref SimulationPoint b) => a.Location == b.Location && a.Previous == b.Previous;
         public static bool operator ==(SimulationPoint x, SimulationPoint y)
         {
             return x.Location == y.Location && x.Previous == y.Previous;

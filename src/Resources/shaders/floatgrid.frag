@@ -1,6 +1,6 @@
 #version 120 /*TODO MAKE LINE COLOURS UNIFORMS*/
 
-uniform float u_zoom; //The current track zoom (needed to calculate the separation of neighbouring pixels)
+uniform float u_zoom; // The current track zoom (needed to calculate the separation of neighbouring pixels)
 
 varying vec2 world_position;
 varying vec2 pixel_coord;
@@ -13,7 +13,7 @@ vec2 sign(vec2 val){
 	return val/abs(val);
 }
 
-float grid_alph(vec2 pos, float res) //Returns (one minus) the alpha value of a given position based on its proximity to the grid
+float grid_alph(vec2 pos, float res) // Returns (one minus) the alpha value of a given position based on its proximity to the grid
 {
 	vec2 grid_low = sign(pos) * vec2(pow(2.0, floor(log2(abs(pos.x)))), pow(2.0, floor(log2(abs(pos.y)))));
 	vec2 grid_high = 2.0*grid_low;

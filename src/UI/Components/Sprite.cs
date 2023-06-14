@@ -16,12 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Drawing;
 using Gwen;
 using Gwen.Controls;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace linerider.UI.Components
 {
@@ -39,8 +36,7 @@ namespace linerider.UI.Components
 
         public void SetImage(Bitmap bmp)
         {
-            if (m_texture != null)
-                m_texture.Dispose();
+            m_texture?.Dispose();
 
             Texture tx = new Texture(Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
@@ -54,8 +50,7 @@ namespace linerider.UI.Components
         }
         public override void Dispose()
         {
-            if (m_texture != null)
-                m_texture.Dispose();
+            m_texture?.Dispose();
             base.Dispose();
         }
     }

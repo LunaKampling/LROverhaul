@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Gwen.Controls
+﻿namespace Gwen.Controls
 {
     /// <summary>
     /// Numeric text box - accepts only double numbers.
@@ -18,7 +16,7 @@ namespace Gwen.Controls
         /// </summary>
         public virtual double Value
         {
-            get { return m_Value; }
+            get => m_Value;
             set
             {
                 if (value != m_Value)
@@ -58,18 +56,15 @@ namespace Gwen.Controls
                 base.SetText(str, doEvents);
         }
 
-        public virtual void SetValue(double v)
-        {
-            m_Value = v;
-        }
+        public virtual void SetValue(double v) => m_Value = v;
 
         #endregion Methods
 
         protected virtual bool IsTextAllowed(string str)
         {
             if (str == "" || str == "-")
-                return true; // annoying if single - is not allowed
-            return double.TryParse(str, out double d);
+                return true; // Annoying if single - is not allowed
+            return double.TryParse(str, out _);
         }
 
         /// <summary>
@@ -110,21 +105,18 @@ namespace Gwen.Controls
             UpdateAfterTextChanged();
         }
 
-        protected virtual void UpdateAfterTextChanged()
-        {
-            UpdateValue();
-        }
+        protected virtual void UpdateAfterTextChanged() => UpdateValue();
 
         protected virtual void UpdateValue()
         {
             if (Validate(Text))
             {
-                var val = double.Parse(Text);
+                double val = double.Parse(Text);
                 if (OnlyWholeNumbers)
                     val = (int)val;
                 SetValue(val);
             }
-            else if (String.IsNullOrEmpty(Text) || Text == "-")
+            else if (string.IsNullOrEmpty(Text) || Text == "-")
             {
                 SetValue(0);
             }
@@ -135,12 +127,6 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="str">Text to evaluate.</param>
         /// <returns>True if the text is allowed.</returns>
-        protected virtual bool Validate(string str)
-        {
-            double d;
-            if (!double.TryParse(str, out d))
-                return false;
-            return true;
-        }
+        protected virtual bool Validate(string str) => double.TryParse(str, out _);
     }
 }

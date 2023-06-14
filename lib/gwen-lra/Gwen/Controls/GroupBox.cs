@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace Gwen.Controls
 {
@@ -15,7 +14,7 @@ namespace Gwen.Controls
         /// </summary>
         public Font Font
         {
-            get { return m_Label.Font; }
+            get => m_Label.Font;
             set
             {
                 m_Label.Font = value;
@@ -28,23 +27,11 @@ namespace Gwen.Controls
         /// </summary>
         public virtual string Text
         {
-            get
-            {
-                return m_Label.Text;
-            }
-            set
-            {
-                m_Label.Text = value;
-            }
+            get => m_Label.Text;
+            set => m_Label.Text = value;
         }
 
-        protected override Margin PanelMargin
-        {
-            get
-            {
-                return new Margin(5, m_Label.TextHeight + 5, 5, 5);
-            }
-        }
+        protected override Margin PanelMargin => new Margin(5, m_Label.TextHeight + 5, 5, 5);
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupBox"/> class.
@@ -52,10 +39,12 @@ namespace Gwen.Controls
         /// <param name="parent">Parent control.</param>
         public GroupBox(ControlBase parent) : base(parent)
         {
-            m_Label = new Label(null);
-            m_Label.TextPadding = new Padding(10, 0, 10, 0);
-            m_Label.Alignment = Pos.Top | Pos.Left;
-            m_Label.AutoSizeToContents = true;
+            m_Label = new Label(null)
+            {
+                TextPadding = new Padding(10, 0, 10, 0),
+                Alignment = Pos.Top | Pos.Left,
+                AutoSizeToContents = true
+            };
             PrivateChildren.Add(m_Label);
             m_Panel.AutoSizeToContents = true;
             Invalidate();
@@ -74,7 +63,7 @@ namespace Gwen.Controls
         {
             if (ShouldDrawBackground)
             {
-                var end = m_Label.TextX + m_Label.TextWidth;
+                int end = m_Label.TextX + m_Label.TextWidth;
                 int txwidth = m_Label.TextWidth - (end - Math.Min(end, Width - Padding.Right));
                 skin.DrawGroupBox(this, m_Label.TextX, m_Label.TextHeight, txwidth);
             }

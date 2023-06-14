@@ -16,9 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System.Drawing;
 using Gwen;
 using Gwen.Controls;
+using System.Drawing;
 
 namespace linerider.UI.Components
 {
@@ -34,34 +34,24 @@ namespace linerider.UI.Components
 
         public override void Dispose()
         {
-            if (tx1 != null)
-                tx1.Dispose();
-            if (_overridetex != null)
-                _overridetex.Dispose();
+            tx1?.Dispose();
+            _overridetex?.Dispose();
             base.Dispose();
         }
         public void SetImage(Bitmap bmp)
         {
-            if (m_texture != null)
-                m_texture.Dispose();
+            m_texture?.Dispose();
             Texture tx = new Texture(Skin.Renderer);
 
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
             m_texture = tx;
             tx1 = tx;
         }
-        public void DisableImageOverride()
-        {
-            _override = false;
-        }
-        public void EnableImageOverride()
-        {
-            _override = true;
-        }
+        public void DisableImageOverride() => _override = false;
+        public void EnableImageOverride() => _override = true;
         public void SetOverride(Bitmap bitmap)
         {
-            if (_overridetex != null)
-                _overridetex.Dispose();
+            _overridetex?.Dispose();
             Texture tx = new Texture(Skin.Renderer);
 
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bitmap);
@@ -69,8 +59,7 @@ namespace linerider.UI.Components
         }
         public override void SetImage(string textureName, bool center = false)
         {
-            if (m_texture != null)
-                m_texture.Dispose();
+            m_texture?.Dispose();
             m_texture = new Texture(Skin.Renderer);
             m_texture.Load(textureName);
         }

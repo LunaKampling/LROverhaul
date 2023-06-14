@@ -1,7 +1,5 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using Gwen.ControlInternal;
+﻿using Gwen.ControlInternal;
+using System;
 using System.Collections.Generic;
 
 namespace Gwen.Controls
@@ -16,29 +14,27 @@ namespace Gwen.Controls
         protected TreeControl m_TreeControl;
         protected Button m_ToggleButton;
         protected Button m_Title;
-        private bool m_Root;
         private bool m_Selected;
-        private bool m_Selectable;
 
         /// <summary>
         /// Indicates whether this is a root node.
         /// </summary>
-        public bool IsRoot { get { return m_Root; } set { m_Root = value; } }
+        public bool IsRoot { get; set; }
 
         /// <summary>
         /// Parent tree control.
         /// </summary>
         public TreeControl TreeControl
         {
-            get { return m_TreeControl; }
+            get => m_TreeControl;
             set
             {
                 m_TreeControl = value;
-                foreach (var child in Children)
+                foreach (ControlBase child in Children)
                 {
-                    if (child is TreeNode)
+                    if (child is TreeNode node)
                     {
-                        ((TreeNode)child).TreeControl = value;
+                        node.TreeControl = value;
                     }
                 }
             }
@@ -46,14 +42,14 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines whether the node is selectable.
         /// </summary>
-        public bool IsSelectable { get { return m_Selectable; } set { m_Selectable = value; } }
+        public bool IsSelectable { get; set; }
 
         /// <summary>
         /// Indicates whether the node is selected.
         /// </summary>
         public bool IsSelected
         {
-            get { return m_Selected; }
+            get => m_Selected;
             set
             {
                 if (!IsSelectable)
@@ -72,22 +68,18 @@ namespace Gwen.Controls
                 if (m_Title != null)
                     m_Title.ToggleState = value;
 
-                if (SelectionChanged != null)
-                    SelectionChanged.Invoke(this, EventArgs.Empty);
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
 
-                // propagate to root parent (tree)
-                if (m_TreeControl != null)
-                    m_TreeControl.OnSelectionChanged(this, EventArgs.Empty);
+                // Propagate to root parent (tree)
+                m_TreeControl?.OnSelectionChanged(this, EventArgs.Empty);
 
                 if (value)
                 {
-                    if (Selected != null)
-                        Selected.Invoke(this, EventArgs.Empty);
+                    Selected?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    if (Unselected != null)
-                        Unselected.Invoke(this, EventArgs.Empty);
+                    Unselected?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -97,14 +89,8 @@ namespace Gwen.Controls
         /// </summary>
         public string Text
         {
-            get
-            {
-                return m_Title.Text;
-            }
-            set
-            {
-                m_Title.Text = value;
-            }
+            get => m_Title.Text;
+            set => m_Title.Text = value;
         }
 
         /// <summary>
@@ -136,13 +122,7 @@ namespace Gwen.Controls
         /// Invoked when the node has been collapsed.
         /// </summary>
         public event GwenEventHandler<EventArgs> Collapsed;
-        protected override Margin PanelMargin
-        {
-            get
-            {
-                return new Margin(TreeIndentation, 0, 0, 0);
-            }
-        }
+        protected override Margin PanelMargin => new Margin(TreeIndentation, 0, 0, 0);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TreeNode"/> class.
@@ -151,29 +131,33 @@ namespace Gwen.Controls
         public TreeNode(ControlBase parent)
                     : base(parent)
         {
-            m_ToggleButton = new TreeToggleButton(null);
-            m_ToggleButton.ToolTipProvider = false;
-            m_ToggleButton.SetBounds(0, 0, 15, 15);
+            m_ToggleButton = new TreeToggleButton(null)
+            {
+                ToolTipProvider = false
+            };
+            _ = m_ToggleButton.SetBounds(0, 0, 15, 15);
             m_ToggleButton.Toggled += OnToggleButtonPress;
-            // m_ToggleButton.Dock = Dock.Left;
+            //m_ToggleButton.Dock = Dock.Left;
 
-            m_Title = new TreeNodeLabel(null);
-            m_Title.ToolTipProvider = false;
+            m_Title = new TreeNodeLabel(null)
+            {
+                ToolTipProvider = false
+            };
             m_Title.DoubleClicked += OnDoubleClickName;
 
             m_Title.Clicked += OnClickName;
             m_Title.Dock = Dock.Top;
             m_Title.Margin = new Margin(16, 0, 0, 0);
-            // m_Title.BoundsChanged += 
+            //m_Title.BoundsChanged += 
             PrivateChildren.Insert(0, m_ToggleButton);
             PrivateChildren.Insert(0, m_Title);
             m_Panel.Dock = Dock.Fill;
             m_Panel.Hide();
             m_ToggleButton.Hide();
 
-            m_Root = parent is TreeControl;
+            IsRoot = parent is TreeControl;
             m_Selected = false;
-            m_Selectable = true;
+            IsSelectable = true;
 
             Dock = Dock.Top;
             AutoSizeToContents = true;
@@ -186,7 +170,7 @@ namespace Gwen.Controls
         protected override void Render(Skin.SkinBase skin)
         {
             int bottom = 0;
-            var children = m_Panel.Children.Count;
+            int children = m_Panel.Children.Count;
             if (children > 0)
             {
                 bottom = m_Panel.Children[children - 1].Y + m_Panel.Y;
@@ -211,8 +195,10 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public TreeNode AddNode(string label)
         {
-            TreeNode node = new TreeNode(this);
-            node.Text = label;
+            TreeNode node = new TreeNode(this)
+            {
+                Text = label
+            };
 
             return node;
         }
@@ -226,8 +212,7 @@ namespace Gwen.Controls
             if (m_ToggleButton != null)
                 m_ToggleButton.ToggleState = true;
 
-            if (Expanded != null)
-                Expanded.Invoke(this, EventArgs.Empty);
+            Expanded?.Invoke(this, EventArgs.Empty);
 
             Invalidate();
         }
@@ -241,8 +226,7 @@ namespace Gwen.Controls
             if (m_ToggleButton != null)
                 m_ToggleButton.ToggleState = false;
 
-            if (Collapsed != null)
-                Collapsed.Invoke(this, EventArgs.Empty);
+            Collapsed?.Invoke(this, EventArgs.Empty);
 
             Invalidate();
         }
@@ -255,8 +239,7 @@ namespace Gwen.Controls
             Open();
             foreach (ControlBase child in Children)
             {
-                TreeNode node = child as TreeNode;
-                if (node == null)
+                if (!(child is TreeNode node))
                     continue;
                 node.ExpandAll();
             }
@@ -273,8 +256,7 @@ namespace Gwen.Controls
 
             foreach (ControlBase child in Children)
             {
-                TreeNode node = child as TreeNode;
-                if (node == null)
+                if (!(child is TreeNode node))
                     continue;
                 node.UnselectAll();
             }
@@ -313,30 +295,21 @@ namespace Gwen.Controls
         /// <param name="control">Event source.</param>
         protected virtual void OnClickName(ControlBase control, EventArgs args)
         {
-            if (LabelPressed != null)
-                LabelPressed.Invoke(this, EventArgs.Empty);
+            LabelPressed?.Invoke(this, EventArgs.Empty);
             IsSelected = !IsSelected;
         }
 
-        public void SetImage(string textureName)
-        {
-            m_Title.SetImage(textureName);
-        }
+        public void SetImage(string textureName) => m_Title.SetImage(textureName);
 
         protected override void OnChildAdded(ControlBase child)
         {
-            TreeNode node = child as TreeNode;
-            if (node != null)
+            if (child is TreeNode node)
             {
                 node.TreeControl = m_TreeControl;
 
-                if (m_TreeControl != null)
-                {
-                    m_TreeControl.OnNodeAdded(node);
-                }
+                m_TreeControl?.OnNodeAdded(node);
             }
-            if (m_ToggleButton != null)
-                m_ToggleButton.Show();
+            m_ToggleButton?.Show();
 
             base.OnChildAdded(child);
         }
@@ -352,16 +325,8 @@ namespace Gwen.Controls
         }
         public override event GwenEventHandler<ClickedEventArgs> Clicked
         {
-            add
-            {
-                m_Title.Clicked += delegate (ControlBase sender, ClickedEventArgs args) { value(this, args); };
-            }
-            remove
-            {
-
-                throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");
-                //m_Title.Clicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
-            }
+            add => m_Title.Clicked += delegate (ControlBase sender, ClickedEventArgs args) { value(this, args); };
+            remove => throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");//m_Title.Clicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
         }
 
         public override event GwenEventHandler<ClickedEventArgs> DoubleClicked
@@ -373,24 +338,13 @@ namespace Gwen.Controls
                     m_Title.DoubleClicked += delegate (ControlBase sender, ClickedEventArgs args) { value(this, args); };
                 }
             }
-            remove
-            {
-                throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");
-                //m_Title.DoubleClicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
-            }
+            remove => throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");//m_Title.DoubleClicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
         }
 
         public override event GwenEventHandler<ClickedEventArgs> RightClicked
         {
-            add
-            {
-                m_Title.RightClicked += delegate (ControlBase sender, ClickedEventArgs args) { value(this, args); };
-            }
-            remove
-            {
-                throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");
-                //m_Title.RightClicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
-            }
+            add => m_Title.RightClicked += delegate (ControlBase sender, ClickedEventArgs args) { value(this, args); };
+            remove => throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");//m_Title.RightClicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
         }
 
         public override event GwenEventHandler<ClickedEventArgs> DoubleRightClicked
@@ -402,11 +356,7 @@ namespace Gwen.Controls
                     m_Title.DoubleRightClicked += delegate (ControlBase sender, ClickedEventArgs args) { value(this, args); };
                 }
             }
-            remove
-            {
-                throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");
-                //m_Title.DoubleRightClicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
-            }
+            remove => throw new Exception("Gwen can't handle treenode clicked unsubscribing lol");//m_Title.DoubleRightClicked -= delegate(ControlBase sender, ClickedEventArgs args) { value(this, args); };
         }
 
         public IEnumerable<TreeNode> SelectedChildren
@@ -417,13 +367,12 @@ namespace Gwen.Controls
 
                 foreach (ControlBase child in Children)
                 {
-                    TreeNode node = child as TreeNode;
-                    if (node == null)
+                    if (!(child is TreeNode node))
                         continue;
                     Trees.AddRange(node.SelectedChildren);
                 }
 
-                if (this.IsSelected)
+                if (IsSelected)
                 {
                     Trees.Add(this);
                 }

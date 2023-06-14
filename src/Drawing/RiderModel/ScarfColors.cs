@@ -1,27 +1,14 @@
-﻿using linerider.Utils;
-using Newtonsoft.Json.Linq;
-using OpenTK.Audio.OpenAL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.IO.Ports;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace linerider.Drawing.RiderModel
 {
     public static class ScarfColors
     {
-        private static List<int> Colors = new List<int>();
-        private static List<byte> Opacity = new List<byte>();
-        public static List<int> GetColorList()
-        {
-            return Colors;
-        }
-        public static List<byte> GetOpacityList()
-        {
-            return Opacity;
-        }
+        private static readonly List<int> Colors = new List<int>();
+        private static readonly List<byte> Opacity = new List<byte>();
+        public static List<int> GetColorList() => Colors;
+        public static List<byte> GetOpacityList() => Opacity;
         public static void Add(int color, byte opacity)
         {
             Colors.Add(color);
@@ -37,14 +24,8 @@ namespace linerider.Drawing.RiderModel
             Colors.RemoveAt(index);
             Opacity.RemoveAt(index);
         }
-        public static bool AreEmpty()
-        {
-            return !Colors.Any();
-        }
-        public static int Count()
-        {
-            return Colors.Count();
-        }
+        public static bool AreEmpty() => !Colors.Any();
+        public static int Count() => Colors.Count();
         public static void RemoveAll()
         {
             Colors.Clear();

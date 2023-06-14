@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-
-namespace Gwen.Controls
+﻿namespace Gwen.Controls
 {
     /// <summary>
     /// Menu strip.
@@ -15,7 +12,7 @@ namespace Gwen.Controls
         public MenuStrip(ControlBase parent)
             : base(parent)
         {
-            SetBounds(0, 0, 200, 22);
+            _ = SetBounds(0, 0, 200, 22);
             Dock = Dock.Top;
             m_Panel.Padding = new Padding(0, 0, 0, 0);
         }
@@ -25,7 +22,7 @@ namespace Gwen.Controls
         /// </summary>
         public override void Close()
         {
-            
+
         }
 
         /// <summary>
@@ -40,18 +37,12 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawMenuStrip(this);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawMenuStrip(this);
 
         /// <summary>
         /// Determines whether the menu should open on mouse hover.
         /// </summary>
-        protected override bool ShouldHoverOpenMenu
-        {
-            get { return IsMenuOpen(); }
-        }
+        protected override bool ShouldHoverOpenMenu => IsMenuOpen();
 
         /// <summary>
         /// Add item handler.
@@ -64,8 +55,8 @@ namespace Gwen.Controls
             item.Padding = new Padding(10, 5, 10, 5);
             item.IsOnStrip = true;
             item.HoverEnter += OnHoverItem;
-            item.SizeToChildren();
-            SizeToChildren();
+            _ = item.SizeToChildren();
+            _ = SizeToChildren();
         }
     }
 }

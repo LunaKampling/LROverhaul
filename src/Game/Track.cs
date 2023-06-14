@@ -16,18 +16,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using linerider.Rendering;
-using OpenTK;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
+using linerider.Audio;
 using linerider.Game;
 using linerider.Utils;
+using OpenTK;
+using System.Collections.Generic;
 using System.Diagnostics;
-using linerider.Audio;
-using System.Linq;
+using System.Drawing;
 
 namespace linerider
 {
@@ -47,10 +42,7 @@ namespace linerider
         public Bone[] Bones = new Bone[RiderConstants.Bones.Length];
         public Vector2d StartOffset
         {
-            get
-            {
-                return _start;
-            }
+            get => _start;
             set
             {
                 _start = value;
@@ -90,9 +82,9 @@ namespace linerider
         public int LineColorR = Settings.Colors.ExportLine.R;
         public int LineColorG = Settings.Colors.ExportLine.G;
         public int LineColorB = Settings.Colors.ExportLine.B;
-        public float YGravity = 1; //default gravity
-        public float XGravity = 0; //default gravity
-        public double GravityWellSize = 10; //Default Gravity Well Size
+        public float YGravity = 1; // Default gravity
+        public float XGravity = 0; // Default gravity
+        public double GravityWellSize = 10; // Default Gravity Well Size
 
         public Track()
         {
@@ -102,7 +94,7 @@ namespace linerider
         {
             GameLine[] ret = new GameLine[LineLookup.Count];
             int index = ret.Length - 1;
-            foreach (var id in Lines)
+            foreach (int id in Lines)
             {
                 ret[index] = LineLookup[id];
                 index--;
@@ -114,23 +106,22 @@ namespace linerider
             GameLine[] ret = new GameLine[LineLookup.Count];
             SortedSet<int> temp = new SortedSet<int>(Lines);
             int index = 0;
-            // sorted as -2 -1 0 1 2
-            foreach (var line in temp)
-            {
+            // Sorted as -2 -1 0 1 2
+            foreach (int line in temp)
                 ret[index++] = LineLookup[line];
-            }
+
             return ret;
         }
         private void GenerateBones()
         {
-            // if the start offset is different the floating point math could
+            // If the start offset is different the floating point math could
             // result in a slightly different restlength and cause inconsistency.
-            var joints = GetStart().Body;
+            ImmutablePointCollection joints = GetStart().Body;
             Bone[] bones = new Bone[RiderConstants.Bones.Length];
             for (int i = 0; i < bones.Length; i++)
             {
-                var bone = RiderConstants.Bones[i];
-                var rest = (joints[bone.joint1].Location - joints[bone.joint2].Location).Length;
+                Bone bone = RiderConstants.Bones[i];
+                double rest = (joints[bone.joint1].Location - joints[bone.joint2].Location).Length;
                 if (bone.OnlyRepel)
                     rest *= 0.5;
                 bones[i] = new Bone(
@@ -180,10 +171,10 @@ namespace linerider
                 !LineLookup.ContainsKey(line.ID),
                 "Lines occupying the same ID -- really bad");
             LineLookup.Add(line.ID, line);
-            // here is where using a linkedlist shines:
+            // Here is where using a linkedlist shines:
             // we can make the most recent change at the front so if it gets
             // looked up it's easier and faster to find
-            Lines.AddFirst(line.ID);
+            _ = Lines.AddFirst(line.ID);
 
             if (line is StandardLine stl)
                 AddLineToGrid(stl);
@@ -202,8 +193,8 @@ namespace linerider
                     SceneryLines--;
                     break;
             }
-            LineLookup.Remove(line.ID);
-            Lines.Remove(line.ID);
+            _ = LineLookup.Remove(line.ID);
+            _ = Lines.Remove(line.ID);
             if (line.ID == LinesMax)
             {
                 LinesMax = line.ID - 1;
@@ -218,44 +209,26 @@ namespace linerider
         }
         public void MoveLine(StandardLine line, Vector2d new1, Vector2d new2)
         {
-            var old = line.Position1;
-            var old2 = line.Position2;
+            Vector2d old = line.Position1;
+            Vector2d old2 = line.Position2;
             line.Position1 = new1;
             line.Position2 = new2;
             line.CalculateConstants();
             Grid.MoveLine(old, old2, line);
         }
-        public int GetVersion()
-        {
-            return Grid.GridVersion;
-        }
+        public int GetVersion() => Grid.GridVersion;
 
-        public bool IsLineCollided(int id)
-        {
-            return false;
-        }
+        public bool IsLineCollided(int id) => false;
 
         /// <summary>
         /// Adds the line to the physics grid.
         /// </summary>
-        public void AddLineToGrid(StandardLine line)
-        {
-            Grid.AddLine(line);
-        }
+        public void AddLineToGrid(StandardLine line) => Grid.AddLine(line);
         /// <summary>
         /// Removes the line from the physics
         /// </summary>
-        public void RemoveLineFromGrid(StandardLine line)
-        {
-            Grid.RemoveLine(line);
-        }
-        public Rider GetStart()
-        {
-            return Rider.Create(this.StartOffset, new Vector2d(ZeroStart ? 0 : RiderConstants.StartingMomentum, 0), Remount, frictionless);
-        }
-        public void SetVersion(int version)
-        {
-            Grid.GridVersion = version;
-        }
+        public void RemoveLineFromGrid(StandardLine line) => Grid.RemoveLine(line);
+        public Rider GetStart() => Rider.Create(StartOffset, new Vector2d(ZeroStart ? 0 : RiderConstants.StartingMomentum, 0), Remount, frictionless);
+        public void SetVersion(int version) => Grid.GridVersion = version;
     }
 }

@@ -16,34 +16,31 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using Gwen;
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using Gwen;
-using Gwen.Controls;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
 namespace linerider.UI.Components
 {
     public class PlayheadMarker : Gwen.ControlInternal.Dragger
     {
         private Texture m_texture;
-        private byte Alpha = 255;
+        private readonly byte Alpha = 255;
         public int Frame
         {
             get
             {
-                var left = X - Margin.Left;
-                var w = (double)_owner.Width - (Margin.Width + Width);
-                var perc = left / w;
+                int left = X - Margin.Left;
+                double w = (double)_owner.Width - (Margin.Width + Width);
+                double perc = left / w;
                 Debug.Assert(perc >= 0, "Playhead marker frame cannot be < 0%");
                 Debug.Assert(perc <= 1, "Playhead marker frame cannot be > 100%");
-                var frame = (int)Math.Round(_owner.Max * perc);
+                int frame = (int)Math.Round(_owner.Max * perc);
                 return frame;
             }
         }
-        private Playhead _owner;
+        private readonly Playhead _owner;
         public PlayheadMarker(Playhead owner)
             : base(owner)
         {
@@ -55,8 +52,7 @@ namespace linerider.UI.Components
         }
         public void SetImage(Bitmap bmp)
         {
-            if (m_texture != null)
-                m_texture.Dispose();
+            m_texture?.Dispose();
 
             Texture tx = new Texture(Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
@@ -67,16 +63,15 @@ namespace linerider.UI.Components
         {
             skin.Renderer.DrawColor = Color.FromArgb(Alpha, 255, 255, 255);
             Rectangle bounds = RenderBounds;
-            bounds.Y = (bounds.Y + Height / 2) - m_texture.Height / 2;
-            bounds.X = (bounds.X + Width / 2) - m_texture.Width / 2;
+            bounds.Y = bounds.Y + Height / 2 - m_texture.Height / 2;
+            bounds.X = bounds.X + Width / 2 - m_texture.Width / 2;
             bounds.Height = m_texture.Height;
             bounds.Width = m_texture.Width;
             skin.Renderer.DrawTexturedRect(m_texture, bounds);
         }
         public override void Dispose()
         {
-            if (m_texture != null)
-                m_texture.Dispose();
+            m_texture?.Dispose();
             base.Dispose();
         }
     }

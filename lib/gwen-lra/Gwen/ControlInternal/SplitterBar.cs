@@ -1,7 +1,4 @@
-﻿using System;
-using Gwen.Controls;
-
-namespace Gwen.ControlInternal
+﻿namespace Gwen.ControlInternal
 {
     /// <summary>
     /// Splitter bar.
@@ -25,12 +22,9 @@ namespace Gwen.ControlInternal
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.SkinBase skin)
         {
-           if (ShouldDrawBackground)
+            if (ShouldDrawBackground)
                 skin.DrawButton(this, true, false, IsDisabled);
         }
-        protected override void ProcessLayout(System.Drawing.Size size)
-        {
-            MoveTo(X, Y);
-        }
+        protected override void ProcessLayout(System.Drawing.Size size) => MoveTo(X, Y);
     }
 }

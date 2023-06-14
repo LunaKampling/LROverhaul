@@ -21,7 +21,7 @@ namespace linerider.Drawing.RiderModel
 
             Legacy = false;
 
-            Cache.Parse(RegionsCacheLines);
+            _ = Cache.Parse(RegionsCacheLines);
         }
     }
 }

@@ -1,19 +1,15 @@
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using linerider.Utils;
 using linerider.Drawing;
 using linerider.Game;
+using linerider.Utils;
+using System;
+using System.Collections.Generic;
 namespace linerider.Rendering
 {
     internal class LineDecorator : IDisposable
     {
-        private LineColorRenderer _linecolorrenderer;
-        private LineAccelRenderer _lineaccelrenderer;
-        private WellRenderer _wellrenderer;
+        private readonly LineColorRenderer _linecolorrenderer;
+        private readonly LineAccelRenderer _lineaccelrenderer;
+        private readonly WellRenderer _wellrenderer;
         public LineDecorator()
         {
             _linecolorrenderer = new LineColorRenderer();
@@ -40,8 +36,8 @@ namespace linerider.Rendering
         }
         public void Initialize(AutoArray<GameLine> lines)
         {
-            var red = new List<RedLine>(lines.Count / 4);
-            foreach (var line in lines.unsafe_array)
+            List<RedLine> red = new List<RedLine>(lines.Count / 4);
+            foreach (GameLine line in lines.unsafe_array)
             {
                 if (line.Type == LineType.Acceleration)
                     red.Add((RedLine)line);

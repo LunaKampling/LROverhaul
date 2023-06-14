@@ -1,5 +1,5 @@
-﻿using Gwen.Controls;
-using Gwen;
+﻿using Gwen;
+using Gwen.Controls;
 using linerider.Tools;
 using System.Drawing;
 
@@ -9,7 +9,7 @@ namespace linerider.UI.Components
     {
         public Tool Tool;
         public Tool Subtool;
-        private Texture ActiveToolBackground;
+        private readonly Texture ActiveToolBackground;
 
         public ToolButton(ControlBase parent, Tool tool) : this(parent, tool, true)
         { }
@@ -29,7 +29,7 @@ namespace linerider.UI.Components
             }
 
             SetImage(tool.Icon);
-            SetSize(tool.Icon.Width, tool.Icon.Height);
+            _ = SetSize(tool.Icon.Width, tool.Icon.Height);
         }
         public override string Tooltip
         {

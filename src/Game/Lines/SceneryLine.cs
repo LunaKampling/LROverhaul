@@ -22,25 +22,17 @@ namespace linerider.Game
 {
     public class SceneryLine : GameLine
     {
-        public override LineType Type
-        {
-            get
-            {
-                return LineType.Scenery;
-            }
-        }
+        public override LineType Type => LineType.Scenery;
         public override System.Drawing.Color Color => Settings.Colors.SceneryLine;
         protected SceneryLine()
         {
         }
-        public SceneryLine(Vector2d p1, Vector2d p2) 
+        public SceneryLine(Vector2d p1, Vector2d p2)
         {
             Position1 = p1;
             Position2 = p2;
         }
-        public override string ToString()
-        {
-            return "{" +
+        public override string ToString() => "{" +
                 "\"type\":2," +
                 $"\"x1\":{Position1.X}," +
                 $"\"y1\":{Position1.Y}," +
@@ -48,14 +40,10 @@ namespace linerider.Game
                 $"\"y2\":{Position2.Y}," +
                 $"\"width\":{Width}" +
                 "}";
-        }
-        public override GameLine Clone()
+        public override GameLine Clone() => new SceneryLine(Position1, Position2)
         {
-            return new SceneryLine(Position1, Position2)
-            {
-                ID = ID,
-                Width = Width
-            };
-        }
+            ID = ID,
+            Width = Width
+        };
     }
 }

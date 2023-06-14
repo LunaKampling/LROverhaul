@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 namespace linerider.UI
 {
     public enum Hotkey
@@ -112,5 +110,4 @@ namespace linerider.UI
         CopyX9,
         CopyY9
     }
-
 }

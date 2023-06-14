@@ -19,16 +19,13 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using OpenTK;
-
-using System.Drawing;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace linerider.Drawing
 {
-    unsafe class GLBuffer<T> : IDisposable
+    internal unsafe class GLBuffer<T> : IDisposable
     where T : struct
     {
         protected sealed class Pinnable
@@ -41,14 +38,14 @@ namespace linerider.Drawing
         protected int _bufferid;
         protected int _objectsize;
         protected IntPtr _map = IntPtr.Zero;
-        private bool _is_size4_valuetype = false;
-        private static Dictionary<BufferTarget, int> BoundBuffers = new Dictionary<BufferTarget, int>();
+        private readonly bool _is_size4_valuetype = false;
+        private static readonly Dictionary<BufferTarget, int> BoundBuffers = new Dictionary<BufferTarget, int>();
         public GLBuffer(BufferTarget target)
         {
             _objectsize = Marshal.SizeOf(typeof(T));
             _target = target;
             _bufferid = GL.GenBuffer();
-            var thistype = typeof(T);
+            Type thistype = typeof(T);
             if (thistype == typeof(int) ||
                 thistype == typeof(uint) ||
                 thistype == typeof(float))
@@ -83,7 +80,7 @@ namespace linerider.Drawing
             if (Mapped)
                 throw new Exception("cannot call getdata while buffer is mapped");
             uint bytecount = (uint)length * (uint)_objectsize;
-            var cast = Unsafe.As<Pinnable>(copy);
+            Pinnable cast = Unsafe.As<Pinnable>(copy);
             fixed (void* pinned = &cast.PinMe)
             {
                 byte* dst = (byte*)Unsafe.AsPointer(ref copy[0]);
@@ -99,14 +96,11 @@ namespace linerider.Drawing
         /// Set the size of the buffer and set its contents
         /// Basically, it calls glBufferData
         /// </summary>
-        public void BufferData(T[] input, int srcstart, int count, BufferUsageHint hint)
-        {
-            GL.BufferData(
+        public void BufferData(T[] input, int srcstart, int count, BufferUsageHint hint) => GL.BufferData(
                 _target,
                 count * _objectsize,
                 input,
                 hint);
-        }
 
         /// <summary>
         /// Sets the specified data in the buffer, if the buffer is mapped
@@ -122,21 +116,21 @@ namespace linerider.Drawing
             if (srcstart + count > input.Length)
                 throw new IndexOutOfRangeException(
                     "SetData failed, count larger than srcbuffer");
-            // not technically an error, but dont get a ptr.
+            // Not technically an error, but dont get a ptr.
             if (input.Length == 0)
                 return;
-            var cast = Unsafe.As<Pinnable>(input);
+            Pinnable cast = Unsafe.As<Pinnable>(input);
             fixed (void* pinned = &cast.PinMe)
             {
-                var ptr = (IntPtr)Unsafe.AsPointer(ref input[0]);
-                var src = IntPtr.Add(ptr, _objectsize * srcstart);
+                IntPtr ptr = (IntPtr)Unsafe.AsPointer(ref input[0]);
+                IntPtr src = IntPtr.Add(ptr, _objectsize * srcstart);
                 if (Mapped)
                 {
-                    var dst = IntPtr.Add(_map, _objectsize * dststart);
+                    IntPtr dst = IntPtr.Add(_map, _objectsize * dststart);
                     if (_is_size4_valuetype)
                     {
-                        var intarray = Unsafe.As<int[]>(input);
-                        // marshal.copy uses hardware intrinsics, so it should 
+                        int[] intarray = Unsafe.As<int[]>(input);
+                        // Marshal.Copy uses hardware intrinsics, so it should 
                         // copy faster
                         Marshal.Copy(intarray, srcstart, dst, count);
                     }
@@ -156,10 +150,7 @@ namespace linerider.Drawing
                 }
             }
         }
-        public virtual void SetData(T value, int dststart)
-        {
-            SetData(new T[] { value }, 0, dststart, 1);
-        }
+        public virtual void SetData(T value, int dststart) => SetData(new T[] { value }, 0, dststart, 1);
         /// <summary>
         /// Binds the buffer to the current context
         /// call this before doing anything
@@ -212,13 +203,10 @@ namespace linerider.Drawing
         {
             if (_map != IntPtr.Zero)
             {
-                GL.UnmapBuffer(_target);
+                _ = GL.UnmapBuffer(_target);
                 _map = IntPtr.Zero;
             }
         }
-        public void Dispose()
-        {
-            GL.DeleteBuffer(_bufferid);
-        }
+        public void Dispose() => GL.DeleteBuffer(_bufferid);
     }
 }

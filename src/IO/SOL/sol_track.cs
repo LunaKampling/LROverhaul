@@ -8,14 +8,11 @@ namespace linerider.IO.SOL
         public string name;
         public List<Amf0Object> data;
 
-        public override string ToString()
-        {
-            return name;
-        }
+        public override string ToString() => name;
 
         public object get_property(string name)
         {
-            for (var i = 0; i < data.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
                 if (data[i].name == name)
                     return data[i].data;

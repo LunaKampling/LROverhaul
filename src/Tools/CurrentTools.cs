@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
-namespace linerider.Tools
+﻿namespace linerider.Tools
 {
     public static class CurrentTools
     {
@@ -10,22 +6,16 @@ namespace linerider.Tools
         public static SmoothPencilTool SmoothPencilTool { get; private set; }
         public static EraserTool EraserTool { get; private set; }
         public static LineTool LineTool { get; private set; }
-        public static BezierTool BezierTool { get; private set; } 
+        public static BezierTool BezierTool { get; private set; }
         public static SelectTool SelectTool { get; private set; }
         public static SelectSubtool SelectSubtool { get; private set; }
         public static PanTool PanTool { get; private set; }
         public static Tool _current;
-        public static Tool CurrentTool
-        {
-            get => _quickpan ? PanTool : _current;
-        }
+        public static Tool CurrentTool => _quickpan ? PanTool : _current;
         private static bool _quickpan = false;
         public static bool QuickPan
         {
-            get
-            {
-                return _quickpan;
-            }
+            get => _quickpan;
             set
             {
                 if (value != _quickpan)

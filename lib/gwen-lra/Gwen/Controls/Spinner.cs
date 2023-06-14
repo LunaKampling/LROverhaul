@@ -10,22 +10,16 @@ namespace Gwen.Controls
     {
         public class NumericUpDownTextbox : TextBoxNumeric
         {
-            Spinner m_parent;
+            private readonly Spinner m_parent;
             public NumericUpDownTextbox(Spinner parent) : base(parent)
             {
                 m_parent = parent;
             }
-            public override void SetValue(double v)
-            {
-                m_parent.Value = v;
-            }
+            public override void SetValue(double v) => m_parent.Value = v;
             protected override void UpdateAfterTextChanged()
             {
             }
-            public void UpdateTextValue()
-            {
-                UpdateValue();
-            }
+            public void UpdateTextValue() => UpdateValue();
         }
         private readonly UpDownButton_Down m_Down;
         private readonly UpDownButton_Up m_Up;
@@ -44,7 +38,7 @@ namespace Gwen.Controls
         /// </summary>
         public double Max
         {
-            get { return m_Max; }
+            get => m_Max;
             set
             {
                 m_Max = value;
@@ -58,7 +52,7 @@ namespace Gwen.Controls
         /// </summary>
         public double Min
         {
-            get { return m_Min; }
+            get => m_Min;
             set
             {
                 m_Min = value;
@@ -73,20 +67,18 @@ namespace Gwen.Controls
         /// </summary>
         public double Value
         {
-            get
-            {
-                return m_Value;
-            }
+            get => m_Value;
             set
             {
-                
-                if (value < m_Min) value = m_Min;
-                if (value > m_Max) value = m_Max;
+
+                if (value < m_Min)
+                    value = m_Min;
+                if (value > m_Max)
+                    value = m_Max;
                 if (value != m_Value)
                 {
                     m_Value = value;
-                    if (ValueChanged != null)
-                        ValueChanged.Invoke(this, EventArgs.Empty);
+                    ValueChanged?.Invoke(this, EventArgs.Empty);
                     Invalidate();
                 }
                 if (value != m_Textbox.Value)
@@ -103,17 +95,13 @@ namespace Gwen.Controls
         }
         public bool OnlyWholeNumbers
         {
-            get
-            {
-                return m_Textbox.OnlyWholeNumbers;
-            }
+            get => m_Textbox.OnlyWholeNumbers;
             set
             {
                 m_Textbox.OnlyWholeNumbers = value;
                 Value = Math.Round(Value);
             }
         }
-
 
         #region Constructors
 
@@ -125,14 +113,19 @@ namespace Gwen.Controls
             : base(parent)
         {
             //   Padding = Padding.One;
-            m_Textbox = new NumericUpDownTextbox(this);
-            m_Textbox.ShouldDrawBackground = false;
+            m_Textbox = new NumericUpDownTextbox(this)
+            {
+                ShouldDrawBackground = false
+            };
             // m_Textbox.TextPadding = new Padding(m_Textbox.TextPadding.Left, m_Textbox.TextPadding.Top, m_BtnContainer.Width, m_Textbox.TextPadding.Bottom);
-            SetSize(m_Textbox.Height * 3, m_Textbox.Height);
+            _ = SetSize(m_Textbox.Height * 3, m_Textbox.Height);
             m_Textbox.Dock = Dock.Fill;
-            m_BtnContainer = new Panel(this);
-            m_BtnContainer.Padding = Padding.Zero;
-            m_BtnContainer.Margin = new Margin(0, 1, 1, 1); ;
+            m_BtnContainer = new Panel(this)
+            {
+                Padding = Padding.Zero,
+                Margin = new Margin(0, 1, 1, 1)
+            };
+            ;
             m_BtnContainer.Dock = Dock.Right;
             m_BtnContainer.AutoSizeToContents = true;
             // m_BtnContainer.DrawDebugOutlines = true;
@@ -158,8 +151,8 @@ namespace Gwen.Controls
         protected override void ProcessLayout(System.Drawing.Size size)
         {
             int ctrlsize = size.Height - m_BtnContainer.Margin.Height;
-            m_Up.SetSize(ctrlsize / 2 + (ctrlsize / 4), ctrlsize / 2);
-            m_Down.SetSize(ctrlsize / 2 + (ctrlsize / 4), ctrlsize / 2);
+            _ = m_Up.SetSize(ctrlsize / 2 + ctrlsize / 4, ctrlsize / 2);
+            _ = m_Down.SetSize(ctrlsize / 2 + ctrlsize / 4, ctrlsize / 2);
             base.ProcessLayout(size);
         }
 
@@ -167,33 +160,21 @@ namespace Gwen.Controls
         /// Handler for the button down event.
         /// </summary>
         /// <param name="control">Event source.</param>
-        protected virtual void OnButtonDown(ControlBase control, ClickedEventArgs args)
-        {
-            Decrement();
-        }
+        protected virtual void OnButtonDown(ControlBase control, ClickedEventArgs args) => Decrement();
 
         /// <summary>
         /// Handler for the button up event.
         /// </summary>
         /// <param name="control">Event source.</param>
-        protected virtual void OnButtonUp(ControlBase control, EventArgs args)
-        {
-            Increment();
-        }
+        protected virtual void OnButtonUp(ControlBase control, EventArgs args) => Increment();
         protected override bool OnMouseWheeled(int delta)
         {
             m_Textbox.UpdateTextValue();
-            Value = m_Value + (IncrementSize * Math.Sign(delta));
+            Value = m_Value + IncrementSize * Math.Sign(delta);
             return true;
         }
-        public void Increment()
-        {
-            Value = m_Value + IncrementSize;
-        }
-        public void Decrement()
-        {
-            Value = m_Value - IncrementSize;
-        }
+        public void Increment() => Value = m_Value + IncrementSize;
+        public void Decrement() => Value = m_Value - IncrementSize;
         /// <summary>
         /// Handler for Down Arrow keyboard event.
         /// </summary>
@@ -221,7 +202,7 @@ namespace Gwen.Controls
                 Increment();
             return true;
         }
-        protected override void Render(Gwen.Skin.SkinBase skin)
+        protected override void Render(Skin.SkinBase skin)
         {
             skin.DrawTextBox(this, m_Textbox.HasFocus || m_BtnContainer.HasFocus);
             base.Render(skin);

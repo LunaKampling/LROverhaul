@@ -28,15 +28,9 @@ namespace Gwen.Input
 
         #region Methods
 
-        public void Initialize(Canvas c)
-        {
-            m_Canvas = c;
-        }
+        public void Initialize(Canvas c) => m_Canvas = c;
 
-        public void KeyPress(object sender, KeyPressEventArgs e)
-        {
-            m_Canvas.Input_Character(e.KeyChar);
-        }
+        public void KeyPress(object sender, KeyPressEventArgs e) => m_Canvas.Input_Character(e.KeyChar);
 
         public bool ProcessKeyDown(EventArgs args)
         {
@@ -59,8 +53,7 @@ namespace Gwen.Input
         public bool ProcessKeyUp(EventArgs args)
         {
             KeyboardKeyEventArgs ev = args as KeyboardKeyEventArgs;
-
-            char ch = TranslateChar(ev.Key);
+            _ = TranslateChar(ev.Key);
 
             Key iKey = TranslateKeyCode(ev.Key);
 
@@ -69,7 +62,8 @@ namespace Gwen.Input
 
         public bool ProcessMouseMessage(EventArgs args)
         {
-            if (null == m_Canvas) return false;
+            if (null == m_Canvas)
+                return false;
 
             if (args is MouseMoveEventArgs)
             {
@@ -90,14 +84,14 @@ namespace Gwen.Input
                 m_MouseY = ev.Y;
 
                 /* We can not simply cast ev.Button to an int, as 1 is middle click, not right click. */
-                int ButtonID = -1; //Do not trigger event.
+                int ButtonID = -1; // Do not trigger event.
 
                 if (ev.Button == MouseButton.Left)
                     ButtonID = 0;
                 else if (ev.Button == MouseButton.Right)
                     ButtonID = 1;
 
-                if (ButtonID != -1) //We only care about left and right click for now
+                if (ButtonID != -1) // We only care about left and right click for now
                     return m_Canvas.Input_MouseButton(ButtonID, ev.IsPressed, ev.X, ev.Y);
             }
 
@@ -115,12 +109,9 @@ namespace Gwen.Input
         /// </summary>
         /// <param name="key">OpenTK key code.</param>
         /// <returns>Translated character.</returns>
-        private static char TranslateChar(global::OpenTK.Input.Key key)
-        {
-            if (key >= global::OpenTK.Input.Key.A && key <= global::OpenTK.Input.Key.Z)
-                return (char)('a' + ((int)key - (int)global::OpenTK.Input.Key.A));
-            return ' ';
-        }
+        private static char TranslateChar(global::OpenTK.Input.Key key) => key >= global::OpenTK.Input.Key.A && key <= global::OpenTK.Input.Key.Z
+                ? (char)('a' + ((int)key - (int)global::OpenTK.Input.Key.A))
+                : ' ';
 
         /// <summary>
         /// Translates control key's OpenTK key code to GWEN's code.
@@ -144,16 +135,16 @@ namespace Gwen.Input
                 case global::OpenTK.Input.Key.End: return Key.End;
                 case global::OpenTK.Input.Key.Delete: return Key.Delete;
                 case global::OpenTK.Input.Key.LControl:
-                    this.m_AltGr = true;
+                    m_AltGr = true;
                     return Key.Control;
 
                 case global::OpenTK.Input.Key.LAlt: return Key.Alt;
                 case global::OpenTK.Input.Key.LShift: return Key.Shift;
                 case global::OpenTK.Input.Key.RControl: return Key.Control;
                 case global::OpenTK.Input.Key.RAlt:
-                    if (this.m_AltGr)
+                    if (m_AltGr)
                     {
-                        this.m_Canvas.Input_Key(Key.Control, false);
+                        _ = m_Canvas.Input_Key(Key.Control, false);
                     }
                     return Key.Alt;
 

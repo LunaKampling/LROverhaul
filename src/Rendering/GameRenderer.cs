@@ -16,18 +16,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using linerider.Tools;
+using linerider.Drawing;
+using linerider.Game;
+using linerider.Utils;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using linerider.Game;
-using linerider.Utils;
-using linerider.Drawing;
-using System.IO;
-using System.Linq;
 
 namespace linerider.Rendering
 {
@@ -38,8 +34,8 @@ namespace linerider.Rendering
 
         public static void DrawTrackLine(StandardLine line, Color color, bool drawwell, bool drawcolor)
         {
-            var lv = new AutoArray<LineVertex>(24);
-            var verts = new AutoArray<GenericVertex>(30);
+            AutoArray<LineVertex> lv = new AutoArray<LineVertex>(24);
+            AutoArray<GenericVertex> verts = new AutoArray<GenericVertex>(30);
             if (drawcolor)
             {
                 if (line is RedLine redline)
@@ -58,9 +54,9 @@ namespace linerider.Rendering
             {
                 verts.AddRange(WellRenderer.GetWell(line));
             }
-            var vao = GetLineVAO();
+            LineVAO vao = GetLineVAO();
             vao.Scale = Game.Track.Zoom;
-            foreach (var v in lv.unsafe_array)
+            foreach (LineVertex v in lv.unsafe_array)
             {
                 vao.AddVertex(v);
             }
@@ -70,7 +66,7 @@ namespace linerider.Rendering
                 if (verts.Count != 0)
                 {
                     GenericVAO gvao = new GenericVAO();
-                    foreach (var v in verts.unsafe_array)
+                    foreach (GenericVertex v in verts.unsafe_array)
                     {
                         gvao.AddVertex(v);
                     }
@@ -94,19 +90,19 @@ namespace linerider.Rendering
             float linewidth,
             float growratio)
         {
-            var knobdefault = Settings.Computed.BGColor;
-            var knobsize = (highlight ? (0.8f + (0.1f * growratio)) : 0.8f);
-            var size = linewidth * 2 * knobsize;
-            var color = knobdefault;
+            Color knobdefault = Settings.Computed.BGColor;
+            float knobsize = highlight ? (0.8f + 0.1f * growratio) : 0.8f;
+            float size = linewidth * 2 * knobsize;
+            Color color = knobdefault;
             if (lifelock)
                 color = Color.FromArgb(0xff, 0x00, 0x00);
             else if (highlight)
                 color = Color.FromArgb(0x70, 0x6B, 0x75);
-            GameRenderer.RenderRoundedLine(
+            RenderRoundedLine(
                 position,
                 position,
                 color,
-                (size));
+                size);
         }
         public static void RenderRoundedLine(Vector2d position, Vector2d position2, Color color, float thickness, bool knobs = false, bool redknobs = false)
         {
@@ -115,7 +111,7 @@ namespace linerider.Rendering
                 using (new GLEnableCap(EnableCap.Texture2D))
                 {
                     GameDrawingMatrix.Enter();
-                    var vao = GetLineVAO();
+                    LineVAO vao = GetLineVAO();
                     vao.Scale = GameDrawingMatrix.Scale;
                     vao.AddLine(position, position2, color, thickness);
                     vao.knobstate = knobs ? (redknobs ? 2 : 1) : 0;
@@ -132,12 +128,12 @@ namespace linerider.Rendering
                 {
                     if (gamecoords)
                         GameDrawingMatrix.Enter();
-                    var vao = GetLineVAO();
+                    LineVAO vao = GetLineVAO();
                     vao.Scale = GameDrawingMatrix.Scale;
-                    var vec1 = rect.Vector;
-                    var vec2 = vec1 + new Vector2d(rect.Width, 0);
-                    var vec3 = vec1 + rect.Size;
-                    var vec4 = vec1 + new Vector2d(0, rect.Height);
+                    Vector2d vec1 = rect.Vector;
+                    Vector2d vec2 = vec1 + new Vector2d(rect.Width, 0);
+                    Vector2d vec3 = vec1 + rect.Size;
+                    Vector2d vec4 = vec1 + new Vector2d(0, rect.Height);
                     vao.AddLine(vec1, vec2, color, thickness);
                     vao.AddLine(vec2, vec3, color, thickness);
                     vao.AddLine(vec3, vec4, color, thickness);
@@ -152,14 +148,14 @@ namespace linerider.Rendering
         public static void DbgDrawCamera()
         {
             GL.PushMatrix();
-            var center = new Vector2(Game.RenderSize.Width / 2, Game.RenderSize.Height / 2);
-            var rect = Game.Track.Camera.getclamp(1, Game.RenderSize.Width, Game.RenderSize.Height);
+            Vector2 center = new Vector2(Game.RenderSize.Width / 2, Game.RenderSize.Height / 2);
+            DoubleRect rect = Game.Track.Camera.getclamp(1, Game.RenderSize.Width, Game.RenderSize.Height);
 
             rect.Width *= Game.Track.Zoom;
             rect.Height *= Game.Track.Zoom;
-            var circle = StaticRenderer.GenerateEllipse((float)rect.Width, (float)rect.Height, 100);
+            Vector2[] circle = StaticRenderer.GenerateEllipse((float)rect.Width, (float)rect.Height, 100);
 
-            var clamprect = new DoubleRect(center.X, center.Y, 0, 0);
+            DoubleRect clamprect = new DoubleRect(center.X, center.Y, 0, 0);
             clamprect.Left -= rect.Width / 2;
             clamprect.Top -= rect.Height / 2;
             clamprect.Width = rect.Width;
@@ -181,22 +177,22 @@ namespace linerider.Rendering
             GL.Color3(0, 0, 0);
             for (int i = 0; i < circle.Length; i++)
             {
-                var pos = (Vector2d)center + (Vector2d)circle[i];
-                var square = clamprect.Clamp(pos);
-                var oval = clamprect.EllipseClamp(pos);
-                pos = (Vector2d.Lerp(square, oval, CameraBoundingBox.roundness));
+                Vector2d pos = (Vector2d)center + (Vector2d)circle[i];
+                Vector2d square = clamprect.Clamp(pos);
+                Vector2d oval = clamprect.EllipseClamp(pos);
+                pos = Vector2d.Lerp(square, oval, CameraBoundingBox.roundness);
                 GL.Vertex2(pos);
             }
             GL.End();
-            // visualize example points being clamped
+            // Visualize example points being clamped
             GL.Begin(PrimitiveType.Lines);
             circle = StaticRenderer.GenerateEllipse((float)rect.Width / 1.5f, (float)rect.Height / 1.5f, 20);
             for (int i = 0; i < circle.Length; i++)
             {
-                var pos = (Vector2d)center + (Vector2d)circle[i];
-                var square = clamprect.Clamp(pos);
-                var oval = clamprect.EllipseClamp(pos);
-                pos = (Vector2d.Lerp(square, oval, CameraBoundingBox.roundness));
+                Vector2d pos = (Vector2d)center + (Vector2d)circle[i];
+                Vector2d square = clamprect.Clamp(pos);
+                Vector2d oval = clamprect.EllipseClamp(pos);
+                pos = Vector2d.Lerp(square, oval, CameraBoundingBox.roundness);
                 if (pos != (Vector2d)center + (Vector2d)circle[i])
                 {
                     GL.Vertex2(pos);
@@ -205,16 +201,16 @@ namespace linerider.Rendering
             }
             GL.End();
             GL.PopMatrix();
-            //visualize rider center
-            // DrawCircle(Game.Track.Camera.GetSmoothPosition(), 5, Color.Red);
-            // DrawCircle(Game.Track.Camera.GetSmoothedCameraOffset(), 5, Color.Blue);
+            // Visualize rider center
+            //DrawCircle(Game.Track.Camera.GetSmoothPosition(), 5, Color.Red);
+            //DrawCircle(Game.Track.Camera.GetSmoothedCameraOffset(), 5, Color.Blue);
             DrawCircle(Game.Track.Timeline.GetFrame(Game.Track.Offset).CalculateCenter(), 5, Color.Green);
         }
         public static void DrawCircle(Vector2d point, float size, Color color)
         {
             GameDrawingMatrix.Enter();
-            var center = (Vector2)point;
-            var circ = StaticRenderer.GenerateCircle(center.X, center.Y, size, 360);
+            Vector2 center = (Vector2)point;
+            Vector2d[] circ = StaticRenderer.GenerateCircle(center.X, center.Y, size, 360);
             GL.Begin(PrimitiveType.LineStrip);
             GL.Color3(color);
             for (int i = 0; i < circ.Length; i++)
@@ -226,7 +222,7 @@ namespace linerider.Rendering
         }
         public static void DrawBezierCurve(Vector2[] points, Color color, int resolution)
         {
-            
+
             Vector2[] curvePoints = GenerateBezierCurve(points, resolution);
             if (points.Length > 0)
             {
@@ -263,7 +259,7 @@ namespace linerider.Rendering
             GL.Begin(PrimitiveType.LineStrip);
             for (int i = 0; i < points.Count; i++)
             {
-               Color col = (i < 1 || i == points.Count - 1) ? color : Color.FromArgb(255, 200, 0);
+                Color col = (i < 1 || i == points.Count - 1) ? color : Color.FromArgb(255, 200, 0);
                 GL.Color3(col);
                 GL.Vertex2(points[i]);
             }
@@ -282,7 +278,7 @@ namespace linerider.Rendering
                 else
                 {
                     DrawCircle(points[i], nodeSize, color);
-                }                
+                }
             }
             renderPointTrace(points, curve, color);
         }
@@ -295,7 +291,7 @@ namespace linerider.Rendering
                 lineLength += Distance(points[i - 1], points[i]);
                 lengthsPerPoint.Add(lineLength);
             }
-            for (int i = 1; i < points.Count-1; i++)
+            for (int i = 1; i < points.Count - 1; i++)
             {
                 Vector2 curvePoint = curve.CalculatePoint((float)lengthsPerPoint[i] / (float)lineLength);
                 GameDrawingMatrix.Enter();
@@ -308,17 +304,17 @@ namespace linerider.Rendering
             }
         }
         public static double Distance(Vector2d a, Vector2d b)
-            => Math.Sqrt(((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y)));
+            => Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         public static Vector2[] GenerateBezierCurve(Vector2[] points, int resPerHundred)
         {
             BezierCurve curve = new BezierCurve(points);
             float curveLength = curve.CalculateLength(0.1f);
-            float resolution = (curveLength / 100) * resPerHundred;
-            List<Vector2> curvePoints = new List<Vector2> {};
+            float resolution = curveLength / 100 * resPerHundred;
+            List<Vector2> curvePoints = new List<Vector2> { };
 
             for (int i = 0; i < resolution; i++)
             {
-                float t = (float)i / resolution;
+                float t = i / resolution;
                 curvePoints.Add(curve.CalculatePoint(t));
             }
 
@@ -328,19 +324,19 @@ namespace linerider.Rendering
         public static Vector2[] GenerateBezierCurve(Vector2d[] points, int resPerHundred)
         {
             Vector2[] newPoints = new Vector2[points.Length];
-            for(int i = 0; i < points.Length; i++)
+            for (int i = 0; i < points.Length; i++)
             {
-                newPoints[i] = (Vector2) points[i];
+                newPoints[i] = (Vector2)points[i];
             }
 
             BezierCurve curve = new BezierCurve(newPoints);
             List<Vector2> curvePoints = new List<Vector2> { };
             float curveLength = curve.CalculateLength(0.1f);
-            float resolution = (curveLength / 100) * resPerHundred;
+            float resolution = curveLength / 100 * resPerHundred;
 
             for (int i = 0; i < resolution; i++)
             {
-                float t = (float)i / (float)resolution;
+                float t = i / (float)resolution;
                 curvePoints.Add(curve.CalculatePoint(t));
             }
 
@@ -359,28 +355,28 @@ namespace linerider.Rendering
             curveOut = curve;
             List<Vector2d> curvePoints = new List<Vector2d> { };
             float curveLength = curve.CalculateLength(0.1f);
-            float resolution = (curveLength / 100) * resPerHundred;
+            float resolution = curveLength / 100 * resPerHundred;
 
             for (int i = 0; i < resolution; i++)
             {
-                float t = (float)i / (float)resolution;
-                curvePoints.Add((Vector2d) curve.CalculatePoint(t));
+                float t = i / (float)resolution;
+                curvePoints.Add((Vector2d)curve.CalculatePoint(t));
             }
 
             return curvePoints.ToArray();
         }
 
-        public static void DrawFloatGrid() //Draws the grid of floating-point 'regions', used in the creation of stable angled kramuals
+        public static void DrawFloatGrid() // Draws the grid of floating-point 'regions', used in the creation of stable angled kramuals
         {
             Shader _shader = Shaders.FloatGridShader;
             _shader.Use();
 
-            var u_zoom = _shader.GetUniform("u_zoom"); //Set uniform var used in fragment shader
+            int u_zoom = _shader.GetUniform("u_zoom"); // Set uniform var used in fragment shader
 
             GL.Uniform1(u_zoom, Game.Track.Zoom);
 
             GL.PushMatrix();
-            GL.Translate(new Vector3d(-Game.ScreenTranslation)); //This transforms from pixel coordinates back to world coordinates (used in vert shader)
+            GL.Translate(new Vector3d(-Game.ScreenTranslation)); // This transforms from pixel coordinates back to world coordinates (used in vert shader)
             GL.Scale(1.0 / Game.Track.Zoom, 1.0 / Game.Track.Zoom, 0);
 
             GL.Begin(PrimitiveType.Quads);
@@ -395,19 +391,19 @@ namespace linerider.Rendering
             GL.PopMatrix();
         }
 
-        public static void DrawGrid_Shader(int sqsize) //Draw the grid using per-pixel shading (more efficient for low zoom where more grid-lines are needed)
+        public static void DrawGrid_Shader(int sqsize) // Draw the grid using per-pixel shading (more efficient for low zoom where more grid-lines are needed)
         {
             Shader _shader = Shaders.SimGridShader;
             _shader.Use();
 
-            var u_zoom = _shader.GetUniform("u_zoom"); //Set uniform var used in fragment shader
-            var u_cellsize = _shader.GetUniform("u_cellsize");
+            int u_zoom = _shader.GetUniform("u_zoom"); // Set uniform var used in fragment shader
+            int u_cellsize = _shader.GetUniform("u_cellsize");
 
             GL.Uniform1(u_zoom, Game.Track.Zoom);
-            GL.Uniform1(u_cellsize, (float)sqsize); //TODO make this sync with DbgDrawGrid() cellsize
+            GL.Uniform1(u_cellsize, (float)sqsize); // TODO: make this sync with DbgDrawGrid() cellsize
 
             GL.PushMatrix();
-            GL.Translate(new Vector3d(-Game.ScreenTranslation)); //This transforms from pixel coordinates back to world coordinates (used in vert shader)
+            GL.Translate(new Vector3d(-Game.ScreenTranslation)); // This transforms from pixel coordinates back to world coordinates (used in vert shader)
             GL.Scale(1.0 / Game.Track.Zoom, 1.0 / Game.Track.Zoom, 0);
 
             GL.Begin(PrimitiveType.Quads);
@@ -425,9 +421,6 @@ namespace linerider.Rendering
         public static void DbgDrawGrid()
         {
             bool fastgrid = false;
-#pragma warning disable CS0219 // Variable is assigned but its value is never used
-            bool renderext = true;
-#pragma warning restore CS0219 // Variable is assigned but its value is never used
             bool renderridersquare = true;
             bool useshadergrid = true;
             int sqsize = fastgrid ? EditorGrid.CellSize : SimulationGrid.CellSize;
@@ -436,15 +429,15 @@ namespace linerider.Rendering
             GL.Scale(Game.Track.Zoom, Game.Track.Zoom, 0);
             GL.Translate(new Vector3d(Game.ScreenTranslation));
             GL.Begin(PrimitiveType.Quads);
-            for (var x = -sqsize; x < (Game.RenderSize.Width / Game.Track.Zoom); x += sqsize)
+            for (int x = -sqsize; x < (Game.RenderSize.Width / Game.Track.Zoom); x += sqsize)
             {
-                for (var y = -sqsize; y < (Game.RenderSize.Height / Game.Track.Zoom); y += sqsize)
+                for (int y = -sqsize; y < (Game.RenderSize.Height / Game.Track.Zoom); y += sqsize)
                 {
-                    var yv = new Vector2d(x + (Game.ScreenPosition.X - (Game.ScreenPosition.X % sqsize)), y + (Game.ScreenPosition.Y - (Game.ScreenPosition.Y % sqsize)));
+                    Vector2d yv = new Vector2d(x + (Game.ScreenPosition.X - Game.ScreenPosition.X % sqsize), y + (Game.ScreenPosition.Y - Game.ScreenPosition.Y % sqsize));
 
                     if (!fastgrid)
                     {
-                        var gridpos = new GridPoint((int)Math.Floor(yv.X / sqsize), (int)Math.Floor(yv.Y / sqsize));
+                        GridPoint gridpos = new GridPoint((int)Math.Floor(yv.X / sqsize), (int)Math.Floor(yv.Y / sqsize));
 
                         if (Game.Track.GridCheck(yv.X, yv.Y))
                         {
@@ -495,16 +488,16 @@ namespace linerider.Rendering
             {
                 GL.Begin(PrimitiveType.Lines);
                 GL.Color3(Color.Red);
-                for (var x = -sqsize; x < (Game.RenderSize.Width / Game.Track.Zoom); x += sqsize)
+                for (int x = -sqsize; x < (Game.RenderSize.Width / Game.Track.Zoom); x += sqsize)
                 {
-                    var yv = new Vector2d(x + (Game.ScreenPosition.X - (Game.ScreenPosition.X % sqsize)), Game.ScreenPosition.Y);
+                    Vector2d yv = new Vector2d(x + (Game.ScreenPosition.X - Game.ScreenPosition.X % sqsize), Game.ScreenPosition.Y);
                     GL.Vertex2(yv);
                     yv.Y += Game.RenderSize.Height / Game.Track.Zoom;
                     GL.Vertex2(yv);
                 }
-                for (var y = -sqsize; y < (Game.RenderSize.Height / Game.Track.Zoom); y += sqsize)
+                for (int y = -sqsize; y < (Game.RenderSize.Height / Game.Track.Zoom); y += sqsize)
                 {
-                    var yv = new Vector2d(Game.ScreenPosition.X, y + (Game.ScreenPosition.Y - (Game.ScreenPosition.Y % sqsize)));
+                    Vector2d yv = new Vector2d(Game.ScreenPosition.X, y + (Game.ScreenPosition.Y - Game.ScreenPosition.Y % sqsize));
                     GL.Vertex2(yv);
                     yv.X += Game.RenderSize.Width / Game.Track.Zoom;
                     GL.Vertex2(yv);
@@ -523,9 +516,9 @@ namespace linerider.Rendering
 
             if (renderext)
             {
-                using (var trk = Game.Track.CreateTrackReader())
+                using (TrackReader trk = Game.Track.CreateTrackReader())
                 {
-                    foreach (var v in trk.GetLinesInRect(Game.Track.Camera.GetViewport(
+                    foreach (GameLine v in trk.GetLinesInRect(Game.Track.Camera.GetViewport(
                         Game.Track.Zoom,
                         Game.RenderSize.Width,
                         Game.RenderSize.Height), false))
@@ -534,7 +527,7 @@ namespace linerider.Rendering
                         {
                             if (std.Extension != StandardLine.Ext.None)
                             {
-                                var d = std.Difference * std.ExtensionRatio;
+                                Vector2d d = std.Difference * std.ExtensionRatio;
                                 if (std.Extension.HasFlag(StandardLine.Ext.Left))
                                 {
                                     RenderRoundedLine(std.Position1 - d, std.Position1, Color.Red, 1);

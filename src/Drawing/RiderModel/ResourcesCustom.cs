@@ -61,7 +61,7 @@ namespace linerider.Drawing.RiderModel
                 {
                     success = false;
                 }
-                    
+
                 if (!success)
                 {
                     Debug.WriteLine("Regions cache is outdated, recreating...");

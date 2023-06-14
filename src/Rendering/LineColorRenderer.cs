@@ -1,40 +1,41 @@
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Drawing;
-using System.Collections.Generic;
-using OpenTK;
 using linerider.Drawing;
-using linerider.Utils;
 using linerider.Game;
+using linerider.Utils;
+using OpenTK;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 namespace linerider.Rendering
 {
     public class LineColorRenderer : IDisposable
     {
         private Dictionary<int, int> _lines = new Dictionary<int, int>();
-        const int linesize = 6;
-        private LineRenderer _linebuffer;
+        private const int linesize = 6;
+        private readonly LineRenderer _linebuffer;
         public LineColorRenderer()
         {
-            _linebuffer = new LineRenderer(Shaders.LineShader);
-            _linebuffer.OverrideColor = Color.FromArgb(0);
-            _linebuffer.OverridePriority = 0;
+            _linebuffer = new LineRenderer(Shaders.LineShader)
+            {
+                OverrideColor = Color.FromArgb(0),
+                OverridePriority = 0
+            };
         }
 
         public void Initialize(AutoArray<GameLine> lines)
         {
             Clear();
             LineVertex[] vertices = new LineVertex[lines.Count * linesize];
-            var redverts = new AutoArray<GenericVertex>((lines.Count / 2) * 3);
-            System.Threading.Tasks.Parallel.For(0, lines.Count, (idx) =>
+            AutoArray<GenericVertex> redverts = new AutoArray<GenericVertex>(lines.Count / 2 * 3);
+            _ = System.Threading.Tasks.Parallel.For(0, lines.Count, (idx) =>
             {
-                var line = (StandardLine)lines[idx];
-                var lineverts = CreateDecorationLine(line, line.Color);
+                StandardLine line = (StandardLine)lines[idx];
+                LineVertex[] lineverts = CreateDecorationLine(line, line.Color);
                 for (int i = 0; i < lineverts.Length; i++)
                 {
                     vertices[idx * 6 + i] = lineverts[i];
                 }
             });
-            var dict = _linebuffer.AddLines(lines, vertices);
+            Dictionary<int, int> dict = _linebuffer.AddLines(lines, vertices);
             _lines = dict;
         }
         public void Draw(DrawOptions draw)
@@ -54,30 +55,27 @@ namespace linerider.Rendering
                 LineChanged(line, false);
                 return;
             }
-            var color = line.GetColor();
-            var lineverts = CreateDecorationLine(line, color);
+            Color color = line.GetColor();
+            LineVertex[] lineverts = CreateDecorationLine(line, color);
             int start = _linebuffer.AddLine(lineverts);
             _lines.Add(line.ID, start);
         }
         public void LineChanged(StandardLine line, bool hit)
         {
-            var colorindex = _lines[line.ID];
-            var color = line.GetColor();
-            var lineverts = hit ? new LineVertex[6] : CreateDecorationLine(line, color);
+            int colorindex = _lines[line.ID];
+            Color color = line.GetColor();
+            LineVertex[] lineverts = hit ? new LineVertex[6] : CreateDecorationLine(line, color);
             _linebuffer.ChangeLine(colorindex, lineverts);
         }
         public void RemoveLine(StandardLine line)
         {
-            var colorindex = _lines[line.ID];
+            int colorindex = _lines[line.ID];
             _linebuffer.RemoveLine(colorindex);
         }
-        public void Dispose()
-        {
-            _linebuffer.Dispose();
-        }
+        public void Dispose() => _linebuffer.Dispose();
         public static LineVertex[] CreateDecorationLine(StandardLine line, Color color)
         {
-            var slant = new Vector2d(
+            Vector2d slant = new Vector2d(
                 line.DiffNormal.X > 0 ? Math.Ceiling(line.DiffNormal.X) : Math.Floor(line.DiffNormal.X),
                 line.DiffNormal.Y > 0 ? Math.Ceiling(line.DiffNormal.Y) : Math.Floor(line.DiffNormal.Y));
             return LineRenderer.CreateTrackLine(line.Position1 + slant, line.Position2 + slant, 2, Utility.ColorToRGBA_LE(color));

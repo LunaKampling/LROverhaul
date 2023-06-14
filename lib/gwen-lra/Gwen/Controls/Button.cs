@@ -1,7 +1,6 @@
 ﻿using Gwen.Input;
 using System;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 
 namespace Gwen.Controls
 {
@@ -40,34 +39,15 @@ namespace Gwen.Controls
         #endregion Events
 
         #region Properties
-        protected override Color CurrentColor
-        {
-            get
-            {
-                if (IsDisabled)
-                {
-                    return Skin.Colors.Text.Disabled;
-                }
-
-                if (IsDepressed || ToggleState)
-                {
-                    return Skin.Colors.Text.Highlight;
-                }
-
-                if (IsHovered)
-                {
-                    return Skin.Colors.Text.Contrast;
-                }
-
-                return Skin.Colors.Text.Foreground;
-            }
-        }
+        protected override Color CurrentColor => IsDisabled
+                    ? Skin.Colors.Text.Disabled
+                    : IsDepressed || ToggleState ? Skin.Colors.Text.Highlight : IsHovered ? Skin.Colors.Text.Contrast : Skin.Colors.Text.Foreground;
         /// <summary>
         /// Indicates whether the button is depressed.
         /// </summary>
         public bool IsDepressed
         {
-            get { return m_Depressed; }
+            get => m_Depressed;
             set
             {
                 if (m_Depressed == value)
@@ -80,33 +60,32 @@ namespace Gwen.Controls
         /// <summary>
         /// Indicates whether the button is toggleable.
         /// </summary>
-        public bool IsToggle { get { return m_Toggle; } set { m_Toggle = value; } }
+        public bool IsToggle { get; set; }
 
         /// <summary>
         /// Determines the button's toggle state.
         /// </summary>
         public bool ToggleState
         {
-            get { return m_ToggleStatus; }
+            get => m_ToggleStatus;
             set
             {
-                if (!m_Toggle) return;
-                if (m_ToggleStatus == value) return;
+                if (!IsToggle)
+                    return;
+                if (m_ToggleStatus == value)
+                    return;
 
                 m_ToggleStatus = value;
 
-                if (Toggled != null)
-                    Toggled.Invoke(this, EventArgs.Empty);
+                Toggled?.Invoke(this, EventArgs.Empty);
 
                 if (m_ToggleStatus)
                 {
-                    if (ToggledOn != null)
-                        ToggledOn.Invoke(this, EventArgs.Empty);
+                    ToggledOn?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    if (ToggledOff != null)
-                        ToggledOff.Invoke(this, EventArgs.Empty);
+                    ToggledOff?.Invoke(this, EventArgs.Empty);
                 }
 
                 Redraw();
@@ -117,7 +96,7 @@ namespace Gwen.Controls
         /// </summary>
         public override Font Font
         {
-            get { return base.Font; }
+            get => base.Font;
             set
             {
                 base.Font = value;
@@ -143,15 +122,15 @@ namespace Gwen.Controls
         }
         protected virtual void SetupDefault()
         {
-            var extra = TextHeight / 3;
-            var textpadding = new Padding(extra, extra, extra, extra);
+            int extra = TextHeight / 3;
+            Padding textpadding = new Padding(extra, extra, extra, extra);
             if (TextPadding != textpadding)
             {
                 TextPadding = textpadding;
                 if (AutoSizeToContents)
                 {
                     if (GetSizeToFitContents().Height > Height)
-                        SizeToChildren(false, true);
+                        _ = SizeToChildren(false, true);
                 }
             }
         }
@@ -163,10 +142,7 @@ namespace Gwen.Controls
         /// <summary>
         /// "Clicks" the button.
         /// </summary>
-        public virtual void Press(ControlBase control = null)
-        {
-            OnClicked(0, 0);
-        }
+        public virtual void Press(ControlBase control = null) => OnClicked(0, 0);
 
         /// <summary>
         /// Sets the button's image.
@@ -175,10 +151,9 @@ namespace Gwen.Controls
         /// <param name="center">Determines whether the image should be centered.</param>
         public virtual void SetImage(string textureName, bool center = false)
         {
-            if (String.IsNullOrEmpty(textureName))
+            if (string.IsNullOrEmpty(textureName))
             {
-                if (m_Image != null)
-                    m_Image.Dispose();
+                m_Image?.Dispose();
                 m_Image = null;
                 return;
             }
@@ -200,27 +175,18 @@ namespace Gwen.Controls
         /// <summary>
         /// Toggles the button.
         /// </summary>
-        public virtual void Toggle()
-        {
-            ToggleState = !ToggleState;
-        }
+        public virtual void Toggle() => ToggleState = !ToggleState;
 
         protected override void ProcessLayout(Size size)
         {
-            if (m_Image != null)
-            {
-                m_Image.AlignToEdge(m_CenterImage ? Pos.Center : Pos.CenterV);
-            }
+            m_Image?.AlignToEdge(m_CenterImage ? Pos.Center : Pos.CenterV);
             base.ProcessLayout(size);
         }
 
         /// <summary>
         /// Default accelerator handler.
         /// </summary>
-        protected override void OnAccelerator()
-        {
-            OnClicked(0, 0);
-        }
+        protected override void OnAccelerator() => OnClicked(0, 0);
 
         /// <summary>
         /// Internal OnPressed implementation.
@@ -242,10 +208,7 @@ namespace Gwen.Controls
         /// <returns>
         /// True if handled.
         /// </returns>
-        protected override bool OnKeySpace(bool down)
-        {
-            return base.OnKeySpace(down);
-        }
+        protected override bool OnKeySpace(bool down) => base.OnKeySpace(down);
 
         /// <summary>
         /// Handler invoked on mouse click (left) event.
@@ -260,20 +223,18 @@ namespace Gwen.Controls
             {
                 IsDepressed = true;
                 InputHandler.MouseFocus = this;
-                if (Pressed != null)
-                    Pressed.Invoke(this, EventArgs.Empty);
+                Pressed?.Invoke(this, EventArgs.Empty);
             }
             else
             {
-                if (this.GetCanvas().GetControlAt(x, y) == this && IsHovered && m_Depressed)
+                if (GetCanvas().GetControlAt(x, y) == this && IsHovered && m_Depressed)
                 {
                     OnClicked(x, y);
                 }
 
                 IsDepressed = false;
                 InputHandler.MouseFocus = null;
-                if (Released != null)
-                    Released.Invoke(this, EventArgs.Empty);
+                Released?.Invoke(this, EventArgs.Empty);
             }
 
             Redraw();
@@ -317,7 +278,6 @@ namespace Gwen.Controls
         private bool m_CenterImage;
         private bool m_Depressed;
         private ImagePanel m_Image;
-        private bool m_Toggle;
         private bool m_ToggleStatus;
 
         #endregion Fields

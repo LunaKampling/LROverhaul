@@ -1,7 +1,4 @@
-﻿using System;
-using Gwen.Controls;
-
-namespace Gwen.ControlInternal
+﻿namespace Gwen.ControlInternal
 {
     /// <summary>
     /// Divider menu item.
@@ -22,9 +19,6 @@ namespace Gwen.ControlInternal
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawMenuDivider(this);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawMenuDivider(this);
     }
 }

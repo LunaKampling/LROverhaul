@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Gwen;
 using Gwen.Controls;
 
@@ -6,9 +5,9 @@ namespace linerider.UI
 {
     public class HotkeyWidget : ControlBase
     {
-        private PropertyTree _kbtree;
-        private Button _btnreset;
-        private GameCanvas _canvas;
+        private readonly PropertyTree _kbtree;
+        private readonly Button _btnreset;
+        private readonly GameCanvas _canvas;
         public HotkeyWidget(ControlBase parent) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
@@ -29,7 +28,7 @@ namespace linerider.UI
             };
             _btnreset.Clicked += (o, e) =>
             {
-                var box = MessageBox.Show(
+                MessageBox box = MessageBox.Show(
                     _canvas,
                     "Are you sure you want to reset your keybindings to default settings?",
                     "Reset keybindings?",
@@ -41,9 +40,9 @@ namespace linerider.UI
                     {
                         Settings.ResetKeybindings();
                         Settings.Save();
-                        foreach (var kb in Settings.Keybinds)
+                        foreach (System.Collections.Generic.KeyValuePair<Hotkey, System.Collections.Generic.List<Keybinding>> kb in Settings.Keybinds)
                         {
-                            var prop = GetLabel(kb.Key);
+                            LabelProperty prop = GetLabel(kb.Key);
                             if (prop != null)
                                 prop.Value = CreateBindingText(kb.Key);
                         }
@@ -55,8 +54,8 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            var firstColWidth = 165;
-            var editorTable = _kbtree.Add("Editor", firstColWidth);
+            int firstColWidth = 165;
+            PropertyTable editorTable = _kbtree.Add("Editor", firstColWidth);
             AddBinding(editorTable, "Pencil Tool", Hotkey.EditorPencilTool);
             AddBinding(editorTable, "Line Tool", Hotkey.EditorLineTool);
             AddBinding(editorTable, "Eraser", Hotkey.EditorEraserTool);
@@ -90,13 +89,13 @@ namespace linerider.UI
             AddBinding(editorTable, "Undo Last Action", Hotkey.EditorUndo);
             AddBinding(editorTable, "Redo Last Undo Action", Hotkey.EditorRedo);
 
-            var toolTable = _kbtree.Add("Tool", firstColWidth);
+            PropertyTable toolTable = _kbtree.Add("Tool", firstColWidth);
             AddBinding(toolTable, "Line Angle Snap", Hotkey.ToolXYSnap);
             AddBinding(toolTable, "Toggle Line Snap", Hotkey.ToolToggleSnap);
             AddBinding(toolTable, "Flip Line", Hotkey.LineToolFlipLine,
                 "Hold before drawing a new line");
 
-            var selecttoolTable = _kbtree.Add("Select Tool", firstColWidth);
+            PropertyTable selecttoolTable = _kbtree.Add("Select Tool", firstColWidth);
             AddBinding(selecttoolTable, "Lock Angle", Hotkey.ToolAngleLock);
             AddBinding(selecttoolTable, "Move Whole Line", Hotkey.ToolSelectBothJoints);
             AddBinding(selecttoolTable, "Life Lock", Hotkey.ToolLifeLock,
@@ -119,7 +118,7 @@ namespace linerider.UI
             AddBinding(selecttoolTable, "Convert Selection (G)", Hotkey.ToolSwitchGreen,
                 "Convert all selected lines to green lines");
 
-            var playbackTable = _kbtree.Add("Playback", firstColWidth);
+            PropertyTable playbackTable = _kbtree.Add("Playback", firstColWidth);
             AddBinding(playbackTable, "Toggle Flag", Hotkey.PlaybackFlag);
             AddBinding(playbackTable, "Reset Camera", Hotkey.PlaybackResetCamera);
             AddBinding(playbackTable, "Start Track", Hotkey.PlaybackStart);
@@ -139,7 +138,7 @@ namespace linerider.UI
             AddBinding(playbackTable, "Zoom In", Hotkey.PlaybackZoom);
             AddBinding(playbackTable, "Zoom Out", Hotkey.PlaybackUnzoom);
 
-            var menuTable = _kbtree.Add("Menus", firstColWidth);
+            PropertyTable menuTable = _kbtree.Add("Menus", firstColWidth);
             AddBinding(menuTable, "Quicksave", Hotkey.Quicksave);
             AddBinding(menuTable, "Save As Menu", Hotkey.SaveAsWindow);
             AddBinding(menuTable, "Open Preferences", Hotkey.PreferencesWindow);
@@ -149,7 +148,7 @@ namespace linerider.UI
             AddBinding(menuTable, "Open Trigger Menu", Hotkey.TriggerMenuWindow);
             AddBinding(menuTable, "Open Generator Window", Hotkey.LineGeneratorWindow);
 
-            var coordinateTable = _kbtree.Add("Clipboard Bindings", firstColWidth);
+            PropertyTable coordinateTable = _kbtree.Add("Clipboard Bindings", firstColWidth);
             AddBinding(coordinateTable, "CopyX0", Hotkey.CopyX0);
             AddBinding(coordinateTable, "CopyY0", Hotkey.CopyY0);
             AddBinding(coordinateTable, "CopyX1", Hotkey.CopyX1);
@@ -174,7 +173,7 @@ namespace linerider.UI
         }
         private string CreateBindingText(Hotkey hotkey)
         {
-            var hk = Settings.FetchBinding(hotkey);
+            System.Collections.Generic.List<Keybinding> hk = Settings.FetchBinding(hotkey);
             string hkstring = "";
             for (int i = 0; i < hk.Count; i++)
             {
@@ -188,7 +187,7 @@ namespace linerider.UI
         }
         private void AddBinding(PropertyTable table, string label, Hotkey hotkey, string tooltip = null)
         {
-            var hk = Settings.FetchBinding(hotkey);
+            System.Collections.Generic.List<Keybinding> hk = Settings.FetchBinding(hotkey);
             string hkstring = CreateBindingText(hotkey);
             LabelProperty prop = new LabelProperty(null)
             {
@@ -199,7 +198,7 @@ namespace linerider.UI
             {
                 label += " [?]";
             }
-            var row = table.Add(label, prop);
+            PropertyRow row = table.Add(label, prop);
             if (tooltip != null)
             {
                 row.Tooltip = tooltip;
@@ -221,7 +220,7 @@ namespace linerider.UI
                 };
                 opt.AddItem("Remove Secondary").Clicked += (_o, _e) =>
                 {
-                    var k = Settings.Keybinds[hotkey];
+                    System.Collections.Generic.List<Keybinding> k = Settings.Keybinds[hotkey];
                     if (k.Count > 1)
                     {
                         k.RemoveAt(1);
@@ -231,15 +230,15 @@ namespace linerider.UI
                 };
                 opt.AddItem("Restore Default").Clicked += (_o, _e) =>
                 {
-                    var def = Settings.GetHotkeyDefault(hotkey);
+                    System.Collections.Generic.List<Keybinding> def = Settings.GetHotkeyDefault(hotkey);
                     if (def != null && def.Count != 0)
                     {
                         int idx = 0;
-                        var keys = Settings.Keybinds[hotkey];
+                        System.Collections.Generic.List<Keybinding> keys = Settings.Keybinds[hotkey];
                         keys.Clear();
-                        foreach (var defaultbind in def)
+                        foreach (Keybinding defaultbind in def)
                         {
-                            var conflict = Settings.CheckConflicts(defaultbind, hotkey);
+                            Hotkey conflict = Settings.CheckConflicts(defaultbind, hotkey);
                             if (conflict != Hotkey.None)
                                 RemoveKeybind(conflict, defaultbind);
                             ChangeKeybind(prop, hotkey, idx++, defaultbind);
@@ -252,29 +251,27 @@ namespace linerider.UI
         }
         private LabelProperty GetLabel(Hotkey hotkey)
         {
-            var ret = _kbtree.FindChildByName(hotkey.ToString(), true);
-            if (ret != null)
-                return (LabelProperty)ret;
-            return null;
+            ControlBase ret = _kbtree.FindChildByName(hotkey.ToString(), true);
+            return ret != null ? (LabelProperty)ret : null;
         }
         private void ShowHotkeyWindow(Hotkey hotkey, LabelProperty prop, int kbindex)
         {
             PropertyRow row = (PropertyRow)prop.Parent;
-            var wnd = new RebindHotkeyWindow(_canvas, row.Label.ToString());
+            RebindHotkeyWindow wnd = new RebindHotkeyWindow(_canvas, row.Label.ToString());
             wnd.KeybindChanged += (x, newbind) =>
             {
-                TryNewKeybind(hotkey, newbind, kbindex);
+                _ = TryNewKeybind(hotkey, newbind, kbindex);
             };
             wnd.ShowCentered();
         }
         private void RemoveKeybind(Hotkey hotkey, Keybinding binding)
         {
-            var conflictkeys = Settings.Keybinds[hotkey];
+            System.Collections.Generic.List<Keybinding> conflictkeys = Settings.Keybinds[hotkey];
             for (int i = 0; i < conflictkeys.Count; i++)
             {
                 if (conflictkeys[i].IsBindingEqual(binding))
                 {
-                    var conflictprop = GetLabel(hotkey);
+                    LabelProperty conflictprop = GetLabel(hotkey);
                     conflictkeys.RemoveAt(i);
                     conflictprop.Value = CreateBindingText(hotkey);
                     break;
@@ -283,14 +280,14 @@ namespace linerider.UI
         }
         private bool TryNewKeybind(Hotkey hotkey, Keybinding newbind, int kbindex)
         {
-            var k = Settings.Keybinds[hotkey];
-            var conflict = CheckConflicts(newbind, hotkey);
+            System.Collections.Generic.List<Keybinding> k = Settings.Keybinds[hotkey];
+            Hotkey conflict = CheckConflicts(newbind, hotkey);
             if (conflict == hotkey)
                 return true;
-            var prop = GetLabel(hotkey);
+            LabelProperty prop = GetLabel(hotkey);
             if (conflict != Hotkey.None)
             {
-                var mbox = MessageBox.Show(_canvas,
+                MessageBox mbox = MessageBox.Show(_canvas,
                     $"Keybinding conflicts with {conflict}, If you proceed you will overwrite it.\nDo you want to continue?",
                     "Conflict detected", MessageBox.ButtonType.OkCancel);
                 mbox.Dismissed += (o, e) =>
@@ -308,7 +305,7 @@ namespace linerider.UI
         }
         private void ChangeKeybind(LabelProperty prop, Hotkey hotkey, int kbindex, Keybinding kb)
         {
-            var k = Settings.Keybinds[hotkey];
+            System.Collections.Generic.List<Keybinding> k = Settings.Keybinds[hotkey];
             if (kbindex >= k.Count)
             {
                 k.Add(kb);
@@ -324,17 +321,17 @@ namespace linerider.UI
         {
             if (!keybinding.IsEmpty)
             {
-                var inputconflicts = Settings.KeybindConflicts[hotkey];
-                foreach (var keybinds in Settings.Keybinds)
+                KeyConflicts inputconflicts = Settings.KeybindConflicts[hotkey];
+                foreach (System.Collections.Generic.KeyValuePair<Hotkey, System.Collections.Generic.List<Keybinding>> keybinds in Settings.Keybinds)
                 {
-                    var hk = keybinds.Key;
-                    var conflicts = Settings.KeybindConflicts[hk];
-                    //if the conflicts is equal to or below inputconflicts
-                    //then we can compare for conflict
-                    //if conflicts is above inputconflicts, ignore
+                    Hotkey hk = keybinds.Key;
+                    KeyConflicts conflicts = Settings.KeybindConflicts[hk];
+                    // If the conflicts is equal to or below inputconflicts
+                    // then we can compare for conflict.
+                    // If conflicts is above inputconflicts, ignore.
                     if (inputconflicts.HasFlag(conflicts))
                     {
-                        foreach (var keybind in keybinds.Value)
+                        foreach (Keybinding keybind in keybinds.Value)
                         {
                             if (keybind.IsBindingEqual(keybinding))
                                 return hk;

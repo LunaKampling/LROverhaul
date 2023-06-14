@@ -3,20 +3,19 @@ using Gwen.Controls;
 using linerider.Tools;
 using linerider.UI.Components;
 using System.Drawing;
-using static linerider.Settings;
 
 namespace linerider.UI
 {
     public class SwatchBar : WidgetContainer
     {
-        private Editor _editor;
+        private readonly Editor _editor;
 
-        private Bitmap _normalTexture = GameResources.ux_swatch.Bitmap;
-        private Bitmap _activeTexture = GameResources.ux_swatch_active.Bitmap;
-        private WidgetButton _standardBtn;
-        private WidgetButton _accelerationBtn;
-        private WidgetButton _sceneryBtn;
-        private WidgetButton _allBtn;
+        private readonly Bitmap _normalTexture = GameResources.ux_swatch.Bitmap;
+        private readonly Bitmap _activeTexture = GameResources.ux_swatch_active.Bitmap;
+        private readonly WidgetButton _standardBtn;
+        private readonly WidgetButton _accelerationBtn;
+        private readonly WidgetButton _sceneryBtn;
+        private readonly WidgetButton _allBtn;
 
         public SwatchBar(ControlBase parent, Editor editor) : base(parent)
         {

@@ -1,36 +1,21 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using linerider.Drawing;
 using linerider.Game;
+using linerider.IO;
+using linerider.Tools;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System.IO;
-using System.Threading;
-using Gwen.Controls;
-using linerider.Tools;
-using linerider.Audio;
-using linerider.Utils;
-using linerider.IO;
 
 namespace linerider.Rendering
 {
     public class SimulationRenderer : GameService
     {
-        private TrackRenderer _trackrenderer;
+        private readonly TrackRenderer _trackrenderer;
         public RiderRenderer _riderrenderer;
 
         public bool RequiresUpdate
         {
-            get
-            {
-                return _trackrenderer.RequiresUpdate;
-            }
-            set
-            {
-                _trackrenderer.RequiresUpdate = value;
-            }
+            get => _trackrenderer.RequiresUpdate;
+            set => _trackrenderer.RequiresUpdate = value;
         }
         public SimulationRenderer()
         {
@@ -39,17 +24,19 @@ namespace linerider.Rendering
         }
         public void Render(Track track, Timeline timeline, ICamera camera, DrawOptions options)
         {
-            Rider drawrider = options.Rider;
+            _ = options.Rider;
             if (options.OverlayFrame != -1)
             {
-                var offs = camera.GetFrameCamera(options.OverlayFrame);
-                var diff = offs - camera.GetFrameCamera(game.Track.Offset);
+                Vector2d offs = camera.GetFrameCamera(options.OverlayFrame);
+                Vector2d diff = offs - camera.GetFrameCamera(game.Track.Offset);
                 GL.PushMatrix();
                 GL.Translate(new Vector3d(-diff * game.Track.Zoom));
-                var overlayopts = new DrawOptions();
-                overlayopts.Zoom = options.Zoom;
-                overlayopts.LineColors = false;
-                overlayopts.Overlay = true;
+                DrawOptions overlayopts = new DrawOptions
+                {
+                    Zoom = options.Zoom,
+                    LineColors = false,
+                    Overlay = true
+                };
                 _trackrenderer.Render(overlayopts, TrackRecorder.Recording);
                 GL.PopMatrix();
             }
@@ -58,10 +45,10 @@ namespace linerider.Rendering
             {
                 for (int i = -Settings.PastOnionSkins; i <= Settings.FutureOnionSkins; i++)
                 {
-                    var frame = game.Track.Offset + i;
+                    int frame = game.Track.Offset + i;
                     if (frame > 0 && frame < game.Track.FrameCount && i != 0)
                     {
-                        var onionskin = timeline.GetFrame(frame);
+                        Rider onionskin = timeline.GetFrame(frame);
                         _riderrenderer.DrawRider(
                             0.2f,
                             onionskin,
@@ -96,7 +83,7 @@ namespace linerider.Rendering
                     options.Iteration != 0 &&
                     !Settings.OnionSkinning)
                 {
-                    var frame = timeline.GetFrame(game.Track.Offset + 1, 0);
+                    Rider frame = timeline.GetFrame(game.Track.Offset + 1, 0);
                     _riderrenderer.DrawRider(0.1f, frame);
                     if (options.ShowContactLines)
                     {
@@ -114,21 +101,9 @@ namespace linerider.Rendering
             _riderrenderer.DrawLines();
             _riderrenderer.Clear();
         }
-        public void AddLine(GameLine l)
-        {
-            _trackrenderer.AddLine(l);
-        }
-        public void RedrawLine(GameLine l)
-        {
-            _trackrenderer.LineChanged(l);
-        }
-        public void RemoveLine(GameLine l)
-        {
-            _trackrenderer.RemoveLine(l);
-        }
-        public void RefreshTrack(Track track)
-        {
-            _trackrenderer.InitializeTrack(track);
-        }
+        public void AddLine(GameLine l) => _trackrenderer.AddLine(l);
+        public void RedrawLine(GameLine l) => _trackrenderer.LineChanged(l);
+        public void RemoveLine(GameLine l) => _trackrenderer.RemoveLine(l);
+        public void RefreshTrack(Track track) => _trackrenderer.InitializeTrack(track);
     }
 }

@@ -21,124 +21,103 @@ using System.IO;
 using System.Text;
 namespace linerider.IO
 {
-	class BigEndianWriter
-	{
-		protected MemoryStream _buffer;
-		/// <summary>
-		/// The main writer tool
-		/// </summary>
-		private readonly BinaryWriter _binWriter;
+    internal class BigEndianWriter
+    {
+        protected MemoryStream _buffer;
+        /// <summary>
+        /// The main writer tool
+        /// </summary>
+        private readonly BinaryWriter _binWriter;
 
-		/// <summary>
-		/// Amount of data writen in the writer
-		/// </summary>
-		public int Length
-		{
-			get { return (int)_buffer.Length; }
-		}
+        /// <summary>
+        /// Amount of data writen in the writer
+        /// </summary>
+        public int Length => (int)_buffer.Length;
 
-		/// <summary>
-		/// Creates a new instance of PacketWriter
-		/// </summary>
-		public BigEndianWriter()
-			: this(0)
-		{
-		}
+        /// <summary>
+        /// Creates a new instance of PacketWriter
+        /// </summary>
+        public BigEndianWriter()
+            : this(0)
+        {
+        }
 
-		/// <summary>
-		/// Creates a new instance of PacketWriter
-		/// </summary>
-		/// <param name="size">Starting size of the buffer</param>
-		public BigEndianWriter(int size)
-		{
-			_buffer = new MemoryStream(size);
-			_binWriter = new BinaryWriter(_buffer, Encoding.UTF8);
-		}
+        /// <summary>
+        /// Creates a new instance of PacketWriter
+        /// </summary>
+        /// <param name="size">Starting size of the buffer</param>
+        public BigEndianWriter(int size)
+        {
+            _buffer = new MemoryStream(size);
+            _binWriter = new BinaryWriter(_buffer, Encoding.UTF8);
+        }
 
-		public BigEndianWriter(byte[] data)
-		{
-			_buffer = new MemoryStream(data);
-			_binWriter = new BinaryWriter(_buffer, Encoding.UTF8);
-		}
+        public BigEndianWriter(byte[] data)
+        {
+            _buffer = new MemoryStream(data);
+            _binWriter = new BinaryWriter(_buffer, Encoding.UTF8);
+        }
 
-		public void Reset(int length)
-		{
-			_buffer.Seek(length, SeekOrigin.Begin);
-		}
+        public void Reset(int length) => _buffer.Seek(length, SeekOrigin.Begin);
 
-		public void WriteByte(int @byte)
-		{
-			_binWriter.Write((byte)@byte);
-		}
+        public void WriteByte(int @byte) => _binWriter.Write((byte)@byte);
 
-		public void WriteBytes(byte[] @bytes)
-		{
-			_binWriter.Write(@bytes);
-		}
+        public void WriteBytes(byte[] @bytes) => _binWriter.Write(@bytes);
 
-		public void WriteBool(bool @bool)
-		{
-			_binWriter.Write(@bool);
-		}
+        public void WriteBool(bool @bool) => _binWriter.Write(@bool);
 
-		public void WriteShort(int @short)
-		{
-			var bytes = BitConverter.GetBytes((short)@short);
+        public void WriteShort(int @short)
+        {
+            byte[] bytes = BitConverter.GetBytes((short)@short);
 
-			if (BitConverter.IsLittleEndian)
-				System.Array.Reverse(bytes);
-			_binWriter.Write(bytes);
-		}
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            _binWriter.Write(bytes);
+        }
 
-		public void WriteInt(int @int)
-		{
-			var bytes = BitConverter.GetBytes(@int);
+        public void WriteInt(int @int)
+        {
+            byte[] bytes = BitConverter.GetBytes(@int);
 
-			if (BitConverter.IsLittleEndian)
-				System.Array.Reverse(bytes);
-			_binWriter.Write(bytes);
-		}
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            _binWriter.Write(bytes);
+        }
 
-		public void WriteLong(long @long)
-		{
-			var bytes = BitConverter.GetBytes(@long);
+        public void WriteLong(long @long)
+        {
+            byte[] bytes = BitConverter.GetBytes(@long);
 
-			if (BitConverter.IsLittleEndian)
-				System.Array.Reverse(bytes);
-			_binWriter.Write(bytes);
-		}
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            _binWriter.Write(bytes);
+        }
 
-		public void WriteDouble(double @double)
-		{
-			var bytes = BitConverter.GetBytes(@double);
+        public void WriteDouble(double @double)
+        {
+            byte[] bytes = BitConverter.GetBytes(@double);
 
-			if (BitConverter.IsLittleEndian)
-				System.Array.Reverse(bytes);
-			_binWriter.Write(bytes);
-		}
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            _binWriter.Write(bytes);
+        }
 
-		public void WriteSingle(float @float)
-		{
-			var bytes = BitConverter.GetBytes(@float);
+        public void WriteSingle(float @float)
+        {
+            byte[] bytes = BitConverter.GetBytes(@float);
 
-			if (BitConverter.IsLittleEndian)
-				System.Array.Reverse(bytes);
-			_binWriter.Write(bytes);
-		}
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            _binWriter.Write(bytes);
+        }
 
-		public void WriteString(String @string)
-		{
-			_binWriter.Write(@string.ToCharArray());
-		}
+        public void WriteString(string @string) => _binWriter.Write(@string.ToCharArray());
 
-		public void WriteMapleString(String @string)
-		{
-			WriteShort((short)@string.Length);
-			WriteString(@string);
-		}
-		public byte[] ToArray()
-		{
-			return _buffer.ToArray();
-		}
-	}
+        public void WriteMapleString(string @string)
+        {
+            WriteShort((short)@string.Length);
+            WriteString(@string);
+        }
+        public byte[] ToArray() => _buffer.ToArray();
+    }
 }

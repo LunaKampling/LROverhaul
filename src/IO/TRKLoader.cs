@@ -1,19 +1,17 @@
-﻿using OpenTK;
+﻿using linerider.Audio;
+using linerider.Game;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using linerider.Audio;
-using linerider.Game;
-using System.Diagnostics;
 
 namespace linerider.IO
 {
     public static class TRKLoader
     {
-        private static string[] supported_features = {
+        private static readonly string[] supported_features = {
     "REDMULTIPLIER",
     "SCENERYWIDTH",
     "6.1","SONGINFO",
@@ -21,51 +19,42 @@ namespace linerider.IO
     "ZEROSTART",
         };
 
-        private const int REDMULTIPLIER_INDEX = 0;
-        private const int SCENERYWIDTH_INDEX = 1;
-        private const int SIX_ONE_INDEX = 2;
-        private const int SONGINFO_INDEX = 3;
-        private const int IGNORABLE_TRIGGER_INDEX = 4;
-        private const int ZEROSTART_INDEX = 5;
-        private static float ParseFloat(string f)
-        {
-            if (!float.TryParse(
+        //private const int REDMULTIPLIER_INDEX = 0;
+        //private const int SCENERYWIDTH_INDEX = 1;
+        //private const int SIX_ONE_INDEX = 2;
+        //private const int SONGINFO_INDEX = 3;
+        //private const int IGNORABLE_TRIGGER_INDEX = 4;
+        //private const int ZEROSTART_INDEX = 5;
+        private static float ParseFloat(string f) => !float.TryParse(
                 f,
                 NumberStyles.Float,
                 Program.Culture,
-                out float ret))
-                throw new TrackIO.TrackLoadException(
-                    "Unable to parse string into float");
-            return ret;
-        }
-        private static double ParseDouble(string f)
-        {
-            if (!double.TryParse(
+                out float ret)
+                ? throw new TrackIO.TrackLoadException(
+                    "Unable to parse string into float")
+                : ret;
+        private static double ParseDouble(string f) => !double.TryParse(
                 f,
                 NumberStyles.Float,
                 Program.Culture,
-                out double ret))
-                throw new TrackIO.TrackLoadException(
-                    "Unable to parse string into double");
-            return ret;
-        }
-        private static int ParseInt(string f)
-        {
-            if (!int.TryParse(
+                out double ret)
+                ? throw new TrackIO.TrackLoadException(
+                    "Unable to parse string into double")
+                : ret;
+        private static int ParseInt(string f) => !int.TryParse(
                 f,
                 NumberStyles.Float,
                 Program.Culture,
-                out int ret))
-                throw new TrackIO.TrackLoadException(
-                    "Unable to parse string into int");
-            return ret;
-        }
+                out int ret)
+                ? throw new TrackIO.TrackLoadException(
+                    "Unable to parse string into int")
+                : ret;
         private static void ParseMetadata(Track ret, BinaryReader br)
         {
-            var count = br.ReadInt16();
+            short count = br.ReadInt16();
             for (int i = 0; i < count; i++)
             {
-                var metadata = ReadString(br).Split('=');
+                string[] metadata = ReadString(br).Split('=');
                 switch (metadata[0])
                 {
                     case TrackMetadata.startzoom:
@@ -100,7 +89,7 @@ namespace linerider.IO
                         break;
                     case TrackMetadata.triggers:
                         string[] triggers = metadata[1].Split('&');
-                        foreach (var t in triggers)
+                        foreach (string t in triggers)
                         {
                             string[] tdata = t.Split(':');
                             TriggerType ttype;
@@ -119,7 +108,7 @@ namespace linerider.IO
                             switch (ttype)
                             {
                                 case TriggerType.Zoom:
-                                    var target = ParseFloat(tdata[1]);
+                                    float target = ParseFloat(tdata[1]);
                                     start = ParseInt(tdata[2]);
                                     end = ParseInt(tdata[3]);
                                     newtrigger = new GameTrigger()
@@ -131,9 +120,9 @@ namespace linerider.IO
                                     };
                                     break;
                                 case TriggerType.BGChange:
-                                    var red = ParseInt(tdata[1]);
-                                    var green = ParseInt(tdata[2]);
-                                    var blue = ParseInt(tdata[3]);
+                                    int red = ParseInt(tdata[1]);
+                                    int green = ParseInt(tdata[2]);
+                                    int blue = ParseInt(tdata[3]);
                                     start = ParseInt(tdata[4]);
                                     end = ParseInt(tdata[5]);
                                     newtrigger = new GameTrigger()
@@ -147,9 +136,9 @@ namespace linerider.IO
                                     };
                                     break;
                                 case TriggerType.LineColor:
-                                    var linered = ParseInt(tdata[1]);
-                                    var linegreen = ParseInt(tdata[2]);
-                                    var lineblue = ParseInt(tdata[3]);
+                                    int linered = ParseInt(tdata[1]);
+                                    int linegreen = ParseInt(tdata[2]);
+                                    int lineblue = ParseInt(tdata[3]);
                                     start = ParseInt(tdata[4]);
                                     end = ParseInt(tdata[5]);
                                     newtrigger = new GameTrigger()
@@ -174,17 +163,19 @@ namespace linerider.IO
         }
         public static Track LoadTrack(string trackfile, string trackname)
         {
-            var ret = new Track();
-            ret.Filename = trackfile;
-            ret.Name = trackname;
-            ret.Remount = false;
-            var addedlines = new Dictionary<int, StandardLine>();
-            var location = trackfile;
-            var bytes = File.ReadAllBytes(location);
-            using (var file =
+            Track ret = new Track
+            {
+                Filename = trackfile,
+                Name = trackname,
+                Remount = false
+            };
+            Dictionary<int, StandardLine> addedlines = new Dictionary<int, StandardLine>();
+            string location = trackfile;
+            byte[] bytes = File.ReadAllBytes(location);
+            using (MemoryStream file =
                     new MemoryStream(bytes))
             {
-                var br = new BinaryReader(file);
+                BinaryReader br = new BinaryReader(file);
                 int magic = br.ReadInt32();
                 if (magic != ('T' | 'R' << 8 | 'K' << 16 | 0xF2 << 24))
                     throw new TrackIO.TrackLoadException("File was read as .trk but it is not valid");
@@ -247,11 +238,11 @@ namespace linerider.IO
                 }
                 if (songinfo)
                 {
-                    var song = br.ReadString();
+                    string song = br.ReadString();
                     try
                     {
-                        var strings = song.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        var fn = Program.UserDirectory + "Songs" +
+                        string[] strings = song.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                        string fn = Program.UserDirectory + "Songs" +
                                  Path.DirectorySeparatorChar +
                                  strings[0];
                         if (File.Exists(fn))
@@ -265,28 +256,27 @@ namespace linerider.IO
                                 Program.NonFatalError("An unknown error occured trying to load the song file");
                             }
                         }
-
                     }
                     catch
                     {
-                        // ignored
+                        // Ignored
                     }
                 }
                 ret.StartOffset = new Vector2d(br.ReadDouble(), br.ReadDouble());
-                var lines = br.ReadInt32();
+                int lines = br.ReadInt32();
                 List<LineTrigger> linetriggers = new List<LineTrigger>();
-                for (var i = 0; i < lines; i++)
+                for (int i = 0; i < lines; i++)
                 {
                     GameLine l;
                     byte ltype = br.ReadByte();
-                    var lt = (LineType)(ltype & 0x1F);//we get 5 bits
-                    var inv = (ltype >> 7) != 0;
-                    var lim = (ltype >> 5) & 0x3;
-                    var ID = -1;
-                    var prvID = -1;
-                    var nxtID = -1;
-                    var multiplier = 1;
-                    var linewidth = 1f;
+                    LineType lt = (LineType)(ltype & 0x1F); // We get 5 bits
+                    bool inv = (ltype >> 7) != 0;
+                    int lim = (ltype >> 5) & 0x3;
+                    int ID = -1;
+                    int prvID = -1;
+                    int nxtID = -1;
+                    int multiplier = 1;
+                    float linewidth = 1f;
                     LineTrigger tr = null;
                     if (redmultipier)
                     {
@@ -304,8 +294,8 @@ namespace linerider.IO
                             if (zoomtrigger)
                             {
                                 tr.ZoomTrigger = true;
-                                var target = br.ReadSingle();
-                                var frames = br.ReadInt16();
+                                float target = br.ReadSingle();
+                                short frames = br.ReadInt16();
                                 tr.ZoomFrames = frames;
                                 tr.ZoomTarget = target;
                             }
@@ -317,8 +307,8 @@ namespace linerider.IO
                         ID = br.ReadInt32();
                         if (lim != 0)
                         {
-                            prvID = br.ReadInt32();//ignored
-                            nxtID = br.ReadInt32();//ignored
+                            prvID = br.ReadInt32(); // Ignored
+                            nxtID = br.ReadInt32(); // Ignored
                         }
                     }
                     if (lt == LineType.Scenery)
@@ -329,10 +319,10 @@ namespace linerider.IO
                             linewidth = b / 10f;
                         }
                     }
-                    var x1 = br.ReadDouble();
-                    var y1 = br.ReadDouble();
-                    var x2 = br.ReadDouble();
-                    var y2 = br.ReadDouble();
+                    double x1 = br.ReadDouble();
+                    double y1 = br.ReadDouble();
+                    double x2 = br.ReadDouble();
+                    double y2 = br.ReadDouble();
 
                     if (tr != null)
                     {
@@ -342,16 +332,20 @@ namespace linerider.IO
                     switch (lt)
                     {
                         case LineType.Standard:
-                            var bl = new StandardLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv);
-                            bl.ID = ID;
-                            bl.Extension = (StandardLine.Ext)lim;
+                            StandardLine bl = new StandardLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            {
+                                ID = ID,
+                                Extension = (StandardLine.Ext)lim
+                            };
                             l = bl;
                             break;
 
                         case LineType.Acceleration:
-                            var rl = new RedLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv);
-                            rl.ID = ID;
-                            rl.Extension = (StandardLine.Ext)lim;
+                            RedLine rl = new RedLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            {
+                                ID = ID,
+                                Extension = (StandardLine.Ext)lim
+                            };
                             if (redmultipier)
                             {
                                 rl.Multiplier = multiplier;
@@ -367,11 +361,11 @@ namespace linerider.IO
                         default:
                             throw new TrackIO.TrackLoadException("Invalid line type at ID " + ID);
                     }
-                    if (l is StandardLine)
+                    if (l is StandardLine line)
                     {
                         if (!addedlines.ContainsKey(l.ID))
                         {
-                            addedlines[ID] = (StandardLine)l;
+                            addedlines[ID] = line;
                             ret.AddLine(l);
                         }
                     }
@@ -383,7 +377,7 @@ namespace linerider.IO
                 ret.Triggers = TriggerConverter.ConvertTriggers(linetriggers, ret);
                 if (br.BaseStream.Position != br.BaseStream.Length)
                 {
-                    var meta = br.ReadInt32();
+                    int meta = br.ReadInt32();
                     if (meta == ('M' | 'E' << 8 | 'T' << 16 | 'A' << 24))
                     {
                         ParseMetadata(ret, br);
@@ -396,9 +390,6 @@ namespace linerider.IO
             }
             return ret;
         }
-        private static string ReadString(BinaryReader br)
-        {
-            return Encoding.ASCII.GetString(br.ReadBytes(br.ReadInt16()));
-        }
+        private static string ReadString(BinaryReader br) => Encoding.ASCII.GetString(br.ReadBytes(br.ReadInt16()));
     }
 }

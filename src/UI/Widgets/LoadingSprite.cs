@@ -16,19 +16,19 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Drawing;
 using Gwen.Controls;
+using linerider.UI.Components;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using linerider.UI.Components;
 using Svg;
+using System;
+using System.Drawing;
 
 namespace linerider.UI
 {
     public class LoadingSprite : Sprite
     {
-        private Color Color = Settings.Colors.StandardLine;
+        private readonly Color Color = Settings.Colors.StandardLine;
 
         public LoadingSprite(ControlBase canvas) : base(canvas)
         {
@@ -45,7 +45,7 @@ namespace linerider.UI
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
             ((Gwen.Renderer.OpenTK)skin.Renderer).Flush();
-            float rotation = (Environment.TickCount % 1000) / 1000f;
+            float rotation = Environment.TickCount % 1000 / 1000f;
             Vector3d trans = new Vector3d(X + Width / 2, Y + Height / 2, 0);
             GL.Translate(Width / -4, Height / -4, 0);
             GL.PushMatrix();
