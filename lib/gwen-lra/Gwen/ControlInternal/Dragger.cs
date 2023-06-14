@@ -8,7 +8,7 @@ namespace Gwen.ControlInternal
     /// <summary>
     /// Base for controls that can be dragged by mouse.
     /// </summary>
-    public class Dragger : Controls.ControlBase
+    public class Dragger : ControlBase
     {
         #region Events
 
@@ -32,7 +32,7 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Indicates if the control is being dragged.
         /// </summary>
-        public bool IsHeld { get { return m_Held; } }
+        public bool IsHeld => m_Held;
 
         #endregion Properties
 
@@ -42,7 +42,7 @@ namespace Gwen.ControlInternal
         /// Initializes a new instance of the <see cref="Dragger"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Dragger(Controls.ControlBase parent) : base(parent)
+        public Dragger(ControlBase parent) : base(parent)
         {
             ToolTipProvider = false;
             MouseInputEnabled = true;
@@ -51,10 +51,10 @@ namespace Gwen.ControlInternal
 
         #endregion Constructors
 
-        internal ControlBase Target { get { return m_Target; } set { m_Target = value; } }
+        internal ControlBase Target { get => m_Target; set => m_Target = value; }
         protected bool m_Held;
         protected Point m_HoldPos;
-        protected Controls.ControlBase m_Target;
+        protected ControlBase m_Target;
 
         /// <summary>
         /// Handler invoked on mouse click (left) event.
@@ -64,23 +64,22 @@ namespace Gwen.ControlInternal
         /// <param name="down">If set to <c>true</c> mouse button is down.</param>
         protected override void OnMouseClickedLeft(int x, int y, bool down)
         {
-            if (null == m_Target) return;
+            if (null == m_Target)
+                return;
 
             if (down)
             {
                 m_Held = true;
                 m_HoldPos = m_Target.CanvasPosToLocal(new Point(x, y));
                 InputHandler.MouseFocus = this;
-                if (Pressed != null)
-                    Pressed.Invoke(this, EventArgs.Empty);
+                Pressed?.Invoke(this, EventArgs.Empty);
             }
             else
             {
                 m_Held = false;
                 InputHandler.MouseFocus = null;
 
-                if (Released != null)
-                    Released.Invoke(this, EventArgs.Empty);
+                Released?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -93,8 +92,10 @@ namespace Gwen.ControlInternal
         /// <param name="dy">Y change.</param>
         protected override void OnMouseMoved(int x, int y, int dx, int dy)
         {
-            if (null == m_Target) return;
-            if (!m_Held) return;
+            if (null == m_Target)
+                return;
+            if (!m_Held)
+                return;
 
             Point p = new Point(x - m_HoldPos.X, y - m_HoldPos.Y);
 
@@ -103,9 +104,8 @@ namespace Gwen.ControlInternal
                 p = m_Target.Parent.CanvasPosToLocal(p);
 
             //m_Target->SetPosition( p.x, p.y );
-            m_Target.MoveClampToParent(p.X, p.Y);
-            if (Dragged != null)
-                Dragged.Invoke(this, EventArgs.Empty);
+            _ = m_Target.MoveClampToParent(p.X, p.Y);
+            Dragged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

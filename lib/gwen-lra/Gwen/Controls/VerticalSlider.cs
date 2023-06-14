@@ -25,10 +25,7 @@ namespace Gwen.Controls
 
         #region Methods
 
-        protected override double CalculateValue()
-        {
-            return 1 - m_SliderBar.Y / (double)(Height - m_SliderBar.Height);
-        }
+        protected override double CalculateValue() => 1 - m_SliderBar.Y / (double)(Height - m_SliderBar.Height);
 
         /// <summary>
         /// Lays out the control's interior according to alignment, padding, dock etc.
@@ -37,7 +34,7 @@ namespace Gwen.Controls
         protected override void ProcessLayout(Size size)
         {
             base.ProcessLayout(size);
-            m_SliderBar.SetSize(Width, 15);
+            _ = m_SliderBar.SetSize(Width, 15);
             UpdateBarFromValue();
         }
 
@@ -52,7 +49,7 @@ namespace Gwen.Controls
             base.OnMouseClickedLeft(x, y, down);
             if (down)
             {
-                IsMouseDepressed = false;//we forfeit our mouse down event and right to a mouse up event
+                IsMouseDepressed = false; // We forfeit our mouse down event and right to a mouse up event
                 m_SliderBar.MoveTo(m_SliderBar.X, (int)(CanvasPosToLocal(new Point(x, y)).Y - m_SliderBar.Height * 0.5));
                 m_SliderBar.InputMouseClickedLeft(x, y, down);
                 OnMoved(m_SliderBar, EventArgs.Empty);
@@ -63,15 +60,9 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawSlider(this, false, m_SnapToNotches && DrawNotches ? m_NotchCount : 0, m_SliderBar.Height, m_Value);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawSlider(this, false, m_SnapToNotches && DrawNotches ? m_NotchCount : 0, m_SliderBar.Height, m_Value);
 
-        protected override void UpdateBarFromValue()
-        {
-            m_SliderBar.MoveTo(m_SliderBar.X, (int)((Height - m_SliderBar.Height) * (1 - m_Value)));
-        }
+        protected override void UpdateBarFromValue() => m_SliderBar.MoveTo(m_SliderBar.X, (int)((Height - m_SliderBar.Height) * (1 - m_Value)));
 
         #endregion Methods
     }

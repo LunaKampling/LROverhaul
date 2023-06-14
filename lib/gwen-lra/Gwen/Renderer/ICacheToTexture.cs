@@ -23,7 +23,7 @@ namespace Gwen.Renderer
         /// </summary>
         /// <param name="control">Control to be rendered.</param>
         void DrawCachedControlTexture(Controls.ControlBase control);
-        
+
         void SetRenderer(RendererBase renderer);
     }
 }

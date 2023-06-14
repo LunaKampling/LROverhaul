@@ -16,24 +16,20 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.UI;
+using linerider.Utils;
+using OpenTK;
+using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.IO;
-using OpenTK;
-using OpenTK.Input;
-using OpenTK.Graphics;
-using linerider.Audio;
-using linerider.UI;
-using linerider.Utils;
-using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 
 namespace linerider
 {
-    static class Settings
+    internal static class Settings
     {
         public enum BezierMode
         {
@@ -49,15 +45,12 @@ namespace linerider
             public static bool EnableColorTriggers = true;
             public static int RecordingWidth = 0;
             public static int RecordingHeight = 0;
-            public static bool ResIndZoom = true; //Use resolution-independent zoom based on window size when recording
+            public static bool ResIndZoom = true; // Use resolution-independent zoom based on window size when recording
         }
         public static class Local
         {
             public static bool RecordingMode;
-            public static float MaxZoom
-            {
-                get => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
-            }
+            public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
             public static bool TrackOverlay = false;
             public static bool TrackOverlayFixed = false;
             public static int TrackOverlayFixedFrame = 0;
@@ -147,27 +140,27 @@ namespace linerider
         public static bool PreviewMode;
         public static int SlowmoSpeed;
         public static float DefaultPlayback;
-        public static bool DrawCollisionGrid; //Draw the grid used in line collision detection
-        public static bool DrawAGWs; //Draw the normally invisible line extensions used to smooth curve collisions
-        public static bool DrawFloatGrid; //Draw the exponential grid of floating-point 'regions' (used for angled kramuals)
-        public static bool DrawCamera; //Draw the camera's area
+        public static bool DrawCollisionGrid; // Draw the grid used in line collision detection
+        public static bool DrawAGWs; // Draw the normally invisible line extensions used to smooth curve collisions
+        public static bool DrawFloatGrid; // Draw the exponential grid of floating-point 'regions' (used for angled kramuals)
+        public static bool DrawCamera; // Draw the camera's area
 
-        public static float ZoomMultiplier; //A constant multiplier for the zoom
+        public static float ZoomMultiplier; // A constant multiplier for the zoom
 
         // LRTran settings
-        public static String SelectedScarf; //What custom scarf is selected
-        public static int ScarfSegments; //How many scarf segments on restart
-        public static String SelectedBoshSkin; //What bosh skin is selected
-        public static bool showChangelog; //Show the changelog
-        public static int multiScarfAmount; //How many scarves the rider has
-        public static int multiScarfSegments; //How many segments a multi scarf has
-        public static int autosaveChanges; //Changes when autosave starts
-        public static int autosaveMinutes; //Amount of minues per autosave
-        public static bool startWindowMaximized; //Start window maximized
-        public static String DefaultSaveFormat; //What the save menu auto picks 
-        public static String DefaultAutosaveFormat; //What the autosave format is
-        public static String DefaultQuicksaveFormat; //What the autosave format is
-        public static String DefaultCrashBackupFormat; //Format crash backups are saved to
+        public static string SelectedScarf; // What custom scarf is selected
+        public static int ScarfSegments; // How many scarf segments on restart
+        public static string SelectedBoshSkin; // What bosh skin is selected
+        public static bool showChangelog; // Show the changelog
+        public static int multiScarfAmount; // How many scarves the rider has
+        public static int multiScarfSegments; // How many segments a multi scarf has
+        public static int autosaveChanges; // Changes when autosave starts
+        public static int autosaveMinutes; // Amount of minues per autosave
+        public static bool startWindowMaximized; // Start window maximized
+        public static string DefaultSaveFormat; // What the save menu auto picks 
+        public static string DefaultAutosaveFormat; // What the autosave format is
+        public static string DefaultQuicksaveFormat; // What the autosave format is
+        public static string DefaultCrashBackupFormat; // Format crash backups are saved to
 
         // RatherBeLunar Addon Settings
         public static bool velocityReferenceFrameAnimation = true;
@@ -183,7 +176,7 @@ namespace linerider
         public static string LastSelectedTrack = "";
         public static Dictionary<Hotkey, KeyConflicts> KeybindConflicts = new Dictionary<Hotkey, KeyConflicts>();
         public static Dictionary<Hotkey, List<Keybinding>> Keybinds = new Dictionary<Hotkey, List<Keybinding>>();
-        private static Dictionary<Hotkey, List<Keybinding>> DefaultKeybinds = new Dictionary<Hotkey, List<Keybinding>>();
+        private static readonly Dictionary<Hotkey, List<Keybinding>> DefaultKeybinds = new Dictionary<Hotkey, List<Keybinding>>();
 
         // Malizma Addon Settings
         public static bool InvisibleRider;
@@ -191,18 +184,9 @@ namespace linerider
         // Computed settings
         public static class Computed
         {
-            public static float UIScale
-            {
-                get => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
-            }
-            public static Color BGColor
-            {
-                get => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
-            }
-            public static Color LineColor
-            {
-                get => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
-            }
+            public static float UIScale => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
+            public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
+            public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
         }
 
         static Settings()
@@ -215,9 +199,9 @@ namespace linerider
                 KeybindConflicts.Add(hk, KeyConflicts.General);
                 Keybinds.Add(hk, new List<Keybinding>());
             }
-            //conflicts, for keybinds that depend on a state, so keybinds 
-            //outside of its state can be set as long
-            //as its dependant state (general) doesnt have a keybind set
+            // Conflicts, for keybinds that depend on a state, so keybinds 
+            // outside of its state can be set as long
+            // as its dependant state (general) doesnt have a keybind set
             KeybindConflicts[Hotkey.PlaybackZoom] = KeyConflicts.Playback;
             KeybindConflicts[Hotkey.PlaybackUnzoom] = KeyConflicts.Playback;
             KeybindConflicts[Hotkey.PlaybackSpeedUp] = KeyConflicts.Playback;
@@ -278,7 +262,7 @@ namespace linerider
             Colors.StandardLine = Constants.BlueLineColor;
             Bezier.Resolution = 30;
             Bezier.NodeSize = 15;
-            Bezier.Mode = (int) BezierMode.Direct;
+            Bezier.Mode = (int)BezierMode.Direct;
             PlaybackZoomType = 0;
             PlaybackZoomValue = 4;
             Volume = 100;
@@ -347,7 +331,7 @@ namespace linerider
         }
         public static void ResetKeybindings()
         {
-            foreach (var kb in Keybinds)
+            foreach (KeyValuePair<Hotkey, List<Keybinding>> kb in Keybinds)
             {
                 kb.Value.Clear();
             }
@@ -385,7 +369,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.ToolSelectBothJoints, new Keybinding(KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.LineToolFlipLine, new Keybinding(KeyModifiers.Shift));
             SetupDefaultKeybind(Hotkey.EditorUndo, new Keybinding(Key.Z, KeyModifiers.Control));
-            
+
             SetupDefaultKeybind(Hotkey.EditorRedo,
                 new Keybinding(Key.Y, KeyModifiers.Control),
                 new Keybinding(Key.Z, KeyModifiers.Control | KeyModifiers.Shift));
@@ -450,7 +434,6 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
             SetupDefaultKeybind(Hotkey.Quicksave, new Keybinding(Key.S, KeyModifiers.Control));
 
-
             SetupDefaultKeybind(Hotkey.EditorQuickPan, new Keybinding(Key.Space, KeyModifiers.Shift));
             SetupDefaultKeybind(Hotkey.EditorDragCanvas, new Keybinding(MouseButton.Middle));
 
@@ -489,8 +472,10 @@ namespace linerider
         {
             if (keybinding.IsEmpty)
                 return;
-            DefaultKeybinds[hotkey] = new List<Keybinding>();
-            DefaultKeybinds[hotkey].Add(keybinding);
+            DefaultKeybinds[hotkey] = new List<Keybinding>
+            {
+                keybinding
+            };
             if (secondary != null)
             {
                 DefaultKeybinds[hotkey].Add(secondary);
@@ -505,25 +490,20 @@ namespace linerider
                 LoadDefaultKeybind(hk);
             }
         }
-        public static List<Keybinding> GetHotkeyDefault(Hotkey hotkey)
-        {
-            if (!DefaultKeybinds.ContainsKey(hotkey))
-                return null;
-            return DefaultKeybinds[hotkey];
-        }
+        public static List<Keybinding> GetHotkeyDefault(Hotkey hotkey) => !DefaultKeybinds.ContainsKey(hotkey) ? null : DefaultKeybinds[hotkey];
         private static void LoadDefaultKeybind(Hotkey hotkey)
         {
             if (DefaultKeybinds.ContainsKey(hotkey))
             {
-                var defaults = DefaultKeybinds[hotkey];
+                List<Keybinding> defaults = DefaultKeybinds[hotkey];
                 if (defaults == null || defaults.Count == 0)
                     return;
-                var list = Keybinds[hotkey];
+                List<Keybinding> list = Keybinds[hotkey];
                 if (list.Count == 0)
                     CreateKeybind(hotkey, defaults[0]);
                 if (defaults.Count > 1)
                 {
-                    var secondary = defaults[1];
+                    Keybinding secondary = defaults[1];
                     if (secondary != null && list.Count == 1 && list[0].IsBindingEqual(defaults[0]))
                         CreateKeybind(hotkey, secondary);
                 }
@@ -531,7 +511,7 @@ namespace linerider
         }
         private static void CreateKeybind(Hotkey hotkey, Keybinding keybinding)
         {
-            var conflict = CheckConflicts(keybinding, hotkey);
+            Hotkey conflict = CheckConflicts(keybinding, hotkey);
             if (keybinding.IsEmpty || conflict != Hotkey.None)
                 return;
             Keybinds[hotkey].Add(keybinding);
@@ -540,7 +520,7 @@ namespace linerider
         {
             if (!Keybinds.ContainsKey(hotkey))
                 Keybinds[hotkey] = new List<Keybinding>();
-            var ret = Keybinds[hotkey];
+            List<Keybinding> ret = Keybinds[hotkey];
             if (ret.Count == 0)
                 ret.Add(new Keybinding()); // Empty
             return ret;
@@ -572,20 +552,20 @@ namespace linerider
         {
             if (!keybinding.IsEmpty)
             {
-                var inputconflicts = KeybindConflicts[hotkey];
+                KeyConflicts inputconflicts = KeybindConflicts[hotkey];
                 if (inputconflicts == KeyConflicts.HardCoded)
                     return Hotkey.None;
-                foreach (var keybinds in Keybinds)
+                foreach (KeyValuePair<Hotkey, List<Keybinding>> keybinds in Keybinds)
                 {
-                    var hk = keybinds.Key;
-                    var conflicts = KeybindConflicts[hk];
-                    //if the conflicts is equal to or below inputconflicts
-                    //then we can compare for conflict
-                    //if conflicts is above inputconflicts, ignore
-                    //also, if theyre both hardcoded they cannot conflict.
+                    Hotkey hk = keybinds.Key;
+                    KeyConflicts conflicts = KeybindConflicts[hk];
+                    // If the conflicts is equal to or below inputconflicts
+                    // then we can compare for conflict.
+                    // If conflicts is above inputconflicts, ignore.
+                    // Also, if theyre both hardcoded they cannot conflict.
                     if (inputconflicts.HasFlag(conflicts))
                     {
-                        foreach (var keybind in keybinds.Value)
+                        foreach (Keybinding keybind in keybinds.Value)
                         {
                             if (keybind.IsBindingEqual(keybinding) &&
                                 !(inputconflicts == KeyConflicts.HardCoded &&
@@ -613,7 +593,7 @@ namespace linerider
             LoadAddonSettings(lines);
             LoadKeybinds(lines);
 
-            var lasttrack = GetSetting(lines, nameof(LastSelectedTrack));
+            string lasttrack = GetSetting(lines, nameof(LastSelectedTrack));
             if (File.Exists(lasttrack) && lasttrack.StartsWith(Constants.TracksDirectory))
                 LastSelectedTrack = lasttrack;
 
@@ -652,7 +632,6 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(ScreenshotShowHitTest)), ref ScreenshotShowHitTest);
             LoadBool(GetSetting(lines, nameof(ScreenshotResIndependentZoom)), ref ScreenshotResIndependentZoom);
 
-            
             LoadFloat(GetSetting(lines, nameof(UIScale)), ref UIScale);
             LoadBool(GetSetting(lines, nameof(UIShowZoom)), ref UIShowZoom);
             LoadBool(GetSetting(lines, nameof(UIShowSpeedButtons)), ref UIShowSpeedButtons);
@@ -716,8 +695,14 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothStabilizer)), ref SmoothPencil.smoothStabilizer);
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothUpdateSpeed)), ref SmoothPencil.smoothUpdateSpeed);
             LoadBool(GetSetting(lines, nameof(InvisibleRider)), ref InvisibleRider);
-            if (multiScarfSegments == 0) { multiScarfSegments++; }
-            if (ScarfSegments == 0) { ScarfSegments++; }
+            if (multiScarfSegments == 0)
+            {
+                multiScarfSegments++;
+            }
+            if (ScarfSegments == 0)
+            {
+                ScarfSegments++;
+            }
         }
         public static void LoadAddonSettings(string[] lines)
         {
@@ -739,24 +724,21 @@ namespace linerider
             LoadDefaultKeybindings();
         }
 
-        public static void Save()
-        {
-            Debouncer.Debounce("Settings.Save", () =>
-            {
-                List<string> lines = new List<string>();
+        public static void Save() => Debouncer.Debounce("Settings.Save", () =>
+                                              {
+                                                  List<string> lines = new List<string>();
 
-                lines.AddRange(BuildMainSettingsList());
-                lines.AddRange(BuildAddonSettingsList());
-                lines.AddRange(BuildKeybindsList());
+                                                  lines.AddRange(BuildMainSettingsList());
+                                                  lines.AddRange(BuildAddonSettingsList());
+                                                  lines.AddRange(BuildKeybindsList());
 
-                try
-                {
-                    string content = string.Join("\r\n", lines);
-                    File.WriteAllText(Program.UserDirectory + "settings-LRT.conf", content);
-                }
-                catch { }
-            }, 1000);
-        }
+                                                  try
+                                                  {
+                                                      string content = string.Join("\r\n", lines);
+                                                      File.WriteAllText(Program.UserDirectory + "settings-LRT.conf", content);
+                                                  }
+                                                  catch { }
+                                              }, 1000);
 
         private static List<string> BuildMainSettingsList()
         {
@@ -793,7 +775,6 @@ namespace linerider
                 MakeSetting(nameof(ScreenshotShowHitTest), ScreenshotShowHitTest.ToString(Program.Culture)),
                 MakeSetting(nameof(ScreenshotResIndependentZoom), ScreenshotResIndependentZoom.ToString(Program.Culture)),
 
-                
                 MakeSetting(nameof(UIScale), UIScale.ToString(Program.Culture)),
                 MakeSetting(nameof(UIShowZoom), UIShowZoom.ToString(Program.Culture)),
                 MakeSetting(nameof(UIShowSpeedButtons), UIShowSpeedButtons.ToString(Program.Culture)),
@@ -879,9 +860,9 @@ namespace linerider
         {
             List<string> lines = new List<string>();
 
-            foreach (var binds in Keybinds)
+            foreach (KeyValuePair<Hotkey, List<Keybinding>> binds in Keybinds)
             {
-                foreach (var bind in binds.Value)
+                foreach (Keybinding bind in binds.Value)
                 {
                     if (KeybindConflicts[binds.Key] == KeyConflicts.HardCoded)
                         continue;
@@ -916,29 +897,29 @@ namespace linerider
             if (KeybindConflicts[hotkey] == KeyConflicts.HardCoded)
                 return;
             int line = 0;
-            var hotkeyname = hotkey.ToString();
-            var setting = GetSetting(config, hotkeyname, ref line);
+            string hotkeyname = hotkey.ToString();
+            string setting = GetSetting(config, hotkeyname, ref line);
             if (setting != null)
                 Keybinds[hotkey] = new List<Keybinding>();
             while (setting != null)
             {
                 line++;
-                var items = setting.Trim(' ', '\t', '[', ']').Split('+');
+                string[] items = setting.Trim(' ', '\t', '[', ']').Split('+');
                 Keybinding ret = new Keybinding();
-                foreach (var item in items)
+                foreach (string item in items)
                 {
                     if (!ret.UsesModifiers &&
-                        Enum.TryParse<KeyModifiers>(item, true, out var modifiers))
+                        Enum.TryParse(item, true, out KeyModifiers modifiers))
                     {
                         ret.Modifiers = modifiers;
                     }
                     else if (!ret.UsesKeys &&
-                        Enum.TryParse<Key>(item, true, out Key key))
+                        Enum.TryParse(item, true, out Key key))
                     {
                         ret.Key = key;
                     }
                     else if (!ret.UsesMouse &&
-                        Enum.TryParse<MouseButton>(item, true, out var mouse))
+                        Enum.TryParse(item, true, out MouseButton mouse))
                     {
                         ret.MouseButton = mouse;
                     }
@@ -955,7 +936,6 @@ namespace linerider
                 }
                 setting = GetSetting(config, hotkeyname, ref line);
             }
-
         }
         private static string GetSetting(string[] config, string name)
         {
@@ -966,37 +946,31 @@ namespace linerider
         {
             for (int i = start; i < config.Length; i++)
             {
-                var idx = config[i].IndexOf("=");
+                int idx = config[i].IndexOf("=");
                 if (idx != -1 && idx + 1 < config[i].Length && config[i].Substring(0, idx) == name)//split[0] == name && split.Length > 1)
                 {
 
-                    var split = config[i].Substring(idx + 1);
+                    string split = config[i].Substring(idx + 1);
                     start = i;
                     return split;
                 }
             }
             return null;
         }
-        private static string MakeSetting(string name, string value)
-        {
-            return name + "=" + value;
-        }
+        private static string MakeSetting(string name, string value) => name + "=" + value;
         private static void LoadInt(string setting, ref int var)
         {
-            int val;
-            if (int.TryParse(setting, System.Globalization.NumberStyles.Integer, Program.Culture, out val))
+            if (int.TryParse(setting, System.Globalization.NumberStyles.Integer, Program.Culture, out int val))
                 var = val;
         }
         private static void LoadFloat(string setting, ref float var)
         {
-            float val;
-            if (float.TryParse(setting, System.Globalization.NumberStyles.Float, Program.Culture, out val))
+            if (float.TryParse(setting, System.Globalization.NumberStyles.Float, Program.Culture, out float val))
                 var = val;
         }
         private static void LoadBool(string setting, ref bool var)
         {
-            bool val;
-            if (bool.TryParse(setting, out val))
+            if (bool.TryParse(setting, out bool val))
                 var = val;
         }
         private static void LoadColor(string setting, ref Color var)
@@ -1011,7 +985,7 @@ namespace linerider
         private static string SaveColor(Color color)
         {
             int[] colorValues = { color.R, color.G, color.B };
-            return String.Join(",", colorValues);
+            return string.Join(",", colorValues);
         }
     }
 }

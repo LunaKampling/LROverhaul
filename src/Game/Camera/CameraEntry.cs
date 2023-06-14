@@ -1,6 +1,4 @@
-﻿using System;
-using OpenTK;
-using linerider.Utils;
+﻿using OpenTK;
 
 namespace linerider.Game
 {
@@ -19,7 +17,7 @@ namespace linerider.Game
         {
             RiderCenter = origin;
             CameraOffset = Vector2d.Zero;
-            ppf =0;
+            ppf = 0;
         }
     }
 }

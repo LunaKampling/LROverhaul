@@ -16,10 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Utils;
 using OpenTK;
 using System;
-using linerider.Game;
-using linerider.Utils;
 using System.Drawing;
 namespace linerider.Game
 {
@@ -34,22 +33,13 @@ namespace linerider.Game
         /// <summary>
         /// "Left" 
         /// </summary>
-        public virtual Vector2d Start
-        {
-            get { return Position1; }
-        }
+        public virtual Vector2d Start => Position1;
         /// <summary>
         /// "Right"
         /// </summary>
-        public virtual Vector2d End
-        {
-            get { return Position2; }
-        }
+        public virtual Vector2d End => Position2;
 
-        public override int GetHashCode()
-        {
-            return ID;
-        }
+        public override int GetHashCode() => ID;
 
         public Color GetColor()
         {

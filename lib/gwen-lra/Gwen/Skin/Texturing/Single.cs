@@ -6,7 +6,7 @@ namespace Gwen.Skin.Texturing
     /// <summary>
     /// Single textured element.
     /// </summary>
-    public struct Single
+    public readonly struct Single
     {
         #region Constructors
 
@@ -31,11 +31,8 @@ namespace Gwen.Skin.Texturing
 
         #region Methods
 
-        // can't have this as default param
-        public void Draw(Renderer.RendererBase render, Rectangle r)
-        {
-            Draw(render, r, Color.White);
-        }
+        // Can't have this as default param
+        public void Draw(Renderer.RendererBase render, Rectangle r) => Draw(render, r, Color.White);
 
         public void Draw(Renderer.RendererBase render, Rectangle r, Color col)
         {
@@ -53,7 +50,7 @@ namespace Gwen.Skin.Texturing
 
             DrawCenter(render, r, Color.White);
         }
- 
+
         public void DrawCenter(Renderer.RendererBase render, Rectangle r, Color col)
         {
             r.X += (int)Math.Round((r.Width - m_Width) * 0.5);

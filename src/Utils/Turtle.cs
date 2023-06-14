@@ -16,18 +16,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OpenTK;
+using System;
 namespace linerider.Utils
 {
     /// <summary>
     /// This is my pet turtle. I wrote him cause I'm bad at math.
     /// His name is Sam
     /// </summary>
-    class Turtle
+    internal class Turtle
     {
         private Vector2d _point = new Vector2d(0, 0);
         /// <summary>
@@ -36,10 +33,7 @@ namespace linerider.Utils
         /// </summary>
         public Vector2d Point
         {
-            get
-            {
-                return _point;
-            }
+            get => _point;
             set
             {
                 _point = value;
@@ -51,24 +45,12 @@ namespace linerider.Utils
         /// </summary>
         public Vector2d PointNoReset
         {
-            get
-            {
-                return _point;
-            }
-            set
-            {
-                _point = value;
-            }
+            get => _point;
+            set => _point = value;
         }
-        public double X { get { return _point.X; } }
-        public double Y { get { return _point.Y; } }
-        public double Degrees
-        {
-            get
-            {
-                return new Angle(_degrees).Degrees;
-            }
-        }
+        public double X => _point.X;
+        public double Y => _point.Y;
+        public double Degrees => new Angle(_degrees).Degrees;
         private double _degrees = 0;
         public Turtle(Vector2d startpoint)
         {
@@ -77,16 +59,16 @@ namespace linerider.Utils
 
         private static Vector2d CalculateLine(Vector2d position, double degrees, double length)
         {
-            var ret = position;
-            var radians = MathHelper.DegreesToRadians(degrees);
-            var sin = Math.Sin(radians);
-            var cos = Math.Cos(radians);
-            ret.X = ret.X + (length * cos);
-            ret.Y = ret.Y + (length * sin);
+            Vector2d ret = position;
+            double radians = MathHelper.DegreesToRadians(degrees);
+            double sin = Math.Sin(radians);
+            double cos = Math.Cos(radians);
+            ret.X += length * cos;
+            ret.Y += length * sin;
             return ret;
         }
         /// <summary>
-        /// moves relative to the previous command, retaining angle of the last move command
+        /// Moves relative to the previous command, retaining angle of the last move command
         /// </summary>
         public void Move(double degrees, double length)
         {
@@ -94,7 +76,7 @@ namespace linerider.Utils
             _point = CalculateLine(Point, _degrees, length);
         }
         /// <summary>
-        /// moves relative to the previous command, using the static angle used
+        /// Moves relative to the previous command, using the static angle used
         /// </summary>
         public void MoveStaticDegrees(double degrees, double length)
         {

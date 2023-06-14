@@ -24,7 +24,7 @@ namespace linerider.Audio
 {
     internal class AudioDevice : IDisposable
     {
-        private IntPtr _hDevice;
+        private readonly IntPtr _hDevice;
         private ContextHandle _hContext;
         private bool disposed = false;
         private static int devicecount = 0;
@@ -39,7 +39,7 @@ namespace linerider.Audio
                     _hContext = Alc.CreateContext(_hDevice, (int[])null);
                     if (_hContext.Handle != IntPtr.Zero)
                     {
-                        Alc.MakeContextCurrent(_hContext);
+                        _ = Alc.MakeContextCurrent(_hContext);
                         devicecount++;
                         Check();
                     }
@@ -58,22 +58,20 @@ namespace linerider.Audio
                 devicecount--;
                 disposed = true;
                 GC.SuppressFinalize(this);
-				try
-				{
-					Alc.MakeContextCurrent(new ContextHandle(IntPtr.Zero));
-				}
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-				catch
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-				{ 
-				}
+                try
+                {
+                    _ = Alc.MakeContextCurrent(new ContextHandle(IntPtr.Zero));
+                }
+                catch
+                {
+                }
                 if (_hContext.Handle != IntPtr.Zero)
                 {
                     Alc.DestroyContext(_hContext);
                 }
                 if (_hDevice != IntPtr.Zero)
                 {
-                    Alc.CloseDevice(_hDevice);
+                    _ = Alc.CloseDevice(_hDevice);
                 }
             }
         }
@@ -82,7 +80,7 @@ namespace linerider.Audio
         {
             if (devicecount != 0)
             {
-                var error = AL.GetError();
+                ALError error = AL.GetError();
                 if (error != ALError.NoError)
                     throw new OpenTK.Audio.AudioException("OpenAL error " + AL.GetErrorString(error));
             }

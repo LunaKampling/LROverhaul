@@ -16,18 +16,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
+using linerider.Drawing;
+using linerider.Game;
+using linerider.Utils;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading;
 using System.Diagnostics;
-using linerider.Utils;
-using linerider.Drawing;
-using linerider.Game;
-using linerider.IO.json;
+using System.Drawing;
 
 namespace linerider.Rendering
 {
@@ -41,9 +37,9 @@ namespace linerider.Rendering
         }
         public bool RequiresUpdate = true;
 
-        private LineDecorator _decorator;
-        private LineRenderer _physvbo;
-        private LineRenderer _sceneryvbo;
+        private readonly LineDecorator _decorator;
+        private readonly LineRenderer _physvbo;
+        private readonly LineRenderer _sceneryvbo;
         /// <summary>
         /// A dictionary of [line id] -> [index of first vertex]
         /// </summary>
@@ -61,9 +57,9 @@ namespace linerider.Rendering
         /// We use an action queue system instead of instantly adding to the renderer
         /// for the sake of multithreading safety
         /// </summary>
-        private Queue<Tuple<LineActionType, GameLine>> _lineactions;
-        private ResourceSync _sync;
-        const int linesize = 6;
+        private readonly Queue<Tuple<LineActionType, GameLine>> _lineactions;
+        private readonly ResourceSync _sync;
+        private const int linesize = 6;
         public TrackRenderer()
         {
             _sync = new ResourceSync();
@@ -71,11 +67,15 @@ namespace linerider.Rendering
             _physlines = new Dictionary<int, int>();
             _scenerylines = new Dictionary<int, int>();
             _decorator = new LineDecorator();
-            _physvbo = new LineRenderer(Shaders.LineShader);
-            _physvbo.OverrideColor = Settings.Colors.ExportLine;
+            _physvbo = new LineRenderer(Shaders.LineShader)
+            {
+                OverrideColor = Settings.Colors.ExportLine
+            };
 
-            _sceneryvbo = new LineRenderer(Shaders.LineShader);
-            _sceneryvbo.OverrideColor = Color.Black;
+            _sceneryvbo = new LineRenderer(Shaders.LineShader)
+            {
+                OverrideColor = Color.Black
+            };
         }
         public void Render(DrawOptions options, bool recording = false)
         {
@@ -90,11 +90,8 @@ namespace linerider.Rendering
                 _physvbo.KnobState = options.KnobState;
 
                 _sceneryvbo.Scale = options.Zoom;
-                //green lines dont get lifelock
-                if (options.KnobState != KnobState.Hidden)
-                    _sceneryvbo.KnobState = KnobState.Shown;
-                else
-                    _sceneryvbo.KnobState = KnobState.Hidden;
+                // Green lines dont get lifelock
+                _sceneryvbo.KnobState = options.KnobState != KnobState.Hidden ? KnobState.Shown : KnobState.Hidden;
 
                 if ((Settings.PreviewMode || recording) && !(recording && !Settings.Recording.EnableColorTriggers))
                 {
@@ -115,7 +112,7 @@ namespace linerider.Rendering
                 }
                 else
                 {
-                    _sceneryvbo.OverridePriority = 255;//force override
+                    _sceneryvbo.OverridePriority = 255; // Force override
                     _physvbo.OverridePriority = 255;
                 }
                 _physvbo.Overlay = options.Overlay;
@@ -134,7 +131,7 @@ namespace linerider.Rendering
             AutoArray<GameLine> scenery = new AutoArray<GameLine>(track.SceneryLines);
             scenery.UnsafeSetCount(track.SceneryLines);
             AutoArray<GameLine> phys = new AutoArray<GameLine>(track.BlueLines + track.RedLines);
-            var sorted = track.GetSortedLines();
+            GameLine[] sorted = track.GetSortedLines();
             using (_sync.AcquireWrite())
             {
                 _lineactions.Clear();
@@ -149,7 +146,7 @@ namespace linerider.Rendering
                 int scenerycount = 0;
                 for (int i = 0; i < sorted.Length; i++)
                 {
-                    var line = sorted[i];
+                    GameLine line = sorted[i];
                     if (line.Type == LineType.Scenery)
                     {
                         scenery.unsafe_array[scenery.Count - (1 + scenerycount++)] = line;
@@ -164,11 +161,11 @@ namespace linerider.Rendering
                 if (scenery.Count != 0)
                 {
                     LineVertex[] sceneryverts = new LineVertex[scenery.Count * linesize];
-                    System.Threading.Tasks.Parallel.For(0, scenery.Count, (index) =>
+                    _ = System.Threading.Tasks.Parallel.For(0, scenery.Count, (index) =>
                     {
                         int counter = 0;
-                        var verts = (GenerateLine(scenery[index], false));
-                        foreach (var vert in verts)
+                        LineVertex[] verts = GenerateLine(scenery[index], false);
+                        foreach (LineVertex vert in verts)
                         {
                             sceneryverts[index * linesize + counter++] = vert;
                         }
@@ -180,11 +177,11 @@ namespace linerider.Rendering
                 if (phys.Count != 0)
                 {
                     LineVertex[] physverts = new LineVertex[phys.Count * linesize];
-                    System.Threading.Tasks.Parallel.For(0, phys.Count, (index) =>
+                    _ = System.Threading.Tasks.Parallel.For(0, phys.Count, (index) =>
                       {
                           int counter = 0;
-                          var verts = (GenerateLine(phys[index], false));
-                          foreach (var vert in verts)
+                          LineVertex[] verts = GenerateLine(phys[index], false);
+                          foreach (LineVertex vert in verts)
                           {
                               physverts[index * linesize + counter++] = vert;
                           }
@@ -237,8 +234,8 @@ namespace linerider.Rendering
                 RequiresUpdate = false;
                 while (_lineactions.Count != 0)
                 {
-                    var dequeued = _lineactions.Dequeue();
-                    var line = dequeued.Item2;
+                    Tuple<LineActionType, GameLine> dequeued = _lineactions.Dequeue();
+                    GameLine line = dequeued.Item2;
                     switch (dequeued.Item1)
                     {
                         case LineActionType.Add:
@@ -287,8 +284,7 @@ namespace linerider.Rendering
                             else
                             {
                                 bool hit = Settings.Editor.HitTest
-                                    ? game.Track.Timeline.IsLineHit(line.ID)
-                                    : false;
+&& game.Track.Timeline.IsLineHit(line.ID);
                                 LineChanged(
                                     line,
                                     _physvbo,
@@ -312,7 +308,7 @@ namespace linerider.Rendering
                 LineChanged(line, renderer, lookup, false);
                 return;
             }
-            var lineverts = GenerateLine(line, false);
+            LineVertex[] lineverts = GenerateLine(line, false);
             int start = renderer.AddLine(lineverts);
             lookup.Add(line.ID, start);
         }
@@ -322,7 +318,7 @@ namespace linerider.Rendering
             Dictionary<int, int> lookup,
             bool hit)
         {
-            var lineverts = GenerateLine(line, hit);
+            LineVertex[] lineverts = GenerateLine(line, hit);
             renderer.ChangeLine(lookup[line.ID], lineverts);
         }
         private void RemoveLine(
@@ -332,7 +328,7 @@ namespace linerider.Rendering
         {
             int start = lookup[line.ID];
             renderer.RemoveLine(start);
-            // preserve the id in the lookup in event of undo
+            // Preserve the id in the lookup in event of undo
         }
         private static LineVertex[] GenerateLine(GameLine line, bool hit)
         {
@@ -345,12 +341,12 @@ namespace linerider.Rendering
                 }
                 else if (stl.Trigger != null)
                 {
-                    var trigger = Utility.ColorToRGBA_LE(
+                    int trigger = Utility.ColorToRGBA_LE(
                         Constants.TriggerLineColor);
                     color = Utility.ChangeAlpha(trigger, 254);
                 }
             }
-            var lineverts = LineRenderer.CreateTrackLine(
+            LineVertex[] lineverts = LineRenderer.CreateTrackLine(
                 line.Position1,
                 line.Position2,
                 2 * line.Width,

@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -8,41 +7,16 @@ namespace Gwen.ControlInternal
     /// </summary>
     public class CategoryButton : Button
     {
-        internal bool m_Alt; // for alternate coloring
+        internal bool m_Alt; // For alternate coloring
 
-        protected override System.Drawing.Color CurrentColor
-        {
-            get
-            {
-                if (m_Alt)
-                {
-                    if (IsDepressed || ToggleState)
-                    {
-                        return Skin.Colors.Text.Contrast;
-                    }
-                    if (IsHovered)
-                    {
-                        return Skin.Colors.Text.Foreground;
-                    }
-                    return Skin.Colors.Text.Foreground;
-                }
-
-                if (IsDepressed || ToggleState)
-                {
-                    return Skin.Colors.Text.Contrast;
-                }
-                if (IsHovered)
-                {
-                    return Skin.Colors.Text.Foreground;
-                }
-                return Skin.Colors.Text.Foreground;
-            }
-        }
+        protected override System.Drawing.Color CurrentColor => m_Alt
+                    ? IsDepressed || ToggleState ? Skin.Colors.Text.Contrast : IsHovered ? Skin.Colors.Text.Foreground : Skin.Colors.Text.Foreground
+                    : IsDepressed || ToggleState ? Skin.Colors.Text.Contrast : IsHovered ? Skin.Colors.Text.Foreground : Skin.Colors.Text.Foreground;
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryButton"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public CategoryButton(Controls.ControlBase parent) : base(parent)
+        public CategoryButton(ControlBase parent) : base(parent)
         {
             Alignment = Pos.Left | Pos.CenterV;
             m_Alt = false;
@@ -59,24 +33,9 @@ namespace Gwen.ControlInternal
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.SkinBase skin)
         {
-            if (m_Alt)
-            {
-                if (IsDepressed || ToggleState)
-                    Skin.Renderer.DrawColor = skin.Colors.AccentHigh;
-                else if (IsHovered)
-                    Skin.Renderer.DrawColor = skin.Colors.AccentHigh;
-                else
-                    Skin.Renderer.DrawColor = skin.Colors.BackgroundHighlight;
-            }
-            else
-            {
-                if (IsDepressed || ToggleState)
-                    Skin.Renderer.DrawColor = skin.Colors.AccentHigh;
-                else if (IsHovered)
-                    Skin.Renderer.DrawColor = skin.Colors.AccentHigh;
-                else
-                    Skin.Renderer.DrawColor = skin.Colors.Background;
-            }
+            Skin.Renderer.DrawColor = m_Alt
+                ? IsDepressed || ToggleState ? skin.Colors.AccentHigh : IsHovered ? skin.Colors.AccentHigh : skin.Colors.BackgroundHighlight
+                : IsDepressed || ToggleState ? skin.Colors.AccentHigh : IsHovered ? skin.Colors.AccentHigh : skin.Colors.Background;
 
             skin.Renderer.DrawFilledRect(RenderBounds);
             base.Render(Skin);

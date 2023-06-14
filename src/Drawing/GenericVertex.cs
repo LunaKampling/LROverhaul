@@ -16,12 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using OpenTK;
 using System.Drawing;
+using System.Runtime.InteropServices;
 namespace linerider.Drawing
 {
     /// <summary>
@@ -56,14 +53,14 @@ namespace linerider.Drawing
             b = color.B;
             a = color.A;
         }
-		public GenericVertex SetColor(Color color)
-		{
-			var ret = this;
-			ret.r = color.R;
-			ret.g = color.G;
-			ret.b = color.B;
-			ret.a = color.A;
-			return ret;
-		}
+        public GenericVertex SetColor(Color color)
+        {
+            GenericVertex ret = this;
+            ret.r = color.R;
+            ret.g = color.G;
+            ret.b = color.B;
+            ret.a = color.A;
+            return ret;
+        }
     }
 }

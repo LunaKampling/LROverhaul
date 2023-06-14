@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -11,10 +10,7 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Determines whether unchecking is allowed.
         /// </summary>
-        protected override bool AllowUncheck
-        {
-            get { return false; }
-        }
+        protected override bool AllowUncheck => false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RadioButton"/> class.
@@ -23,7 +19,7 @@ namespace Gwen.ControlInternal
         public RadioButtonButton(ControlBase parent)
             : base(parent)
         {
-            SetSize(15, 15);
+            _ = SetSize(15, 15);
             MouseInputEnabled = true;
             IsTabable = false;
             IsToggle = true; //[halfofastaple] technically true. "Toggle" isn't the best word, "Sticky" is a better one.
@@ -33,9 +29,6 @@ namespace Gwen.ControlInternal
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawRadioButton(this, IsChecked, IsDepressed);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawRadioButton(this, IsChecked, IsDepressed);
     }
 }

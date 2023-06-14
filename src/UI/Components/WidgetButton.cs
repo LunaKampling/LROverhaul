@@ -1,9 +1,7 @@
-﻿using Gwen.Controls;
-using Gwen;
+﻿using Gwen;
+using Gwen.Controls;
 using System;
 using System.Drawing;
-using linerider.Tools;
-using System.Collections.Generic;
 
 namespace linerider.UI.Components
 {
@@ -28,7 +26,7 @@ namespace linerider.UI.Components
                 {
                     _icon = value;
                     SetImage(_icon);
-                    SetSize(_icon.Width, _icon.Height);
+                    _ = SetSize(_icon.Width, _icon.Height);
                 }
             }
         }
@@ -53,10 +51,7 @@ namespace linerider.UI.Components
         public Color Color
         {
             get => _color == Color.Empty ? Settings.Computed.LineColor : _color;
-            set
-            {
-                _color = value;
-            }
+            set => _color = value;
         }
 
         public new Color TextColor = Color.Black;

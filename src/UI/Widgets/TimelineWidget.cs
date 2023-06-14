@@ -15,12 +15,11 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Drawing;
 using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
-using linerider.Utils;
+using System;
+using System.Drawing;
 
 namespace linerider.UI
 {
@@ -29,7 +28,7 @@ namespace linerider.UI
         public Playhead Playhead { get; private set; }
         private ControlBase _topbar;
         private ControlBase _bottombar;
-        private Editor _editor;
+        private readonly Editor _editor;
         private WidgetButton _speedincrease;
         private WidgetButton _speeddecrease;
         private TrackLabel _timecurrent;
@@ -86,8 +85,10 @@ namespace linerider.UI
                 Hotkey = Hotkey.PlaybackSpeedDown,
             };
 
-            Playhead = new Playhead(_topbar, _editor);
-            Playhead.Dock = Dock.Fill;
+            Playhead = new Playhead(_topbar, _editor)
+            {
+                Dock = Dock.Fill
+            };
             Panel time = new Panel(_bottombar)
             {
                 Dock = Dock.Fill,
@@ -152,19 +153,18 @@ namespace linerider.UI
         {
             string formatstring = "mm\\:ss";
             string longformatstring = "h\\:" + formatstring;
-            var currts = TimeSpan.FromSeconds(frameid / 40f);
-            var format = currts.ToString(currts.Hours > 0 ? longformatstring : formatstring);
-            var frame = (frameid % 40).ToString("D2");
+            TimeSpan currts = TimeSpan.FromSeconds(frameid / 40f);
+            string format = currts.ToString(currts.Hours > 0 ? longformatstring : formatstring);
+            string frame = (frameid % 40).ToString("D2");
             return format + ":" + frame;
         }
         private ImageButton CreateButton(ControlBase parent, Bitmap image, string tooltip)
         {
             ImageButton btn = new ImageButton(parent);
             btn.SetImage(image);
-            btn.SetSize(32, 32);
+            _ = btn.SetSize(32, 32);
             btn.Tooltip = tooltip;
             return btn;
         }
-
     }
 }

@@ -15,21 +15,19 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using Gwen;
+using Gwen.Controls;
+using linerider.UI.Components;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using Gwen;
-using Gwen.Controls;
-using linerider.Tools;
-using linerider.UI.Components;
-using linerider.Utils;
 
 namespace linerider.UI
 {
     public class InfoBarRight : WidgetContainer
     {
-        private Editor _editor;
-        private Stopwatch _fpswatch = new Stopwatch();
+        private readonly Editor _editor;
+        private readonly Stopwatch _fpswatch = new Stopwatch();
 
         private TrackLabel _fpslabel;
         private TrackLabel _riderspeedlabel;
@@ -39,7 +37,7 @@ namespace linerider.UI
 
         private Panel _resetcamerawrapper;
 
-        private double _zoomrounded
+        private double ZoomRounded
         {
             get
             {
@@ -118,7 +116,7 @@ namespace linerider.UI
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
-                    string text = $"Zoom: {_zoomrounded}x";
+                    string text = $"Zoom: {ZoomRounded}x";
                     return _editor.UseUserZoom ? $"{text} *" : text;
                 },
             };
@@ -154,7 +152,7 @@ namespace linerider.UI
                 AutoSizeToContents = true,
             };
 
-            new WidgetButton(_resetcamerawrapper)
+            _ = new WidgetButton(_resetcamerawrapper)
             {
                 Dock = Dock.Right,
                 Name = "Reset Camera",

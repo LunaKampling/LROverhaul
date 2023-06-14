@@ -1,13 +1,6 @@
-﻿using Gwen.Anim;
-using Gwen.DragDrop;
-using Gwen.Input;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Gwen.Controls
 {
@@ -15,18 +8,12 @@ namespace Gwen.Controls
     {
         public class ControlCollection : IList<ControlBase>
         {
-            private ControlBase _owner;
-            private List<ControlBase> _controls;
+            private readonly ControlBase _owner;
+            private readonly List<ControlBase> _controls;
             public ControlBase this[int index]
             {
-                get
-                {
-                    return _controls[index];
-                }
-                set
-                {
-                    throw new Exception("Cannot use setter for ControlBase.Children, use AddChild instead.");
-                }
+                get => _controls[index];
+                set => throw new Exception("Cannot use setter for ControlBase.Children, use AddChild instead.");
             }
 
             public int Count => _controls.Count;
@@ -41,7 +28,7 @@ namespace Gwen.Controls
 
             public void SendToBack(ControlBase child)
             {
-                var index = IndexOf(child);
+                int index = IndexOf(child);
                 SendToBack(index);
             }
             internal void SendToBack(int index)
@@ -50,7 +37,7 @@ namespace Gwen.Controls
                     throw new Exception("Child not found in parent who called SendToBack");
                 if (Count != 0 && index != 0)
                 {
-                    var control = _controls[index];
+                    ControlBase control = _controls[index];
                     _controls.RemoveAt(index);
                     _controls.Insert(0, control);
                     _owner.Invalidate();
@@ -62,7 +49,7 @@ namespace Gwen.Controls
                     throw new Exception("Child not found in parent who called BringToFront");
                 if (Count != 0 && index != Count - 1)
                 {
-                    var control = _controls[index];
+                    ControlBase control = _controls[index];
                     _controls.RemoveAt(index);
                     _controls.Insert(_controls.Count, control);
                     _owner.Invalidate();
@@ -70,7 +57,7 @@ namespace Gwen.Controls
             }
             internal void Move(ControlBase child, int index)
             {
-                var childindex = IndexOf(child);
+                int childindex = IndexOf(child);
                 if (childindex == -1)
                     throw new Exception("Child not found in parent who called Move");
                 if (index >= Count || index < 0)
@@ -81,14 +68,11 @@ namespace Gwen.Controls
             }
             public void BringToFront(ControlBase child)
             {
-                var index = IndexOf(child);
+                int index = IndexOf(child);
                 BringToFront(index);
             }
 
-            public void Add(ControlBase item)
-            {
-                Insert(Count, item);
-            }
+            public void Add(ControlBase item) => Insert(Count, item);
 
             public void Clear()
             {
@@ -96,25 +80,13 @@ namespace Gwen.Controls
                     RemoveAt(Count - 1);
             }
 
-            public bool Contains(ControlBase item)
-            {
-                return _controls.Contains(item);
-            }
+            public bool Contains(ControlBase item) => _controls.Contains(item);
 
-            public void CopyTo(ControlBase[] array, int arrayIndex)
-            {
-                _controls.CopyTo(array, arrayIndex);
-            }
+            public void CopyTo(ControlBase[] array, int arrayIndex) => _controls.CopyTo(array, arrayIndex);
 
-            public IEnumerator<ControlBase> GetEnumerator()
-            {
-                return _controls.GetEnumerator();
-            }
+            public IEnumerator<ControlBase> GetEnumerator() => _controls.GetEnumerator();
 
-            public int IndexOf(ControlBase item)
-            {
-                return _controls.IndexOf(item);
-            }
+            public int IndexOf(ControlBase item) => _controls.IndexOf(item);
 
             public void Insert(int index, ControlBase item)
             {
@@ -122,7 +94,7 @@ namespace Gwen.Controls
                 {
                     if (item.m_Parent != null && item.m_Parent != _owner)
                     {
-                        //remove previous parent
+                        // Remove previous parent
                         item.m_Parent.RemoveChild(item, false);
                     }
                     _controls.Insert(index, item);
@@ -134,7 +106,7 @@ namespace Gwen.Controls
 
             public bool Remove(ControlBase item)
             {
-                var idx = _controls.IndexOf(item);
+                int idx = _controls.IndexOf(item);
                 if (idx == -1)
                     return false;
                 RemoveAt(idx);
@@ -143,7 +115,7 @@ namespace Gwen.Controls
 
             public void RemoveAt(int index)
             {
-                var toremove = _controls[index];
+                ControlBase toremove = _controls[index];
                 toremove.m_Parent = null;
                 _controls.RemoveAt(index);
                 _owner.OnChildRemoved(toremove);
@@ -151,14 +123,11 @@ namespace Gwen.Controls
             }
             public ControlBase[] ToArray()
             {
-                var copy = new ControlBase[Count];
+                ControlBase[] copy = new ControlBase[Count];
                 CopyTo(copy, 0);
                 return copy;
             }
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return ((IList)_controls).GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator() => ((IList)_controls).GetEnumerator();
         }
     }
 }

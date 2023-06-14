@@ -1,12 +1,8 @@
 ﻿using linerider.Game;
 using linerider.Tools;
-using linerider.Utils;
 using OpenTK;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace linerider.Addons
 {
@@ -38,8 +34,8 @@ namespace linerider.Addons
             // 
             // This is all if the user-configured relative speeds are (0, 0). If the user changes these speeds,
             // the lines will be drawn accordingly.
-            Vector2d flagFramePos = Game.Rider.GetBounds(flagFrameRider).Vector;
-            Vector2d flagNextFramePos = Game.Rider.GetBounds(flagNextFrameRider).Vector;
+            Vector2d flagFramePos = Rider.GetBounds(flagFrameRider).Vector;
+            Vector2d flagNextFramePos = Rider.GetBounds(flagNextFrameRider).Vector;
 
             // The difference between where the rider was on frames 0 and 1 establishes a reference speed to apply
             Vector2d firstFrameDiff = Vector2d.Subtract(flagNextFramePos, flagFramePos);
@@ -100,14 +96,12 @@ namespace linerider.Addons
                 newLines.Add(newLine);
             }
 
-            var selectTool = CurrentTools.SelectSubtool;
+            SelectSubtool selectTool = CurrentTools.SelectSubtool;
             foreach (GameLine newLine in newLines)
             {
                 trackWriter.AddLine(newLine);
             }
-            selectTool.SelectLines(newLines);
-
-
+            _ = selectTool.SelectLines(newLines);
 
             if (isCompleteAction)
             {

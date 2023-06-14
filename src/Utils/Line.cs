@@ -18,9 +18,6 @@
 
 using OpenTK;
 using System;
-using linerider.Game;
-using linerider.Utils;
-using System.Drawing;
 namespace linerider.Utils
 {
     public class Line
@@ -42,18 +39,12 @@ namespace linerider.Utils
             ret = new Line(
                 p1,
                 new Vector2d(
-                    p1.X + (length * angle.Cos), 
-                    p1.Y + (length * angle.Sin)));
+                    p1.X + length * angle.Cos,
+                    p1.Y + length * angle.Sin));
             return ret;
         }
-        public double GetLength()
-        {
-            return (Position2 - Position1).Length;
-        }
-        public Vector2d GetVector()
-        {
-            return (Position2 - Position1);
-        }
+        public double GetLength() => (Position2 - Position1).Length;
+        public Vector2d GetVector() => Position2 - Position1;
 
         public static bool DoesLineIntersectRect(Line l1, DoubleRect rect)
         {
@@ -73,11 +64,7 @@ namespace linerider.Utils
                 Intersects(ps1, pe1, tr, br) ||
                 Intersects(ps1, pe1, bl, br);
         }
-        public static bool Intersects(Vector2d a1, Vector2d a2, Vector2d b1, Vector2d b2)
-        {
-            Vector2d p;
-            return Intersects(a1, a2, b1, b2, out p);
-        }
+        public static bool Intersects(Vector2d a1, Vector2d a2, Vector2d b1, Vector2d b2) => Intersects(a1, a2, b1, b2, out _);
 
         public static bool Intersects(Vector2d a1, Vector2d a2, Vector2d b1, Vector2d b2, out Vector2d intersection)
         {

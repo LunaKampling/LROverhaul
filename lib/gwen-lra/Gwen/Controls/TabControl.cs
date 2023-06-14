@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gwen.ControlInternal;
+using System;
 using System.Drawing;
-using Gwen.ControlInternal;
 
 namespace Gwen.Controls
 {
@@ -9,9 +9,7 @@ namespace Gwen.Controls
     /// </summary>
     public class TabControl : Container
     {
-        private readonly TabStrip m_TabStrip;
         private readonly ScrollBarButton[] m_Scroll;
-        private TabButton m_CurrentButton;
         private int m_ScrollOffset;
 
         /// <summary>
@@ -27,39 +25,33 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines if tabs can be reordered by dragging.
         /// </summary>
-        public bool AllowReorder { get { return m_TabStrip.AllowReorder; } set { m_TabStrip.AllowReorder = value; } }
+        public bool AllowReorder { get => TabStrip.AllowReorder; set => TabStrip.AllowReorder = value; }
 
         /// <summary>
         /// Currently active tab button.
         /// </summary>
-        internal TabButton CurrentButton { get { return m_CurrentButton; } }
+        internal TabButton CurrentButton { get; private set; }
 
         /// <summary>
         /// Currently active tab page.
         /// </summary>
-        public TabPage CurrentPage { get { return m_CurrentButton.Page; } }
+        public TabPage CurrentPage => CurrentButton.Page;
 
         /// <summary>
         /// Current tab strip position.
         /// </summary>
-        public Dock TabStripPosition { get { return m_TabStrip.StripPosition; } set { m_TabStrip.StripPosition = value; } }
+        public Dock TabStripPosition { get => TabStrip.StripPosition; set => TabStrip.StripPosition = value; }
 
         /// <summary>
         /// Tab strip.
         /// </summary>
-        public TabStrip TabStrip { get { return m_TabStrip; } }
-        public int SelectedTab
-        {
-            get
-            {
-                return Children.IndexOf(CurrentButton.Page);
-            }
-        }
+        public TabStrip TabStrip { get; }
+        public int SelectedTab => Children.IndexOf(CurrentButton.Page);
 
         /// <summary>
         /// Number of tabs in the control.
         /// </summary>
-        public int TabCount { get { return m_TabStrip.Children.Count; } }
+        public int TabCount => TabStrip.Children.Count;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TabControl"/> class.
@@ -71,21 +63,23 @@ namespace Gwen.Controls
             m_Scroll = new ScrollBarButton[2];
             m_ScrollOffset = 0;
 
-            m_TabStrip = new TabStrip(null);
-            m_TabStrip.StripPosition = Dock.Top;
+            TabStrip = new TabStrip(null)
+            {
+                StripPosition = Dock.Top
+            };
 
             // Make this some special control?
             m_Scroll[0] = new ScrollBarButton(null);
             m_Scroll[0].SetDirectionLeft();
             m_Scroll[0].Clicked += ScrollPressedLeft;
-            m_Scroll[0].SetSize(14, 16);
+            _ = m_Scroll[0].SetSize(14, 16);
 
             m_Scroll[1] = new ScrollBarButton(null);
             m_Scroll[1].SetDirectionRight();
             m_Scroll[1].Clicked += ScrollPressedRight;
-            m_Scroll[1].SetSize(14, 16);
+            _ = m_Scroll[1].SetSize(14, 16);
 
-            PrivateChildren.Add(m_TabStrip);
+            PrivateChildren.Add(TabStrip);
             PrivateChildren.Add(m_Scroll[0]);
             PrivateChildren.Add(m_Scroll[1]);
 
@@ -104,9 +98,11 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public TabPage AddPage(string label, ControlBase page = null)
         {
-            TabButton button = new TabButton(m_TabStrip);
-            var tabpage = new TabPage(this, button);
-            tabpage.Name = label;
+            TabButton button = new TabButton(TabStrip);
+            TabPage tabpage = new TabPage(this, button)
+            {
+                Name = label
+            };
             button.SetText(label);
             button.Page = tabpage;
             button.IsTabable = false;
@@ -130,28 +126,23 @@ namespace Gwen.Controls
             page.Margin = new Margin(6, 6, 6, 6);
             page.Dock = Dock.Fill;
 
-            button.Parent = m_TabStrip;
+            button.Parent = TabStrip;
             button.Dock = Dock.Left;
-            if (button.TabControl != null)
-                button.TabControl.UnsubscribeTabEvent(button);
+            button.TabControl?.UnsubscribeTabEvent(button);
             button.TabControl = this;
             button.Clicked += OnTabPressed;
 
-            if (m_CurrentButton == null)
+            if (CurrentButton == null)
             {
                 button.Press();
             }
 
-            if (TabAdded != null)
-                TabAdded.Invoke(this, EventArgs.Empty);
+            TabAdded?.Invoke(this, EventArgs.Empty);
 
             Invalidate();
         }
 
-        public TabPage GetPage(int index)
-        {
-            return ((TabButton)TabStrip.Children[index]).Page;
-        }
+        public TabPage GetPage(int index) => ((TabButton)TabStrip.Children[index]).Page;
         public TabPage GetPage(string title)
         {
             for (int i = 0; i < TabStrip.Children.Count; i++)
@@ -169,17 +160,17 @@ namespace Gwen.Controls
             if (index < 0)
                 throw new ArgumentOutOfRangeException(nameof(index));
             TabStrip.Children.Move(page.TabButton, index);
-            m_TabStrip.Invalidate();
+            TabStrip.Invalidate();
         }
         public void RemoveTab(TabPage page)
         {
-            var idx = -1;
+            int idx = -1;
             if (CurrentButton == page.TabButton)
             {
                 idx = TabStrip.Children.IndexOf(page.TabButton);
                 if (idx == TabStrip.Children.Count - 1)
                     idx--;
-                m_CurrentButton = null;
+                CurrentButton = null;
             }
             TabStrip.RemoveChild(page.TabButton, true);
             RemoveChild(page, true);
@@ -190,10 +181,7 @@ namespace Gwen.Controls
             OnLoseTab(page.TabButton);
             Invalidate();
         }
-        private void UnsubscribeTabEvent(TabButton button)
-        {
-            button.Clicked -= OnTabPressed;
-        }
+        private void UnsubscribeTabEvent(TabButton button) => button.Clicked -= OnTabPressed;
 
         /// <summary>
         /// Handler for tab selection.
@@ -201,31 +189,32 @@ namespace Gwen.Controls
         /// <param name="control">Event source (TabButton).</param>
 		internal virtual void OnTabPressed(ControlBase control, EventArgs args)
         {
-            TabButton button = control as TabButton;
-            if (null == button) return;
-
-            ControlBase page = button.Page;
-            if (null == page) return;
-
-            if (m_CurrentButton == button)
+            if (!(control is TabButton button))
                 return;
 
-            if (null != m_CurrentButton)
+            ControlBase page = button.Page;
+            if (null == page)
+                return;
+
+            if (CurrentButton == button)
+                return;
+
+            if (null != CurrentButton)
             {
-                ControlBase page2 = m_CurrentButton.Page;
+                ControlBase page2 = CurrentButton.Page;
                 if (page2 != null)
                 {
                     page2.IsHidden = true;
                 }
-                m_CurrentButton.Redraw();
-                m_CurrentButton = null;
+                CurrentButton.Redraw();
+                CurrentButton = null;
             }
 
-            m_CurrentButton = button;
+            CurrentButton = button;
 
             page.IsHidden = false;
 
-            m_TabStrip.Invalidate();
+            TabStrip.Invalidate();
             Invalidate();
         }
 
@@ -241,21 +230,20 @@ namespace Gwen.Controls
         /// <param name="button"></param>
         internal virtual void OnLoseTab(TabButton button)
         {
-            if (TabRemoved != null)
-                TabRemoved.Invoke(this, EventArgs.Empty);
+            TabRemoved?.Invoke(this, EventArgs.Empty);
 
             Invalidate();
         }
 
         private void HandleOverflow()
         {
-            var TabsSize = m_TabStrip.GetSizeToFitContents();
+            Size TabsSize = TabStrip.GetSizeToFitContents();
 
             // Only enable the scrollers if the tabs are at the top.
             // This is a limitation we should explore.
             // Really TabControl should have derivitives for tabs placed elsewhere where we could specialize 
             // some functions like this for each direction.
-            bool needed = TabsSize.Width > Width && m_TabStrip.Dock == Dock.Top;
+            bool needed = TabsSize.Width > Width && TabStrip.Dock == Dock.Top;
 
             m_Scroll[0].IsHidden = !needed;
             m_Scroll[1].IsHidden = !needed;
@@ -265,7 +253,7 @@ namespace Gwen.Controls
                 if (m_ScrollOffset != 0)
                 {
                     m_ScrollOffset = 0;
-                    m_TabStrip.Margin = new Margin(0, 0, 0, 0);
+                    TabStrip.Margin = new Margin(0, 0, 0, 0);
                     Invalidate();
                 }
                 return;
@@ -273,7 +261,7 @@ namespace Gwen.Controls
 
             m_ScrollOffset = Util.Clamp(m_ScrollOffset, 0, TabsSize.Width - Width + 32);
 
-            m_TabStrip.Margin = new Margin(m_ScrollOffset * -1, 0, 0, 0);
+            TabStrip.Margin = new Margin(m_ScrollOffset * -1, 0, 0, 0);
             m_Scroll[0].SetPosition(Width - 30, 5);
             m_Scroll[1].SetPosition(m_Scroll[0].Right + m_Scroll[0].Margin.Right, 5);
         }

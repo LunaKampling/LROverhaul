@@ -1,11 +1,9 @@
+using linerider.Game;
+using linerider.IO.json;
 using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Diagnostics;
-using linerider.Game;
-using linerider.IO.json;
 using Utf8Json;
 namespace linerider.IO
 {
@@ -13,10 +11,12 @@ namespace linerider.IO
     {
         public static Track LoadTrack(string trackfile)
         {
-            Track ret = new Track();
-            ret.Filename = trackfile;
+            Track ret = new Track
+            {
+                Filename = trackfile
+            };
             track_json trackobj;
-            using (var file = File.OpenRead(trackfile))
+            using (FileStream file = File.OpenRead(trackfile))
             {
                 try
                 {
@@ -68,7 +68,7 @@ namespace linerider.IO
             }
             if (!string.IsNullOrEmpty(trackobj.linesArrayCompressed))
             {
-                var json2 = LZString.decompressBase64(trackobj.linesArrayCompressed);
+                string json2 = LZString.DecompressBase64(trackobj.linesArrayCompressed);
                 trackobj.linesArray = JsonSerializer.Deserialize<object[][]>(json2);
                 trackobj.linesArrayCompressed = null;
             }
@@ -78,7 +78,7 @@ namespace linerider.IO
             }
             else if (trackobj.lines != null)
             {
-                foreach (var line in trackobj.lines)
+                foreach (line_json line in trackobj.lines)
                 {
                     AddLine(ret, line);
                 }
@@ -86,11 +86,11 @@ namespace linerider.IO
             if (trackobj.triggers != null)
             {
                 List<LineTrigger> linetriggers = new List<LineTrigger>();
-                foreach (var trigger in trackobj.triggers)
+                foreach (track_json.zoomtrigger_json trigger in trackobj.triggers)
                 {
                     if (ret.LineLookup.TryGetValue(trigger.ID, out GameLine line))
                     {
-                        if (line is StandardLine stl)
+                        if (line is StandardLine)
                         {
                             if (trigger.zoom)
                             {
@@ -113,7 +113,7 @@ namespace linerider.IO
             }
             if (trackobj.gameTriggers != null)
             {
-                foreach (var t in trackobj.gameTriggers)
+                foreach (track_json.gametrigger_json t in trackobj.gameTriggers)
                 {
                     if (t.start < 1 || t.end < 1 || t.end < t.start)
                         throw new TrackIO.TrackLoadException(
@@ -168,9 +168,9 @@ namespace linerider.IO
         }
         private static void ReadLinesArray(Track track, object[][] parser)
         {
-            //['type', 'id', 'x1', 'y1', 'x2', 'y2', 'extended', 'flipped', 'leftLine', 'rightLine', 'multiplier']
-            //ignore leftLine, rightLine
-            foreach (var lineobj in parser)
+            // ['type', 'id', 'x1', 'y1', 'x2', 'y2', 'extended', 'flipped', 'leftLine', 'rightLine', 'multiplier']
+            // Ignore leftLine, rightLine
+            foreach (object[] lineobj in parser)
             {
                 line_json line = new line_json();
                 int idx = 0;
@@ -180,14 +180,14 @@ namespace linerider.IO
                 line.y1 = Convert.ToDouble(lineobj[idx++]);
                 line.x2 = Convert.ToDouble(lineobj[idx++]);
                 line.y2 = Convert.ToDouble(lineobj[idx++]);
-                var sz = lineobj.Length;
-                if (line.type != 2 && idx < sz)//non scenery
+                int sz = lineobj.Length;
+                if (line.type != 2 && idx < sz) // Non scenery
                 {
                     line.extended = Convert.ToInt32(lineobj[idx++]);
                     if (idx < sz)
                     {
                         line.flipped = Convert.ToBoolean(lineobj[idx++]);
-                        idx += 2;//skip leftline, rightline
+                        idx += 2; // Skip leftline, rightline
                         if (line.type == 1 && idx < sz)
                         {
                             line.multiplier = Convert.ToInt32(lineobj[idx++]);
@@ -202,48 +202,54 @@ namespace linerider.IO
             switch (line.type)
             {
                 case 0:
+                {
+                    StandardLine add = new StandardLine(
+                            new Vector2d(line.x1, line.y1),
+                            new Vector2d(line.x2, line.y2),
+                            Convert.ToBoolean(line.flipped))
                     {
-                        var add = new StandardLine(
-                                new Vector2d(line.x1, line.y1),
-                                new Vector2d(line.x2, line.y2),
-                                Convert.ToBoolean(line.flipped));
-                        add.ID = line.id;
-                        add.Extension = (StandardLine.Ext)line.extended;
-                        if (Convert.ToBoolean(line.leftExtended))
-                            add.Extension |= StandardLine.Ext.Left;
-                        if (Convert.ToBoolean(line.rightExtended))
-                            add.Extension |= StandardLine.Ext.Right;
-                        track.AddLine(add);
-                        break;
-                    }
+                        ID = line.id,
+                        Extension = (StandardLine.Ext)line.extended
+                    };
+                    if (Convert.ToBoolean(line.leftExtended))
+                        add.Extension |= StandardLine.Ext.Left;
+                    if (Convert.ToBoolean(line.rightExtended))
+                        add.Extension |= StandardLine.Ext.Right;
+                    track.AddLine(add);
+                    break;
+                }
                 case 1:
+                {
+                    RedLine add = new RedLine(
+                            new Vector2d(line.x1, line.y1),
+                            new Vector2d(line.x2, line.y2),
+                            Convert.ToBoolean(line.flipped))
                     {
-                        var add = new RedLine(
-                                new Vector2d(line.x1, line.y1),
-                                new Vector2d(line.x2, line.y2),
-                                Convert.ToBoolean(line.flipped));
-                        add.ID = line.id;
-                        add.Extension = (StandardLine.Ext)line.extended;
-                        if (Convert.ToBoolean(line.leftExtended))
-                            add.Extension |= StandardLine.Ext.Left;
-                        if (Convert.ToBoolean(line.rightExtended))
-                            add.Extension |= StandardLine.Ext.Right;
+                        ID = line.id,
+                        Extension = (StandardLine.Ext)line.extended
+                    };
+                    if (Convert.ToBoolean(line.leftExtended))
+                        add.Extension |= StandardLine.Ext.Left;
+                    if (Convert.ToBoolean(line.rightExtended))
+                        add.Extension |= StandardLine.Ext.Right;
                     if (line.multiplier > 1)
                     {
                         add.Multiplier = line.multiplier;
                     }
                     track.AddLine(add);
-                        break;
-                    }
+                    break;
+                }
                 case 2:
+                {
+                    SceneryLine add = new SceneryLine(
+                            new Vector2d(line.x1, line.y1),
+                            new Vector2d(line.x2, line.y2))
                     {
-                        var add = new SceneryLine(
-                                new Vector2d(line.x1, line.y1),
-                                new Vector2d(line.x2, line.y2));
-                        add.ID = line.id;
-                        track.AddLine(add);
-                        break;
-                    }
+                        ID = line.id
+                    };
+                    track.AddLine(add);
+                    break;
+                }
                 default:
                     throw new TrackIO.TrackLoadException(
                         "Unknown line type");

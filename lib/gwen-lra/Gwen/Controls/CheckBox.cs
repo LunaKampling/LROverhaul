@@ -1,7 +1,7 @@
-﻿using System;
-using System.Drawing;
+﻿using Gwen.ControlInternal;
 using Gwen.Input;
-using Gwen.ControlInternal;
+using System;
+using System.Drawing;
 namespace Gwen.Controls
 {
     /// <summary>
@@ -30,18 +30,18 @@ namespace Gwen.Controls
         /// <summary>
         /// Indicates whether the control is checked.
         /// </summary>
-        public bool IsChecked { get { return m_CheckBox.IsChecked; } set { m_CheckBox.IsChecked = value; } }
+        public bool IsChecked { get => m_CheckBox.IsChecked; set => m_CheckBox.IsChecked = value; }
 
         /// <summary>
         /// Label text.
         /// </summary>
         public string Text
         {
-            get { return m_Label.Text; }
+            get => m_Label.Text;
             set
             {
                 m_Label.Text = value;
-                m_Label.IsHidden = (string.IsNullOrEmpty(value));
+                m_Label.IsHidden = string.IsNullOrEmpty(value);
             }
         }
 
@@ -52,17 +52,21 @@ namespace Gwen.Controls
         public Checkbox(ControlBase parent)
             : base(parent)
         {
-            this.MinimumSize = new System.Drawing.Size(15, 15);
+            MinimumSize = new Size(15, 15);
             AutoSizeToContents = true;
-            m_CheckBox = new CheckBoxButton(this);
-            m_CheckBox.ToolTipProvider = false;
-            m_CheckBox.IsTabable = false;
+            m_CheckBox = new CheckBoxButton(this)
+            {
+                ToolTipProvider = false,
+                IsTabable = false
+            };
             m_CheckBox.CheckChanged += OnCheckChanged;
-            m_Label = new Label(this);
-            m_Label.ToolTipProvider = false;
-            m_Label.TextPadding = Padding.Two;
-            m_Label.Margin = new Margin(17, 0, 0, 0);
-            m_Label.Dock = Dock.Fill;
+            m_Label = new Label(this)
+            {
+                ToolTipProvider = false,
+                TextPadding = Padding.Two,
+                Margin = new Margin(17, 0, 0, 0),
+                Dock = Dock.Fill
+            };
             m_Label.Clicked += delegate (ControlBase Control, ClickedEventArgs args) { m_CheckBox.Press(Control); };
             m_Label.IsTabable = false;
             Text = "";
@@ -84,10 +88,7 @@ namespace Gwen.Controls
         }
         protected override void ProcessLayout(Size size)
         {
-            if (m_CheckBox != null)
-            {
-                m_CheckBox.AlignToEdge(Pos.Left | Pos.CenterV);
-            }
+            m_CheckBox?.AlignToEdge(Pos.Left | Pos.CenterV);
             base.ProcessLayout(size);
         }
 
@@ -98,17 +99,14 @@ namespace Gwen.Controls
         {
             if (m_CheckBox.IsChecked)
             {
-                if (Checked != null)
-                    Checked.Invoke(this, EventArgs.Empty);
+                Checked?.Invoke(this, EventArgs.Empty);
             }
             else
             {
-                if (UnChecked != null)
-                    UnChecked.Invoke(this, EventArgs.Empty);
+                UnChecked?.Invoke(this, EventArgs.Empty);
             }
 
-            if (CheckChanged != null)
-                CheckChanged.Invoke(this, EventArgs.Empty);
+            CheckChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -120,15 +118,13 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeySpace(bool down)
         {
-            base.OnKeySpace(down);
+            _ = base.OnKeySpace(down);
             if (!down)
                 m_CheckBox.IsChecked = !m_CheckBox.IsChecked;
             return true;
         }
-        public override void SetToolTipText(string text)
-        {
+        public override void SetToolTipText(string text) =>
             //  base.SetToolTipText(text);
             m_Label.SetToolTipText(text);
-        }
     }
 }

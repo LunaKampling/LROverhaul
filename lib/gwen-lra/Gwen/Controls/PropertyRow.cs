@@ -22,40 +22,28 @@ namespace Gwen.Controls
         /// <summary>
         /// Indicates whether the property value is being edited.
         /// </summary>
-        public bool IsEditing { get { return m_Property != null && m_Property.IsEditing; } }
+        public bool IsEditing => m_Property != null && m_Property.IsEditing;
 
         /// <summary>
         /// Indicates whether the control is hovered by mouse pointer.
         /// </summary>
-        public override bool IsHovered
-        {
-            get
-            {
-                return base.IsHovered || (m_Property != null && m_Property.IsHovered);
-            }
-        }
+        public override bool IsHovered => base.IsHovered || (m_Property != null && m_Property.IsHovered);
 
         /// <summary>
         /// Property name.
         /// </summary>
-        public string Label { get { return m_Label.Text; } set { m_Label.Text = value; } }
+        public string Label { get => m_Label.Text; set => m_Label.Text = value; }
 
         public System.Drawing.Color LabelColor
         {
-            get
-            {
-                return m_Label.TextColorOverride;
-            }
-            set
-            {
-                m_Label.TextColorOverride = value;
-            }
+            get => m_Label.TextColorOverride;
+            set => m_Label.TextColorOverride = value;
         }
 
         /// <summary>
         /// Property value.
         /// </summary>
-        public string Value { get { return m_Property.Value; } set { m_Property.Value = value; } }
+        public string Value { get => m_Property.Value; set => m_Property.Value = value; }
 
         #endregion Properties
 
@@ -69,11 +57,13 @@ namespace Gwen.Controls
         public PropertyRow(ControlBase parent, PropertyBase prop)
             : base(parent)
         {
-            m_Label = new PropertyRowLabel(this);
-            m_Label.Dock = Dock.Left;
-            m_Label.Alignment = Pos.Left | Pos.Top;
-            m_Label.Margin = new Margin(2, 2, 0, 2);
-            m_Label.AutoSizeToContents = false;
+            m_Label = new PropertyRowLabel(this)
+            {
+                Dock = Dock.Left,
+                Alignment = Pos.Left | Pos.Top,
+                Margin = new Margin(2, 2, 0, 2),
+                AutoSizeToContents = false
+            };
 
             m_Property = prop;
             m_Property.Dock = Dock.Fill;
@@ -81,7 +71,7 @@ namespace Gwen.Controls
             m_Property.Margin = new Margin(1, 0, 0, 1);
             m_Property.ValueChanged += OnValueChanged;
             m_Property.ToolTipProvider = false;
-            SizeToChildren(false, true);
+            _ = SizeToChildren(false, true);
             AutoSizeToContents = true;
         }
 
@@ -91,19 +81,14 @@ namespace Gwen.Controls
 
         protected override void ProcessLayout(System.Drawing.Size size)
         {
-            PropertyTable parent = Parent as PropertyTable;
-            if (parent != null)
+            if (Parent is PropertyTable parent)
             {
                 m_Label.Width = parent.SplitWidth;
             }
             base.ProcessLayout(size);
         }
 
-        protected virtual void OnValueChanged(ControlBase control, EventArgs args)
-        {
-            if (ValueChanged != null)
-                ValueChanged.Invoke(this, EventArgs.Empty);
-        }
+        protected virtual void OnValueChanged(ControlBase control, EventArgs args) => ValueChanged?.Invoke(this, EventArgs.Empty);
 
         /// <summary>
         /// Renders the control using specified skin.
@@ -139,15 +124,9 @@ namespace Gwen.Controls
 
         #endregion Fields
 
-        private void OnEditingChanged()
-        {
-            m_Label.Redraw();
-        }
+        private void OnEditingChanged() => m_Label.Redraw();
 
-        private void OnHoverChanged()
-        {
-            m_Label.Redraw();
-        }
+        private void OnHoverChanged() => m_Label.Redraw();
         public override void SetToolTipText(string text)
         {
             base.SetToolTipText(text);

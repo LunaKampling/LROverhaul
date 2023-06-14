@@ -1,4 +1,3 @@
-using System;
 namespace linerider.IO
 {
     public static class TrackFeatures

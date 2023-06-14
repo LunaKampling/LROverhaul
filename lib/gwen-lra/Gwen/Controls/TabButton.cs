@@ -1,5 +1,5 @@
-﻿using System;
-using Gwen.Input;
+﻿using Gwen.Input;
+using System;
 
 namespace Gwen.Controls
 {
@@ -8,23 +8,22 @@ namespace Gwen.Controls
     /// </summary>
     public class TabButton : Button
     {
-        private TabPage m_Page;
         private TabControl m_Control;
 
         /// <summary>
         /// Indicates whether the tab is active.
         /// </summary>
-        public bool IsActive { get { return m_Page != null && m_Page.IsVisible; } }
+        public bool IsActive => Page != null && Page.IsVisible;
 
-        // todo: remove public access
+        // TODO: remove public access
         public TabControl TabControl
         {
-            get { return m_Control; }
+            get => m_Control;
             set
             {
-                if (value == m_Control) return;
-                if (m_Control != null)
-                    m_Control.OnLoseTab(this);
+                if (value == m_Control)
+                    return;
+                m_Control?.OnLoseTab(this);
                 m_Control = value;
             }
         }
@@ -32,15 +31,12 @@ namespace Gwen.Controls
         /// <summary>
         /// Interior of the tab.
         /// </summary>
-        public TabPage Page { get { return m_Page; } set { m_Page = value; } }
+        public TabPage Page { get; set; }
 
         /// <summary>
         /// Determines whether the control should be clipped to its bounds while rendering.
         /// </summary>
-        protected override bool ShouldClip
-        {
-            get { return false; }
-        }
+        protected override bool ShouldClip => false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TabButton"/> class.
@@ -58,10 +54,7 @@ namespace Gwen.Controls
             ShouldDrawBackground = false;
         }
 
-        public override void DragAndDrop_StartDragging(DragDrop.Package package, int x, int y)
-        {
-            IsHidden = true;
-        }
+        public override void DragAndDrop_StartDragging(DragDrop.Package package, int x, int y) => IsHidden = true;
 
         public override void DragAndDrop_EndDragging(bool success, int x, int y)
         {
@@ -69,10 +62,7 @@ namespace Gwen.Controls
             IsDepressed = false;
         }
 
-        public override bool DragAndDrop_ShouldStartDrag()
-        {
-            return m_Control.AllowReorder;
-        }
+        public override bool DragAndDrop_ShouldStartDrag() => m_Control.AllowReorder;
 
         /// <summary>
         /// Renders the control using specified skin.
@@ -81,7 +71,7 @@ namespace Gwen.Controls
         protected override void Render(Skin.SkinBase skin)
         {
             base.Render(skin);
-            switch(m_Control.TabStrip.Dock)
+            switch (m_Control.TabStrip.Dock)
             {
                 case Dock.Top:
                     skin.DrawTabButton(this, IsActive, Pos.Top);
@@ -109,11 +99,11 @@ namespace Gwen.Controls
         {
             if (down)
             {
-                var count = Parent.Children.Count;
+                int count = Parent.Children.Count;
                 int me = Parent.Children.IndexOf(this);
                 if (me + 1 < count)
                 {
-                    var nextTab = Parent.Children[me + 1];
+                    ControlBase nextTab = Parent.Children[me + 1];
                     TabControl.OnTabPressed(nextTab, EventArgs.Empty);
                     InputHandler.KeyboardFocus = nextTab;
                 }
@@ -133,11 +123,11 @@ namespace Gwen.Controls
         {
             if (down)
             {
-                var count = Parent.Children.Count;
+                _ = Parent.Children.Count;
                 int me = Parent.Children.IndexOf(this);
                 if (me - 1 >= 0)
                 {
-                    var prevTab = Parent.Children[me - 1];
+                    ControlBase prevTab = Parent.Children[me - 1];
                     TabControl.OnTabPressed(prevTab, EventArgs.Empty);
                     InputHandler.KeyboardFocus = prevTab;
                 }
@@ -146,34 +136,10 @@ namespace Gwen.Controls
             return true;
         }
 
-        protected override System.Drawing.Color CurrentColor
-        {
-            get
-            {
-                if (IsActive)
-                {
-                    if (IsDisabled)
-                    {
-                        return Skin.Colors.Text.Disabled;
-                    }
-                    return Skin.Colors.Text.Foreground;
-                }
-
-                if (IsDisabled)
-                {
-                    return Skin.Colors.Text.Disabled;
-                }
-                if (IsDepressed)
-                {
-                    return Skin.Colors.Text.ContrastLow;
-                }
-                if (IsHovered)
-                {
-                    return Skin.Colors.Text.ContrastLow;
-                }
-
-                return Skin.Colors.Text.Foreground;
-            }
-        }
+        protected override System.Drawing.Color CurrentColor => IsActive
+                    ? IsDisabled ? Skin.Colors.Text.Disabled : Skin.Colors.Text.Foreground
+                    : IsDisabled
+                    ? Skin.Colors.Text.Disabled
+                    : IsDepressed ? Skin.Colors.Text.ContrastLow : IsHovered ? Skin.Colors.Text.ContrastLow : Skin.Colors.Text.Foreground;
     }
 }

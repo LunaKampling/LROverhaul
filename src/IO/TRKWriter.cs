@@ -1,13 +1,8 @@
-﻿using OpenTK;
+﻿using linerider.Game;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using linerider.Audio;
-using linerider.Game;
-using System.Drawing;
 
 namespace linerider.IO
 {
@@ -15,28 +10,31 @@ namespace linerider.IO
     {
         public static string SaveTrack(Track trk, string savename)
         {
-            var dir = TrackIO.GetTrackDirectory(trk);
-            if (trk.Name.Equals("<untitled>")) { dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar; }
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            var filename = dir + savename + ".trk";
-            using (var file = File.Create(filename))
+            string dir = TrackIO.GetTrackDirectory(trk);
+            if (trk.Name.Equals("<untitled>"))
             {
-                var bw = new BinaryWriter(file);
+                dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
+            }
+            if (!Directory.Exists(dir))
+                _ = Directory.CreateDirectory(dir);
+            string filename = dir + savename + ".trk";
+            using (FileStream file = File.Create(filename))
+            {
+                BinaryWriter bw = new BinaryWriter(file);
                 bw.Write(new byte[] { (byte)'T', (byte)'R', (byte)'K', 0xF2 }); //TRK
                 bw.Write((byte)1);
                 string featurestring = "";
-                var lines = trk.GetLines();
-                var featurelist = TrackIO.GetTrackFeatures(trk);
-                featurelist.TryGetValue(TrackFeatures.songinfo, out bool songinfo);
-                featurelist.TryGetValue(TrackFeatures.redmultiplier, out bool redmultiplier);
-                featurelist.TryGetValue(TrackFeatures.zerostart, out bool zerostart);
-                featurelist.TryGetValue(TrackFeatures.scenerywidth, out bool scenerywidth);
-                featurelist.TryGetValue(TrackFeatures.six_one, out bool six_one);
-                featurelist.TryGetValue(TrackFeatures.ignorable_trigger, out bool ignorable_trigger);
-                featurelist.TryGetValue(TrackFeatures.remount, out bool remount);
-                featurelist.TryGetValue(TrackFeatures.frictionless, out bool frictionless);
-                foreach (var feature in featurelist)
+                GameLine[] lines = trk.GetLines();
+                Dictionary<string, bool> featurelist = TrackIO.GetTrackFeatures(trk);
+                _ = featurelist.TryGetValue(TrackFeatures.songinfo, out bool songinfo);
+                _ = featurelist.TryGetValue(TrackFeatures.redmultiplier, out bool redmultiplier);
+                _ = featurelist.TryGetValue(TrackFeatures.zerostart, out bool zerostart);
+                _ = featurelist.TryGetValue(TrackFeatures.scenerywidth, out bool scenerywidth);
+                _ = featurelist.TryGetValue(TrackFeatures.six_one, out bool six_one);
+                _ = featurelist.TryGetValue(TrackFeatures.ignorable_trigger, out bool ignorable_trigger);
+                _ = featurelist.TryGetValue(TrackFeatures.remount, out bool remount);
+                _ = featurelist.TryGetValue(TrackFeatures.frictionless, out bool frictionless);
+                foreach (KeyValuePair<string, bool> feature in featurelist)
                 {
                     if (feature.Value)
                     {
@@ -46,7 +44,7 @@ namespace linerider.IO
                 WriteString(bw, featurestring);
                 if (songinfo)
                 {
-                    // unfotrunately this relies on .net to save and parse in
+                    // Unfotrunately this relies on .net to save and parse in
                     // its own way, and we're kind of stuck with it instead of
                     // the right way to write strings
                     bw.Write(trk.Song.ToString());
@@ -54,15 +52,15 @@ namespace linerider.IO
                 bw.Write(trk.StartOffset.X);
                 bw.Write(trk.StartOffset.Y);
                 bw.Write(lines.Length);
-                foreach (var line in lines)
+                foreach (GameLine line in lines)
                 {
                     byte type = (byte)line.Type;
                     if (line is StandardLine l)
                     {
                         if (l.inv)
                             type |= 1 << 7;
-                        var ext = (byte)l.Extension;
-                        type |= (byte)((ext & 0x03) << 5); //bits: 2
+                        byte ext = (byte)l.Extension;
+                        type |= (byte)((ext & 0x03) << 5); // Bits: 2
                         bw.Write(type);
                         if (redmultiplier)
                         {
@@ -75,7 +73,7 @@ namespace linerider.IO
                         {
                             if (l.Trigger != null)
                             {
-                                if (l.Trigger.ZoomTrigger) // check other triggers here for at least one
+                                if (l.Trigger.ZoomTrigger) // Check other triggers here for at least one
                                 {
                                     bw.Write(l.Trigger.ZoomTrigger);
                                     if (l.Trigger.ZoomTrigger)
@@ -97,7 +95,7 @@ namespace linerider.IO
                         bw.Write(l.ID);
                         if (l.Extension != StandardLine.Ext.None)
                         {
-                            // this was extension writing
+                            // This was extension writing
                             // but we no longer support this.
                             bw.Write(-1);
                             bw.Write(-1);
@@ -122,10 +120,12 @@ namespace linerider.IO
                     bw.Write(line.Position2.Y);
                 }
                 bw.Write(new byte[] { (byte)'M', (byte)'E', (byte)'T', (byte)'A' });
-                List<string> metadata = new List<string>();
-                metadata.Add(TrackMetadata.startzoom + "=" + trk.StartZoom.ToString(Program.Culture));
+                List<string> metadata = new List<string>
+                {
+                    TrackMetadata.startzoom + "=" + trk.StartZoom.ToString(Program.Culture)
+                };
 
-                //Only add if the values are different from default
+                // Only add if the values are different from default
                 if (trk.YGravity != 1)
                 {
                     metadata.Add(TrackMetadata.ygravity + "=" + trk.YGravity.ToString(Program.Culture));
@@ -155,46 +155,49 @@ namespace linerider.IO
                 for (int i = 0; i < trk.Triggers.Count; i++)
                 {
                     GameTrigger t = trk.Triggers[i];
-                    if (i != 0) { triggerstring.Append("&"); }
+                    if (i != 0)
+                    {
+                        _ = triggerstring.Append("&");
+                    }
                     switch (t.TriggerType)
                     {
                         case TriggerType.Zoom:
-                            triggerstring.Append((int)TriggerType.Zoom);
-                            triggerstring.Append(":");
-                            triggerstring.Append(t.ZoomTarget.ToString(Program.Culture));
-                            triggerstring.Append(":");
+                            _ = triggerstring.Append((int)TriggerType.Zoom);
+                            _ = triggerstring.Append(":");
+                            _ = triggerstring.Append(t.ZoomTarget.ToString(Program.Culture));
+                            _ = triggerstring.Append(":");
                             break;
                         case TriggerType.BGChange:
-                            triggerstring.Append((int)TriggerType.BGChange);
-                            triggerstring.Append(":");
-                            triggerstring.Append(t.backgroundRed.ToString(Program.Culture));
-                            triggerstring.Append(":");
-                            triggerstring.Append(t.backgroundGreen.ToString(Program.Culture));
-                            triggerstring.Append(":");
-                            triggerstring.Append(t.backgroundBlue.ToString(Program.Culture));
-                            triggerstring.Append(":");
+                            _ = triggerstring.Append((int)TriggerType.BGChange);
+                            _ = triggerstring.Append(":");
+                            _ = triggerstring.Append(t.backgroundRed.ToString(Program.Culture));
+                            _ = triggerstring.Append(":");
+                            _ = triggerstring.Append(t.backgroundGreen.ToString(Program.Culture));
+                            _ = triggerstring.Append(":");
+                            _ = triggerstring.Append(t.backgroundBlue.ToString(Program.Culture));
+                            _ = triggerstring.Append(":");
                             break;
                         case TriggerType.LineColor:
-                            triggerstring.Append((int)TriggerType.LineColor);
-                            triggerstring.Append(":");
-                            triggerstring.Append(t.lineRed.ToString(Program.Culture));
-                            triggerstring.Append(":");
-                            triggerstring.Append(t.lineGreen.ToString(Program.Culture));
-                            triggerstring.Append(":");
-                            triggerstring.Append(t.lineBlue.ToString(Program.Culture));
-                            triggerstring.Append(":");
+                            _ = triggerstring.Append((int)TriggerType.LineColor);
+                            _ = triggerstring.Append(":");
+                            _ = triggerstring.Append(t.lineRed.ToString(Program.Culture));
+                            _ = triggerstring.Append(":");
+                            _ = triggerstring.Append(t.lineGreen.ToString(Program.Culture));
+                            _ = triggerstring.Append(":");
+                            _ = triggerstring.Append(t.lineBlue.ToString(Program.Culture));
+                            _ = triggerstring.Append(":");
                             break;
                     }
-                    triggerstring.Append(t.Start.ToString(Program.Culture));
-                    triggerstring.Append(":");
-                    triggerstring.Append(t.End.ToString(Program.Culture));
+                    _ = triggerstring.Append(t.Start.ToString(Program.Culture));
+                    _ = triggerstring.Append(":");
+                    _ = triggerstring.Append(t.End.ToString(Program.Culture));
                 }
-                if (trk.Triggers.Count > 0) //If here are not trigger don't add triggers entry
+                if (trk.Triggers.Count > 0) // If here are not trigger don't add triggers entry
                 {
                     metadata.Add(TrackMetadata.triggers + "=" + triggerstring.ToString());
                 }
                 bw.Write((short)metadata.Count);
-                foreach (var str in metadata)
+                foreach (string str in metadata)
                 {
                     WriteString(bw, str);
                 }

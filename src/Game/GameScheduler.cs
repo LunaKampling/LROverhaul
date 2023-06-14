@@ -16,31 +16,22 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Utils;
 using System;
 using System.Diagnostics;
-using linerider.Utils;
 
 namespace linerider
 {
     public class GameScheduler
     {
-        private Stopwatch sw = new Stopwatch();
+        private readonly Stopwatch sw = new Stopwatch();
         private double lastupdate = 0;
         private double updateperiod = 1;
         private bool reset = true;
-        public float UpdatePeriod
-        {
-            get
-            {
-                return (float)updateperiod;
-            }
-        }
+        public float UpdatePeriod => (float)updateperiod;
         public int UpdatesPerSecond
         {
-            get
-            {
-                return (int)(1.0 / updateperiod);
-            }
+            get => (int)(1.0 / updateperiod);
             set
             {
                 if (UpdatesPerSecond != value)
@@ -55,8 +46,8 @@ namespace linerider
         {
             get
             {
-                var totalelapsed = sw.Elapsed.TotalSeconds;
-                var elapsed = totalelapsed - lastupdate;
+                double totalelapsed = sw.Elapsed.TotalSeconds;
+                double elapsed = totalelapsed - lastupdate;
                 return (float)(elapsed / updateperiod);
             }
         }
@@ -64,19 +55,17 @@ namespace linerider
         {
             DefaultSpeed();
         }
-        public void DefaultSpeed()
-        {
-            UpdatesPerSecond = (int)Math.Round(Utils.Constants.PhysicsRate * Settings.DefaultPlayback);
-        }
+        public void DefaultSpeed() => UpdatesPerSecond = (int)Math.Round(Constants.PhysicsRate * Settings.DefaultPlayback);
 
         public int UnqueueUpdates()
         {
-            if (updateperiod == 0) return 1;
+            if (updateperiod == 0)
+                return 1;
             if (!sw.IsRunning)
                 sw.Start();
             int updates = 0;
-            var totalelapsed = sw.Elapsed.TotalSeconds;
-            var elapsed = totalelapsed - lastupdate;
+            double totalelapsed = sw.Elapsed.TotalSeconds;
+            double elapsed = totalelapsed - lastupdate;
             if (reset)
             {
                 reset = false;
@@ -89,8 +78,8 @@ namespace linerider
                 {
                     elapsed -= updateperiod;
                     updates++;
-                    int cap = (int)(2 + 
-                    (UpdatesPerSecond / (float)Constants.PhysicsRate));
+                    int cap = (int)(2 +
+                    UpdatesPerSecond / (float)Constants.PhysicsRate);
                     if (updates >= cap)
                     {
                         elapsed = Math.Min(elapsed, updateperiod * cap);
@@ -103,9 +92,6 @@ namespace linerider
             return updates;
         }
 
-        public void Reset()
-        {
-            reset = true;
-        }
+        public void Reset() => reset = true;
     }
 }

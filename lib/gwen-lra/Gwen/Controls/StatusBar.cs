@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Gwen.Controls
+﻿namespace Gwen.Controls
 {
     /// <summary>
     /// Status bar.
@@ -13,7 +11,7 @@ namespace Gwen.Controls
         /// <param name="parent">Parent control.</param>
         public StatusBar(ControlBase parent) : base(parent)
         {
-			AutoSizeToContents = false;
+            AutoSizeToContents = false;
 
             Height = 22;
             Dock = Dock.Bottom;
@@ -37,9 +35,6 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawStatusBar(this);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawStatusBar(this);
     }
 }

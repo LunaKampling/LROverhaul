@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace Gwen.Controls
 {
@@ -41,7 +40,7 @@ namespace Gwen.Controls
                 Y = Math.Max(Y, 0);
                 Y = Math.Min(Y, m_TextLines.Count() - 1);
 
-                int X = m_CursorEnd.X; //X may be beyond the last character, but we will want to draw it at the end of line.
+                int X = m_CursorEnd.X; // X may be beyond the last character, but we will want to draw it at the end of line.
                 X = Math.Max(X, 0);
                 X = Math.Min(X, m_TextLines[Y].Length);
 
@@ -70,7 +69,7 @@ namespace Gwen.Controls
                 Y = Math.Max(Y, 0);
                 Y = Math.Min(Y, m_TextLines.Count() - 1);
 
-                int X = m_CursorPos.X; //X may be beyond the last character, but we will want to draw it at the end of line.
+                int X = m_CursorPos.X; // X may be beyond the last character, but we will want to draw it at the end of line.
                 X = Math.Max(X, 0);
                 X = Math.Min(X, m_TextLines[Y].Length);
 
@@ -87,7 +86,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Indicates whether the text has active selection.
         /// </summary>
-        public bool HasSelection { get { return m_CursorPos != m_CursorEnd; } }
+        public bool HasSelection => m_CursorPos != m_CursorEnd;
 
         /// <summary>
         /// Gets and sets the text to display to the user. Each line is seperated by
@@ -108,25 +107,17 @@ namespace Gwen.Controls
                 }
                 return ret;
             }
-            set
-            {
-                //Label (base) calls SetText.
-                //SetText is overloaded to dump value into TextLines.
-                //We're cool.
+            set =>
+                // Label (base) calls SetText.
+                // SetText is overloaded to dump value into TextLines.
+                // We're cool.
                 base.Text = value;
-            }
         }
 
         /// <summary>
         /// Returns the number of lines that are in the Multiline Text Box.
         /// </summary>
-        public int TotalLines
-        {
-            get
-            {
-                return m_TextLines.Count;
-            }
-        }
+        public int TotalLines => m_TextLines.Count;
 
         #endregion Properties
 
@@ -139,7 +130,7 @@ namespace Gwen.Controls
         public MultilineTextBox(ControlBase parent) : base(parent)
         {
             AutoSizeToContents = false;
-            SetSize(200, 20);
+            _ = SetSize(200, 20);
 
             MouseInputEnabled = true;
             KeyboardInputEnabled = true;
@@ -156,17 +147,19 @@ namespace Gwen.Controls
             IsTabable = false;
             AcceptTabs = true;
 
-            m_ScrollControl = new ScrollControl(this);
-            m_ScrollControl.Dock = Dock.Fill;
+            m_ScrollControl = new ScrollControl(this)
+            {
+                Dock = Dock.Fill
+            };
             m_ScrollControl.EnableScroll(true, true);
             m_ScrollControl.AutoHideBars = true;
             m_ScrollControl.Margin = Margin.One;
-            //TODO COMPLETELY BROKEN TEXTBOX WITHOUT THESE TWO LINES
+            // TODO: COMPLETELY BROKEN TEXTBOX WITHOUT THESE TWO LINES
             //m_InnerPanel = m_ScrollControl;
             m_Text.Parent = m_ScrollControl;
             m_ScrollControl.InnerPanel.BoundsChanged += new GwenEventHandler<EventArgs>(ScrollChanged);
 
-            m_TextLines.Add(String.Empty);
+            m_TextLines.Add(string.Empty);
 
             // [halfofastaple] TODO Figure out where these numbers come from. See if we can remove the magic numbers.
             //	This should be as simple as 'm_ScrollControl.AutoSizeToContents = true' or 'm_ScrollControl.NoBounds()'
@@ -231,10 +224,10 @@ namespace Gwen.Controls
         /// <returns>Current selection.</returns>
         public string GetSelection()
         {
-            if (!HasSelection) return String.Empty;
+            if (!HasSelection)
+                return string.Empty;
 
-            string str = String.Empty;
-
+            string str;
             if (StartPoint.Y == EndPoint.Y)
             {
                 int start = StartPoint.X;
@@ -245,22 +238,19 @@ namespace Gwen.Controls
             }
             else
             {
-                str = String.Empty;
-                str += m_TextLines[StartPoint.Y].Substring(StartPoint.X); //Copy start
+                str = string.Empty;
+                str += m_TextLines[StartPoint.Y].Substring(StartPoint.X); // Copy start
                 for (int i = 1; i < EndPoint.Y - StartPoint.Y; i++)
                 {
-                    str += m_TextLines[StartPoint.Y + i]; //Copy middle
+                    str += m_TextLines[StartPoint.Y + i]; // Copy middle
                 }
-                str += m_TextLines[EndPoint.Y].Substring(0, EndPoint.X); //Copy end
+                str += m_TextLines[EndPoint.Y].Substring(0, EndPoint.X); // Copy end
             }
 
             return str;
         }
 
-        public string GetTextLine(int index)
-        {
-            return m_TextLines[index];
-        }
+        public string GetTextLine(int index) => m_TextLines[index];
 
         /// <summary>
         /// Invalidates the control.
@@ -296,10 +286,7 @@ namespace Gwen.Controls
             RefreshCursorBounds();
         }
 
-        public void SetTextLine(int index, string value)
-        {
-            m_TextLines[index] = value;
-        }
+        public void SetTextLine(int index, string value) => m_TextLines[index] = value;
 
         #endregion Methods
 
@@ -318,9 +305,9 @@ namespace Gwen.Controls
         protected override Point GetClosestCharacter(int px, int py)
         {
             Point p = CanvasPosToLocal(new Point(px, py));
-            double distance = Double.MaxValue;
+            double distance = double.MaxValue;
             Point Best = new Point(0, 0);
-            string sub = String.Empty;
+            string sub = string.Empty;
 
             /* Find the appropriate Y row (always pick whichever y the mouse currently is on) */
             for (int y = 0; y < m_TextLines.Count(); y++)
@@ -337,8 +324,8 @@ namespace Gwen.Controls
             }
 
             /* Find the best X row, closest char */
-            sub = String.Empty;
-            distance = Double.MaxValue;
+            sub = string.Empty;
+            distance = double.MaxValue;
             for (int x = 0; x <= m_TextLines[Best.Y].Count(); x++)
             {
                 if (x < m_TextLines[Best.Y].Count())
@@ -423,7 +410,8 @@ namespace Gwen.Controls
         protected override bool OnChar(char chr)
         {
             //base.OnChar(chr);
-            if (chr == '\t' && !AcceptTabs) return false;
+            if (chr == '\t' && !AcceptTabs)
+                return false;
 
             InsertText(chr.ToString());
             return true;
@@ -434,13 +422,10 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="oldChildBounds"></param>
         /// <param name="child"></param>
-        protected override void OnChildBoundsChanged(System.Drawing.Rectangle oldChildBounds, ControlBase child)
+        protected override void OnChildBoundsChanged(Rectangle oldChildBounds, ControlBase child)
         {
             base.OnChildBoundsChanged(oldChildBounds, child);
-            if (m_ScrollControl != null)
-            {
-                m_ScrollControl.UpdateScrollBars();
-            }
+            _ = (m_ScrollControl?.UpdateScrollBars());
         }
 
         /// <summary>
@@ -449,10 +434,11 @@ namespace Gwen.Controls
         /// <param name="from">Source control.</param>
         protected override void OnCopy(ControlBase from, EventArgs args)
         {
-            if (!HasSelection) return;
+            if (!HasSelection)
+                return;
             base.OnCopy(from, args);
 
-            Platform.Neutral.SetClipboardText(GetSelection());
+            _ = Platform.Neutral.SetClipboardText(GetSelection());
         }
 
         /// <summary>
@@ -461,10 +447,11 @@ namespace Gwen.Controls
         /// <param name="from">Source control.</param>
         protected override void OnCut(ControlBase from, EventArgs args)
         {
-            if (!HasSelection) return;
+            if (!HasSelection)
+                return;
             base.OnCut(from, args);
 
-            Platform.Neutral.SetClipboardText(GetSelection());
+            _ = Platform.Neutral.SetClipboardText(GetSelection());
             EraseSelection();
         }
 
@@ -477,7 +464,8 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyBackspace(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             if (HasSelection)
             {
@@ -489,15 +477,15 @@ namespace Gwen.Controls
             {
                 if (m_CursorPos.Y == 0)
                 {
-                    return true; //Nothing left to delete
+                    return true; // Nothing left to delete
                 }
                 else
                 {
                     string lhs = m_TextLines[m_CursorPos.Y - 1];
                     string rhs = m_TextLines[m_CursorPos.Y];
                     m_TextLines.RemoveAt(m_CursorPos.Y);
-                    OnKeyUp(true);
-                    OnKeyEnd(true);
+                    _ = OnKeyUp(true);
+                    _ = OnKeyEnd(true);
                     m_TextLines[m_CursorPos.Y] = lhs + rhs;
                 }
             }
@@ -507,7 +495,7 @@ namespace Gwen.Controls
                 string lhs = CurrentLine.Substring(0, CursorPosition.X - 1);
                 string rhs = CurrentLine.Substring(CursorPosition.X);
                 m_TextLines[m_CursorPos.Y] = lhs + rhs;
-                OnKeyLeft(true);
+                _ = OnKeyLeft(true);
             }
 
             Invalidate();
@@ -525,7 +513,8 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyDelete(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             if (HasSelection)
             {
@@ -537,14 +526,14 @@ namespace Gwen.Controls
             {
                 if (m_CursorPos.Y == m_TextLines.Count - 1)
                 {
-                    return true; //Nothing left to delete
+                    return true; // Nothing left to delete
                 }
                 else
                 {
                     string lhs = m_TextLines[m_CursorPos.Y];
                     string rhs = m_TextLines[m_CursorPos.Y + 1];
                     m_TextLines.RemoveAt(m_CursorPos.Y + 1);
-                    OnKeyEnd(true);
+                    _ = OnKeyEnd(true);
                     m_TextLines[m_CursorPos.Y] = lhs + rhs;
                 }
             }
@@ -571,14 +560,15 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyDown(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             if (m_CursorPos.Y < TotalLines - 1)
             {
                 m_CursorPos.Y += 1;
             }
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 m_CursorEnd = m_CursorPos;
             }
@@ -598,11 +588,12 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyEnd(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             m_CursorPos.X = m_TextLines[m_CursorPos.Y].Length;
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 m_CursorEnd = m_CursorPos;
             }
@@ -622,11 +613,12 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyHome(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             m_CursorPos.X = 0;
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 m_CursorEnd = m_CursorPos;
             }
@@ -646,7 +638,8 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyLeft(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             if (m_CursorPos.X > 0)
             {
@@ -656,12 +649,12 @@ namespace Gwen.Controls
             {
                 if (m_CursorPos.Y > 0)
                 {
-                    OnKeyUp(down);
-                    OnKeyEnd(down);
+                    _ = OnKeyUp(down);
+                    _ = OnKeyEnd(down);
                 }
             }
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 m_CursorEnd = m_CursorPos;
             }
@@ -681,7 +674,8 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyReturn(bool down)
         {
-            if (down) return true;
+            if (down)
+                return true;
 
             //Split current string, putting the rhs on a new line
             string CurrentLine = m_TextLines[m_CursorPos.Y];
@@ -691,8 +685,8 @@ namespace Gwen.Controls
             m_TextLines[m_CursorPos.Y] = lhs;
             m_TextLines.Insert(m_CursorPos.Y + 1, rhs);
 
-            OnKeyDown(true);
-            OnKeyHome(true);
+            _ = OnKeyDown(true);
+            _ = OnKeyHome(true);
 
             if (m_CursorPos.Y == TotalLines - 1)
             {
@@ -714,7 +708,8 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyRight(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             if (m_CursorPos.X < m_TextLines[m_CursorPos.Y].Length)
             {
@@ -724,12 +719,12 @@ namespace Gwen.Controls
             {
                 if (m_CursorPos.Y < m_TextLines.Count - 1)
                 {
-                    OnKeyDown(down);
-                    OnKeyHome(down);
+                    _ = OnKeyDown(down);
+                    _ = OnKeyHome(down);
                 }
             }
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 m_CursorEnd = m_CursorPos;
             }
@@ -749,10 +744,12 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyTab(bool down)
         {
-            if (!AcceptTabs) return base.OnKeyTab(down);
-            if (!down) return false;
+            if (!AcceptTabs)
+                return base.OnKeyTab(down);
+            if (!down)
+                return false;
 
-            OnChar('\t');
+            _ = OnChar('\t');
             return true;
         }
 
@@ -765,14 +762,15 @@ namespace Gwen.Controls
         /// </returns>
         protected override bool OnKeyUp(bool down)
         {
-            if (!down) return true;
+            if (!down)
+                return true;
 
             if (m_CursorPos.Y > 0)
             {
                 m_CursorPos.Y -= 1;
             }
 
-            if (!Input.InputHandler.IsShiftDown)
+            if (!InputHandler.IsShiftDown)
             {
                 m_CursorEnd = m_CursorPos;
             }
@@ -807,7 +805,7 @@ namespace Gwen.Controls
             {
                 CursorPosition = coords;
 
-                if (!Input.InputHandler.IsShiftDown)
+                if (!InputHandler.IsShiftDown)
                     CursorEnd = coords;
 
                 InputHandler.MouseFocus = this;
@@ -830,11 +828,9 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        protected override void OnMouseDoubleClickedLeft(int x, int y)
-        {
+        protected override void OnMouseDoubleClickedLeft(int x, int y) =>
             //base.OnMouseDoubleClickedLeft(x, y);
             OnSelectAll(this, EventArgs.Empty);
-        }
 
         //        m_CursorEnd = m_CursorPos;
         //    /* Multiline Delete */
@@ -849,7 +845,8 @@ namespace Gwen.Controls
         protected override void OnMouseMoved(int x, int y, int dx, int dy)
         {
             base.OnMouseMoved(x, y, dx, dy);
-            if (InputHandler.MouseFocus != this) return;
+            if (InputHandler.MouseFocus != this)
+                return;
 
             Point c = GetClosestCharacter(x, y);
 
@@ -859,10 +856,7 @@ namespace Gwen.Controls
             RefreshCursorBounds();
         }
 
-        protected override bool OnMouseWheeled(int delta)
-        {
-            return m_ScrollControl.InputMouseWheeled(delta);
-        }
+        protected override bool OnMouseWheeled(int delta) => m_ScrollControl.InputMouseWheeled(delta);
 
         /// <summary>
         /// Handler for Paste event.
@@ -893,8 +887,7 @@ namespace Gwen.Controls
         protected override void OnTextChanged()
         {
             base.OnTextChanged();
-            if (TextChanged != null)
-                TextChanged.Invoke(this, EventArgs.Empty);
+            TextChanged?.Invoke(this, EventArgs.Empty);
         }
 
         protected void RefreshCursorBounds()
@@ -904,7 +897,7 @@ namespace Gwen.Controls
             MakeCaretVisible();
 
             Point pA = GetCharacterPosition(CursorPosition);
-            Point pB = GetCharacterPosition(m_CursorEnd);
+            _ = GetCharacterPosition(m_CursorEnd);
 
             //m_SelectionBounds.X = Math.Min(pA.X, pB.X);
             //m_SelectionBounds.Y = TextY - 1;
@@ -912,7 +905,7 @@ namespace Gwen.Controls
             //m_SelectionBounds.Height = TextHeight + 2;
 
             m_CaretBounds.X = pA.X;
-            m_CaretBounds.Y = (pA.Y + 1);
+            m_CaretBounds.Y = pA.Y + 1;
 
             m_CaretBounds.Y += m_ScrollControl.VerticalScroll;
 
@@ -933,7 +926,8 @@ namespace Gwen.Controls
             if (ShouldDrawBackground)
                 skin.DrawTextBox(this, HasFocus);
 
-            if (!HasFocus) return;
+            if (!HasFocus)
+                return;
 
             int VerticalOffset = 2 - m_ScrollControl.VerticalScroll;
             int VerticalSize = Font.Size + 6;
@@ -946,9 +940,11 @@ namespace Gwen.Controls
                     Point pA = GetCharacterPosition(StartPoint);
                     Point pB = GetCharacterPosition(EndPoint);
 
-                    Rectangle SelectionBounds = new Rectangle();
-                    SelectionBounds.X = Math.Min(pA.X, pB.X);
-                    SelectionBounds.Y = pA.Y - VerticalOffset;
+                    Rectangle SelectionBounds = new Rectangle
+                    {
+                        X = Math.Min(pA.X, pB.X),
+                        Y = pA.Y - VerticalOffset
+                    };
                     SelectionBounds.Width = Math.Max(pA.X, pB.X) - SelectionBounds.X;
                     SelectionBounds.Height = VerticalSize;
 
@@ -961,9 +957,11 @@ namespace Gwen.Controls
                     Point pA = GetCharacterPosition(StartPoint);
                     Point pB = GetCharacterPosition(new Point(m_TextLines[StartPoint.Y].Length, StartPoint.Y));
 
-                    Rectangle SelectionBounds = new Rectangle();
-                    SelectionBounds.X = Math.Min(pA.X, pB.X);
-                    SelectionBounds.Y = pA.Y - VerticalOffset;
+                    Rectangle SelectionBounds = new Rectangle
+                    {
+                        X = Math.Min(pA.X, pB.X),
+                        Y = pA.Y - VerticalOffset
+                    };
                     SelectionBounds.Width = Math.Max(pA.X, pB.X) - SelectionBounds.X;
                     SelectionBounds.Height = VerticalSize;
 
@@ -976,9 +974,11 @@ namespace Gwen.Controls
                         pA = GetCharacterPosition(new Point(0, StartPoint.Y + i));
                         pB = GetCharacterPosition(new Point(m_TextLines[StartPoint.Y + i].Length, StartPoint.Y + i));
 
-                        SelectionBounds = new Rectangle();
-                        SelectionBounds.X = Math.Min(pA.X, pB.X);
-                        SelectionBounds.Y = pA.Y - VerticalOffset;
+                        SelectionBounds = new Rectangle
+                        {
+                            X = Math.Min(pA.X, pB.X),
+                            Y = pA.Y - VerticalOffset
+                        };
                         SelectionBounds.Width = Math.Max(pA.X, pB.X) - SelectionBounds.X;
                         SelectionBounds.Height = VerticalSize;
 
@@ -990,9 +990,11 @@ namespace Gwen.Controls
                     pA = GetCharacterPosition(new Point(0, EndPoint.Y));
                     pB = GetCharacterPosition(EndPoint);
 
-                    SelectionBounds = new Rectangle();
-                    SelectionBounds.X = Math.Min(pA.X, pB.X);
-                    SelectionBounds.Y = pA.Y - VerticalOffset;
+                    SelectionBounds = new Rectangle
+                    {
+                        X = Math.Min(pA.X, pB.X),
+                        Y = pA.Y - VerticalOffset
+                    };
                     SelectionBounds.Width = Math.Max(pA.X, pB.X) - SelectionBounds.X;
                     SelectionBounds.Height = VerticalSize;
 
@@ -1002,7 +1004,7 @@ namespace Gwen.Controls
             }
 
             // Draw caret
-            var time = Platform.Neutral.GetTimeInSeconds() - m_LastInputTime;
+            double time = Platform.Neutral.GetTimeInSeconds() - m_LastInputTime;
 
             if ((time % 1.0) <= 0.5)
             {
@@ -1016,38 +1018,16 @@ namespace Gwen.Controls
         private Point m_CursorEnd;
         private Point m_CursorPos;
         private double m_LastInputTime;
-        private bool m_SelectAll;
+        private readonly bool m_SelectAll;
         private List<string> m_TextLines = new List<string>();
 
-        private Point EndPoint
-        {
-            get
-            {
-                if (CursorPosition.Y == m_CursorEnd.Y)
-                {
-                    return CursorPosition.X > CursorEnd.X ? CursorPosition : CursorEnd;
-                }
-                else
-                {
-                    return CursorPosition.Y > CursorEnd.Y ? CursorPosition : CursorEnd;
-                }
-            }
-        }
+        private Point EndPoint => CursorPosition.Y == m_CursorEnd.Y
+                    ? CursorPosition.X > CursorEnd.X ? CursorPosition : CursorEnd
+                    : CursorPosition.Y > CursorEnd.Y ? CursorPosition : CursorEnd;
 
-        private Point StartPoint
-        {
-            get
-            {
-                if (CursorPosition.Y == m_CursorEnd.Y)
-                {
-                    return CursorPosition.X < CursorEnd.X ? CursorPosition : CursorEnd;
-                }
-                else
-                {
-                    return CursorPosition.Y < CursorEnd.Y ? CursorPosition : CursorEnd;
-                }
-            }
-        }
+        private Point StartPoint => CursorPosition.Y == m_CursorEnd.Y
+                    ? CursorPosition.X < CursorEnd.X ? CursorPosition : CursorEnd
+                    : CursorPosition.Y < CursorEnd.Y ? CursorPosition : CursorEnd;
 
         //        if (CursorPosition.X > StartPos.X) {
         //            m_CursorPos.X = CursorPosition.X - length;
@@ -1075,10 +1055,7 @@ namespace Gwen.Controls
         /// Refreshes the cursor location and selected area when the inner panel scrolls
         /// </summary>
         /// <param name="control">The inner panel the text is embedded in</param>
-        private void ScrollChanged(ControlBase control, EventArgs args)
-        {
-            RefreshCursorBounds();
-        }
+        private void ScrollChanged(ControlBase control, EventArgs args) => RefreshCursorBounds();
 
         //[halfofastaple] TODO Implement this and use it. The end user can work around not having it, but it is terribly convenient.
         //	See the delete key handler for help. Eventually, the delete key should use this.

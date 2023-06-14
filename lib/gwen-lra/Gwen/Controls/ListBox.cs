@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Gwen.Controls
 {
@@ -11,10 +8,7 @@ namespace Gwen.Controls
     /// </summary>
     public class ListBox : ScrollControl
     {
-        private readonly List<ListBoxRow> m_SelectedRows;
-
         private bool m_MultiSelect;
-        private bool m_IsToggle;
         private bool m_AlternateColors;
 
         /// <summary>
@@ -22,7 +16,7 @@ namespace Gwen.Controls
         /// </summary>
         public bool AllowMultiSelect
         {
-            get { return m_MultiSelect; }
+            get => m_MultiSelect;
             set
             {
                 m_MultiSelect = value;
@@ -30,12 +24,10 @@ namespace Gwen.Controls
                     IsToggle = true;
             }
         }
-        public bool AlternateColors { 
-            
-            get
-            {
-                return m_AlternateColors;
-            }
+        public bool AlternateColors
+        {
+
+            get => m_AlternateColors;
             set
             {
                 if (m_AlternateColors != value)
@@ -43,7 +35,7 @@ namespace Gwen.Controls
                     m_AlternateColors = value;
                     if (!m_AlternateColors)
                     {
-                        foreach(var child in Children)
+                        foreach (ControlBase child in Children)
                         {
                             if (child is ListBoxRow row)
                             {
@@ -57,31 +49,26 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines whether rows can be unselected by clicking on them again.
         /// </summary>
-        public bool IsToggle { get { return m_IsToggle; } set { m_IsToggle = value; } }
+        public bool IsToggle { get; set; }
 
         /// <summary>
         /// Returns specific row of the ListBox.
         /// </summary>
         /// <param name="index">Row index.</param>
         /// <returns>Row at the specified index.</returns>
-        public ListBoxRow this[int index] { get { return Children[index] as ListBoxRow; } }
+        public ListBoxRow this[int index] => Children[index] as ListBoxRow;
 
         /// <summary>
         /// List of selected rows.
         /// </summary>
-        public List<ListBoxRow> SelectedRows { get { return m_SelectedRows; } }
+        public List<ListBoxRow> SelectedRows { get; }
 
         /// <summary>
         /// First selected row (and only if list is not multiselectable).
         /// </summary>
         public ListBoxRow SelectedRow
         {
-            get
-            {
-                if (m_SelectedRows.Count == 0)
-                    return null;
-                return m_SelectedRows[0];
-            }
+            get => SelectedRows.Count == 0 ? null : SelectedRows[0];
             set
             {
                 if (Children.Contains(value))
@@ -105,15 +92,10 @@ namespace Gwen.Controls
         {
             get
             {
-                var selected = SelectedRow;
-                if (selected == null)
-                    return -1;
-                return Children.IndexOf(selected);
+                ListBoxRow selected = SelectedRow;
+                return selected == null ? -1 : Children.IndexOf(selected);
             }
-            set
-            {
-                SelectRow(value);
-            }
+            set => SelectRow(value);
         }
 
         /// <summary>
@@ -133,7 +115,7 @@ namespace Gwen.Controls
         public ListBox(ControlBase parent)
             : base(parent)
         {
-            m_SelectedRows = new List<ListBoxRow>();
+            SelectedRows = new List<ListBoxRow>();
 
             MouseInputEnabled = true;
             // EnableScroll(false, true);
@@ -141,14 +123,14 @@ namespace Gwen.Controls
             Margin = Margin.One;
 
             m_MultiSelect = false;
-            m_IsToggle = false;
+            IsToggle = false;
             OnThink += (o, e) =>
             {
                 if (AlternateColors)
                 {
-                    bool even=false;
+                    bool even = false;
 
-                    foreach (var child in Children)
+                    foreach (ControlBase child in Children)
                     {
                         if (child is ListBoxRow row)
                         {
@@ -179,7 +161,7 @@ namespace Gwen.Controls
         /// <param name="clearOthers">Determines whether to deselect previously selected rows.</param>
         public void SelectRows(string rowText, bool clearOthers = false)
         {
-            var rows = Children.OfType<ListBoxRow>().Where(x => x.Text == rowText);
+            IEnumerable<ListBoxRow> rows = Children.OfType<ListBoxRow>().Where(x => x.Text == rowText);
             foreach (ListBoxRow row in rows)
             {
                 SelectRow(row, clearOthers);
@@ -196,25 +178,20 @@ namespace Gwen.Controls
             if (!AllowMultiSelect || clearOthers)
                 UnselectAll();
 
-            ListBoxRow row = control as ListBoxRow;
-            if (row == null)
+            if (!(control is ListBoxRow row))
                 return;
 
             // TODO: make sure this is one of our rows!
             row.IsSelected = true;
-            m_SelectedRows.Add(row);
-            if (RowSelected != null)
-                RowSelected.Invoke(this, new ItemSelectedEventArgs(row));
+            SelectedRows.Add(row);
+            RowSelected?.Invoke(this, new ItemSelectedEventArgs(row));
         }
 
         /// <summary>
         /// Removes the all rows from the ListBox
         /// </summary>
         /// <param name="idx">Row index.</param>
-        public void RemoveAllRows()
-        {
-            DeleteAll();
-        }
+        public void RemoveAllRows() => DeleteAll();
 
         /// <summary>
         /// Removes the specified row by index.
@@ -222,7 +199,8 @@ namespace Gwen.Controls
         /// <param name="idx">Row index.</param>
         public void RemoveRow(int idx)
         {
-            RemoveChild(Children[idx], true); ; // this calls Dispose()
+            RemoveChild(Children[idx], true);
+            ; // this calls Dispose()
         }
 
         /// <summary>
@@ -230,10 +208,7 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="label">Row text.</param>
         /// <returns>Newly created control.</returns>
-        public ListBoxRow AddRow(string label)
-        {
-            return AddRow(label, String.Empty);
-        }
+        public ListBoxRow AddRow(string label) => AddRow(label, string.Empty);
 
         /// <summary>
         /// Adds a new row.
@@ -241,10 +216,7 @@ namespace Gwen.Controls
         /// <param name="label">Row text.</param>
         /// <param name="name">Internal control name.</param>
         /// <returns>Newly created control.</returns>
-        public ListBoxRow AddRow(string label, string name)
-        {
-            return AddRow(label, name, null);
-        }
+        public ListBoxRow AddRow(string label, string name) => AddRow(label, name, null);
 
         /// <summary>
         /// Adds a new row.
@@ -253,7 +225,7 @@ namespace Gwen.Controls
         /// <param name="name">Internal control name.</param>
         /// <param name="UserData">User data for newly created row</param>
         /// <returns>Newly created control.</returns>
-        public ListBoxRow AddRow(string label, string name, Object UserData)
+        public ListBoxRow AddRow(string label, string name, object UserData)
         {
             ListBoxRow row = new ListBoxRow(this)
             {
@@ -270,23 +242,19 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawListBox(this);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawListBox(this);
 
         /// <summary>
         /// Deselects all rows.
         /// </summary>
         public virtual void UnselectAll()
         {
-            foreach (ListBoxRow row in m_SelectedRows)
+            foreach (ListBoxRow row in SelectedRows)
             {
                 row.IsSelected = false;
-                if (RowUnselected != null)
-                    RowUnselected.Invoke(this, new ItemSelectedEventArgs(row));
+                RowUnselected?.Invoke(this, new ItemSelectedEventArgs(row));
             }
-            m_SelectedRows.Clear();
+            SelectedRows.Clear();
         }
 
         /// <summary>
@@ -296,10 +264,9 @@ namespace Gwen.Controls
         public void UnselectRow(ListBoxRow row)
         {
             row.IsSelected = false;
-            m_SelectedRows.Remove(row);
+            _ = SelectedRows.Remove(row);
 
-            if (RowUnselected != null)
-                RowUnselected.Invoke(this, new ItemSelectedEventArgs(row));
+            RowUnselected?.Invoke(this, new ItemSelectedEventArgs(row));
         }
         protected override void OnChildRemoved(ControlBase child)
         {
@@ -317,8 +284,7 @@ namespace Gwen.Controls
         {
             // [omeg] changed default behavior
             bool clear = false;// !InputHandler.InputHandler.IsShiftDown;
-            ListBoxRow row = args.SelectedItem as ListBoxRow;
-            if (row == null)
+            if (!(args.SelectedItem is ListBoxRow row))
                 return;
 
             if (row.IsSelected)
@@ -338,7 +304,7 @@ namespace Gwen.Controls
         /// <param name="label">The label to look for, this is what is shown to the user.</param>
         public void SelectByText(string text)
         {
-            foreach (var c in Children)
+            foreach (ControlBase c in Children)
             {
                 if (c is ListBoxRow item)
                 {
@@ -358,7 +324,7 @@ namespace Gwen.Controls
         /// <param name="name">The internal name to look for. To select by what is displayed to the user, use "SelectByText".</param>
         public void SelectByName(string name)
         {
-            foreach (var c in Children)
+            foreach (ControlBase c in Children)
             {
                 if (c is ListBoxRow item)
                 {
@@ -379,7 +345,7 @@ namespace Gwen.Controls
         /// If null is passed in, it will look for null/unset UserData.</param>
         public void SelectByUserData(object userdata)
         {
-            foreach (var c in Children)
+            foreach (ControlBase c in Children)
             {
                 if (c is ListBoxRow item)
                 {

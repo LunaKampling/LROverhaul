@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
+using linerider.Utils;
 using OpenTK;
 using OpenTK.Input;
-using linerider.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace linerider.UI
 {
-    static class InputUtils
+    internal static class InputUtils
     {
         /// how hotkeys ive observed in applications work
         /// 
@@ -32,15 +32,15 @@ namespace linerider.UI
         private static GameWindow _window;
         private static KeyboardState _kbstate;
         private static KeyboardState _prev_kbstate;
-        private static List<MouseButton> _mousebuttonsdown = new List<MouseButton>();
+        private static readonly List<MouseButton> _mousebuttonsdown = new List<MouseButton>();
         private static MouseState _mousestate;
         private static MouseState _prev_mousestate;
         private static bool _hasmoved = false;
-        private static ResourceSync _lock = new ResourceSync();
+        private static readonly ResourceSync _lock = new ResourceSync();
         private static KeyModifiers _modifiersdown;
-        private static Dictionary<Hotkey, HotkeyHandler> Handlers = new Dictionary<Hotkey, HotkeyHandler>();
+        private static readonly Dictionary<Hotkey, HotkeyHandler> Handlers = new Dictionary<Hotkey, HotkeyHandler>();
         private static HotkeyHandler _current_hotkey = null;
-        // macos has to handle ctrl+ combos differently.
+        // Macos has to handle ctrl+ combos differently.
         private static bool _macOS = false;
         /// "If a non modifier key was pressed, it's like the previous key 
         /// stopped being pressed"
@@ -66,14 +66,14 @@ namespace linerider.UI
         }
         public static Keybinding ReadHotkey()
         {
-            var key = RepeatKey;
+            Key key = RepeatKey;
             if (!_kbstate[key])
                 key = (Key)(-1);
             if (_mousebuttonsdown.Count == 1 && key == (Key)(-1))
             {
-                var button = _mousebuttonsdown[0];
+                MouseButton button = _mousebuttonsdown[0];
                 if (button == MouseButton.Left || button == MouseButton.Right)
-                    return new Keybinding();//ignore
+                    return new Keybinding(); // Ignore
                 return new Keybinding(button, _modifiersdown);
             }
             return new Keybinding(key, _modifiersdown);
@@ -111,10 +111,7 @@ namespace linerider.UI
                 repeat = repeat
             });
         }
-        public static void FreeHotkey(Hotkey hotkey)
-        {
-            Handlers.Remove(hotkey);
-        }
+        public static void FreeHotkey(Hotkey hotkey) => Handlers.Remove(hotkey);
         /// <summary>
         /// Checks if the currently pressed hotkey is still 'pressed' after a
         /// state change.
@@ -135,18 +132,18 @@ namespace linerider.UI
         }
         public static void ProcessMouseHotkeys()
         {
-            CheckCurrentHotkey();
-            foreach (var pair in Handlers)
+            _ = CheckCurrentHotkey();
+            foreach (KeyValuePair<Hotkey, HotkeyHandler> pair in Handlers)
             {
-                var bind = CheckInternal(pair.Key, true);
+                Keybinding bind = CheckInternal(pair.Key, true);
                 if (bind != null && bind.UsesMouse)
                 {
-                    var handler = pair.Value;
+                    HotkeyHandler handler = pair.Value;
                     if (handler.condition())
                     {
                         bool waspressed = CheckPressed(
-                            bind, 
-                            ref _prev_kbstate, 
+                            bind,
+                            ref _prev_kbstate,
                             ref _prev_mousestate);
                         if (waspressed)
                         {
@@ -164,7 +161,7 @@ namespace linerider.UI
         {
             if (CheckCurrentHotkey())
             {
-                var kb = CheckInternal(_current_hotkey.hotkey, true);
+                Keybinding kb = CheckInternal(_current_hotkey.hotkey, true);
                 if (!kb.UsesMouse && _current_hotkey.repeat)
                 {
                     _current_hotkey.keydownhandler();
@@ -172,17 +169,17 @@ namespace linerider.UI
                 return;
             }
             _current_hotkey = null;
-            foreach (var pair in Handlers)
+            foreach (KeyValuePair<Hotkey, HotkeyHandler> pair in Handlers)
             {
-                var bind = CheckInternal(pair.Key, false);
+                Keybinding bind = CheckInternal(pair.Key, false);
                 if (bind != null)
                 {
-                    var handler = pair.Value;
+                    HotkeyHandler handler = pair.Value;
                     if (handler.condition())
                     {
                         bool waspressed = CheckPressed(
-                            bind, 
-                            ref _prev_kbstate, 
+                            bind,
+                            ref _prev_kbstate,
                             ref _prev_mousestate);
                         if (waspressed && !handler.repeat)
                         {
@@ -227,22 +224,15 @@ namespace linerider.UI
                 }
             }
         }
-        public static Vector2d GetMouse()
-        {
-            return new Vector2d(_mousestate.X, _mousestate.Y);
-        }
-        public static bool Check(Hotkey hotkey)
-        {
-            return CheckInternal(hotkey, true) != null;
-        }
+        public static Vector2d GetMouse() => new Vector2d(_mousestate.X, _mousestate.Y);
+        public static bool Check(Hotkey hotkey) => CheckInternal(hotkey, true) != null;
         public static bool CheckPressed(Hotkey hotkey)
         {
-            List<Keybinding> keybindings;
-            if (Settings.Keybinds.TryGetValue(hotkey, out keybindings))
+            if (Settings.Keybinds.TryGetValue(hotkey, out List<Keybinding> keybindings))
             {
                 using (_lock.AcquireRead())
                 {
-                    foreach (var bind in keybindings)
+                    foreach (Keybinding bind in keybindings)
                     {
                         if (bind.IsEmpty)
                         {
@@ -266,12 +256,12 @@ namespace linerider.UI
             if (bind.UsesKeys)
             {
                 if (_modifiersdown != bind.Modifiers ||
-                bind.Key != RepeatKey)//someone overrode us
+                bind.Key != RepeatKey) // Someone overrode us
                     return false;
             }
             if (bind.UsesMouse)
             {
-                //we can conflict with left/right, not others
+                // We can conflict with left/right, not others
                 int buttonsdown = _mousebuttonsdown.Count;
                 if (_mousestate[MouseButton.Left])
                     buttonsdown--;
@@ -284,12 +274,11 @@ namespace linerider.UI
         }
         private static Keybinding CheckInternal(Hotkey hotkey, bool checkmouse)
         {
-            List<Keybinding> keybindings;
-            if (Settings.Keybinds.TryGetValue(hotkey, out keybindings))
+            if (Settings.Keybinds.TryGetValue(hotkey, out List<Keybinding> keybindings))
             {
                 using (_lock.AcquireRead())
                 {
-                    foreach (var bind in keybindings)
+                    foreach (Keybinding bind in keybindings)
                     {
                         if (bind.IsEmpty ||
                             (bind.UsesMouse && !checkmouse) ||
@@ -343,12 +332,12 @@ namespace linerider.UI
                 if (!mousestate.IsButtonDown(bind.MouseButton))
                     return false;
             }
-            if (bind.Modifiers != (KeyModifiers)(0))
+            if (bind.Modifiers != 0)
             {
-                var alt =
+                bool alt =
                 state.IsKeyDown(Key.AltLeft) ||
                 state.IsKeyDown(Key.AltRight);
-                var ctrl =
+                bool ctrl =
                 state.IsKeyDown(Key.ControlLeft) ||
                 state.IsKeyDown(Key.ControlRight);
                 if (_macOS)
@@ -358,7 +347,7 @@ namespace linerider.UI
                     state.IsKeyDown(Key.WinLeft) ||
                     state.IsKeyDown(Key.WinRight);
                 }
-                var shift =
+                bool shift =
                 state.IsKeyDown(Key.ShiftLeft) ||
                 state.IsKeyDown(Key.ShiftRight);
 
@@ -387,10 +376,8 @@ namespace linerider.UI
         }
         public static void SetWindow(GameWindow window)
         {
-            if (window == null)
-                throw new NullReferenceException("InputUtils SetWindow cannot be null");
-            _window = window;
-            _macOS = OpenTK.Configuration.RunningOnMacOS;
+            _window = window ?? throw new NullReferenceException("InputUtils SetWindow cannot be null");
+            _macOS = Configuration.RunningOnMacOS;
         }
     }
 }

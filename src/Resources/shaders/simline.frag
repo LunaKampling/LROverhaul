@@ -4,14 +4,14 @@ uniform int u_knobstate;
 uniform bool u_alphachannel;
 uniform bool u_overlay;
 uniform vec4 u_knobcolor;
-//basically u/v coordinates to the circle.
+// Basically u/v coordinates to the circle.
 varying vec2 v_circle;
 varying vec2 v_linesize;
 varying vec4 v_color;
 varying float v_selectflags;
 
 float v_scale;
-//the ratio height/width of the line
+// The ratio height/width of the line
 float v_ratio;
 
 const float radius = 0.5;

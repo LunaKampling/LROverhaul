@@ -10,7 +10,7 @@ public static class Benchmark
     private static string _stopwatchstring;
     public static TimeSpan BenchmarkFunction(Action function, string name)
     {
-        var sw = Stopwatch.StartNew();
+        Stopwatch sw = Stopwatch.StartNew();
         function();
         sw.Stop();
         Debug.WriteLine(sw.Elapsed);

@@ -1,10 +1,4 @@
-using OpenTK;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using linerider.Game;
-using linerider.Rendering;
-using System.Collections;
 
 namespace linerider
 {
@@ -12,8 +6,8 @@ namespace linerider
     {
         public SimulationCell FullClone()
         {
-            var ret = new SimulationCell();
-            foreach (var l in this)
+            SimulationCell ret = new SimulationCell();
+            foreach (StandardLine l in this)
             {
                 ret.AddLine((StandardLine)l.Clone());
             }

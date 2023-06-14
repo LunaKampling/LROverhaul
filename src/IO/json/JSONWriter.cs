@@ -1,12 +1,9 @@
-using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using Utf8Json;
-using System.Diagnostics;
 using linerider.Game;
 using linerider.IO.json;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using Utf8Json;
 
 namespace linerider.IO
 {
@@ -14,25 +11,27 @@ namespace linerider.IO
     {
         public static string SaveTrack(Track trk, string savename)
         {
-            var sw = Stopwatch.StartNew();
-            track_json trackobj = new track_json();
-            trackobj.label = trk.Name;
-            trackobj.startPosition = new track_json.point_json()
+            _ = Stopwatch.StartNew();
+            track_json trackobj = new track_json
             {
-                x = trk.StartOffset.X,
-                y = trk.StartOffset.Y
+                label = trk.Name,
+                startPosition = new track_json.point_json()
+                {
+                    x = trk.StartOffset.X,
+                    y = trk.StartOffset.Y
+                },
+                startZoom = trk.StartZoom,
+                zeroStart = trk.ZeroStart,
+                yGravity = trk.YGravity,
+                xGravity = trk.XGravity,
+                gravityWellSize = trk.GravityWellSize,
+                bgR = trk.BGColorR,
+                bgG = trk.BGColorG,
+                bgB = trk.BGColorB,
+                lineR = trk.LineColorR,
+                lineG = trk.LineColorG,
+                lineB = trk.LineColorB
             };
-            trackobj.startZoom = trk.StartZoom;
-            trackobj.zeroStart = trk.ZeroStart;
-            trackobj.yGravity = trk.YGravity;
-            trackobj.xGravity = trk.XGravity;
-            trackobj.gravityWellSize = trk.GravityWellSize;
-            trackobj.bgR = trk.BGColorR;
-            trackobj.bgG = trk.BGColorG;
-            trackobj.bgB = trk.BGColorB;
-            trackobj.lineR = trk.LineColorR;
-            trackobj.lineG = trk.LineColorG;
-            trackobj.lineB = trk.LineColorB;
 
             int ver = trk.GetVersion();
             switch (ver)
@@ -44,11 +43,11 @@ namespace linerider.IO
                     trackobj.version = "6.2";
                     break;
             }
-            var sort = trk.GetSortedLines();
+            GameLine[] sort = trk.GetSortedLines();
             trackobj.linesArray = new object[sort.Length][];
             trackobj.gameTriggers = new List<track_json.gametrigger_json>();
             int idx = 0;
-            foreach (var line in sort)
+            foreach (GameLine line in sort)
             {
                 line_json jline = new line_json();
                 switch (line.Type)
@@ -83,7 +82,7 @@ namespace linerider.IO
                 }
                 trackobj.linesArray[idx++] = line_to_linearrayline(jline);
             }
-            foreach (var trigger in trk.Triggers)
+            foreach (GameTrigger trigger in trk.Triggers)
             {
                 switch (trigger.TriggerType)
                 {
@@ -120,14 +119,17 @@ namespace linerider.IO
                         break;
                 }
             }
-            var dir = TrackIO.GetTrackDirectory(trk);
-            if (trk.Name.Equals("<untitled>")) { dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar; }
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            var filename = dir + savename + ".track.json";
-            using (var file = File.Create(filename))
+            string dir = TrackIO.GetTrackDirectory(trk);
+            if (trk.Name.Equals("<untitled>"))
             {
-                var bytes = JsonSerializer.Serialize<track_json>(trackobj);
+                dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
+            }
+            if (!Directory.Exists(dir))
+                _ = Directory.CreateDirectory(dir);
+            string filename = dir + savename + ".track.json";
+            using (FileStream file = File.Create(filename))
+            {
+                byte[] bytes = JsonSerializer.Serialize(trackobj);
                 file.Write(bytes, 0, bytes.Length);
             }
             return filename;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using Gwen.Controls;
+﻿using System.Drawing;
 
 namespace Gwen.ControlInternal
 {
@@ -9,17 +7,15 @@ namespace Gwen.ControlInternal
     /// </summary>
     public class ScrollBarBar : Dragger
     {
-        private bool m_Horizontal;
-
         /// <summary>
         /// Indicates whether the bar is horizontal.
         /// </summary>
-        public bool IsHorizontal { get { return m_Horizontal; } set { m_Horizontal = value; } }
+        public bool IsHorizontal { get; set; }
 
         /// <summary>
         /// Indicates whether the bar is vertical.
         /// </summary>
-        public bool IsVertical { get { return !m_Horizontal; } set { m_Horizontal = !value; } }
+        public bool IsVertical { get => !IsHorizontal; set => IsHorizontal = !value; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScrollBarBar"/> class.
@@ -38,7 +34,7 @@ namespace Gwen.ControlInternal
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.SkinBase skin)
         {
-            skin.DrawScrollBarBar(this, m_Held, IsHovered, m_Horizontal);
+            skin.DrawScrollBarBar(this, m_Held, IsHovered, IsHorizontal);
             base.Render(skin);
         }
 
@@ -72,7 +68,7 @@ namespace Gwen.ControlInternal
 
         protected override void ProcessLayout(Size size)
         {
-            MoveClampToParent(X, Y);
+            _ = MoveClampToParent(X, Y);
             base.ProcessLayout(size);
         }
     }

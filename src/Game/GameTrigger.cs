@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using linerider.Utils;
 using OpenTK.Graphics;
 using System;
 using System.Drawing;
@@ -29,26 +28,22 @@ namespace linerider.Game
         public int Start;
         public int End;
         public TriggerType TriggerType;
-        //Zoom
+        // Zoom
         public float ZoomTarget = 4;
-        //BG
+        // Background
         public int backgroundRed;
         public int backgroundGreen;
         public int backgroundBlue;
-        //Line Color
+        // Line Color
         public int lineRed;
         public int lineGreen;
         public int lineBlue;
 
-        public bool CompareTo(GameTrigger other)
-        {
-            if (other == null)
-                return false;
-            return TriggerType == other.TriggerType &&
+        public bool CompareTo(GameTrigger other) => other != null
+&& TriggerType == other.TriggerType &&
             Start == other.Start &&
             End == other.End &&
             ZoomTarget == other.ZoomTarget;
-        }
         public bool ActivateZoom(int hitdelta, ref float currentzoom)
         {
             bool handled = false;
@@ -59,8 +54,8 @@ namespace linerider.Game
                 {
                     if (hitdelta >= 0 && hitdelta < zoomframes)
                     {
-                        var diff = ZoomTarget - currentzoom;
-                        currentzoom = currentzoom + (diff / (zoomframes - hitdelta));
+                        float diff = ZoomTarget - currentzoom;
+                        currentzoom += diff / (zoomframes - hitdelta);
                         handled = true;
                     }
                     else
@@ -77,22 +72,22 @@ namespace linerider.Game
             if (TriggerType == TriggerType.BGChange)
             {
                 float fadeframes = End - Start;
-                float frame = (currentFrame - Start);
+                float frame = currentFrame - Start;
 
-                if (!staticCurrentColor.Equals(new Color4((float)this.backgroundRed, (float)this.backgroundGreen, (float)this.backgroundBlue, 255)))
+                if (!staticCurrentColor.Equals(new Color4(backgroundRed, backgroundGreen, backgroundBlue, 255)))
                 {
                     if (frame < fadeframes)
                     {
                         Color staticColor = Color.FromArgb(staticCurrentColor.ToArgb());
 
-                        float diffR = this.backgroundRed - staticColor.R;
-                        float diffG = this.backgroundGreen - staticColor.G;
-                        float diffB = this.backgroundBlue - staticColor.B;
-                        byte newR = (byte)((staticColor.R) + (diffR * (frame / fadeframes)));
-                        byte newG = (byte)((staticColor.G) + (diffG * (frame / fadeframes)));
-                        byte newB = (byte)((staticColor.B) + (diffB * (frame / fadeframes)));
+                        float diffR = backgroundRed - staticColor.R;
+                        float diffG = backgroundGreen - staticColor.G;
+                        float diffB = backgroundBlue - staticColor.B;
+                        byte newR = (byte)(staticColor.R + diffR * (frame / fadeframes));
+                        byte newG = (byte)(staticColor.G + diffG * (frame / fadeframes));
+                        byte newB = (byte)(staticColor.B + diffB * (frame / fadeframes));
 
-                        frameInfoColor = new Color4(newR, newG, newB, (byte)255);
+                        frameInfoColor = new Color4(newR, newG, newB, 255);
 
                         Console.WriteLine("R: " + newR);
                         Console.WriteLine("G: " + newG);
@@ -102,13 +97,13 @@ namespace linerider.Game
                     }
                     else
                     {
-                        frameInfoColor = new Color4((byte)this.backgroundRed, (byte)this.backgroundGreen, (byte)this.backgroundBlue, (byte)255);
-                        staticCurrentColor = new Color4((byte)this.backgroundRed, (byte)this.backgroundGreen, (byte)this.backgroundBlue, (byte)255);
-                        CurrentChangingColor = new Color4((byte)this.backgroundRed, (byte)this.backgroundGreen, (byte)this.backgroundBlue, (byte)255);
+                        frameInfoColor = new Color4((byte)backgroundRed, (byte)backgroundGreen, (byte)backgroundBlue, 255);
+                        staticCurrentColor = new Color4((byte)backgroundRed, (byte)backgroundGreen, (byte)backgroundBlue, 255);
+                        CurrentChangingColor = new Color4((byte)backgroundRed, (byte)backgroundGreen, (byte)backgroundBlue, 255);
                     }
                 }
             }
-             return handled;
+            return handled;
         }
 
         public bool ActivateLine(int hitdelta, ref Color staticCurrentColor, ref Color notStaticCurrentColor, int currentFrame, ref Color frameLineColor)
@@ -117,18 +112,18 @@ namespace linerider.Game
             if (TriggerType == TriggerType.LineColor)
             {
                 float fadeframes = End - Start;
-                float frame = (currentFrame - Start);
+                float frame = currentFrame - Start;
 
-                if (!staticCurrentColor.Equals(Color.FromArgb(255, this.lineRed, this.lineGreen, this.lineBlue)))
+                if (!staticCurrentColor.Equals(Color.FromArgb(255, lineRed, lineGreen, lineBlue)))
                 {
                     if (frame < fadeframes)
                     {
-                        float diffR = this.lineRed - staticCurrentColor.R;
-                        float diffG = this.lineGreen - staticCurrentColor.G;
-                        float diffB = this.lineBlue - staticCurrentColor.B;
-                        float newR = (staticCurrentColor.R + (diffR * (frame / fadeframes)));
-                        float newG = (staticCurrentColor.G + (diffG * (frame / fadeframes)));
-                        float newB = (staticCurrentColor.B + (diffB * (frame / fadeframes)));
+                        float diffR = lineRed - staticCurrentColor.R;
+                        float diffG = lineGreen - staticCurrentColor.G;
+                        float diffB = lineBlue - staticCurrentColor.B;
+                        float newR = staticCurrentColor.R + diffR * (frame / fadeframes);
+                        float newG = staticCurrentColor.G + diffG * (frame / fadeframes);
+                        float newB = staticCurrentColor.B + diffB * (frame / fadeframes);
 
                         frameLineColor = Color.FromArgb(255, (int)newR, (int)newG, (int)newB);
                         notStaticCurrentColor = Color.FromArgb(255, (int)newR, (int)newG, (int)newB);
@@ -141,30 +136,27 @@ namespace linerider.Game
                     }
                     else
                     {
-                        staticCurrentColor = Color.FromArgb(255, this.lineRed, this.lineGreen, this.lineBlue);
-                        frameLineColor = Color.FromArgb(255, this.lineRed, this.lineGreen, this.lineBlue);
-                        notStaticCurrentColor = Color.FromArgb(255, this.lineRed, this.lineGreen, this.lineBlue);
+                        staticCurrentColor = Color.FromArgb(255, lineRed, lineGreen, lineBlue);
+                        frameLineColor = Color.FromArgb(255, lineRed, lineGreen, lineBlue);
+                        notStaticCurrentColor = Color.FromArgb(255, lineRed, lineGreen, lineBlue);
                     }
                 }
             }
             return handled;
         }
 
-        public GameTrigger Clone()
+        public GameTrigger Clone() => new GameTrigger()
         {
-            return new GameTrigger()
-            {
-                Start = Start,
-                End = End,
-                TriggerType = TriggerType,
-                ZoomTarget = ZoomTarget,
-                backgroundRed = backgroundRed,
-                backgroundGreen = backgroundGreen,
-                backgroundBlue = backgroundBlue,
-                lineRed = lineRed,
-                lineGreen = lineGreen,
-                lineBlue = lineBlue,
-            };
-        }
+            Start = Start,
+            End = End,
+            TriggerType = TriggerType,
+            ZoomTarget = ZoomTarget,
+            backgroundRed = backgroundRed,
+            backgroundGreen = backgroundGreen,
+            backgroundBlue = backgroundBlue,
+            lineRed = lineRed,
+            lineGreen = lineGreen,
+            lineBlue = lineBlue,
+        };
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Gwen.Controls
 {
@@ -33,17 +33,11 @@ namespace Gwen.Controls
             int rowheight = 0;
             int maxwidth = 0;
             // Adjust bounds for padding
-            foreach (var child in Children)
+            foreach (ControlBase child in Children)
             {
                 if (child.IsHidden)
                     continue;
-                Size childsize;
-                if (child.AutoSizeToContents)
-                {
-                    childsize = child.GetSizeToFitContents();
-                }
-                else
-                    childsize = child.Bounds.Size;
+                Size childsize = child.AutoSizeToContents ? child.GetSizeToFitContents() : child.Bounds.Size;
                 childsize.Width += child.Margin.Width;
                 childsize.Height += child.Margin.Height;
 
@@ -66,13 +60,13 @@ namespace Gwen.Controls
         }
         private void CorrectRow(int rowheight, int y, List<ControlBase> row)
         {
-            foreach (var rowchild in row)
+            foreach (ControlBase rowchild in row)
             {
-                var h = rowchild.Height + rowchild.Margin.Height;
+                int h = rowchild.Height + rowchild.Margin.Height;
                 if (h < rowheight)
                 {
-                    var d = rowheight - h;
-                    rowchild.Y = y + (d / 2);//center child in row.
+                    int d = rowheight - h;
+                    rowchild.Y = y + d / 2; // Center child in row.
                 }
             }
         }
@@ -84,7 +78,7 @@ namespace Gwen.Controls
             int y = 0;
             int rowheight = 0;
             List<ControlBase> row = new List<ControlBase>();
-            foreach (var child in Children)
+            foreach (ControlBase child in Children)
             {
                 if (child.IsHidden)
                     continue;

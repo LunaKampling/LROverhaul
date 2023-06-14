@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Diagnostics;
 
 namespace Gwen.Platform
@@ -16,7 +15,7 @@ namespace Gwen.Platform
             public abstract string GetClipboardText();
         }
         public static PlatformImplementation Implementation;
-        private static Stopwatch _timecounter = Stopwatch.StartNew();
+        private static readonly Stopwatch _timecounter = Stopwatch.StartNew();
         private static Cursor current = Cursors.Default;
 
         /// <summary>
@@ -40,36 +39,21 @@ namespace Gwen.Platform
         /// Gets text from clipboard.
         /// </summary>
         /// <returns>Clipboard text.</returns>
-        public static string GetClipboardText()
-        {
-            if (Implementation == null)
-            {
-                throw new InvalidOperationException("Platform handler not set.");
-            }
-            return Implementation.GetClipboardText();
-        }
+        public static string GetClipboardText() => Implementation == null ? throw new InvalidOperationException("Platform handler not set.") : Implementation.GetClipboardText();
 
         /// <summary>
         /// Sets the clipboard text.
         /// </summary>
         /// <param name="text">Text to set.</param>
         /// <returns>True if succeeded.</returns>
-        public static bool SetClipboardText(string text)
-        {
-            if (Implementation == null)
-            {
-                throw new InvalidOperationException("Platform handler not set.");
-            }
-            return Implementation.SetClipboardText(text);
-        }
+        public static bool SetClipboardText(string text) => Implementation == null
+                ? throw new InvalidOperationException("Platform handler not set.")
+                : Implementation.SetClipboardText(text);
 
         /// <summary>
         /// Gets elapsed time since this class was initalized.
         /// </summary>
         /// <returns>Time interval in seconds.</returns>
-        public static double GetTimeInSeconds()
-        {
-            return _timecounter.Elapsed.TotalSeconds;
-        }
+        public static double GetTimeInSeconds() => _timecounter.Elapsed.TotalSeconds;
     }
 }

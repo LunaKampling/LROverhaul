@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Gwen.Controls
 {
-    public class MessageBox : Gwen.Controls.WindowControl
+    public class MessageBox : WindowControl
     {
         public enum ButtonType
         {
@@ -16,10 +16,10 @@ namespace Gwen.Controls
         public ControlBase Container;
         public DialogResult Result { get; set; }
         public string Text { get; private set; }
-        private ButtonType _buttons;
+        private readonly ButtonType _buttons;
         public static MessageBox Show(Canvas canvas, string text, string title, bool modal = true, bool dim = false)
         {
-            var ret = new MessageBox(canvas, text, title, ButtonType.Ok);
+            MessageBox ret = new MessageBox(canvas, text, title, ButtonType.Ok);
             if (modal)
                 ret.MakeModal(dim);
             ret.ShowCentered();
@@ -27,21 +27,23 @@ namespace Gwen.Controls
         }
         public static MessageBox Show(Canvas canvas, string text, string title, ButtonType buttons, bool modal = true, bool dim = false)
         {
-            var ret = new MessageBox(canvas, text, title, buttons);
+            MessageBox ret = new MessageBox(canvas, text, title, buttons);
             if (modal)
                 ret.MakeModal(dim);
             ret.ShowCentered();
             return ret;
         }
-        public MessageBox(Gwen.Controls.ControlBase ctrl, string text, string title, ButtonType buttons) : base(ctrl, title)
+        public MessageBox(ControlBase ctrl, string text, string title, ButtonType buttons) : base(ctrl, title)
         {
             Text = text;
             _buttons = buttons;
             DeleteOnClose = true;
-            Container = new ControlBase(m_Panel);
-            Container.Margin = new Margin(0, Skin.DefaultFont.LineHeight, 0, 0);
-            Container.Dock = Dock.Bottom;
-            Container.AutoSizeToContents = true;
+            Container = new ControlBase(m_Panel)
+            {
+                Margin = new Margin(0, Skin.DefaultFont.LineHeight, 0, 0),
+                Dock = Dock.Bottom,
+                AutoSizeToContents = true
+            };
             switch (buttons)
             {
                 case ButtonType.Ok:
@@ -68,37 +70,37 @@ namespace Gwen.Controls
         }
         private void Setup()
         {
-            foreach (var child in Children.ToArray())
+            foreach (ControlBase child in Children.ToArray())
             {
                 if (child is Label && !(child is Button))
                 {
                     RemoveChild(child, true);
                 }
             }
-            Container.SizeToChildren(true, true);
-            int min = Container.Width + PanelMargin.Width + (50);
-            Height = Container.Height + (Skin.DefaultFont.LineHeight * 2);
+            _ = Container.SizeToChildren(true, true);
+            int min = Container.Width + PanelMargin.Width + 50;
+            Height = Container.Height + Skin.DefaultFont.LineHeight * 2;
             MinimumSize = new Size(Math.Max(min, MinimumSize.Width), MinimumSize.Height);
             SetupText(Text);
-            m_Panel.SizeToChildren(true, true);
-            SizeToChildren(true, true);
+            _ = m_Panel.SizeToChildren(true, true);
+            _ = SizeToChildren(true, true);
             Invalidate();
         }
         private void SetupText(string text)
         {
-            var charsize = Skin.Renderer.MeasureText(Skin.DefaultFont, "_").X;
+            int charsize = Skin.Renderer.MeasureText(Skin.DefaultFont, "_").X;
             int maxwidth = Math.Max(charsize * 30, MinimumSize.Width - PanelMargin.Width);
-            int maxwidth2 = maxwidth + (maxwidth / 2);
-            var wrapped1 = Skin.DefaultFont.WordWrap(text, maxwidth);
-            var wrapped2 = Skin.DefaultFont.WordWrap(text, maxwidth2);
-            var wrap = wrapped2;
-            // this is a cheat that doesnt work perfectly, but decently for making
+            int maxwidth2 = maxwidth + maxwidth / 2;
+            System.Collections.Generic.List<string> wrapped1 = Skin.DefaultFont.WordWrap(text, maxwidth);
+            System.Collections.Generic.List<string> wrapped2 = Skin.DefaultFont.WordWrap(text, maxwidth2);
+            System.Collections.Generic.List<string> wrap = wrapped2;
+            // This is a cheat that doesnt work perfectly, but decently for making
             // short messageboxes appear ok
             if (wrapped1.Count == wrapped2.Count)
             {
                 wrap = wrapped1;
             }
-            foreach (var line in wrap)
+            foreach (string line in wrap)
             {
                 AddLine(line);
             }
@@ -130,33 +132,30 @@ namespace Gwen.Controls
         }
         private void AddButton(string text, DialogResult result)
         {
-            Button btn = new Button(Container);
-            btn.Margin = new Margin(7, 1, 1, 1);
-            btn.Dock = Dock.Right;
-            btn.Name = text;
-            btn.Text = text;
+            Button btn = new Button(Container)
+            {
+                Margin = new Margin(7, 1, 1, 1),
+                Dock = Dock.Right,
+                Name = text,
+                Text = text
+            };
             btn.Clicked += (o, e) =>
             {
                 Result = result;
-                Close();
+                _ = Close();
                 DismissedHandler(o, e);
             };
             btn.Padding = new Padding(5, 0, 5, 0);
         }
 
-        private void DismissedHandler(ControlBase control, EventArgs args)
+        private void DismissedHandler(ControlBase control, EventArgs args) => Dismissed?.Invoke(this, Result);
+        private void AddLine(string line) => _ = new Label(m_Panel)
         {
-            if (Dismissed != null)
-                Dismissed.Invoke(this, Result);
-        }
-        private void AddLine(string line)
-        {
-            Label add = new Label(m_Panel);
-            add.Margin = new Margin(0, 0, 0, 0);
-            add.Alignment = Pos.Left | Pos.Top;
-            add.Dock = Dock.Top;
-            add.AutoSizeToContents = true;
-            add.Text = line;
-        }
+            Margin = new Margin(0, 0, 0, 0),
+            Alignment = Pos.Left | Pos.Top,
+            Dock = Dock.Top,
+            AutoSizeToContents = true,
+            Text = line
+        };
     }
 }

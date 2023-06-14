@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gwen.ControlInternal;
+using System;
 using System.Drawing;
-using Gwen.ControlInternal;
 
 namespace Gwen.Controls
 {
@@ -9,7 +9,6 @@ namespace Gwen.Controls
     /// </summary>
     public class ResizableControl : Container
     {
-        private bool m_ClampMovement;
         protected readonly Resizer[] m_Resizers;
         protected Resizer _resizer_top;
         protected Resizer _resizer_bottom;
@@ -19,7 +18,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines whether control's position should be restricted to its parent bounds.
         /// </summary>
-        public bool ClampMovement { get { return m_ClampMovement; } set { m_ClampMovement = value; } }
+        public bool ClampMovement { get; set; }
         /// <summary>
         /// True if DisableResizing should hide the resizers
         /// </summary>
@@ -37,55 +36,69 @@ namespace Gwen.Controls
             : base(parent)
         {
             MinimumSize = new Size(5, 5);
-            m_ClampMovement = false;
+            ClampMovement = false;
 
-            _resizer_bottom = new Resizer(null);
-            _resizer_bottom.Dock = Dock.Bottom;
-            _resizer_bottom.ResizeDir = Pos.Bottom;
+            _resizer_bottom = new Resizer(null)
+            {
+                Dock = Dock.Bottom,
+                ResizeDir = Pos.Bottom
+            };
             _resizer_bottom.Resized += OnResized;
             _resizer_bottom.Target = this;
 
-            _resizer_top = new Resizer(null);
-            _resizer_top.Dock = Dock.Top;
-            _resizer_top.ResizeDir = Pos.Top;
+            _resizer_top = new Resizer(null)
+            {
+                Dock = Dock.Top,
+                ResizeDir = Pos.Top
+            };
             _resizer_top.Resized += OnResized;
             _resizer_top.Target = this;
 
-            _resizer_left = new Resizer(null);
-            _resizer_left.Dock = Dock.Left;
-            _resizer_left.ResizeDir = Pos.Left;
+            _resizer_left = new Resizer(null)
+            {
+                Dock = Dock.Left,
+                ResizeDir = Pos.Left
+            };
             _resizer_left.Resized += OnResized;
             _resizer_left.Target = this;
 
-            _resizer_right = new Resizer(null);
-            _resizer_right.Dock = Dock.Right;
-            _resizer_right.ResizeDir = Pos.Right;
+            _resizer_right = new Resizer(null)
+            {
+                Dock = Dock.Right,
+                ResizeDir = Pos.Right
+            };
             _resizer_right.Resized += OnResized;
             _resizer_right.Target = this;
 
-
-
-            var sizebl = new Resizer(_resizer_bottom);
-            sizebl.Dock = Dock.Left;
-            sizebl.ResizeDir = Pos.Bottom | Pos.Left;
+            Resizer sizebl = new Resizer(_resizer_bottom)
+            {
+                Dock = Dock.Left,
+                ResizeDir = Pos.Bottom | Pos.Left
+            };
             sizebl.Resized += OnResized;
             sizebl.Target = this;
 
-            var sizebr = new Resizer(_resizer_bottom);
-            sizebr.Dock = Dock.Right;
-            sizebr.ResizeDir = Pos.Bottom | Pos.Right;
+            Resizer sizebr = new Resizer(_resizer_bottom)
+            {
+                Dock = Dock.Right,
+                ResizeDir = Pos.Bottom | Pos.Right
+            };
             sizebr.Resized += OnResized;
             sizebr.Target = this;
 
-            var sizetl = new Resizer(_resizer_top);
-            sizetl.Dock = Dock.Left;
-            sizetl.ResizeDir = Pos.Left | Pos.Top;
+            Resizer sizetl = new Resizer(_resizer_top)
+            {
+                Dock = Dock.Left,
+                ResizeDir = Pos.Left | Pos.Top
+            };
             sizetl.Resized += OnResized;
             sizetl.Target = this;
 
-            var sizetr = new Resizer(_resizer_top);
-            sizetr.Dock = Dock.Right;
-            sizetr.ResizeDir = Pos.Right | Pos.Top;
+            Resizer sizetr = new Resizer(_resizer_top)
+            {
+                Dock = Dock.Right,
+                ResizeDir = Pos.Right | Pos.Top
+            };
             sizetr.Resized += OnResized;
             sizetr.Target = this;
 
@@ -110,11 +123,7 @@ namespace Gwen.Controls
         /// Handler for the resized event.
         /// </summary>
         /// <param name="control">Event source.</param>
-		protected virtual void OnResized(ControlBase control, EventArgs args)
-        {
-            if (Resized != null)
-                Resized.Invoke(this, EventArgs.Empty);
-        }
+		protected virtual void OnResized(ControlBase control, EventArgs args) => Resized?.Invoke(this, EventArgs.Empty);
 
         /// <summary>
         /// Disables resizing.
@@ -159,17 +168,23 @@ namespace Gwen.Controls
         {
             Size minSize = MinimumSize;
             // Clamp Minimum Size
-            if (width < minSize.Width) width = minSize.Width;
-            if (height < minSize.Height) height = minSize.Height;
+            if (width < minSize.Width)
+                width = minSize.Width;
+            if (height < minSize.Height)
+                height = minSize.Height;
 
             // Clamp to parent's window
             ControlBase parent = Parent;
-            if (parent != null && m_ClampMovement)
+            if (parent != null && ClampMovement)
             {
-                if (x + width > parent.Width) x = parent.Width - width;
-                if (x < 0) x = 0;
-                if (y + height > parent.Height) y = parent.Height - height;
-                if (y < 0) y = 0;
+                if (x + width > parent.Width)
+                    x = parent.Width - width;
+                if (x < 0)
+                    x = 0;
+                if (y + height > parent.Height)
+                    y = parent.Height - height;
+                if (y < 0)
+                    y = 0;
             }
 
             return base.SetBounds(x, y, width, height);

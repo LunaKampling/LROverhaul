@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Win32;
 
-// todo: compile/run only on windows
+// TODO: compile/run only on windows
 
 namespace Gwen.Platform
 {
@@ -23,22 +23,19 @@ namespace Gwen.Platform
         /// <returns>Font file path.</returns>
         public static string GetFontPath(string fontName)
         {
-            // is this reliable? we rely on lazy jitting to not run win32 code on linux
+            // Is this reliable? we rely on lazy jitting to not run win32 code on linux
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
                 return null;
 
             if (m_FontPaths == null)
                 InitFontPaths();
 
-            if (!m_FontPaths.ContainsKey(fontName))
-                return null;
-
-            return m_FontPaths[fontName];
+            return !m_FontPaths.ContainsKey(fontName) ? null : m_FontPaths[fontName];
         }
 
         private static void InitFontPaths()
         {
-            // very hacky but better than nothing
+            // Very hacky but better than nothing
             m_FontPaths = new Dictionary<string, string>();
             string fontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
 

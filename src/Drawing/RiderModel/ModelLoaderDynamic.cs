@@ -21,16 +21,13 @@ namespace linerider.Drawing.RiderModel
             RotateBody();
         }
 
-        protected override void ApplyRects()
-        {
-            Models.SetRects(
+        protected override void ApplyRects() => Models.SetRects(
                 CalcRect(Model.Sled, ContactPointPos.Sled),
                 CalcRect(Model.SledBroken, ContactPointPos.Sled),
                 CalcRect(Model.Body, ContactPointPos.Body),
                 CalcRect(Model.Arm, ContactPointPos.Arm),
                 CalcRect(Model.Leg, ContactPointPos.Leg)
             );
-        }
 
         protected override void ApplyRope()
         {
@@ -53,14 +50,11 @@ namespace linerider.Drawing.RiderModel
             return clone;
         }
 
-        private DoubleRect CalcRect(Bitmap img, Point shift)
-        {
-            return new DoubleRect(
+        private DoubleRect CalcRect(Bitmap img, Point shift) => new DoubleRect(
                 (img.Width / 2 + shift.X) * -1 * TextureScale,
                 (img.Height / 2 + shift.Y) * -1 * TextureScale,
                 img.Width * TextureScale,
                 img.Height * TextureScale
             );
-        }
     }
 }

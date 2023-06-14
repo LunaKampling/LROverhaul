@@ -1,21 +1,17 @@
+using Gwen;
+using Gwen.Controls;
+using linerider.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using Gwen;
-using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
-using linerider.IO;
-using linerider.Drawing;
 
 namespace linerider.UI
 {
     public class ExportWindow : DialogBase
     {
-        private RichLabel _descriptionlabel;
-        private Label _error;
-        private MainWindow _game;
+        private readonly RichLabel _descriptionlabel;
+        private readonly Label _error;
+        private readonly MainWindow _game;
         private const string howto = "You are about to export your track as a video file. Make sure the end of the track is marked by a flag. " +
             "It will be located in your line rider user directory (Documents/LRA/Renders).\n" +
             "Please allow some minutes depending on your computer speed. " +
@@ -72,8 +68,8 @@ namespace linerider.UI
         }
         private CheckProperty AddPropertyCheckbox(PropertyTable prop, string label, bool value)
         {
-            var check = new CheckProperty(null);
-            prop.Add(label, check);
+            CheckProperty check = new CheckProperty(null);
+            _ = prop.Add(label, check);
             check.IsChecked = value;
             return check;
         }
@@ -99,65 +95,101 @@ namespace linerider.UI
                 Width = 200,
                 Margin = new Margin(0, 0, 0, 10)
             };
-            var table = proptree.Add("Output Settings", 150);
-            var qualitycb = new ComboBoxProperty(table);
+            PropertyTable table = proptree.Add("Output Settings", 150);
+            ComboBoxProperty qualitycb = new ComboBoxProperty(table);
 
-            foreach (var item in resolutions)
+            foreach (KeyValuePair<string, Size> item in resolutions)
             {
-                qualitycb.AddItem(item.Key);
+                _ = qualitycb.AddItem(item.Key);
             }
             qualitycb.SetValue(Settings.RecordResolution);
-            qualitycb.ValueChanged += (o, e) => { Settings.RecordResolution = qualitycb.Value; Settings.Save(); };
+            qualitycb.ValueChanged += (o, e) =>
+            {
+                Settings.RecordResolution = qualitycb.Value;
+                Settings.Save();
+            };
 
-            table.Add("Quality", qualitycb);
+            _ = table.Add("Quality", qualitycb);
 
-            var smoothcheck = AddPropertyCheckbox(
+            CheckProperty smoothcheck = AddPropertyCheckbox(
                 table,
                 "Smooth Playback",
                 Settings.RecordSmooth);
-            smoothcheck.ValueChanged += (o, e) => { Settings.RecordSmooth = smoothcheck.IsChecked; Settings.Save(); };
+            smoothcheck.ValueChanged += (o, e) =>
+            {
+                Settings.RecordSmooth = smoothcheck.IsChecked;
+                Settings.Save();
+            };
 
-            var music = AddPropertyCheckbox(
+            CheckProperty music = AddPropertyCheckbox(
                 table,
                 "Save Music",
-                Settings.MuteAudio ? false : Settings.RecordMusic);
+                !Settings.MuteAudio && Settings.RecordMusic);
             if (Settings.MuteAudio)
             {
                 music.Disable();
             }
-            music.ValueChanged += (o, e) => { Settings.RecordMusic = music.IsChecked; Settings.Save(); };
+            music.ValueChanged += (o, e) =>
+            {
+                Settings.RecordMusic = music.IsChecked;
+                Settings.Save();
+            };
 
             table = proptree.Add("Overlay settings", 150);
-            var ppf = AddPropertyCheckbox(
+            CheckProperty ppf = AddPropertyCheckbox(
                 table,
                 "Show P/f",
                 Settings.RecordShowPpf);
-            ppf.ValueChanged += (o, e) => { Settings.RecordShowPpf = ppf.IsChecked; Settings.Save(); };
-            var fps = AddPropertyCheckbox(
+            ppf.ValueChanged += (o, e) =>
+            {
+                Settings.RecordShowPpf = ppf.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty fps = AddPropertyCheckbox(
                 table,
                 "Show FPS",
                 Settings.RecordShowFps);
-            fps.ValueChanged += (o, e) => { Settings.RecordShowFps = fps.IsChecked; Settings.Save(); };
-            var tools = AddPropertyCheckbox(
+            fps.ValueChanged += (o, e) =>
+            {
+                Settings.RecordShowFps = fps.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty tools = AddPropertyCheckbox(
                 table,
                 "Show Tools",
                 Settings.RecordShowTools);
-            tools.ValueChanged += (o, e) => { Settings.RecordShowTools = tools.IsChecked; Settings.Save(); };
-            var hitTest = AddPropertyCheckbox(
+            tools.ValueChanged += (o, e) =>
+            {
+                Settings.RecordShowTools = tools.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty hitTest = AddPropertyCheckbox(
                table,
                "Show Hit Test",
                Settings.RecordShowHitTest);
-            hitTest.ValueChanged += (o, e) => { Settings.RecordShowHitTest = hitTest.IsChecked; Settings.Save(); };
-            var colorTriggers = AddPropertyCheckbox(
+            hitTest.ValueChanged += (o, e) =>
+            {
+                Settings.RecordShowHitTest = hitTest.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty colorTriggers = AddPropertyCheckbox(
                 table,
                 "Enable Color Triggers",
                 Settings.RecordShowColorTriggers);
-            colorTriggers.ValueChanged += (o, e) => { Settings.RecordShowColorTriggers = colorTriggers.IsChecked; Settings.Save(); };
-            var resIndZoom = AddPropertyCheckbox(
+            colorTriggers.ValueChanged += (o, e) =>
+            {
+                Settings.RecordShowColorTriggers = colorTriggers.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty resIndZoom = AddPropertyCheckbox(
                 table,
                 "Res-Independent Zoom",
                 Settings.RecordResIndependentZoom);
-            resIndZoom.ValueChanged += (o, e) => { Settings.RecordResIndependentZoom = resIndZoom.IsChecked; Settings.Save(); };
+            resIndZoom.ValueChanged += (o, e) =>
+            {
+                Settings.RecordResIndependentZoom = resIndZoom.IsChecked;
+                Settings.Save();
+            };
             proptree.ExpandAll();
             Button Cancel = new Button(bottomrow)
             {
@@ -167,7 +199,7 @@ namespace linerider.UI
             };
             Cancel.Clicked += (o, e) =>
             {
-                Close();
+                _ = Close();
             };
             Button ok = new Button(bottomrow)
             {
@@ -180,7 +212,7 @@ namespace linerider.UI
             }
             ok.Clicked += (o, e) =>
                 {
-                    Close();
+                    _ = Close();
                     Settings.Recording.ShowPpf = ppf.IsChecked;
                     Settings.Recording.ShowFps = fps.IsChecked;
                     Settings.Recording.ShowTools = tools.IsChecked;
@@ -196,7 +228,7 @@ namespace linerider.UI
 
                     try
                     {
-                        var size = resolutions[qualitycb.SelectedItem.Text];
+                        Size size = resolutions[qualitycb.SelectedItem.Text];
                         Settings.Recording.RecordingWidth = size.Width;
                         Settings.Recording.RecordingHeight = size.Height;
                     }
@@ -223,12 +255,9 @@ namespace linerider.UI
             }
             return true;
         }
-        private void Record()
-        {
-            IO.TrackRecorder.RecordTrack(
+        private void Record() => IO.TrackRecorder.RecordTrack(
                 _game,
                 Settings.RecordSmooth,
                 Settings.RecordMusic && !Settings.MuteAudio);
-        }
     }
 }

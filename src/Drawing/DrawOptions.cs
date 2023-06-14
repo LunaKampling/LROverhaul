@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using linerider.Game;
+using System.Collections.Generic;
 
 namespace linerider.Drawing
 {
@@ -9,7 +8,7 @@ namespace linerider.Drawing
         public bool Paused = false;
         public bool LineColors = true;
         public bool GravityWells = false;
-        public bool NightMode=false;
+        public bool NightMode = false;
         public KnobState KnobState = 0;
         public float Blend = 1;
         public bool Overlay = false;
@@ -22,12 +21,6 @@ namespace linerider.Drawing
         public int Iteration = 6;
         public float Zoom;
         public int OverlayFrame = -1;
-        public bool IsRunning
-        {
-            get
-            {
-                return !Paused;
-            }
-        }
+        public bool IsRunning => !Paused;
     }
 }

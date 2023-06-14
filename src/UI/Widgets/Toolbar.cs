@@ -1,17 +1,17 @@
-﻿using Gwen.Controls;
-using linerider.UI.Components;
+﻿using Gwen;
+using Gwen.Controls;
 using linerider.Tools;
-using System.Drawing;
+using linerider.UI.Components;
 using System;
-using Gwen;
+using System.Drawing;
 
 namespace linerider.UI
 {
     public class Toolbar : WidgetContainer
     {
-        private GameCanvas _canvas;
-        private MainWindow _game;
-        private Editor _editor;
+        private readonly GameCanvas _canvas;
+        private readonly MainWindow _game;
+        private readonly Editor _editor;
         private Menu _menu;
 
         public Toolbar(ControlBase parent, MainWindow game) : base(parent)
@@ -28,13 +28,13 @@ namespace linerider.UI
 
         private void MakeButtons()
         {
-            Func<bool> condition = () => !_editor.Playing;
+            bool condition() => !_editor.Playing;
 
-            new MultiToolButton(this, new Tool[] { CurrentTools.PencilTool, CurrentTools.SmoothPencilTool }, Hotkey.EditorPencilTool) { HotkeyCondition = condition };
-            new MultiToolButton(this, new Tool[] { CurrentTools.LineTool, CurrentTools.BezierTool }, Hotkey.EditorLineTool) { HotkeyCondition = condition };
-            new ToolButton(this, CurrentTools.EraserTool) { HotkeyCondition = condition };
-            new ToolButton(this, CurrentTools.SelectTool) { HotkeyCondition = condition, Subtool = CurrentTools.SelectSubtool };
-            new ToolButton(this, CurrentTools.PanTool) { HotkeyCondition = condition };
+            _ = new MultiToolButton(this, new Tool[] { CurrentTools.PencilTool, CurrentTools.SmoothPencilTool }, Hotkey.EditorPencilTool) { HotkeyCondition = condition };
+            _ = new MultiToolButton(this, new Tool[] { CurrentTools.LineTool, CurrentTools.BezierTool }, Hotkey.EditorLineTool) { HotkeyCondition = condition };
+            _ = new ToolButton(this, CurrentTools.EraserTool) { HotkeyCondition = condition };
+            _ = new ToolButton(this, CurrentTools.SelectTool) { HotkeyCondition = condition, Subtool = CurrentTools.SelectSubtool };
+            _ = new ToolButton(this, CurrentTools.PanTool) { HotkeyCondition = condition };
 
             WidgetButton playpausebtn = new WidgetButton(this)
             {
@@ -47,21 +47,21 @@ namespace linerider.UI
             InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStartSlowmo));
             InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStartIgnoreFlag));
 
-            new WidgetButton(this)
+            _ = new WidgetButton(this)
             {
                 Name = "Stop",
                 Icon = GameResources.icon_stop.Bitmap,
                 Action = (o, e) => TogglePlayback(playpausebtn, Hotkey.PlaybackStop),
                 Hotkey = Hotkey.PlaybackStop,
             };
-            new WidgetButton(this)
+            _ = new WidgetButton(this)
             {
                 Name = "Flag",
                 Icon = GameResources.icon_flag.Bitmap,
                 Action = (o, e) => _editor.Flag(_editor.Offset),
                 Hotkey = Hotkey.PlaybackFlag,
             };
-            new WidgetButton(this)
+            _ = new WidgetButton(this)
             {
                 Name = "Generators",
                 Icon = GameResources.icon_generators.Bitmap,
@@ -69,7 +69,7 @@ namespace linerider.UI
                 Hotkey = Hotkey.LineGeneratorWindow,
                 HotkeyCondition = condition,
             };
-            new WidgetButton(this)
+            _ = new WidgetButton(this)
             {
                 Name = "Menu",
                 Icon = GameResources.icon_menu.Bitmap,
@@ -119,7 +119,6 @@ namespace linerider.UI
                 playpauseButton.Name = "Pause";
                 playpauseButton.Icon = GameResources.icon_pause.Bitmap;
             }
-            
         }
         private void MakeMenu()
         {
@@ -129,27 +128,21 @@ namespace linerider.UI
                 IsHidden = true,
             };
 
-            AddMenuItem("Save As...", Hotkey.SaveAsWindow, () => _canvas.ShowSaveDialog());
-            AddMenuItem("Load...", Hotkey.LoadWindow, () => _canvas.ShowLoadDialog());
-            AddMenuItem("New", () => NewTrack());
+            _ = AddMenuItem("Save As...", Hotkey.SaveAsWindow, () => _canvas.ShowSaveDialog());
+            _ = AddMenuItem("Load...", Hotkey.LoadWindow, () => _canvas.ShowLoadDialog());
+            _ = AddMenuItem("New", () => NewTrack());
             AddDivider();
-            AddMenuItem("Preferences", Hotkey.PreferencesWindow, () => _canvas.ShowPreferencesDialog());
-            AddMenuItem("Open User Directory", () => GameCanvas.OpenUrl(Program.UserDirectory));
+            _ = AddMenuItem("Preferences", Hotkey.PreferencesWindow, () => _canvas.ShowPreferencesDialog());
+            _ = AddMenuItem("Open User Directory", () => GameCanvas.OpenUrl(Program.UserDirectory));
             AddDivider();
-            AddMenuItem("Track Properties", Hotkey.TrackPropertiesWindow, () => _canvas.ShowTrackPropertiesDialog());
-            AddMenuItem("Triggers", Hotkey.TriggerMenuWindow, () => _canvas.ShowTriggerWindow());
+            _ = AddMenuItem("Track Properties", Hotkey.TrackPropertiesWindow, () => _canvas.ShowTrackPropertiesDialog());
+            _ = AddMenuItem("Triggers", Hotkey.TriggerMenuWindow, () => _canvas.ShowTriggerWindow());
             AddDivider();
-            AddMenuItem("Export Video", () => _canvas.ShowExportVideoWindow());
-            AddMenuItem("Capture Screen", () => _canvas.ShowScreenCaptureWindow());
+            _ = AddMenuItem("Export Video", () => _canvas.ShowExportVideoWindow());
+            _ = AddMenuItem("Capture Screen", () => _canvas.ShowScreenCaptureWindow());
         }
-        private void AddDivider()
-        {
-            _menu.AddDivider();
-        }
-        private MenuItem AddMenuItem(string caption, Action action)
-        {
-            return AddMenuItem(caption, Hotkey.None, action);
-        }
+        private void AddDivider() => _menu.AddDivider();
+        private MenuItem AddMenuItem(string caption, Action action) => AddMenuItem(caption, Hotkey.None, action);
         private MenuItem AddMenuItem(string caption, Hotkey hotkey, Action action)
         {
             string hotkeyStr = Settings.HotkeyToString(hotkey);
@@ -164,7 +157,7 @@ namespace linerider.UI
         {
             if (_editor.TrackChanges != 0)
             {
-                var save = MessageBox.Show(
+                MessageBox save = MessageBox.Show(
                     _canvas,
                     "You are creating a new track.\nDo you want to save your current changes?",
                     "Create New Track",
@@ -185,7 +178,7 @@ namespace linerider.UI
             }
             else
             {
-                var msg = MessageBox.Show(
+                MessageBox msg = MessageBox.Show(
                     _canvas,
                     "Are you sure you want to create a new track?",
                     "Create New Track",

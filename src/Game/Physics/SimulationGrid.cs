@@ -15,15 +15,11 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using linerider.Rendering;
-using OpenTK;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
 using linerider.Game;
 using linerider.Utils;
+using OpenTK;
+using System;
+using System.Collections.Generic;
 
 namespace linerider
 {
@@ -31,23 +27,16 @@ namespace linerider
     {
         public const int CellSize = 14;
         public int GridVersion = 62;
-        public ResourceSync Sync
-        {
-            get { return _sync; }
-        }
+        public ResourceSync Sync { get; } = new ResourceSync();
         private readonly Dictionary<int, SimulationCell> Cells = new Dictionary<int, SimulationCell>(4096);
-        private readonly ResourceSync _sync = new ResourceSync();
 
-        public List<CellLocation> GetGridPositions(StandardLine line)
-        {
-            return GetGridPositions(line, GridVersion);
-        }
+        public List<CellLocation> GetGridPositions(StandardLine line) => GetGridPositions(line, GridVersion);
         public void AddLine(StandardLine line)
         {
-            var positions = GetGridPositions(line);
-            using (_sync.AcquireWrite())
+            List<CellLocation> positions = GetGridPositions(line);
+            using (Sync.AcquireWrite())
             {
-                foreach (var pos in positions)
+                foreach (CellLocation pos in positions)
                 {
                     Register(line, pos.X, pos.Y);
                 }
@@ -55,10 +44,10 @@ namespace linerider
         }
         public void RemoveLine(StandardLine line)
         {
-            var positions = GetGridPositions(line);
-            using (_sync.AcquireWrite())
+            List<CellLocation> positions = GetGridPositions(line);
+            using (Sync.AcquireWrite())
             {
-                foreach (var pos in positions)
+                foreach (CellLocation pos in positions)
                 {
                     Unregister(line, pos.X, pos.Y);
                 }
@@ -70,15 +59,15 @@ namespace linerider
         /// </summary>
         public void MoveLine(Vector2d old1, Vector2d old2, StandardLine line)
         {
-            var oldpos = GetGridPositions(old1, old2, GridVersion);
-            var newpos = GetGridPositions(line);
-            using (_sync.AcquireWrite())
+            List<CellLocation> oldpos = GetGridPositions(old1, old2, GridVersion);
+            List<CellLocation> newpos = GetGridPositions(line);
+            using (Sync.AcquireWrite())
             {
-                foreach (var v in oldpos)
+                foreach (CellLocation v in oldpos)
                 {
                     Unregister(line, v.X, v.Y);
                 }
-                foreach (var v in newpos)
+                foreach (CellLocation v in newpos)
                 {
                     Register(line, v.X, v.Y);
                 }
@@ -86,18 +75,11 @@ namespace linerider
         }
         public virtual SimulationCell GetCell(int x, int y)
         {
-            SimulationCell cell;
-            var pos = GetCellKey(x, y);
-            if (!Cells.TryGetValue(pos, out cell))
-                return null;
-            return cell;
-
+            int pos = GetCellKey(x, y);
+            return !Cells.TryGetValue(pos, out SimulationCell cell) ? null : cell;
         }
 
-        public SimulationCell PointToChunk(Vector2d pos)
-        {
-            return GetCell((int)Math.Floor(pos.X / CellSize), (int)Math.Floor(pos.Y / CellSize));
-        }
+        public SimulationCell PointToChunk(Vector2d pos) => GetCell((int)Math.Floor(pos.X / CellSize), (int)Math.Floor(pos.Y / CellSize));
 
         protected int GetCellKey(int x, int y)
         {
@@ -111,9 +93,8 @@ namespace linerider
         }
         private void Register(StandardLine l, int x, int y)
         {
-            var key = GetCellKey(x, y);
-            SimulationCell cell;
-            if (!Cells.TryGetValue(key, out cell))
+            int key = GetCellKey(x, y);
+            if (!Cells.TryGetValue(key, out SimulationCell cell))
             {
                 cell = new SimulationCell();
                 Cells[key] = cell;
@@ -123,9 +104,8 @@ namespace linerider
 
         private void Unregister(StandardLine l, int x, int y)
         {
-            SimulationCell cell;
-            var pos = GetCellKey(x, y);
-            if (!Cells.TryGetValue(pos, out cell))
+            int pos = GetCellKey(x, y);
+            if (!Cells.TryGetValue(pos, out SimulationCell cell))
                 return;
             cell.RemoveLine(l.ID);
         }

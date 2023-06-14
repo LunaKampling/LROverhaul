@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
 using linerider.Game;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace linerider
 {
@@ -11,7 +9,7 @@ namespace linerider
         {
             if (line.ID < 0)
             {
-                // scenery lines want to skip right to the beginning of the
+                // Scenery lines want to skip right to the beginning of the
                 // other scenery line ids
                 while (node.Value.ID >= 0)
                 {
@@ -21,8 +19,8 @@ namespace linerider
                 }
             }
             while (line.ID >= 0
-                ? line.ID < node.Value.ID//phys
-                : line.ID > node.Value.ID)//scenery
+                ? line.ID < node.Value.ID // Physics
+                : line.ID > node.Value.ID) // Scenery
             {
                 node = node.Next;
                 if (node == null)

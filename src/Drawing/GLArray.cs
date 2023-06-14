@@ -16,15 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Drawing;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using OpenTK;
 using linerider.Utils;
-using linerider.Rendering;
+using OpenTK.Graphics.OpenGL;
 
 namespace linerider.Drawing
 {
@@ -35,20 +28,14 @@ namespace linerider.Drawing
         public GLArray()
         {
         }
-        public void AddVertex(T vertex)
-        {
-            Array.Add(vertex);
-        }
+        public void AddVertex(T vertex) => Array.Add(vertex);
         public void Draw(PrimitiveType primitive)
         {
             BeginDraw();
             InternalDraw(primitive);
             EndDraw();
         }
-        public void Clear()
-        {
-            Array.Clear();
-        }
+        public void Clear() => Array.Clear();
         protected virtual void BeginDraw()
         {
         }

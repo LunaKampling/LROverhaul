@@ -1,28 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
-using linerider.IO;
 using linerider.Drawing;
+using System.Drawing;
 
 namespace linerider.UI
 {
     public class ScreenshotWindow : DialogBase
     {
-        private RichLabel _descriptionlabel;
-        private Label _error;
-        private MainWindow _game;
+        private readonly RichLabel _descriptionlabel;
+        private readonly Label _error;
+        private readonly MainWindow _game;
         private const string howto = "You are about to export a capture of this current track.\n" +
             "It will be located in your line rider user directory (Documents/LRA/Renders).\n\n" +
             "This may take a few seconds for very high-resolution captures." +
             "The window will become unresponsive during this time.\n\n" +
             "If the image fails to record properly, try a smaller resolution.";
 
-        private int lockW, lockH; //The width & height when fixed aspect ratio was enabled
+        private int lockW, lockH; // The width & height when fixed aspect ratio was enabled
 
         public ScreenshotWindow(GameCanvas parent, Editor editor, MainWindow window) : base(parent, editor)
         {
@@ -62,10 +56,10 @@ namespace linerider.UI
         }
         private CheckProperty AddPropertyCheckbox(PropertyTable prop, string label, bool value)
         {
-            var check = new CheckProperty(null);
-            prop.Add(label, check);
+            CheckProperty check = new CheckProperty(null);
+            _ = prop.Add(label, check);
             check.IsChecked = value;
-            
+
             return check;
         }
         private void Setup()
@@ -89,9 +83,9 @@ namespace linerider.UI
                 Width = 200,
                 Margin = new Margin(0, 0, 0, 10)
             };
-            var table = proptree.Add("Output Settings", 150);
+            PropertyTable table = proptree.Add("Output Settings", 150);
 
-            var lockratiocheck = AddPropertyCheckbox(
+            CheckProperty lockratiocheck = AddPropertyCheckbox(
                table,
                "Lock Aspect Ratio",
                Settings.ScreenshotLockRatio);
@@ -107,14 +101,14 @@ namespace linerider.UI
                 Settings.Save();
             };
 
-            var width = new NumberProperty(null)
+            NumberProperty width = new NumberProperty(null)
             {
                 Min = 1,
                 Max = 50000,
                 NumberValue = Settings.ScreenshotWidth,
                 OnlyWholeNumbers = true
             };
-            var height = new NumberProperty(null)
+            NumberProperty height = new NumberProperty(null)
             {
                 Min = 1,
                 Max = 50000,
@@ -122,15 +116,15 @@ namespace linerider.UI
                 OnlyWholeNumbers = true
             };
 
-            table.Add("Width", width);
-            table.Add("Height", height);
+            _ = table.Add("Width", width);
+            _ = table.Add("Height", height);
 
             width.ValueChanged += (o, e) =>
             {
                 Settings.ScreenshotWidth = (int)width.NumberValue;
                 if (Settings.ScreenshotLockRatio)
                 {
-                    Settings.ScreenshotLockRatio = false; //Setting this to false prevents the height value trying to update the width value again
+                    Settings.ScreenshotLockRatio = false; // Setting this to false prevents the height value trying to update the width value again
                     height.NumberValue = Settings.ScreenshotWidth * lockH / lockW;
                     Settings.ScreenshotLockRatio = true;
                 }
@@ -149,31 +143,51 @@ namespace linerider.UI
             };
 
             table = proptree.Add("Overlay settings", 150);
-            var ppf = AddPropertyCheckbox(
+            CheckProperty ppf = AddPropertyCheckbox(
                 table,
                 "Show P/f",
                 Settings.ScreenshotShowPpf);
-            ppf.ValueChanged += (o, e) => { Settings.ScreenshotShowPpf = ppf.IsChecked; Settings.Save(); };
-            var fps = AddPropertyCheckbox(
+            ppf.ValueChanged += (o, e) =>
+            {
+                Settings.ScreenshotShowPpf = ppf.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty fps = AddPropertyCheckbox(
                 table,
                 "Show FPS",
                 Settings.ScreenshotShowFps);
-            fps.ValueChanged += (o, e) => { Settings.ScreenshotShowFps = fps.IsChecked; Settings.Save(); };
-            var tools = AddPropertyCheckbox(
+            fps.ValueChanged += (o, e) =>
+            {
+                Settings.ScreenshotShowFps = fps.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty tools = AddPropertyCheckbox(
                 table,
                 "Show Tools",
                 Settings.ScreenshotShowTools);
-            tools.ValueChanged += (o, e) => { Settings.ScreenshotShowTools = tools.IsChecked; Settings.Save(); };
-            var hitTest = AddPropertyCheckbox(
+            tools.ValueChanged += (o, e) =>
+            {
+                Settings.ScreenshotShowTools = tools.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty hitTest = AddPropertyCheckbox(
                table,
                "Show Hit Test",
                Settings.ScreenshotShowHitTest);
-            hitTest.ValueChanged += (o, e) => { Settings.ScreenshotShowHitTest = hitTest.IsChecked; Settings.Save(); };
-            var resIndZoom = AddPropertyCheckbox(
+            hitTest.ValueChanged += (o, e) =>
+            {
+                Settings.ScreenshotShowHitTest = hitTest.IsChecked;
+                Settings.Save();
+            };
+            CheckProperty resIndZoom = AddPropertyCheckbox(
                 table,
                 "Res-Independent Zoom",
                 Settings.ScreenshotResIndependentZoom);
-            resIndZoom.ValueChanged += (o, e) => { Settings.ScreenshotResIndependentZoom = resIndZoom.IsChecked; Settings.Save(); };
+            resIndZoom.ValueChanged += (o, e) =>
+            {
+                Settings.ScreenshotResIndependentZoom = resIndZoom.IsChecked;
+                Settings.Save();
+            };
             proptree.ExpandAll();
             Button Cancel = new Button(bottomrow)
             {
@@ -183,7 +197,7 @@ namespace linerider.UI
             };
             Cancel.Clicked += (o, e) =>
             {
-                Close();
+                _ = Close();
             };
             Button ok = new Button(bottomrow)
             {
@@ -192,7 +206,7 @@ namespace linerider.UI
             };
             ok.Clicked += (o, e) =>
                 {
-                    Close();
+                    _ = Close();
                     Settings.Recording.ShowPpf = ppf.IsChecked;
                     Settings.Recording.ShowFps = fps.IsChecked;
                     Settings.Recording.ShowTools = tools.IsChecked;
@@ -203,9 +217,6 @@ namespace linerider.UI
                     Record();
                 };
         }
-        private void Record()
-        {
-            IO.TrackRecorder.RecordScreenshot(_game);
-        }
+        private void Record() => IO.TrackRecorder.RecordScreenshot(_game);
     }
 }

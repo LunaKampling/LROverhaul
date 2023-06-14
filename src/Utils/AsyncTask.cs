@@ -17,22 +17,15 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace linerider.Utils
 {
     public class AsyncTask : IDisposable
     {
-        private Action _action;
-        private Action _oncompletion;
-        private Func<bool> _condition;
+        private readonly Action _action;
+        private readonly Action _oncompletion;
+        private readonly Func<bool> _condition;
         private Task _task = null;
         private readonly object _sync = new object();
         private bool running = false;
@@ -90,9 +83,6 @@ namespace linerider.Utils
                 }
             }
         }
-        public void Dispose()
-        {
-            _task?.Dispose();
-        }
+        public void Dispose() => _task?.Dispose();
     }
 }

@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
 using linerider.Game;
 using OpenTK;
+using System.Collections.Generic;
 
 namespace linerider.Tools
 {
@@ -66,9 +65,6 @@ namespace linerider.Tools
             snapped = new List<LineSelection>();
         }
 
-        public LineType GetLineType()
-        {
-            return line.Type;
-        }
+        public LineType GetLineType() => line.Type;
     }
 }

@@ -10,7 +10,7 @@ namespace linerider.Utils
 {
     public static class Debouncer
     {
-        static ConcurrentDictionary<string, CancellationTokenSource> _tokens = new ConcurrentDictionary<string, CancellationTokenSource>();
+        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _tokens = new ConcurrentDictionary<string, CancellationTokenSource>();
 
         /// <summary>
         /// Throttle action if it's already been called during specified amount of time.
@@ -20,18 +20,22 @@ namespace linerider.Utils
         /// <param name="ms">Milliseconds to wait</param>
         public static void Debounce(string uniqueKey, Action action, int ms)
         {
-            var token = _tokens.AddOrUpdate(
+            CancellationTokenSource token = _tokens.AddOrUpdate(
                 uniqueKey,
-                (key) => new CancellationTokenSource(), //key not found - create new
-                (key, existingToken) => { existingToken.Cancel(); return new CancellationTokenSource(); } //key found - cancel task and recreate
+                (key) => new CancellationTokenSource(), // Key not found - create new
+                (key, existingToken) =>
+                {
+                    existingToken.Cancel();
+                    return new CancellationTokenSource();
+                } // Key found - cancel task and recreate
             );
 
-            Task.Delay(ms, token.Token).ContinueWith(task =>
+            _ = Task.Delay(ms, token.Token).ContinueWith(task =>
             {
                 if (!task.IsCanceled)
                 {
                     action();
-                    _tokens.TryRemove(uniqueKey, out _);
+                    _ = _tokens.TryRemove(uniqueKey, out _);
                 }
             }, token.Token);
         }

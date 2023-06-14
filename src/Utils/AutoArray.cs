@@ -17,7 +17,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 namespace linerider.Utils
 {
@@ -28,15 +27,10 @@ namespace linerider.Utils
     {
         public T this[int index]
         {
-            get
-            {
-                if (index >= _size)
-                    throw new IndexOutOfRangeException();
-                return unsafe_array[index];
-            }
+            get => index >= Count ? throw new IndexOutOfRangeException() : unsafe_array[index];
             set
             {
-                if (index >= _size)
+                if (index >= Count)
                     throw new IndexOutOfRangeException();
                 unsafe_array[index] = value;
             }
@@ -51,37 +45,28 @@ namespace linerider.Utils
         /// It also does not do bounds checks, so be careful.
         /// </summary>
         public T[] unsafe_array;
-        private int _size;
+
         public int Capacity
         {
-            get
-            {
-                return unsafe_array.Length;
-            }
+            get => unsafe_array.Length;
             set
             {
                 if (value != unsafe_array.Length)
                 {
                     T[] newarray = new T[value];
-                    if (_size > 0)
+                    if (Count > 0)
                     {
-                        Array.Copy(unsafe_array, 0, newarray, 0, _size);
+                        Array.Copy(unsafe_array, 0, newarray, 0, Count);
                     }
                     unsafe_array = newarray;
                 }
             }
         }
 
-        public int Count
-        {
-            get
-            {
-                return _size;
-            }
-        }
+        public int Count { get; private set; }
         public AutoArray()
         {
-            //i picked this arbitrarily
+            // I picked this arbitrarily
             unsafe_array = new T[4];
         }
         public AutoArray(int capacity)
@@ -89,30 +74,27 @@ namespace linerider.Utils
             unsafe_array = new T[capacity];
         }
         /// <summary>
-        /// sets the count with no checks or actions.
+        /// Sets the count with no checks or actions.
         /// </summary>
         public void UnsafeSetCount(int count)
         {
             EnsureCapacity(count);
-            _size = count;
+            Count = count;
         }
         public void Add(T item)
         {
-            if (_size == unsafe_array.Length)
-                EnsureCapacity(_size + 1);
-            unsafe_array[_size++] = item;
+            if (Count == unsafe_array.Length)
+                EnsureCapacity(Count + 1);
+            unsafe_array[Count++] = item;
         }
-        public void AddRange(IList<T> collection)
-        {
-            InsertRange(_size, collection);
-        }
+        public void AddRange(IList<T> collection) => InsertRange(Count, collection);
 
         public void Clear()
         {
-            if (_size > 0)
+            if (Count > 0)
             {
-                Array.Clear(unsafe_array, 0, _size);
-                _size = 0;
+                Array.Clear(unsafe_array, 0, Count);
+                Count = 0;
             }
         }
         public void EnsureCapacity(int min)
@@ -124,23 +106,23 @@ namespace linerider.Utils
         }
         public void Insert(int index, T item)
         {
-            if (index > _size)
+            if (index > Count)
             {
                 throw new IndexOutOfRangeException();
             }
-            if (_size == unsafe_array.Length)
-                EnsureCapacity(_size + 1);
-            if (index < _size)
+            if (Count == unsafe_array.Length)
+                EnsureCapacity(Count + 1);
+            if (index < Count)
             {
-                Array.Copy(unsafe_array, index, unsafe_array, index + 1, _size - index);
+                Array.Copy(unsafe_array, index, unsafe_array, index + 1, Count - index);
             }
             unsafe_array[index] = item;
-            _size++;
+            Count++;
         }
 
         public void InsertRange(int index, IList<T> collection)
         {
-            if (index > _size)
+            if (index > Count)
             {
                 throw new IndexOutOfRangeException();
             }
@@ -148,42 +130,42 @@ namespace linerider.Utils
             int count = collection.Count;
             if (count > 0)
             {
-                EnsureCapacity(_size + count);
-                if (index < _size)
+                EnsureCapacity(Count + count);
+                if (index < Count)
                 {
-                    Array.Copy(unsafe_array, index, unsafe_array, index + count, _size - index);
+                    Array.Copy(unsafe_array, index, unsafe_array, index + count, Count - index);
                 }
                 for (int i = 0; i < collection.Count; i++)
                 {
                     unsafe_array[index + i] = collection[i];
                 }
-                _size += count;
+                Count += count;
             }
         }
         public void RemoveAt(int index)
         {
-            if (index >= _size)
+            if (index >= Count)
             {
                 throw new IndexOutOfRangeException();
             }
-            _size--;
-            if (index < _size)
+            Count--;
+            if (index < Count)
             {
-                Array.Copy(unsafe_array, index + 1, unsafe_array, index, _size - index);
+                Array.Copy(unsafe_array, index + 1, unsafe_array, index, Count - index);
             }
         }
 
         public void RemoveRange(int index, int count)
         {
-            if (_size - index < count)
+            if (Count - index < count)
                 throw new IndexOutOfRangeException();
 
             if (count > 0)
             {
-                _size -= count;
-                if (index < _size)
+                Count -= count;
+                if (index < Count)
                 {
-                    Array.Copy(unsafe_array, index + count, unsafe_array, index, _size - index);
+                    Array.Copy(unsafe_array, index + count, unsafe_array, index, Count - index);
                 }
             }
         }

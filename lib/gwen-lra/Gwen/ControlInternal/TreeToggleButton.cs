@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -12,7 +11,7 @@ namespace Gwen.ControlInternal
         /// Initializes a new instance of the <see cref="TreeToggleButton"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TreeToggleButton(Controls.ControlBase parent)
+        public TreeToggleButton(ControlBase parent)
             : base(parent)
         {
             AutoSizeToContents = false;
@@ -33,9 +32,6 @@ namespace Gwen.ControlInternal
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawTreeButton(this, ToggleState);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawTreeButton(this, ToggleState);
     }
 }

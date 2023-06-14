@@ -1,10 +1,7 @@
-using OpenTK;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using linerider.Game;
-using linerider.Rendering;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace linerider
@@ -18,18 +15,12 @@ namespace linerider
     public class LineContainer<T> : IEnumerable<T>, ICollection<T>
     where T : GameLine
     {
-        LinkedList<T> _list = new LinkedList<T>();
-        public int Count
-        {
-            get
-            {
-                return _list.Count;
-            }
-        }
+        private readonly LinkedList<T> _list = new LinkedList<T>();
+        public int Count => _list.Count;
         bool ICollection<T>.IsReadOnly => false;
 
         /// <summary>
-        /// return the node that would come right after line.id
+        /// Return the node that would come right after line.id
         /// returns null if unsuccessful
         /// ex: if our state is 1 2 4 and line.id is 3, this function returns 4
         /// </summary>
@@ -54,16 +45,16 @@ namespace linerider
         {
             if (this == cell)
                 return;
-            var node = _list.First;
-            foreach (var line in cell)
+            LinkedListNode<T> node = _list.First;
+            foreach (T line in cell)
             {
                 if (node != null)
                 {
                     node = FindNodeAfter(node, line);
                     if (node == null)
                         node = _list.AddLast(line);
-                    else if (node.Value.ID != line.ID) // no redundant lines
-                        _list.AddBefore(node, line);
+                    else if (node.Value.ID != line.ID) // No redundant lines
+                        _ = _list.AddBefore(node, line);
                 }
                 else
                 {
@@ -73,30 +64,30 @@ namespace linerider
         }
         public void AddLine(T line)
         {
-            var node = _list.First;
+            LinkedListNode<T> node = _list.First;
             if (node != null)
             {
                 node = FindNodeAfter(node, line);
                 if (node == null)
                 {
-                    _list.AddLast(line);
+                    _ = _list.AddLast(line);
                 }
                 else
                 {
                     if (node.Value.ID != line.ID)
-                        _list.AddBefore(node, line);
+                        _ = _list.AddBefore(node, line);
                     else
                         Debug.WriteLine("Line ID collision in line container");
                 }
             }
             else
             {
-                _list.AddFirst(line);
+                _ = _list.AddFirst(line);
             }
         }
         public void RemoveLine(int lineid)
         {
-            var node = _list.First;
+            LinkedListNode<T> node = _list.First;
             while (node != null)
             {
                 if (node.Value.ID == lineid)
@@ -110,46 +101,21 @@ namespace linerider
         }
         public LineContainer<T> Clone()
         {
-            var ret = new LineContainer<T>();
-            foreach (var l in this)
+            LineContainer<T> ret = new LineContainer<T>();
+            foreach (T l in this)
             {
                 ret.AddLine(l);
             }
             return ret;
         }
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _list.GetEnumerator();
-        }
+        public IEnumerator<T> GetEnumerator() => _list.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _list.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => _list.GetEnumerator();
 
-        void ICollection<T>.Add(T item)
-        {
-            throw new NotImplementedException();
-            //AddLine(item);
-        }
-        void ICollection<T>.Clear()
-        {
-            _list.Clear();
-        }
-        bool ICollection<T>.Contains(T item)
-        {
-            throw new NotImplementedException();
-            // return _list.Contains(item);
-        }
-        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-            //      _list.CopyTo(array, arrayIndex);
-        }
-        bool ICollection<T>.Remove(T item)
-        {
-            throw new NotImplementedException();
-            //      return _list.Remove(item);
-        }
+        void ICollection<T>.Add(T item) => throw new NotImplementedException();//AddLine(item);
+        void ICollection<T>.Clear() => _list.Clear();
+        bool ICollection<T>.Contains(T item) => throw new NotImplementedException();// return _list.Contains(item);
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex) => throw new NotImplementedException();//      _list.CopyTo(array, arrayIndex);
+        bool ICollection<T>.Remove(T item) => throw new NotImplementedException();//      return _list.Remove(item);
     }
 }

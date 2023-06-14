@@ -1,6 +1,6 @@
-using System;
 using Gwen;
 using Gwen.Controls;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
@@ -16,10 +16,7 @@ namespace linerider.UI
             {
                 _color = color;
             }
-            public Color Value
-            {
-                get { return _color; }
-            }
+            public Color Value => _color;
         }
         public class ColorIndicator : ControlBase
         {
@@ -42,8 +39,8 @@ namespace linerider.UI
 
         public static CheckProperty AddPropertyCheckbox(PropertyTable prop, string label, bool value)
         {
-            var check = new CheckProperty(null);
-            prop.Add(label, check);
+            CheckProperty check = new CheckProperty(null);
+            _ = prop.Add(label, check);
             check.IsChecked = value;
             return check;
         }
@@ -60,7 +57,7 @@ namespace linerider.UI
         }
         public static Panel CreateHeaderPanel(ControlBase parent, string headertext)
         {
-            var canvas = (GameCanvas)parent.GetCanvas();
+            GameCanvas canvas = (GameCanvas)parent.GetCanvas();
             Panel panel = new Panel(parent)
             {
                 Dock = Dock.Top,
@@ -107,7 +104,7 @@ namespace linerider.UI
         }
         public static ControlBase CreateLabeledControl(ControlBase parent, string label, ControlBase[] controls)
         {
-            foreach (var control in controls)
+            foreach (ControlBase control in controls)
             {
                 control.Dock = Dock.Right;
             }
@@ -133,18 +130,15 @@ namespace linerider.UI
             }
             return container;
         }
-        public static ControlBase CreateLabeledControl(ControlBase parent, string label, ControlBase control)
-        {
-            return CreateLabeledControl(parent, label, new ControlBase[1] { control });
-        }
+        public static ControlBase CreateLabeledControl(ControlBase parent, string label, ControlBase control) => CreateLabeledControl(parent, label, new ControlBase[1] { control });
         public static ComboBox CreateLabeledCombobox(ControlBase parent, string label)
         {
-            var combobox = new ComboBox(null)
+            ComboBox combobox = new ComboBox(null)
             {
                 Dock = Dock.Right,
                 Width = 100
             };
-            ControlBase container = new ControlBase(parent)
+            _ = new ControlBase(parent)
             {
                 Children =
                 {
@@ -211,7 +205,9 @@ namespace linerider.UI
             string hexR = $"{defaultColor.R:X2}";
             string hexG = $"{defaultColor.G:X2}";
             string hexB = $"{defaultColor.B:X2}";
-            string defaultColorHex;
+            string defaultColorHex = hexR[0] == hexR[1] && hexG[0] == hexG[1] && hexB[0] == hexB[1]
+                ? hexR[0].ToString() + hexG[0].ToString() + hexB[0].ToString()
+                : hexR + hexG + hexB;
 
             //// #F & #FF
             //if (hexR == hexG && hexG == hexB)
@@ -221,15 +217,6 @@ namespace linerider.UI
             //}
 
             // #FFF
-            if (hexR[0] == hexR[1] && hexG[0] == hexG[1] && hexB[0] == hexB[1])
-            {
-                defaultColorHex = hexR[0].ToString() + hexG[0].ToString() + hexB[0].ToString();
-            }
-            // #FFFFFF
-            else
-            {
-                defaultColorHex = hexR + hexG + hexB;
-            }
 
             input.Text = defaultColorHex;
             string oldValue = defaultColorHex;
@@ -237,7 +224,8 @@ namespace linerider.UI
 
             input.TextChanged += (o, e) =>
             {
-                if (isValidating) return;
+                if (isValidating)
+                    return;
                 isValidating = true;
 
                 string newValue = input.Text.ToUpper();
@@ -246,9 +234,9 @@ namespace linerider.UI
                 if (!isHex)
                 {
                     StringBuilder sb = new StringBuilder();
-                    foreach (var c in newValue)
+                    foreach (char c in newValue)
                         if ((c >= 'A' && c <= 'F') || (c >= '0' && c <= '9'))
-                            sb.Append(c);
+                            _ = sb.Append(c);
                     newValue = sb.ToString();
                 }
 
@@ -272,7 +260,7 @@ namespace linerider.UI
                     bool isValidValue = colorRaw != string.Empty;
                     if (isValidValue)
                     {
-                        int argb = Int32.Parse($"FF{colorRaw}", NumberStyles.HexNumber);
+                        int argb = int.Parse($"FF{colorRaw}", NumberStyles.HexNumber);
                         Color color = Color.FromArgb(argb);
 
                         ColorEventArgs colorArg = new ColorEventArgs(color);
@@ -300,5 +288,4 @@ namespace linerider.UI
             return container;
         }
     }
-
 }

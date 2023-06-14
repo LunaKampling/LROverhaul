@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Gwen
+﻿namespace Gwen
 {
     /// <summary>
     /// Key constants.

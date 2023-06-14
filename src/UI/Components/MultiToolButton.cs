@@ -1,29 +1,24 @@
-﻿using Gwen.Controls;
+﻿using Gwen;
+using Gwen.Controls;
 using linerider.Tools;
-using System.Linq;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Gwen;
 
 namespace linerider.UI.Components
 {
     public class MultiToolButton : WidgetButton
     {
         private int _currentidx = 0;
-        private List<ToolButton> _buttons = new List<ToolButton>();
-        private Texture _indicatortexture;
-        private ToolButton _currentbutton
-        {
-            get => _buttons[_currentidx];
-        }
+        private readonly List<ToolButton> _buttons = new List<ToolButton>();
+        private readonly Texture _indicatortexture;
+        private ToolButton CurrentButton => _buttons[_currentidx];
 
         public MultiToolButton(ControlBase parent, Tool[] tools) : this(parent, tools, Hotkey.None)
         { }
         public MultiToolButton(ControlBase parent, Tool[] tools, Hotkey hotkey) : base(parent)
         {
             Texture tx = new Texture(parent.Skin.Renderer);
-            Gwen.Renderer.OpenTK.LoadTextureInternal(tx, GameResources.icon_multitool_indicator.Bitmap);
+            Gwen.Renderer.OpenTK.LoadTextureInternal(tx, GameResources.ux_multitool_indicator.Bitmap);
             _indicatortexture = tx;
 
             foreach (Tool tool in tools)
@@ -36,7 +31,7 @@ namespace linerider.UI.Components
                 _buttons.Add(toolButton);
             }
 
-            _currentbutton.IsHidden = false;
+            CurrentButton.IsHidden = false;
 
             if (hotkey != Hotkey.None)
             {
@@ -49,7 +44,7 @@ namespace linerider.UI.Components
         }
         private void SelectNextTool()
         {
-            bool shouldSetNextTool = CurrentTools._current == _currentbutton.Tool;
+            bool shouldSetNextTool = CurrentTools._current == CurrentButton.Tool;
 
             if (shouldSetNextTool)
             {
@@ -57,29 +52,29 @@ namespace linerider.UI.Components
                 if (nextIdx == _buttons.Count)
                     nextIdx = 0;
 
-                ToolButton nextbutton = _buttons[nextIdx];
+                ToolButton nextButton = _buttons[nextIdx];
 
-                _currentbutton.IsHidden = true;
-                nextbutton.IsHidden = false;
+                CurrentButton.IsHidden = true;
+                nextButton.IsHidden = false;
 
-                CurrentTools.SetTool(nextbutton.Tool);
+                CurrentTools.SetTool(nextButton.Tool);
                 _currentidx = nextIdx;
             }
             else
             {
-                CurrentTools.SetTool(_currentbutton.Tool);
+                CurrentTools.SetTool(CurrentButton.Tool);
             }
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
-            bool drawIndicator = CurrentTools._current == _currentbutton.Tool && !CurrentTools.QuickPan;
+            bool drawIndicator = CurrentTools._current == CurrentButton.Tool && !CurrentTools.QuickPan;
             if (!drawIndicator)
                 return;
 
             Color color = Settings.Computed.LineColor;
-            if (_currentbutton.Tool.ShowSwatch)
+            if (CurrentButton.Tool.ShowSwatch)
             {
-                switch (_currentbutton.Tool.Swatch.Selected)
+                switch (CurrentButton.Tool.Swatch.Selected)
                 {
                     case LineType.Scenery:
                         color = Settings.Colors.SceneryLine;

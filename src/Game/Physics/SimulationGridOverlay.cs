@@ -15,15 +15,8 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using linerider.Rendering;
-using OpenTK;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
-using linerider.Game;
 using linerider.Utils;
+using System.Collections.Concurrent;
 namespace linerider.Game
 {
     /// <summary>
@@ -32,22 +25,16 @@ namespace linerider.Game
     /// </summary>
     public class SimulationGridOverlay : ISimulationGrid
     {
-        public ResourceSync Sync
-        {
-            get { return BaseGrid.Sync; }
-        }
+        public ResourceSync Sync => BaseGrid.Sync;
         public SimulationGrid BaseGrid;
         public ConcurrentDictionary<GridPoint, SimulationCell> Overlay = new ConcurrentDictionary<GridPoint, SimulationCell>();
         public SimulationCell GetCell(int x, int y)
         {
-            SimulationCell cell;
-            var gp = new GridPoint(x, y);
-            if (!Overlay.TryGetValue(gp, out cell))
-                return BaseGrid.GetCell(x, y);
-            return cell;
+            GridPoint gp = new GridPoint(x, y);
+            return !Overlay.TryGetValue(gp, out SimulationCell cell) ? BaseGrid.GetCell(x, y) : cell;
         }
         /// <summary>
-        /// adds an overlay if it does not already exist for that point
+        /// Adds an overlay if it does not already exist for that point
         /// </summary>
         /// <returns>true if the overlay was added</returns>
         public bool AddOverlay(GridPoint point, SimulationCell cell)
@@ -59,9 +46,6 @@ namespace linerider.Game
             }
             return false;
         }
-        public void Clear()
-        {
-            Overlay.Clear();
-        }
+        public void Clear() => Overlay.Clear();
     }
 }

@@ -1,10 +1,6 @@
-﻿using Gwen.Anim;
-using Gwen.DragDrop;
+﻿using Gwen.DragDrop;
 using Gwen.Input;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 
@@ -50,13 +46,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Returns true if any on click events are set.
         /// </summary>
-        internal bool ClickEventAssigned
-        {
-            get
-            {
-                return Clicked != null || RightClicked != null || DoubleClicked != null || DoubleRightClicked != null;
-            }
-        }
+        internal bool ClickEventAssigned => Clicked != null || RightClicked != null || DoubleClicked != null || DoubleRightClicked != null;
         internal bool IsMouseDepressed = false;
         internal bool IsMouseRightDepressed = false;
 
@@ -68,8 +58,7 @@ namespace Gwen.Controls
             if (InputHandler.KeyboardFocus == this)
                 return;
 
-            if (InputHandler.KeyboardFocus != null)
-                InputHandler.KeyboardFocus.OnLostKeyboardFocus();
+            InputHandler.KeyboardFocus?.OnLostKeyboardFocus();
 
             InputHandler.KeyboardFocus = this;
             OnKeyboardFocus();
@@ -92,25 +81,15 @@ namespace Gwen.Controls
         /// <summary>
         /// Control has been clicked - invoked by input system. Windows use it to propagate activation.
         /// </summary>
-        public virtual void Touch()
-        {
-            if (Parent != null)
-                Parent.OnChildTouched(this);
-        }
+        public virtual void Touch() => Parent?.OnChildTouched(this);
 
-        protected virtual void OnChildTouched(ControlBase control)
-        {
-            Touch();
-        }
+        protected virtual void OnChildTouched(ControlBase control) => Touch();
 
         /// <summary>
         /// Default accelerator handler.
         /// </summary>
         /// <param name="control">Event source.</param>
-        private void DefaultAcceleratorHandler(ControlBase control, EventArgs args)
-        {
-            OnAccelerator();
-        }
+        private void DefaultAcceleratorHandler(ControlBase control, EventArgs args) => OnAccelerator();
 
         /// <summary>
         /// Default accelerator handler.
@@ -123,21 +102,12 @@ namespace Gwen.Controls
         /// Handler invoked on mouse wheel event.
         /// </summary>
         /// <param name="delta">Scroll delta.</param>
-        protected virtual bool OnMouseWheeled(int delta)
-        {
-            if (m_Parent != null)
-                return m_Parent.OnMouseWheeled(delta);
-
-            return false;
-        }
+        protected virtual bool OnMouseWheeled(int delta) => m_Parent != null && m_Parent.OnMouseWheeled(delta);
 
         /// <summary>
         /// Invokes mouse wheeled event (used by input system).
         /// </summary>
-        internal bool InputMouseWheeled(int delta)
-        {
-            return OnMouseWheeled(delta);
-        }
+        internal bool InputMouseWheeled(int delta) => OnMouseWheeled(delta);
 
         /// <summary>
         /// Handler invoked on mouse moved event.
@@ -153,10 +123,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Invokes mouse moved event (used by input system).
         /// </summary>
-        internal void InputMouseMoved(int x, int y, int dx, int dy)
-        {
-            OnMouseMoved(x, y, dx, dy);
-        }
+        internal void InputMouseMoved(int x, int y, int dx, int dy) => OnMouseMoved(x, y, dx, dy);
 
         /// <summary>
         /// Handler invoked on mouse click (left) event.
@@ -212,17 +179,13 @@ namespace Gwen.Controls
             //                    Should be called by the event handler.
             OnMouseClickedLeft(x, y, true);
 
-            if (DoubleClicked != null)
-                DoubleClicked(this, new ClickedEventArgs(x, y, true));
+            DoubleClicked?.Invoke(this, new ClickedEventArgs(x, y, true));
         }
 
         /// <summary>
         /// Invokes left double mouse click event (used by input system).
         /// </summary>
-        internal void InputMouseDoubleClickedLeft(int x, int y)
-        {
-            OnMouseDoubleClickedLeft(x, y);
-        }
+        internal void InputMouseDoubleClickedLeft(int x, int y) => OnMouseDoubleClickedLeft(x, y);
 
         /// <summary>
         /// Handler invoked on mouse double click (right) event.
@@ -234,25 +197,20 @@ namespace Gwen.Controls
             // [halfofastaple] See: OnMouseDoubleClicked for discussion on triggering single clicks in a double click event
             OnMouseClickedRight(x, y, true);
 
-            if (DoubleRightClicked != null)
-                DoubleRightClicked(this, new ClickedEventArgs(x, y, true));
+            DoubleRightClicked?.Invoke(this, new ClickedEventArgs(x, y, true));
         }
 
         /// <summary>
         /// Invokes right double mouse click event (used by input system).
         /// </summary>
-        internal void InputMouseDoubleClickedRight(int x, int y)
-        {
-            OnMouseDoubleClickedRight(x, y);
-        }
+        internal void InputMouseDoubleClickedRight(int x, int y) => OnMouseDoubleClickedRight(x, y);
 
         /// <summary>
         /// Handler invoked on mouse cursor entering control's bounds.
         /// </summary>
         protected virtual void OnMouseEntered()
         {
-            if (HoverEnter != null)
-                HoverEnter.Invoke(this, EventArgs.Empty);
+            HoverEnter?.Invoke(this, EventArgs.Empty);
 
             Redraw();
         }
@@ -260,18 +218,14 @@ namespace Gwen.Controls
         /// <summary>
         /// Invokes mouse enter event (used by input system).
         /// </summary>
-        internal void InputMouseEntered()
-        {
-            OnMouseEntered();
-        }
+        internal void InputMouseEntered() => OnMouseEntered();
 
         /// <summary>
         /// Handler invoked on mouse cursor leaving control's bounds.
         /// </summary>
         protected virtual void OnMouseLeft()
         {
-            if (HoverLeave != null)
-                HoverLeave.Invoke(this, EventArgs.Empty);
+            HoverLeave?.Invoke(this, EventArgs.Empty);
 
             Redraw();
         }
@@ -279,85 +233,67 @@ namespace Gwen.Controls
         /// <summary>
         /// Invokes mouse leave event (used by input system).
         /// </summary>
-        internal void InputMouseLeft()
-        {
-            OnMouseLeft();
-        }
+        internal void InputMouseLeft() => OnMouseLeft();
 
+        // Giver
+        public virtual Package DragAndDrop_GetPackage(int x, int y) => m_DragAndDrop_Package;
 
-        // giver
-        public virtual Package DragAndDrop_GetPackage(int x, int y)
-        {
-            return m_DragAndDrop_Package;
-        }
+        // Giver
+        public virtual bool DragAndDrop_Draggable() => m_DragAndDrop_Package != null && m_DragAndDrop_Package.IsDraggable;
 
-        // giver
-        public virtual bool DragAndDrop_Draggable()
-        {
-            if (m_DragAndDrop_Package == null)
-                return false;
-
-            return m_DragAndDrop_Package.IsDraggable;
-        }
-
-        // giver
+        // Giver
         public virtual void DragAndDrop_SetPackage(bool draggable, string name = "", object userData = null)
         {
             if (m_DragAndDrop_Package == null)
             {
-                m_DragAndDrop_Package = new Package();
-                m_DragAndDrop_Package.IsDraggable = draggable;
-                m_DragAndDrop_Package.Name = name;
-                m_DragAndDrop_Package.UserData = userData;
+                m_DragAndDrop_Package = new Package
+                {
+                    IsDraggable = draggable,
+                    Name = name,
+                    UserData = userData
+                };
             }
         }
 
-        // giver
-        public virtual bool DragAndDrop_ShouldStartDrag()
-        {
-            return true;
-        }
+        // Giver
+        public virtual bool DragAndDrop_ShouldStartDrag() => true;
 
-        // giver
+        // Giver
         public virtual void DragAndDrop_StartDragging(Package package, int x, int y)
         {
             package.HoldOffset = CanvasPosToLocal(new Point(x, y));
             package.DrawControl = this;
         }
 
-        // giver
+        // Giver
         public virtual void DragAndDrop_EndDragging(bool success, int x, int y)
         {
         }
 
-        // receiver
+        // Receiver
         public virtual bool DragAndDrop_HandleDrop(Package p, int x, int y)
         {
             DragAndDrop.SourceControl.Parent = this;
             return true;
         }
 
-        // receiver
+        // Receiver
         public virtual void DragAndDrop_HoverEnter(Package p, int x, int y)
         {
         }
 
-        // receiver
+        // Receiver
         public virtual void DragAndDrop_HoverLeave(Package p)
         {
         }
 
-        // receiver
+        // Receiver
         public virtual void DragAndDrop_Hover(Package p, int x, int y)
         {
         }
 
-        // receiver
-        public virtual bool DragAndDrop_CanAcceptPackage(Package p)
-        {
-            return false;
-        }
-
+        // Receiver
+        public virtual bool DragAndDrop_CanAcceptPackage(Package p) => false;
 
         /// <summary>
         /// Handles keyboard accelerator.
@@ -393,10 +329,7 @@ namespace Gwen.Controls
         /// Adds keyboard accelerator with a default handler.
         /// </summary>
         /// <param name="accelerator">Accelerator text.</param>
-        public void AddAccelerator(string accelerator)
-        {
-            m_Accelerators[accelerator] = DefaultAcceleratorHandler;
-        }
+        public void AddAccelerator(string accelerator) => m_Accelerators[accelerator] = DefaultAcceleratorHandler;
 
         /// <summary>
         /// Handler for keyboard events.
@@ -425,7 +358,7 @@ namespace Gwen.Controls
             }
 
             if (!handled && Parent != null)
-                Parent.OnKeyPressed(key, down);
+                _ = Parent.OnKeyPressed(key, down);
 
             return handled;
         }
@@ -433,20 +366,14 @@ namespace Gwen.Controls
         /// <summary>
         /// Invokes key press event (used by input system).
         /// </summary>
-        internal bool InputKeyPressed(Key key, bool down = true)
-        {
-            return OnKeyPressed(key, down);
-        }
+        internal bool InputKeyPressed(Key key, bool down = true) => OnKeyPressed(key, down);
 
         /// <summary>
         /// Handler for keyboard events.
         /// </summary>
         /// <param name="key">Key pressed.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyReleaseed(Key key)
-        {
-            return OnKeyPressed(key, false);
-        }
+        protected virtual bool OnKeyReleaseed(Key key) => OnKeyPressed(key, false);
 
         /// <summary>
         /// Handler for Tab keyboard event.
@@ -472,77 +399,77 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeySpace(bool down) { return false; }
+        protected virtual bool OnKeySpace(bool down) => false;
 
         /// <summary>
         /// Handler for Return keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyReturn(bool down) { return false; }
+        protected virtual bool OnKeyReturn(bool down) => false;
 
         /// <summary>
         /// Handler for Backspace keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyBackspace(bool down) { return false; }
+        protected virtual bool OnKeyBackspace(bool down) => false;
 
         /// <summary>
         /// Handler for Delete keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyDelete(bool down) { return false; }
+        protected virtual bool OnKeyDelete(bool down) => false;
 
         /// <summary>
         /// Handler for Right Arrow keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyRight(bool down) { return false; }
+        protected virtual bool OnKeyRight(bool down) => false;
 
         /// <summary>
         /// Handler for Left Arrow keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyLeft(bool down) { return false; }
+        protected virtual bool OnKeyLeft(bool down) => false;
 
         /// <summary>
         /// Handler for Home keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyHome(bool down) { return false; }
+        protected virtual bool OnKeyHome(bool down) => false;
 
         /// <summary>
         /// Handler for End keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyEnd(bool down) { return false; }
+        protected virtual bool OnKeyEnd(bool down) => false;
 
         /// <summary>
         /// Handler for Up Arrow keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyUp(bool down) { return false; }
+        protected virtual bool OnKeyUp(bool down) => false;
 
         /// <summary>
         /// Handler for Down Arrow keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyDown(bool down) { return false; }
+        protected virtual bool OnKeyDown(bool down) => false;
 
         /// <summary>
         /// Handler for Escape keyboard event.
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyEscape(bool down) { return false; }
+        protected virtual bool OnKeyEscape(bool down) => false;
 
         /// <summary>
         /// Handler for Paste event.
@@ -576,25 +503,13 @@ namespace Gwen.Controls
         {
         }
 
-        internal void InputCopy(ControlBase from)
-        {
-            OnCopy(from, EventArgs.Empty);
-        }
+        internal void InputCopy(ControlBase from) => OnCopy(from, EventArgs.Empty);
 
-        internal void InputPaste(ControlBase from)
-        {
-            OnPaste(from, EventArgs.Empty);
-        }
+        internal void InputPaste(ControlBase from) => OnPaste(from, EventArgs.Empty);
 
-        internal void InputCut(ControlBase from)
-        {
-            OnCut(from, EventArgs.Empty);
-        }
+        internal void InputCut(ControlBase from) => OnCut(from, EventArgs.Empty);
 
-        internal void InputSelectAll(ControlBase from)
-        {
-            OnSelectAll(from, EventArgs.Empty);
-        }
+        internal void InputSelectAll(ControlBase from) => OnSelectAll(from, EventArgs.Empty);
 
         /// <summary>
         /// Handler for gaining keyboard focus.
@@ -615,14 +530,8 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="chr">Character typed.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnChar(Char chr)
-        {
-            return false;
-        }
+        protected virtual bool OnChar(char chr) => false;
 
-        internal bool InputChar(Char chr)
-        {
-            return OnChar(chr);
-        }
+        internal bool InputChar(char chr) => OnChar(chr);
     }
 }

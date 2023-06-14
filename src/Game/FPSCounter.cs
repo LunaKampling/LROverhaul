@@ -16,16 +16,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace linerider
 {
     public class FPSCounter
     {
-        private Queue<double> _queue = new Queue<double>();
+        private readonly Queue<double> _queue = new Queue<double>();
         public double FPS
         {
             get
@@ -33,25 +31,22 @@ namespace linerider
                 if (_queue.Count == 0)
                     return 1;
 
-                var avg = _queue.Average();
-                if (avg == 0)
-                    return 1;
-
-                return 1.0 / avg;
+                double avg = _queue.Average();
+                return avg == 0 ? 1 : 1.0 / avg;
             }
         }
-        private double _framehistory = 20;
+        private readonly double _framehistory = 20;
         public void AddFrame(double f)
         {
             _queue.Enqueue(f);
             if (_queue.Count > _framehistory)
             {
-                _queue.Dequeue();
+                _ = _queue.Dequeue();
             }
         }
         public void Reset()
         {
-            var last = _queue.LastOrDefault();
+            double last = _queue.LastOrDefault();
             _queue.Clear();
             _queue.Enqueue(last);
         }

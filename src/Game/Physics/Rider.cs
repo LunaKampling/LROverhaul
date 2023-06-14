@@ -16,15 +16,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Utils;
 using OpenTK;
 using System;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Linq;
 using System.Collections.Generic;
-using linerider.Game;
-using linerider.Utils;
-using System.Security.Policy;
+using System.Diagnostics;
 
 namespace linerider.Game
 {
@@ -55,13 +51,13 @@ namespace linerider.Game
         }
         public static Rider Create(Vector2d start, Vector2d momentum, bool useRemount, bool frictionless)
         {
-            var joints = new SimulationPoint[RiderConstants.DefaultRider.Length];
-            var scarf = new SimulationPoint[RiderConstants.DefaultScarf.Length + 1];
+            SimulationPoint[] joints = new SimulationPoint[RiderConstants.DefaultRider.Length];
+            SimulationPoint[] scarf = new SimulationPoint[RiderConstants.DefaultScarf.Length + 1];
             RectLRTB pbounds = new RectLRTB();
             for (int i = 0; i < joints.Length; i++)
             {
-                var coord = (RiderConstants.DefaultRider[i] + start);
-                var prev = coord - momentum;
+                Vector2d coord = RiderConstants.DefaultRider[i] + start;
+                Vector2d prev = coord - momentum;
                 switch (i)
                 {
                     case RiderConstants.SledTL:
@@ -83,8 +79,8 @@ namespace linerider.Game
                 }
                 else
                 {
-                    var cellx = (int)Math.Floor(joints[i].Location.X / 14);
-                    var celly = (int)Math.Floor(joints[i].Location.Y / 14);
+                    int cellx = (int)Math.Floor(joints[i].Location.X / 14);
+                    int celly = (int)Math.Floor(joints[i].Location.Y / 14);
 
                     pbounds.left = Math.Min(cellx - 1, pbounds.left);
                     pbounds.top = Math.Min(celly - 1, pbounds.top);
@@ -95,18 +91,17 @@ namespace linerider.Game
             scarf[0] = joints[RiderConstants.BodyShoulder];
             for (int i = 0; i < RiderConstants.DefaultScarf.Length; i++)
             {
-                var pos = scarf[0].Location + RiderConstants.DefaultScarf[i];
+                Vector2d pos = scarf[0].Location + RiderConstants.DefaultScarf[i];
                 scarf[i + 1] = new SimulationPoint(pos, pos, Vector2d.Zero, 0.9);
             }
             return new Rider(joints, scarf, pbounds, false, false, useRemount);
         }
 
-
         public Vector2d CalculateCenter()
         {
             if (Crashed)
                 return Body[4].Location;
-            var anchorsaverage = new Vector2d();
+            Vector2d anchorsaverage = new Vector2d();
             for (int i = 0; i < Body.Length; i++)
             {
                 anchorsaverage += Body[i].Location;
@@ -116,7 +111,7 @@ namespace linerider.Game
 
         public Vector2d CalculateMomentum()
         {
-            var mo = Vector2d.Zero;
+            Vector2d mo = Vector2d.Zero;
             for (int i = 0; i < Body.Length; i++)
             {
                 mo += Body[i].Momentum;
@@ -141,18 +136,18 @@ namespace linerider.Game
         }
         private static void FlutterScarf(SimulationPoint[] scarf, int frameid, double momentum)
         {
-            var baseoffset = frameid;
-            // this creates a sense of 'progression' in the flutter, otherwise
+            int baseoffset = frameid;
+            // This creates a sense of 'progression' in the flutter, otherwise
             // it feels robotic
-            baseoffset += (frameid / 20);
+            baseoffset += frameid / 20;
 
-            int rate = (20 - (int)(14 * Math.Min(1, momentum / 100)));
+            int rate = 20 - (int)(14 * Math.Min(1, momentum / 100));
             int offset = baseoffset % rate;
             for (int i = 1; i < scarf.Length; i++)
             {
                 double scalar = (i - 1.0) / (scarf.Length - 1);
 
-                var flutter = WaveFlutter(
+                Vector2d flutter = WaveFlutter(
                     scarf[i].Location,
                     scarf[i - 1].Location,
                     scalar * (Math.PI * 4) + offset);
@@ -165,11 +160,11 @@ namespace linerider.Game
         }
         private static Vector2d WaveFlutter(Vector2d pos, Vector2d prev, double radian)
         {
-            var ang = Angle.FromLine(prev, pos);
+            Angle ang = Angle.FromLine(prev, pos);
             ang.Degrees += Math.Cos(radian) * 90;
             return ang.MovePoint(Vector2d.Zero, 2);
         }
-        private unsafe static void ProcessLines(
+        private static unsafe void ProcessLines(
             ISimulationGrid grid,
             SimulationPoint[] body,
             ref RectLRTB physinfo,
@@ -178,29 +173,29 @@ namespace linerider.Game
             int bodylen = body.Length;
             for (int i = 0; i < bodylen; i++)
             {
-                var startpos = body[i].Location;
-                var cellx = (int)Math.Floor(startpos.X / 14);
-                var celly = (int)Math.Floor(startpos.Y / 14);
+                Vector2d startpos = body[i].Location;
+                int cellx = (int)Math.Floor(startpos.X / 14);
+                int celly = (int)Math.Floor(startpos.Y / 14);
 
-                //every itreration is at least 3x3, so asjust the info for that
-                int newbox = (int)Math.Floor(1 + (StandardLine.Zone / 14));
+                // Every itreration is at least 3x3, so asjust the info for that
+                int newbox = (int)Math.Floor(1 + StandardLine.Zone / 14);
 
                 physinfo.left = Math.Min(cellx - newbox, physinfo.left);
                 physinfo.top = Math.Min(celly - newbox, physinfo.top);
                 physinfo.right = Math.Max(cellx + newbox, physinfo.right);
                 physinfo.bottom = Math.Max(celly + newbox, physinfo.bottom);
-                for (var x = 0-newbox; x <= newbox; x++)
+                for (int x = 0 - newbox; x <= newbox; x++)
                 {
-                    for (var y = 0-newbox; y <= newbox; y++)
+                    for (int y = 0 - newbox; y <= newbox; y++)
                     {
-                        var cell = grid.GetCell(cellx + x, celly + y);
+                        SimulationCell cell = grid.GetCell(cellx + x, celly + y);
                         if (cell == null)
                             continue;
-                        foreach (var line in cell)
+                        foreach (StandardLine line in cell)
                         {
                             if (line.Interact(ref body[i]))
                             {
-                                collisions?.AddLast(line.ID);
+                                _ = (collisions?.AddLast(line.ID));
                             }
                         }
                     }
@@ -209,35 +204,35 @@ namespace linerider.Game
         }
         public static void ProcessScarfBones(Bone[] bones, SimulationPoint[] scarf)
         {
-            for (int i = 0; i < scarf.Length-1; i++)
+            for (int i = 0; i < scarf.Length - 1; i++)
             {
-                var bone = bones[i];
+                Bone bone = bones[i];
                 int j1 = bone.joint1;
                 int j2 = bone.joint2;
-                var d = scarf[j1].Location - scarf[j2].Location;
-                var len = d.Length;
+                Vector2d d = scarf[j1].Location - scarf[j2].Location;
+                double len = d.Length;
                 if (!bone.OnlyRepel || len < bone.RestLength)
                 {
-                    double scalar = ((len - bone.RestLength) / len);
+                    double scalar = (len - bone.RestLength) / len;
                     scarf[j2] = scarf[j2].AddPosition(d * scalar);
                 }
             }
         }
-        public unsafe static bool TestSurvivable(Bone[] bones, SimulationPoint[] body, double enduranceMultiplier = 1.0) //Tests if a given Bosh state can survive with a given endurance multiplier
+        public static unsafe bool TestSurvivable(Bone[] bones, SimulationPoint[] body, double enduranceMultiplier = 1.0) // Tests if a given Bosh state can survive with a given endurance multiplier
         {
             int bonelen = bones.Length;
             for (int i = 0; i < bonelen; i++)
             {
-                var bone = bones[i];
+                Bone bone = bones[i];
                 int j1 = bone.joint1;
                 int j2 = bone.joint2;
-                var d = body[j1].Location - body[j2].Location;
-                var len = d.Length;
+                Vector2d d = body[j1].Location - body[j2].Location;
+                double len = d.Length;
 
                 if (!bone.OnlyRepel || len < bone.RestLength)
                 {
-                    var scalar = (len - bone.RestLength) / len * 0.5;
-                    // instead of 0 checking dista the rationale is technically dista could be really really small
+                    double scalar = (len - bone.RestLength) / len * 0.5;
+                    // Instead of 0 checking dista the rationale is technically dista could be really really small
                     // and round off into infinity which gives us the NaN error.
                     if (double.IsInfinity(scalar))
                     {
@@ -245,57 +240,65 @@ namespace linerider.Game
                     }
                     if (bone.Breakable && (scalar > bone.RestLength * RiderConstants.EnduranceFactor * enduranceMultiplier))
                     {
-                        return false; //If any of Bosh's bones is unsurvivable, return false as this position will kill Bosh
+                        return false; // If any of Bosh's bones is unsurvivable, return false as this position will kill Bosh
                     }
                 }
             }
 
-            return true; //If none of Bosh's bones are unsurvivable, the state survives so return true
+            return true; // If none of Bosh's bones are unsurvivable, the state survives so return true
         }
 
-        public unsafe static void ProcessRemount(Bone[] bones, SimulationPoint[] body, ref bool dead, ref bool sledbroken, ref int rState, ref int rTimer)
+        public static unsafe void ProcessRemount(Bone[] bones, SimulationPoint[] body, ref bool dead, ref bool sledbroken, ref int rState, ref int rTimer)
         {
             if (sledbroken == true)
             {
-                rState = 2; //Set just in case he gets stuck in remount state with no sled or something
+                rState = 2; // Set just in case he gets stuck in remount state with no sled or something
                 return;
             }
 
             switch (rState)
             {
-                default: //Invalid remount state
+                default: // Invalid remount state
                     break;
-                case 0: //Rider on sled
-                    if (dead) //If Bosh dies, enter dismounting state, set timer to 0
+                case 0: // Rider on sled
+                    if (dead) // If Bosh dies, enter dismounting state, set timer to 0
                     {
                         rState = 1;
                         rTimer = 0;
                     }
                     break;
-                case 1: //Dismounting (dead & cannot remount)
+                case 1: // Dismounting (dead & cannot remount)
                     if (rTimer >= 30)
                     {
                         rState = 2;
                         rTimer = 0;
                     }
-                    else { rTimer += 1; }
+                    else
+                    {
+                        rTimer += 1;
+                    }
                     break;
-                case 2: //Dismounted (dead & can remount)
+                case 2: // Dismounted (dead & can remount)
                     if (TestSurvivable(bones, body, 2.0))
                     {
-                        if (rTimer >= 3) //If Bosh has been within 2x endurance range for 3 consecutive frames, go to remounting phase
+                        if (rTimer >= 3) // If Bosh has been within 2x endurance range for 3 consecutive frames, go to remounting phase
                         {
                             rState = 3;
                             dead = false;
                             rTimer = 0;
                         }
-                        else { rTimer += 1; }
-
+                        else
+                        {
+                            rTimer += 1;
+                        }
                     }
-                    else { rTimer = 0; }
+                    else
+                    {
+                        rTimer = 0;
+                    }
                     break;
-                case 3: //Remounting
-                    if (!TestSurvivable(bones, body, 2.0) || dead) //If Bosh can't survive with 2x endurance range, go back to dismounted phase (TODO check if this is redundant)
+                case 3: // Remounting
+                    if (!TestSurvivable(bones, body, 2.0) || dead) // If Bosh can't survive with 2x endurance range, go back to dismounted phase (TODO check if this is redundant)
                     {
                         rState = 2;
                         rTimer = 0;
@@ -303,19 +306,25 @@ namespace linerider.Game
                     }
                     if (TestSurvivable(bones, body, 1.0))
                     {
-                        if (rTimer >= 3) //If Bosh has been within the standard endurance range for 3 consecutive frames, go to normal mounted phase
+                        if (rTimer >= 3) // If Bosh has been within the standard endurance range for 3 consecutive frames, go to normal mounted phase
                         {
                             rState = 0;
                             rTimer = 0;
                         }
-                        else { rTimer += 1; }
+                        else
+                        {
+                            rTimer += 1;
+                        }
                     }
-                    else { rTimer = 0; }
+                    else
+                    {
+                        rTimer = 0;
+                    }
                     break;
             }
         }
 
-        public unsafe static void ProcessBones(Bone[] bones, SimulationPoint[] body, ref bool dead, ref int rState, List<int> breaks = null)
+        public static unsafe void ProcessBones(Bone[] bones, SimulationPoint[] body, ref bool dead, ref int rState, List<int> breaks = null)
         {
             int bonelen = bones.Length;
 
@@ -324,16 +333,16 @@ namespace linerider.Game
 
             for (int i = 0; i < bonelen; i++)
             {
-                var bone = bones[i];
+                Bone bone = bones[i];
                 int j1 = bone.joint1;
                 int j2 = bone.joint2;
-                var d = body[j1].Location - body[j2].Location;
-                var len = d.Length;
+                Vector2d d = body[j1].Location - body[j2].Location;
+                double len = d.Length;
 
                 if (!bone.OnlyRepel || len < bone.RestLength)
                 {
-                    var scalar = (len - bone.RestLength) / len * 0.5;
-                    // instead of 0 checking dista the rationale is technically dista could be really really small
+                    double scalar = (len - bone.RestLength) / len * 0.5;
+                    // Instead of 0 checking dista the rationale is technically dista could be really really small
                     // and round off into infinity which gives us the NaN error.
                     if (double.IsInfinity(scalar))
                     {
@@ -360,7 +369,7 @@ namespace linerider.Game
             top = bottom = r.Body[0].Location.Y;
             for (int i = 0; i < r.Body.Length; i++)
             {
-                var pos = r.Body[i].Location;
+                Vector2d pos = r.Body[i].Location;
                 right = Math.Max(pos.X, right);
                 left = Math.Min(pos.X, left);
                 top = Math.Min(pos.Y, top);
@@ -369,10 +378,7 @@ namespace linerider.Game
             DoubleRect ret = new DoubleRect(left, top, right - left, bottom - top);
             return ret;
         }
-        public Rider Simulate(Track track, int maxiteration = 6, LinkedList<int> collisions = null)
-        {
-            return Simulate(track.Grid, track.Bones, collisions, maxiteration);
-        }
+        public Rider Simulate(Track track, int maxiteration = 6, LinkedList<int> collisions = null) => Simulate(track.Grid, track.Bones, collisions, maxiteration);
         public Rider Simulate(
             ISimulationGrid grid,
             Bone[] bones,
@@ -382,7 +388,7 @@ namespace linerider.Game
             int frameid = 0)
         {
             SimulationPoint[] body = Body.Step();
-            int bodylen = Body.Length;
+            _ = Body.Length;
             bool dead = Crashed;
             bool sledbroken = SledBroken;
             int rState = remountState;
@@ -398,36 +404,40 @@ namespace linerider.Game
             }
             if (maxiteration == 6)
             {
-                var nose = body[RiderConstants.SledTR].Location - body[RiderConstants.SledTL].Location;
-                var tail = body[RiderConstants.SledBL].Location - body[RiderConstants.SledTL].Location;
-                var head = body[RiderConstants.BodyShoulder].Location - body[RiderConstants.BodyButt].Location;
-                if (!dead && ((nose.X * tail.Y) - (nose.Y * tail.X) < 0 || // tail fakie
-                             (nose.X * head.Y) - (nose.Y * head.X) > 0))   // head fakie
+                Vector2d nose = body[RiderConstants.SledTR].Location - body[RiderConstants.SledTL].Location;
+                Vector2d tail = body[RiderConstants.SledBL].Location - body[RiderConstants.SledTL].Location;
+                Vector2d head = body[RiderConstants.BodyShoulder].Location - body[RiderConstants.BodyButt].Location;
+                if (!dead && (nose.X * tail.Y - nose.Y * tail.X < 0 || // Tail fakie
+                             nose.X * head.Y - nose.Y * head.X > 0))   // Head fakie
                 {
                     dead = true;
                     sledbroken = true;
                 }
             }
-            
+
             if (UseRemount)
             {
                 ProcessRemount(bones, body, ref dead, ref sledbroken, ref rState, ref rTimer);
             }
-            
+
             SimulationPoint[] scarf;
             if (stepscarf)
             {
                 scarf = Scarf.Step(friction: true);
 
-                if (Settings.multiScarfAmount * Settings.multiScarfSegments > RiderConstants.ScarfBones.Length) { Settings.multiScarfAmount = 1; } //if too big set to zero
-
-                if (Settings.multiScarfAmount > 1) //If using dual scarf
+                if (Settings.multiScarfAmount * Settings.multiScarfSegments > RiderConstants.ScarfBones.Length)
                 {
-                    
+                    Settings.multiScarfAmount = 1;
+                } // If too big set to zero
+
+                if (Settings.multiScarfAmount > 1) // If using dual scarf
+                {
+
                     List<SimulationPoint>[] scarves = new List<SimulationPoint>[Settings.multiScarfAmount];
                     List<SimulationPoint> finalScarf = new List<SimulationPoint>();
 
-                    for (int i = 0; i < Settings.multiScarfAmount; i++) {
+                    for (int i = 0; i < Settings.multiScarfAmount; i++)
+                    {
                         scarf[i * Settings.multiScarfSegments] = body[RiderConstants.BodyShoulder];
                         scarves[i] = new List<SimulationPoint>();
 
@@ -435,23 +445,26 @@ namespace linerider.Game
                         {
                             for (int k = 0; k < Settings.multiScarfSegments; k++)
                             {
-                                scarves[i].Add(scarf[k + (i * Settings.multiScarfSegments)]);
+                                scarves[i].Add(scarf[k + i * Settings.multiScarfSegments]);
                             }
                         }
                         else
                         {
-                            for (int k = 0; k < scarf.Length - (i * Settings.multiScarfSegments); k++) 
+                            for (int k = 0; k < scarf.Length - i * Settings.multiScarfSegments; k++)
                             {
-                                scarves[i].Add(scarf[k + (i * Settings.multiScarfSegments)]);
+                                scarves[i].Add(scarf[k + i * Settings.multiScarfSegments]);
                             }
                         }
 
                         SimulationPoint[] scarfArr = scarves[i].ToArray();
 
-                        FlutterScarf(scarfArr, frameid, Utility.LengthFast(scarf[i * Settings.multiScarfSegments].Momentum)+(i*5));
+                        FlutterScarf(scarfArr, frameid, Utility.LengthFast(scarf[i * Settings.multiScarfSegments].Momentum) + i * 5);
                         ProcessScarfBones(RiderConstants.ScarfBones, scarfArr);
 
-                        for (int j = 0; j < scarfArr.Length; j++) { finalScarf.Add(scarfArr[j]); }
+                        for (int j = 0; j < scarfArr.Length; j++)
+                        {
+                            finalScarf.Add(scarfArr[j]);
+                        }
                     }
 
                     scarf = finalScarf.ToArray();
@@ -474,13 +487,13 @@ namespace linerider.Game
             Bone[] bones,
             int maxiteration = 6)
         {
-            var ret = new List<int>();
+            List<int> ret = new List<int>();
             if (Crashed)
                 return ret;
             Debug.Assert(maxiteration != 0, "Momentum tick can't die but attempted diagnose");
 
             SimulationPoint[] body = Body.Step();
-            int bodylen = Body.Length;
+            _ = Body.Length;
             bool dead = Crashed;
             int rState = remountState;
             RectLRTB phys = new RectLRTB(ref body[0]);
@@ -499,16 +512,16 @@ namespace linerider.Game
             }
             if (maxiteration == 6)
             {
-                var nose = body[RiderConstants.SledTR].Location - body[RiderConstants.SledTL].Location;
-                var tail = body[RiderConstants.SledBL].Location - body[RiderConstants.SledTL].Location;
-                var head = body[RiderConstants.BodyShoulder].Location - body[RiderConstants.BodyButt].Location;
-                if ((nose.X * tail.Y) - (nose.Y * tail.X) < 0) // tail fakie
+                Vector2d nose = body[RiderConstants.SledTR].Location - body[RiderConstants.SledTL].Location;
+                Vector2d tail = body[RiderConstants.SledBL].Location - body[RiderConstants.SledTL].Location;
+                Vector2d head = body[RiderConstants.BodyShoulder].Location - body[RiderConstants.BodyButt].Location;
+                if (nose.X * tail.Y - nose.Y * tail.X < 0) // Tail fakie
 
                 {
                     dead = true;
                     ret.Add(-1);
                 }
-                if ((nose.X * head.Y) - (nose.Y * head.X) > 0)// head fakie
+                if (nose.X * head.Y - nose.Y * head.X > 0)// Head fakie
                 {
                     dead = true;
                     ret.Add(-2);
@@ -526,9 +539,6 @@ namespace linerider.Game
             }
             return ret;
         }
-        public override string ToString()
-        {
-            return "Rider { " + CalculateMomentum().Length + " pixels/frame, " + CalculateCenter().ToString() + " center}";
-        }
+        public override string ToString() => "Rider { " + CalculateMomentum().Length + " pixels/frame, " + CalculateCenter().ToString() + " center}";
     }
 }

@@ -11,7 +11,7 @@ namespace Gwen.Controls
         /// Initializes a new instance of the <see cref="PropertyBase"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public PropertyBase(Gwen.Controls.ControlBase parent) : base(parent)
+        public PropertyBase(ControlBase parent) : base(parent)
         {
             Height = 17;
             Dock = Dock.Fill;
@@ -25,23 +25,16 @@ namespace Gwen.Controls
         /// <summary>
         /// Property value (todo: always string, which is ugly. do something about it).
         /// </summary>
-        public virtual string Value { get { return null; } set { SetValue(value, false); } }
+        public virtual string Value { get => null; set => SetValue(value, false); }
 
         /// <summary>
         /// Indicates whether the property value is being edited.
         /// </summary>
-        public virtual bool IsEditing { get { return false; } }
+        public virtual bool IsEditing => false;
 
-        protected virtual void DoChanged()
-        {
-            if (ValueChanged != null)
-                ValueChanged.Invoke(this, EventArgs.Empty);
-        }
+        protected virtual void DoChanged() => ValueChanged?.Invoke(this, EventArgs.Empty);
 
-        protected virtual void OnValueChanged(Gwen.Controls.ControlBase control, EventArgs args)
-        {
-            DoChanged();
-        }
+        protected virtual void OnValueChanged(ControlBase control, EventArgs args) => DoChanged();
 
         /// <summary>
         /// Sets the property value.

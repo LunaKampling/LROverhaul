@@ -16,10 +16,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
-using System;
-using linerider.Utils;
 using linerider.UI;
+using linerider.Utils;
+using OpenTK;
 using System.Drawing;
 
 namespace linerider.Tools
@@ -29,35 +28,14 @@ namespace linerider.Tools
         public override Bitmap Icon => GameResources.icon_tool_eraser.Bitmap;
         public override Hotkey Hotkey => Hotkey.EditorEraserTool;
         public override string Name => "Eraser Tool";
-        public override Swatch Swatch
-        {
-            get
-            {
-                return SharedSwatches.EraserAndSelectToolSwatch;
-            }
-        }
-        public override bool RequestsMousePrecision
-        {
-            get
-            {
-                return false;
-            }
-        }
-        public override bool ShowSwatch
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override Swatch Swatch => SharedSwatches.EraserAndSelectToolSwatch;
+        public override bool RequestsMousePrecision => false;
+        public override bool ShowSwatch => true;
         private Vector2d _last_erased = Vector2d.Zero;
         // todo, this + the circle function dont work at ultra zoomed out.
         private float radius => 8 / game.Track.Zoom;
         private bool _actionmade;
-        public override MouseCursor Cursor
-        {
-            get { return game.Cursors.List[CursorsHandler.Type.Eraser]; }
-        }
+        public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Eraser];
 
         public EraserTool() : base()
         {
@@ -68,7 +46,7 @@ namespace linerider.Tools
         {
             Stop();
             Active = true;
-            var p = ScreenToGameCoords(pos);
+            Vector2d p = ScreenToGameCoords(pos);
             game.Track.UndoManager.BeginAction();
             Erase(p);
             base.OnMouseDown(pos);
@@ -78,15 +56,15 @@ namespace linerider.Tools
         {
             if (Active)
             {
-                var p = ScreenToGameCoords(pos);
-                var diff = (Vector2)(p - _last_erased);
-                var len = diff.LengthFast;
+                Vector2d p = ScreenToGameCoords(pos);
+                Vector2 diff = (Vector2)(p - _last_erased);
+                float len = diff.LengthFast;
                 double steplen = radius * 2;
                 if (len >= steplen)
                 {
-                    // calculate intermediary lines we might have missed
-                    var v = Angle.FromLine(_last_erased, p);
-                    var current = _last_erased;
+                    // Calculate intermediary lines we might have missed
+                    Angle v = Angle.FromLine(_last_erased, p);
+                    Vector2d current = _last_erased;
                     int count = (int)(len / steplen);
                     for (int i = 0; i < count; i++)
                     {
@@ -103,7 +81,7 @@ namespace linerider.Tools
         {
             if (Active)
             {
-                var p = ScreenToGameCoords(pos);
+                Vector2d p = ScreenToGameCoords(pos);
                 Erase(p);
                 Stop();
             }
@@ -112,12 +90,12 @@ namespace linerider.Tools
 
         private void Erase(Vector2d pos)
         {
-            using (var trk = game.Track.CreateTrackWriter())
+            using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
-                var lines = LinesInRadius(trk, pos, radius);
+                Game.GameLine[] lines = LinesInRadius(trk, pos, radius);
                 if (lines.Length != 0)
                 {
-                    var linefilter = Swatch.Selected;
+                    LineType linefilter = Swatch.Selected;
                     for (int i = 0; i < lines.Length; i++)
                     {
                         if (linefilter == LineType.All || lines[i].Type == linefilter)
@@ -132,11 +110,8 @@ namespace linerider.Tools
             }
         }
 
-        public override void Cancel()
-        {
-            Stop();
-        }
-        
+        public override void Cancel() => Stop();
+
         public override void Stop()
         {
             if (Active)

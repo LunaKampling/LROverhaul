@@ -1,8 +1,4 @@
-﻿using System;
-using System.Drawing;
-using Gwen.Controls;
-
-namespace Gwen.ControlInternal
+﻿namespace Gwen.ControlInternal
 {
     /// <summary>
     /// Modal control for windows.
@@ -27,21 +23,18 @@ namespace Gwen.ControlInternal
         /// </summary>
         protected override bool Layout(bool force, bool recursioncheck = false)
         {
-            var canvas = GetCanvas();
+            Controls.Canvas canvas = GetCanvas();
             if (canvas != null)
             {
-                SetBounds(0, 0, GetCanvas().Width, GetCanvas().Height);
+                _ = SetBounds(0, 0, GetCanvas().Width, GetCanvas().Height);
             }
-            return base.Layout(force,recursioncheck);
+            return base.Layout(force, recursioncheck);
         }
 
         /// <summary>
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawModalControl(this);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawModalControl(this);
     }
 }

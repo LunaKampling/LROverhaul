@@ -22,10 +22,8 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace linerider
 {
@@ -36,7 +34,7 @@ namespace linerider
         public static bool LogGL => false;
 #endif
         public static string BinariesFolder = "bin";
-        public readonly static CultureInfo Culture = new CultureInfo("en-US");
+        public static readonly CultureInfo Culture = new CultureInfo("en-US");
         public static string FullVersion = AssemblyInfo.Version + (AssemblyInfo.TestVersion.Length > 1 ? " " : "") + AssemblyInfo.TestVersion;
         public static string NewVersion = null;
         public static readonly string WindowTitle = AssemblyInfo.Title + " \u22C5 " + FullVersion;
@@ -51,26 +49,26 @@ namespace linerider
         /// Gets the current directory. Ends in Path.DirectorySeperator
         /// </summary>
         public static string UserDirectory
-        {       
+        {
             get
             {
                 if (_userdir == null)
                 {
                     _userdir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    //mono doesnt do well with non windows ~/Documents.
+                    // Mono doesn't do well with non windows ~/Documents.
                     if (_userdir == Environment.GetFolderPath(Environment.SpecialFolder.Personal))
                     {
                         string documents = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Documents");
-                        //so, if we can find a Documents folder, we use that.
-                        //otherwise we're just gonna use ~/LRA, unfortunately.
+                        // So, if we can find a Documents folder, we use that.
+                        // Otherwise we're just gonna use ~/LRA, unfortunately.
                         if (Directory.Exists(documents))
                         {
                             _userdir = documents;
                         }
                     }
-                    // linux support: some users use XDG_DOCUMENTS_DIR to change
+                    // Linux support: some users use XDG_DOCUMENTS_DIR to change
                     // their Documents directory location.
-                    var xdg_dir = Environment.GetEnvironmentVariable("XDG_DOCUMENTS_DIR");
+                    string xdg_dir = Environment.GetEnvironmentVariable("XDG_DOCUMENTS_DIR");
                     if (!string.IsNullOrEmpty(xdg_dir) && Directory.Exists(xdg_dir))
                     {
                         _userdir = xdg_dir;
@@ -119,16 +117,13 @@ namespace linerider
                 throw e;
         }
 
-        public static void NonFatalError(string err)
-        {
-            System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
-        }
+        public static void NonFatalError(string err) => System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
         public static void Run(string[] givenArgs)
         {
 #if DEBUG
             if (IsDebugged)
             {
-                Debug.Listeners.Add(new TextWriterTraceListener(System.Console.Out));
+                Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
             }
             else
             {
@@ -142,11 +137,23 @@ namespace linerider
                 System.Windows.Forms.MessageBox.Show("LRA User directory created at:\r\n" + UserDirectory);
             }
             Settings.Load();
-            //Create critical settings if needed
-            if (Settings.DefaultSaveFormat == null) { Settings.DefaultSaveFormat = ".trk"; }
-            if (Settings.DefaultQuicksaveFormat == null) { Settings.DefaultQuicksaveFormat = ".trk"; }
-            if (Settings.DefaultAutosaveFormat == null) { Settings.DefaultAutosaveFormat = ".trk"; }
-            if (Settings.DefaultCrashBackupFormat == null) { Settings.DefaultCrashBackupFormat = ".trk"; }
+            // Create critical settings if needed
+            if (Settings.DefaultSaveFormat == null)
+            {
+                Settings.DefaultSaveFormat = ".trk";
+            }
+            if (Settings.DefaultQuicksaveFormat == null)
+            {
+                Settings.DefaultQuicksaveFormat = ".trk";
+            }
+            if (Settings.DefaultAutosaveFormat == null)
+            {
+                Settings.DefaultAutosaveFormat = ".trk";
+            }
+            if (Settings.DefaultCrashBackupFormat == null)
+            {
+                Settings.DefaultCrashBackupFormat = ".trk";
+            }
             Settings.Save();
 
             if (!Directory.Exists(UserDirectory + "Songs"))
@@ -170,12 +177,12 @@ namespace linerider
                     UI.InputUtils.SetWindow(glGame);
                     glGame.RenderSize = new System.Drawing.Size(glGame.Width, glGame.Height);
                     Rendering.GameRenderer.Game = glGame;
-                    var ms = new MemoryStream(GameResources.icon);
+                    MemoryStream ms = new MemoryStream(GameResources.icon);
                     glGame.Icon = new System.Drawing.Icon(ms);
 
                     ms.Dispose();
                     glGame.Title = WindowTitle;
-                    glGame.Run(60, 0);//todo maybe not limit this
+                    glGame.Run(60, 0); // TODO: Maybe not limit this
                 }
                 Audio.AudioService.CloseDevice();
             }
@@ -200,7 +207,7 @@ namespace linerider
                         using (WebClient wc = new WebClient())
                         {
                             string recentversion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version");
-                            var idx = recentversion.IndexOfAny(new char[] { '\r', '\n' });
+                            int idx = recentversion.IndexOfAny(new char[] { '\r', '\n' });
                             if (idx != -1)
                                 recentversion = recentversion.Remove(idx);
                             if (recentversion != AssemblyInfo.Version && recentversion.Length > 0)
@@ -216,21 +223,15 @@ namespace linerider
                 }.Start();
             }
         }
-        public static int GetWindowWidth()
-        {
-            return (int)glGame.Width;
-        }
-        public static int GetWindowHeight()
-        {
-            return (int)glGame.Height;
-        }
+        public static int GetWindowWidth() => glGame.Width;
+        public static int GetWindowHeight() => glGame.Height;
     }
 
     internal static class AssemblyInfo
     {
-        public static string Title { get { return GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title); } }
-        public static string Version { get { return GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version); } }
-        public static string TestVersion { get { return GetExecutingAssemblyAttribute<AssemblyMetadataAttribute>(a => a.Value); } }
+        public static string Title => GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title);
+        public static string Version => GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
+        public static string TestVersion => GetExecutingAssemblyAttribute<AssemblyMetadataAttribute>(a => a.Value);
 
         private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {

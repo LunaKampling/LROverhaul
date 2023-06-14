@@ -27,7 +27,7 @@ namespace linerider.IO.ffmpeg
         public string InputFilePath;
         public string Options;
 
-        private StringBuilder m_assembledOptions;
+        private readonly StringBuilder m_assembledOptions;
 
         public FFMPEGParameters()
         {
@@ -38,58 +38,48 @@ namespace linerider.IO.ffmpeg
         {
             if ((m_assembledOptions.Length > 0) && (m_assembledOptions.ToString().EndsWith(" ", StringComparison.OrdinalIgnoreCase) == false))
             {
-                m_assembledOptions.Append(" ");
+                _ = m_assembledOptions.Append(" ");
             }
 
-            m_assembledOptions.Append("-");
-            m_assembledOptions.Append(option);
+            _ = m_assembledOptions.Append("-");
+            _ = m_assembledOptions.Append(option);
         }
 
-        public void AddParameter(string parameter)
-        {
-            m_assembledOptions.Append(parameter);
-        }
+        public void AddParameter(string parameter) => m_assembledOptions.Append(parameter);
 
         public void AddOption(string option, string parameter)
         {
             AddOption(option);
-            m_assembledOptions.Append(" ");
+            _ = m_assembledOptions.Append(" ");
             AddParameter(parameter);
         }
 
         public void AddOption(string option, string parameter1, string separator, string parameter2)
         {
             AddOption(option);
-            m_assembledOptions.Append(" ");
+            _ = m_assembledOptions.Append(" ");
             AddParameter(parameter1);
-            m_assembledOptions.Append(separator);
+            _ = m_assembledOptions.Append(separator);
             AddParameter(parameter2);
         }
 
-        public void AddSeparator(string separator)
-        {
-            m_assembledOptions.Append(separator);
-        }
+        public void AddSeparator(string separator) => m_assembledOptions.Append(separator);
 
-        public void AddRawOptions(string rawOptions)
-        {
-            m_assembledOptions.Append(rawOptions);
-        }
+        public void AddRawOptions(string rawOptions) => m_assembledOptions.Append(rawOptions);
 
         protected void AssembleGeneralOptions()
         {
-            if (!String.IsNullOrWhiteSpace(Options))
+            if (!string.IsNullOrWhiteSpace(Options))
             {
                 AddSeparator(" ");
                 AddRawOptions(Options);
             }
         }
 
-
         public override string ToString()
         {
             AssembleGeneralOptions();
-            return m_assembledOptions.ToString() + " \"" + OutputFilePath+"\"";
+            return m_assembledOptions.ToString() + " \"" + OutputFilePath + "\"";
         }
     }
 }

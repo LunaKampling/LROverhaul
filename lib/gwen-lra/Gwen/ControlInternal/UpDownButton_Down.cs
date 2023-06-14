@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -12,20 +11,17 @@ namespace Gwen.ControlInternal
         /// Initializes a new instance of the <see cref="UpDownButton_Down"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public UpDownButton_Down(Controls.ControlBase parent)
+        public UpDownButton_Down(ControlBase parent)
             : base(parent)
         {
             AutoSizeToContents = false;
-            SetSize(7, 7);
+            _ = SetSize(7, 7);
         }
 
         /// <summary>
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawNumericUpDownButton(this, IsDepressed, false);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawNumericUpDownButton(this, IsDepressed, false);
     }
 }

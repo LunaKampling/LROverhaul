@@ -1,7 +1,4 @@
-﻿using System;
-using Gwen.Controls;
-
-namespace Gwen
+﻿namespace Gwen
 {
     /// <summary>
     /// Utility class for manipulating control's position according to its parent. Rarely needed, use control.Dock.
@@ -15,11 +12,11 @@ namespace Gwen
         public static void Center(Controls.ControlBase control)
         {
             Controls.ControlBase parent = control.Parent;
-            if (parent == null) 
+            if (parent == null)
                 return;
             control.SetPosition(
-                parent.Padding.Left + control.Margin.Left +(((parent.Width - parent.Padding.Left - parent.Padding.Right) - control.Width)/2),
-                control.Margin.Top + (parent.Height - control.Height)/2);
+                parent.Padding.Left + control.Margin.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2,
+                control.Margin.Top + (parent.Height - control.Height) / 2);
         }
 
         /// <summary>
@@ -41,7 +38,8 @@ namespace Gwen
         public static void AlignLeft(Controls.ControlBase control)
         {
             Controls.ControlBase parent = control.Parent;
-            if (null == parent) return;
+            if (null == parent)
+                return;
 
             control.SetPosition(parent.Padding.Left + control.Margin.Left, control.Y);
         }
@@ -53,10 +51,10 @@ namespace Gwen
         public static void CenterHorizontally(Controls.ControlBase control)
         {
             Controls.ControlBase parent = control.Parent;
-            if (null == parent) return;
+            if (null == parent)
+                return;
 
-
-            control.SetPosition(parent.Padding.Left + control.Margin.Left + (((parent.Width - parent.Padding.Left - parent.Padding.Right) - control.Width) / 2), control.Y + control.Margin.Top);
+            control.SetPosition(parent.Padding.Left + control.Margin.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2, control.Y + control.Margin.Top);
         }
 
         /// <summary>
@@ -66,8 +64,8 @@ namespace Gwen
         public static void AlignRight(Controls.ControlBase control)
         {
             Controls.ControlBase parent = control.Parent;
-            if (null == parent) return;
-
+            if (null == parent)
+                return;
 
             control.SetPosition(parent.Width - control.Width - parent.Padding.Right - control.Margin.Right, control.Y);
         }
@@ -79,7 +77,8 @@ namespace Gwen
         public static void AlignTop(Controls.ControlBase control)
         {
             Controls.ControlBase parent = control.Parent;
-            if (null == parent) return;
+            if (null == parent)
+                return;
 
             control.SetPosition(control.X, control.Margin.Top + parent.Padding.Top);
         }
@@ -91,9 +90,10 @@ namespace Gwen
         public static void CenterVertically(Controls.ControlBase control)
         {
             Controls.ControlBase parent = control.Parent;
-            if (null == parent) return;
+            if (null == parent)
+                return;
 
-            control.SetPosition(control.X + control.Margin.Left, ((parent.Height - control.Height) / 2) + control.Margin.Top);
+            control.SetPosition(control.X + control.Margin.Left, (parent.Height - control.Height) / 2 + control.Margin.Top);
         }
 
         /// <summary>
@@ -103,9 +103,10 @@ namespace Gwen
         public static void AlignBottom(Controls.ControlBase control)
         {
             Controls.ControlBase parent = control.Parent;
-            if (null == parent) return;
-            
-            control.SetPosition(control.X, (parent.Height - control.Height) - (control.Margin.Bottom + parent.Padding.Bottom));
+            if (null == parent)
+                return;
+
+            control.SetPosition(control.X, parent.Height - control.Height - (control.Margin.Bottom + parent.Padding.Bottom));
         }
 
         /// <summary>
@@ -114,10 +115,7 @@ namespace Gwen
         /// <param name="control">Control to place.</param>
         /// <param name="anchor">Anchor control.</param>
         /// <param name="spacing">Optional spacing.</param>
-        public static void PlaceDownLeft(Controls.ControlBase control, Controls.ControlBase anchor, int spacing = 0)
-        {
-            control.SetPosition(anchor.X + control.Margin.Left, anchor.Bottom + anchor.Margin.Bottom + spacing + control.Margin.Top);
-        }
+        public static void PlaceDownLeft(Controls.ControlBase control, Controls.ControlBase anchor, int spacing = 0) => control.SetPosition(anchor.X + control.Margin.Left, anchor.Bottom + anchor.Margin.Bottom + spacing + control.Margin.Top);
 
         /// <summary>
         /// Places the control to the right of other control (bottom aligned), taking margins into account.
@@ -125,9 +123,6 @@ namespace Gwen
         /// <param name="control">Control to place.</param>
         /// <param name="anchor">Anchor control.</param>
         /// <param name="spacing">Optional spacing.</param>
-        public static void PlaceRightBottom(Controls.ControlBase control, Controls.ControlBase anchor, int spacing = 0)
-        {
-            control.SetPosition(anchor.Right + anchor.Margin.Right + spacing + control.Margin.Right, anchor.Y - control.Height + anchor.Height + control.Margin.Top);
-        }
+        public static void PlaceRightBottom(Controls.ControlBase control, Controls.ControlBase anchor, int spacing = 0) => control.SetPosition(anchor.Right + anchor.Margin.Right + spacing + control.Margin.Right, anchor.Y - control.Height + anchor.Height + control.Margin.Top);
     }
 }

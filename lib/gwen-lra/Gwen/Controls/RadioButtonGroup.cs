@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using Gwen.ControlInternal;
 
 namespace Gwen.Controls
 {
@@ -9,43 +7,32 @@ namespace Gwen.Controls
     /// </summary>
     public class RadioButtonGroup : GroupBox
     {
-        private RadioButton m_Selected;
-
         /// <summary>
         /// Selected radio button.
         /// </summary>
-        public RadioButton Selected { get { return m_Selected; } }
+        public RadioButton Selected { get; private set; }
 
         /// <summary>
         /// Internal name of the selected radio button.
         /// </summary>
-        public string SelectedName { get { return m_Selected.Name; } }
+        public string SelectedName => Selected.Name;
 
         /// <summary>
         /// Text of the selected radio button.
         /// </summary>
-        public string SelectedLabel { get { return m_Selected.Text; } }
+        public string SelectedLabel => Selected.Text;
 
         /// <summary>
         /// Index of the selected radio button.
         /// </summary>
-        public int SelectedIndex { get { return Children.IndexOf(m_Selected); } }
+        public int SelectedIndex => Children.IndexOf(Selected);
 
         /// <summary>
         /// Invoked when the selected option has changed.
         /// </summary>
         public event GwenEventHandler<ItemSelectedEventArgs> SelectionChanged;
 
-        protected override Margin PanelMargin
-        {
-            get
-            {
-                if (ShouldDrawBackground)
-                    return base.PanelMargin;
-                else
-                    return Margin.Zero;
-            }
-        }
+        protected override Margin PanelMargin => ShouldDrawBackground ? base.PanelMargin : Margin.Zero;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RadioButtonGroup"/> class.
@@ -58,7 +45,7 @@ namespace Gwen.Controls
             m_Panel.AutoSizeToContents = true;
             IsTabable = false;
             KeyboardInputEnabled = true;
-            Text = String.Empty;
+            Text = string.Empty;
         }
 
         /// <summary>
@@ -66,10 +53,7 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="text">Option text.</param>
         /// <returns>Newly created control.</returns>
-        public virtual RadioButton AddOption(string text)
-        {
-            return AddOption(text, String.Empty);
-        }
+        public virtual RadioButton AddOption(string text) => AddOption(text, string.Empty);
 
         /// <summary>
         /// Adds a new option.
@@ -79,13 +63,15 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public virtual RadioButton AddOption(string text, string optionName)
         {
-            RadioButton lrb = new RadioButton(this);
-            lrb.Name = optionName;
-            lrb.Text = text;
+            RadioButton lrb = new RadioButton(this)
+            {
+                Name = optionName,
+                Text = text
+            };
             lrb.Checked += OnRadioClicked;
             lrb.Dock = Dock.Top;
             lrb.Margin = new Margin(0, 0, 0, 1); // 1 bottom
-            lrb.KeyboardInputEnabled = false; // todo: true?
+            lrb.KeyboardInputEnabled = false; // TODO: true?
             lrb.IsTabable = true;
 
             Invalidate();
@@ -99,25 +85,21 @@ namespace Gwen.Controls
         protected virtual void OnRadioClicked(ControlBase fromPanel, EventArgs args)
         {
             RadioButton chked = fromPanel as RadioButton;
-            foreach (var child in Children)
+            foreach (ControlBase child in Children)
             {
                 if (child is RadioButton rb)
                 {
                     if (rb == chked)
                     {
-                        m_Selected = rb;
+                        Selected = rb;
                         break;
                     }
                 }
             }
 
-            OnChanged(m_Selected);
+            OnChanged(Selected);
         }
-        protected virtual void OnChanged(ControlBase NewTarget)
-        {
-            if (SelectionChanged != null)
-                SelectionChanged.Invoke(this, new ItemSelectedEventArgs(NewTarget));
-        }
+        protected virtual void OnChanged(ControlBase NewTarget) => SelectionChanged?.Invoke(this, new ItemSelectedEventArgs(NewTarget));
 
         /// <summary>
         /// Selects the specified option.

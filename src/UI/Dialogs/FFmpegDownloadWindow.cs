@@ -1,23 +1,20 @@
+using Gwen;
+using Gwen.Controls;
+using linerider.IO.ffmpeg;
+using linerider.Utils;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using Gwen;
-using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
-using linerider.IO;
-using linerider.IO.ffmpeg;
-using System.Diagnostics;
 
 namespace linerider.UI
 {
     public class FFmpegDownloadWindow : DialogBase
     {
-        private ProgressBar _progress;
-        private Label _text;
+        private readonly ProgressBar _progress;
+        private readonly Label _text;
         private string ffmpeg_download
         {
             get
@@ -54,10 +51,7 @@ namespace linerider.UI
         protected override void CloseButtonPressed(ControlBase control, EventArgs args)
         {
             base.CloseButtonPressed(control, args);
-            if (_webclient != null)
-            {
-                _webclient.CancelAsync();
-            }
+            _webclient?.CancelAsync();
         }
         public override void Dispose()
         {
@@ -66,11 +60,11 @@ namespace linerider.UI
         }
         private void DownloadComplete(string fn)
         {
-            var dir = FFMPEG.ffmpeg_dir;
+            string dir = FFMPEG.ffmpeg_dir;
             string error = null;
             try
             {
-                var archive = ZipFile.OpenRead(fn);
+                ZipArchive archive = ZipFile.OpenRead(fn);
                 if (archive.GetEntry("ffmpeg.exe") == null &&
                     archive.GetEntry("ffmpeg") == null)
                 {
@@ -78,7 +72,7 @@ namespace linerider.UI
                 }
                 else
                 {
-                    Directory.CreateDirectory(dir);
+                    _ = Directory.CreateDirectory(dir);
                     ZipFile.ExtractToDirectory(fn, dir);
                 }
             }
@@ -96,30 +90,23 @@ namespace linerider.UI
                     }
                     else
                     {
-                        MessageBox.Show(_canvas, "ffmpeg was successfully downloaded\nYou can now record tracks.", "Success!", true, true);
+                        _ = MessageBox.Show(_canvas, "ffmpeg was successfully downloaded\nYou can now record tracks.", "Success!", true, true);
                     }
                 }
-                Close();
+                _ = Close();
             });
         }
         private void UpdateDownloadSpeed(long currentbytes)
         {
-            var elapsed = _downloadwatch.Elapsed;
+            TimeSpan elapsed = _downloadwatch.Elapsed;
             if (elapsed.TotalSeconds < 0.5)
                 return;
 
-            var diff = currentbytes - _lastbytes;
-            var rate = diff / elapsed.TotalSeconds;
-            var kbs = (int)(rate / 1024);
-            var mbs = kbs / 1024;
-            if (mbs > 0)
-            {
-                _text.Text = $"Downloading... {mbs} mb/s";
-            }
-            else
-            {
-                _text.Text = $"Downloading... {kbs} kb/s";
-            }
+            long diff = currentbytes - _lastbytes;
+            double rate = diff / elapsed.TotalSeconds;
+            int kbs = (int)(rate / 1024);
+            int mbs = kbs / 1024;
+            _text.Text = mbs > 0 ? $"Downloading... {mbs} mb/s" : $"Downloading... {kbs} kb/s";
             _lastbytes = currentbytes;
             _downloadwatch.Restart();
         }
@@ -142,7 +129,7 @@ namespace linerider.UI
                         {
                             GameCanvas.QueuedActions.Enqueue(() =>
                             {
-                                Close();
+                                _ = Close();
                                 _canvas.ShowError("Download failed\n\n" + e.Error);
                             });
                         }
@@ -164,12 +151,9 @@ namespace linerider.UI
             }
             catch (Exception e)
             {
-                if (_webclient != null)
-                {
-                    _webclient.CancelAsync();//cleanup
-                }
+                _webclient?.CancelAsync(); // Cleanup
                 _canvas.ShowError("Download failed\n\n" + e);
-                Close();
+                _ = Close();
             }
         }
     }

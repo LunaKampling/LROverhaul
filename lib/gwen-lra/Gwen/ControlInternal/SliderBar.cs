@@ -1,7 +1,4 @@
-﻿using Gwen.Controls;
-using System;
-
-namespace Gwen.ControlInternal
+﻿namespace Gwen.ControlInternal
 {
     /// <summary>
     /// Slider bar.
@@ -13,7 +10,7 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Indicates whether the bar is horizontal.
         /// </summary>
-        public bool IsHorizontal { get { return m_bHorizontal; } set { m_bHorizontal = value; } }
+        public bool IsHorizontal { get; set; }
         public override bool ToolTipProvider => false;
 
         #endregion Properties
@@ -39,16 +36,11 @@ namespace Gwen.ControlInternal
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawSliderButton(this, IsHeld, IsHorizontal);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawSliderButton(this, IsHeld, IsHorizontal);
 
         #endregion Methods
 
         #region Fields
-
-        private bool m_bHorizontal;
 
         #endregion Fields
     }

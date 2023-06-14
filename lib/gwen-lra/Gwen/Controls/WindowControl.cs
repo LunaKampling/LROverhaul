@@ -1,7 +1,6 @@
 ﻿using Gwen.ControlInternal;
 using System;
 using System.Drawing;
-using System.Linq;
 
 namespace Gwen.Controls
 {
@@ -12,21 +11,8 @@ namespace Gwen.Controls
     {
         private class TitleLabel : Label
         {
-            private WindowControl m_Window;
-            protected override Color CurrentColor
-            {
-                get
-                {
-                    if (m_Window.IsOnTop)
-                    {
-                        return Skin.Colors.Text.AccentForeground;
-                    }
-                    else
-                    {
-                        return Skin.Colors.Text.Foreground;
-                    }
-                }
-            }
+            private readonly WindowControl m_Window;
+            protected override Color CurrentColor => m_Window.IsOnTop ? Skin.Colors.Text.AccentForeground : Skin.Colors.Text.Foreground;
             public TitleLabel(ControlBase parent, WindowControl window) : base(parent)
             {
                 m_Window = window;
@@ -46,19 +32,19 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines whether the control should be disposed on close.
         /// </summary>
-        public bool DeleteOnClose { get { return m_DeleteOnClose; } set { m_DeleteOnClose = value; } }
+        public bool DeleteOnClose { get; set; }
 
         /// <summary>
         /// Determines whether the window has close button.
         /// </summary>
-        public bool IsClosable { get { return !m_CloseButton.IsHidden; } set { m_CloseButton.IsHidden = !value; } }
+        public bool IsClosable { get => !m_CloseButton.IsHidden; set => m_CloseButton.IsHidden = !value; }
 
         /// <summary>
         /// Indicates whether the control is hidden.
         /// </summary>
         public override bool IsHidden
         {
-            get { return base.IsHidden; }
+            get => base.IsHidden;
             set
             {
                 if (IsHidden == value)
@@ -78,10 +64,7 @@ namespace Gwen.Controls
                         m_Modal.Layout();
                     }
                 }
-                if (IsHiddenChanged != null)
-                {
-                    IsHiddenChanged.Invoke(this, EventArgs.Empty);
-                }
+                IsHiddenChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -105,21 +88,12 @@ namespace Gwen.Controls
         /// <summary>
         /// Window caption.
         /// </summary>
-        public string Title { get { return m_Title.Text; } set { m_Title.Text = value; } }
+        public string Title { get => m_Title.Text; set => m_Title.Text = value; }
 
-        protected override Margin PanelMargin
-        {
-            get
-            {
-                return Margin.Two;
-            }
-        }
+        protected override Margin PanelMargin => Margin.Two;
         public override bool AutoSizeToContents
         {
-            get
-            {
-                return base.AutoSizeToContents;
-            }
+            get => base.AutoSizeToContents;
             set
             {
                 if (AutoSizeToContents != value)
@@ -172,8 +146,8 @@ namespace Gwen.Controls
                 Name = "closeButton"
             };
             m_CloseButton.Clicked += CloseButtonPressed;
-            //Create a blank content control, dock it to the top - Should this be a ScrollControl?
-            // GetResizer(8).Hide();
+            // Create a blank content control, dock it to the top - Should this be a ScrollControl?
+            //GetResizer(8).Hide();
             _resizer_top.Hide();
             IsTabable = false;
             MinimumSize = new Size(100, 50);
@@ -193,11 +167,11 @@ namespace Gwen.Controls
             if (IsHidden)
             {
                 base.Show();
-                var canvas = GetCanvas();
+                Canvas canvas = GetCanvas();
                 if (canvas != null)
                 {
                     Layout();
-                    SetPosition((canvas.Width / 2) - (Width / 2), (canvas.Height / 2) - (Height / 2));
+                    SetPosition(canvas.Width / 2 - Width / 2, canvas.Height / 2 - Height / 2);
                 }
             }
         }
@@ -223,10 +197,7 @@ namespace Gwen.Controls
             m_Modal = new Modal(GetCanvas());
             Parent = m_Modal;
 
-            if (dim)
-                m_Modal.ShouldDrawBackground = true;
-            else
-                m_Modal.ShouldDrawBackground = false;
+            m_Modal.ShouldDrawBackground = dim;
             m_Modal.IsHidden = IsHidden;
         }
 
@@ -246,7 +217,7 @@ namespace Gwen.Controls
                 m_Modal = null;
             }
 
-            if (m_DeleteOnClose && Parent != null)
+            if (DeleteOnClose && Parent != null)
             {
                 Parent.RemoveChild(this, true);
             }
@@ -288,7 +259,6 @@ namespace Gwen.Controls
         private readonly CloseButton m_CloseButton;
         private readonly Label m_Title;
         private readonly Dragger m_TitleBar;
-        private bool m_DeleteOnClose;
         private Modal m_Modal;
 
         #endregion Fields

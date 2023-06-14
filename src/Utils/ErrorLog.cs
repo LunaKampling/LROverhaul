@@ -16,13 +16,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
+using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
 
 namespace linerider.Utils
 {
@@ -32,7 +29,7 @@ namespace linerider.Utils
         {
             try
             {
-                var fs = File.AppendText(Program.UserDirectory + "errors.txt");
+                StreamWriter fs = File.AppendText(Program.UserDirectory + "errors.txt");
                 fs.WriteLine(log);
                 fs.Dispose();
             }

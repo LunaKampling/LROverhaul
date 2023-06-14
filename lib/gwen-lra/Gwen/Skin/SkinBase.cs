@@ -23,7 +23,7 @@ namespace Gwen.Skin
         /// </summary>
         public Font DefaultFont
         {
-            get { return m_DefaultFont; }
+            get => m_DefaultFont;
             set
             {
                 m_DefaultFont.Dispose();
@@ -34,7 +34,7 @@ namespace Gwen.Skin
         /// <summary>
         /// Renderer used.
         /// </summary>
-        public Renderer.RendererBase Renderer { get { return m_Renderer; } }
+        public Renderer.RendererBase Renderer => m_Renderer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkinBase"/> class.
@@ -61,7 +61,7 @@ namespace Gwen.Skin
 
         ~SkinBase()
         {
-            Debug.WriteLine(String.Format("IDisposable object finalized: {0}", GetType()));
+            Debug.WriteLine(string.Format("IDisposable object finalized: {0}", GetType()));
         }
 
 #endif
@@ -254,7 +254,8 @@ namespace Gwen.Skin
             if (!isRoot)
                 Renderer.DrawFilledRect(new Rectangle(8, halfWay, 16 - 9, 1));
 
-            if (!open) return;
+            if (!open)
+                return;
 
             Renderer.DrawFilledRect(new Rectangle(14 + 7, labelHeight + 1, 1, lastBranch + halfWay - labelHeight));
         }
@@ -285,12 +286,7 @@ namespace Gwen.Skin
             if (drawbox)
                 m_Renderer.DrawFilledRect(new Rectangle(0, rect.Y, iWidth, rect.Height));
 
-            if (bBeingEdited)
-                m_Renderer.DrawColor = Colors.ForegroundInactive;
-            else if (hovered)
-                m_Renderer.DrawColor = Colors.ForegroundInactive;
-            else
-                m_Renderer.DrawColor = Colors.ForegroundInactive;
+            m_Renderer.DrawColor = bBeingEdited ? Colors.ForegroundInactive : hovered ? Colors.ForegroundInactive : Colors.ForegroundInactive;
 
             m_Renderer.DrawFilledRect(new Rectangle(iWidth, rect.Y, 1, rect.Height));
 
@@ -344,8 +340,8 @@ namespace Gwen.Skin
 
         public virtual void DrawArrowDown(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            float x = rect.Width / 5.0f;
+            float y = rect.Height / 5.0f;
 
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 0.0f, rect.Y + y * 1.0f, x, y * 1.0f));
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 1.0f, x, y * 2.0f));
@@ -356,8 +352,8 @@ namespace Gwen.Skin
 
         public virtual void DrawArrowUp(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            float x = rect.Width / 5.0f;
+            float y = rect.Height / 5.0f;
 
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 0.0f, rect.Y + y * 3.0f, x, y * 1.0f));
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 2.0f, x, y * 2.0f));
@@ -368,8 +364,8 @@ namespace Gwen.Skin
 
         public virtual void DrawArrowLeft(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            float x = rect.Width / 5.0f;
+            float y = rect.Height / 5.0f;
 
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 3.0f, rect.Y + y * 0.0f, x * 1.0f, y));
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 2.0f, rect.Y + y * 1.0f, x * 2.0f, y));
@@ -380,8 +376,8 @@ namespace Gwen.Skin
 
         public virtual void DrawArrowRight(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            float x = rect.Width / 5.0f;
+            float y = rect.Height / 5.0f;
 
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 0.0f, x * 1.0f, y));
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 1.0f, x * 2.0f, y));
@@ -392,8 +388,8 @@ namespace Gwen.Skin
 
         public virtual void DrawCheck(Rectangle rect)
         {
-            float x = (rect.Width / 5.0f);
-            float y = (rect.Height / 5.0f);
+            float x = rect.Width / 5.0f;
+            float y = rect.Height / 5.0f;
 
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 0.0f, rect.Y + y * 3.0f, x * 2, y * 2));
             m_Renderer.DrawFilledRect(Util.FloatRect(rect.X + x * 1.0f, rect.Y + y * 4.0f, x * 2, y * 2));

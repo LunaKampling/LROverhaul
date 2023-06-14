@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gwen.ControlInternal;
+using System;
 using System.Drawing;
-using Gwen.ControlInternal;
 
 namespace Gwen.Controls
 {
@@ -9,8 +9,6 @@ namespace Gwen.Controls
     /// </summary>
     public class MenuItem : Button
     {
-        private bool m_OnStrip;
-        private bool m_Checkable;
         private bool m_Checked;
         private Menu m_Menu;
         private ControlBase m_SubmenuArrow;
@@ -19,24 +17,24 @@ namespace Gwen.Controls
         /// <summary>
         /// Indicates whether the item is on a menu strip.
         /// </summary>
-        public bool IsOnStrip { get { return m_OnStrip; } set { m_OnStrip = value; } }
+        public bool IsOnStrip { get; set; }
 
         /// <summary>
         /// Determines if the menu item is checkable.
         /// </summary>
-        public bool IsCheckable { get { return m_Checkable; } set { m_Checkable = value; } }
+        public bool IsCheckable { get; set; }
 
         /// <summary>
         /// Indicates if the parent menu is open.
         /// </summary>
-        public bool IsMenuOpen { get { if (m_Menu == null) return false; return !m_Menu.IsHidden; } }
+        public bool IsMenuOpen => m_Menu != null && !m_Menu.IsHidden;
 
         /// <summary>
         /// Gets or sets the check value.
         /// </summary>
         public bool IsChecked
         {
-            get { return m_Checked; }
+            get => m_Checked;
             set
             {
                 if (value == m_Checked)
@@ -44,18 +42,15 @@ namespace Gwen.Controls
 
                 m_Checked = value;
 
-                if (CheckChanged != null)
-                    CheckChanged.Invoke(this, EventArgs.Empty);
+                CheckChanged?.Invoke(this, EventArgs.Empty);
 
                 if (value)
                 {
-                    if (Checked != null)
-                        Checked.Invoke(this, EventArgs.Empty);
+                    Checked?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
-                    if (UnChecked != null)
-                        UnChecked.Invoke(this, EventArgs.Empty);
+                    UnChecked?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -69,15 +64,16 @@ namespace Gwen.Controls
             {
                 if (null == m_Menu)
                 {
-                    m_Menu = new Menu(GetCanvas());
-                    m_Menu.IsHidden = true;
-
-                    if (!m_OnStrip)
+                    m_Menu = new Menu(GetCanvas())
                     {
-                        if (m_SubmenuArrow != null)
-                            m_SubmenuArrow.Dispose();
+                        IsHidden = true
+                    };
+
+                    if (!IsOnStrip)
+                    {
+                        m_SubmenuArrow?.Dispose();
                         m_SubmenuArrow = new RightArrow(this);
-                        m_SubmenuArrow.SetSize(15, 15);
+                        _ = m_SubmenuArrow.SetSize(15, 15);
                     }
 
                     Invalidate();
@@ -115,7 +111,7 @@ namespace Gwen.Controls
             : base(parent)
         {
             AutoSizeToContents = true;
-            m_OnStrip = false;
+            IsOnStrip = false;
             IsTabable = false;
             IsCheckable = false;
             IsChecked = false;
@@ -127,17 +123,11 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawMenuItem(this, IsMenuOpen, m_Checkable ? m_Checked : false);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawMenuItem(this, IsMenuOpen, IsCheckable && m_Checked);
 
         protected override void ProcessLayout(Size size)
         {
-            if (m_SubmenuArrow != null)
-            {
-                m_SubmenuArrow.AlignToEdge(Pos.Right | Pos.CenterV, 4, 0);
-            }
+            m_SubmenuArrow?.AlignToEdge(Pos.Right | Pos.CenterV, 4, 0);
             base.ProcessLayout(size);
         }
 
@@ -150,11 +140,10 @@ namespace Gwen.Controls
             {
                 ToggleMenu();
             }
-            else if (!m_OnStrip)
+            else if (!IsOnStrip)
             {
                 IsChecked = !IsChecked;
-                if (Selected != null)
-                    Selected.Invoke(this, new ItemSelectedEventArgs(this));
+                Selected?.Invoke(this, new ItemSelectedEventArgs(this));
                 GetCanvas().CloseMenus();
             }
             base.OnClicked(x, y);
@@ -176,7 +165,8 @@ namespace Gwen.Controls
         /// </summary>
         public void OpenMenu()
         {
-            if (null == m_Menu) return;
+            if (null == m_Menu)
+                return;
 
             m_Menu.IsHidden = false;
             m_Menu.BringToFront();
@@ -184,7 +174,7 @@ namespace Gwen.Controls
             Point p = LocalPosToCanvas(Point.Empty);
 
             // Strip menus open downwards
-            if (m_OnStrip)
+            if (IsOnStrip)
             {
                 m_Menu.SetPosition(p.X, p.Y + Height + 1);
             }
@@ -204,11 +194,12 @@ namespace Gwen.Controls
         /// </summary>
         public void CloseMenu()
         {
-            if (null == m_Menu) return;
+            if (null == m_Menu)
+                return;
             m_Menu.Close();
             m_Menu.CloseAll();
         }
-        //todo removed accellerator sizing code
+        // TODO: removed accellerator sizing code
 
         public MenuItem SetAction(GwenEventHandler<EventArgs> handler)
         {
@@ -225,23 +216,22 @@ namespace Gwen.Controls
         {
             if (m_Accelerator != null)
             {
-                //m_Accelerator.DelayedDelete(); // to prevent double disposing
+                //m_Accelerator.DelayedDelete(); // To prevent double disposing
                 m_Accelerator = null;
             }
 
             if (string.IsNullOrEmpty(acc))
                 return;
 
-            m_Accelerator = new Label(this);
-            m_Accelerator.Dock = Dock.Right;
-            m_Accelerator.Alignment = Pos.Right | Pos.CenterV;
-            m_Accelerator.Text = acc;
-            m_Accelerator.Margin = new Margin(0, 0, 16, 0);
-            // todo
+            m_Accelerator = new Label(this)
+            {
+                Dock = Dock.Right,
+                Alignment = Pos.Right | Pos.CenterV,
+                Text = acc,
+                Margin = new Margin(0, 0, 16, 0)
+            };
+            // TODO
         }
-        public override string ToString()
-        {
-            return "[MenuItem: " + (this as MenuItem).Text + "]";
-        }
+        public override string ToString() => "[MenuItem: " + Text + "]";
     }
 }

@@ -16,8 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-
 namespace linerider.Game
 {
 
@@ -26,8 +24,6 @@ namespace linerider.Game
     /// </summary>
     public struct GridPoint
     {
-
-        int x, y;
 
         /// <summary>
         /// Constructs a new Point instance.
@@ -42,19 +38,19 @@ namespace linerider.Game
         }
 
         /// <summary>
-        /// Gets a <see cref="System.Boolean"/> that indicates whether this instance is empty or zero.
+        /// Gets a <see cref="bool"/> that indicates whether this instance is empty or zero.
         /// </summary>
-        public bool IsEmpty { get { return X == 0 && Y == 0; } }
+        public bool IsEmpty => X == 0 && Y == 0;
 
         /// <summary>
         /// Gets or sets the X coordinate of this instance.
         /// </summary>
-        public int X { get { return x; } set { x = value; } }
+        public int X { get; set; }
 
         /// <summary>
         /// Gets or sets the Y coordinate of this instance.
         /// </summary>
-        public int Y { get { return y; } set { y = value; } }
+        public int Y { get; set; }
 
         /// <summary>
         /// Returns the Point (0, 0).
@@ -135,45 +131,33 @@ namespace linerider.Game
         /// </summary>
         /// <param name="obj">The object instance to compare to.</param>
         /// <returns>True, if both instances are equal; false otherwise.</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is GridPoint)
-                return Equals((GridPoint)obj);
-
-            return false;
-        }
+        public override bool Equals(object obj) => obj is GridPoint && Equals((GridPoint)obj);
 
         /// <summary>
         /// Returns the hash code for this instance.
         /// </summary>
-        /// <returns>A <see cref="System.Int32"/> that represents the hash code for this instance./></returns>
+        /// <returns>A <see cref="int"/> that represents the hash code for this instance./></returns>
         public override int GetHashCode()
         {
             unchecked
             {
                 int hash = 27;
-                hash = hash * 486187739 + x;
-                hash = hash * 486187739 + y;
+                hash = hash * 486187739 + X;
+                hash = hash * 486187739 + Y;
                 return hash;
             }
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that describes this instance.
+        /// Returns a <see cref="string"/> that describes this instance.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that describes this instance.</returns>
-        public override string ToString()
-        {
-            return String.Format("{{{0}, {1}}}", X, Y);
-        }
+        /// <returns>A <see cref="string"/> that describes this instance.</returns>
+        public override string ToString() => string.Format("{{{0}, {1}}}", X, Y);
         /// <summary>
         /// Indicates whether this instance is equal to the specified Point.
         /// </summary>
         /// <param name="other">The instance to compare to.</param>
         /// <returns>True, if both instances are equal; false otherwise.</returns>
-        public bool Equals(GridPoint other)
-        {
-            return X == other.X && Y == other.Y;
-        }
+        public bool Equals(GridPoint other) => X == other.X && Y == other.Y;
     }
 }

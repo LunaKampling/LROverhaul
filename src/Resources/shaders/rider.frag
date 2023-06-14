@@ -28,6 +28,6 @@ void main()
     else if (v_unit == 6.0)
         color = texture2D(u_sledbrokentex, v_texcoord);
     else
-        color = vec4(1.0, 0.0, 0.0, 1.0);//invalid, show red
+        color = vec4(1.0, 0.0, 0.0, 1.0); // Invalid, show red
     gl_FragColor = color * v_color;
 }

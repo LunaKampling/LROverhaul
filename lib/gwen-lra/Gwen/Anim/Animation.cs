@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gwen.Controls;
 
 namespace Gwen.Anim
 {
@@ -8,18 +7,15 @@ namespace Gwen.Anim
     {
         protected Controls.ControlBase m_Control;
 
-        //private static List<Animation> g_AnimationsListed = new List<Animation>(); // unused
+        //private static List<Animation> g_AnimationsListed = new List<Animation>(); // Unused
         private static readonly Dictionary<Controls.ControlBase, List<Animation>> m_Animations = new Dictionary<Controls.ControlBase, List<Animation>>();
 
         protected virtual void Think()
         {
-            
+
         }
 
-        public virtual bool Finished
-        {
-            get { throw new InvalidOperationException("Pure virtual function call"); }
-        }
+        public virtual bool Finished => throw new InvalidOperationException("Pure virtual function call");
 
         public static void Add(Controls.ControlBase control, Animation animation)
         {
@@ -34,7 +30,7 @@ namespace Gwen.Anim
             if (m_Animations.ContainsKey(control))
             {
                 m_Animations[control].Clear();
-                m_Animations.Remove(control);
+                _ = m_Animations.Remove(control);
             }
         }
 
@@ -42,13 +38,13 @@ namespace Gwen.Anim
         {
             foreach (KeyValuePair<Controls.ControlBase, List<Animation>> pair in m_Animations)
             {
-                var valCopy = pair.Value.FindAll(x =>true); // list copy so foreach won't break when we remove elements
+                List<Animation> valCopy = pair.Value.FindAll(x => true); // List copy so foreach won't break when we remove elements
                 foreach (Animation animation in valCopy)
                 {
                     animation.Think();
                     if (animation.Finished)
                     {
-                        pair.Value.Remove(animation);
+                        _ = pair.Value.Remove(animation);
                     }
                 }
             }

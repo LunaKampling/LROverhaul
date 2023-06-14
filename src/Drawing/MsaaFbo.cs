@@ -17,17 +17,16 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //#define nomsaa
-using System;
-using System.Drawing;
 using OpenTK.Graphics.OpenGL;
+using System;
 namespace linerider.Drawing
 {
     public class MsaaFbo : GameService
     {
         private static int MSAA = 0;
         public readonly int Framebuffer;
-        private int _renderbuffer;
-        private int _stencilbuffer;
+        private readonly int _renderbuffer;
+        private readonly int _stencilbuffer;
         public int Width;
         public int Height;
         public MsaaFbo()
@@ -42,14 +41,14 @@ namespace linerider.Drawing
         }
         private void ErrorCheck()
         {
-            var err = GL.GetError();
+            ErrorCode err = GL.GetError();
             if (err != ErrorCode.NoError)
             {
                 System.Diagnostics.Debug.WriteLine("GL Error: " + err);
             }
             else
             {
-                var status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+                FramebufferErrorCode status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
                 if (status != FramebufferErrorCode.FramebufferComplete)
                 {
                     System.Diagnostics.Debug.WriteLine("Framebuffer Error: " + status);
@@ -70,13 +69,13 @@ namespace linerider.Drawing
                 Height = height;
 
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _renderbuffer);
-                SafeFrameBuffer.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer,MSAA, RenderbufferStorage.Rgba8, width, height);
-                
+                SafeFrameBuffer.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, MSAA, RenderbufferStorage.Rgba8, width, height);
+
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _stencilbuffer);
-                SafeFrameBuffer.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, MSAA,RenderbufferStorage.Depth24Stencil8,width,height);
+                SafeFrameBuffer.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, MSAA, RenderbufferStorage.Depth24Stencil8, width, height);
 
                 SafeFrameBuffer.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.StencilAttachment, RenderbufferTarget.Renderbuffer, _stencilbuffer);
-                
+
                 SafeFrameBuffer.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, RenderbufferTarget.Renderbuffer, _renderbuffer);
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
                 ErrorCheck();
@@ -90,12 +89,12 @@ namespace linerider.Drawing
 #if nomsaa
             return;
 #else
-            SafeFrameBuffer.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);//default
+            SafeFrameBuffer.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0); // Default
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.ReadFramebuffer, Framebuffer);
             SafeFrameBuffer.BlitFramebuffer(0, 0, Width, Height,
                                0, 0, Width, Height,
                                ClearBufferMask.ColorBufferBit,
-                               BlitFramebufferFilter.Linear); 
+                               BlitFramebufferFilter.Linear);
             ErrorCheck();
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
 #endif

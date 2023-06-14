@@ -26,8 +26,7 @@ namespace Gwen.Renderer
             //rnd = new Random();
             m_RenderOffset = Point.Empty;
             Scale = 1.0f;
-            if (CTT != null)
-                CTT.Initialize();
+            CTT?.Initialize();
         }
 
         /// <summary>
@@ -36,8 +35,7 @@ namespace Gwen.Renderer
         /// <filterpriority>2</filterpriority>
         public virtual void Dispose()
         {
-            if (CTT != null)
-                CTT.ShutDown();
+            CTT?.ShutDown();
             GC.SuppressFinalize(this);
         }
 
@@ -45,7 +43,7 @@ namespace Gwen.Renderer
 
         ~RendererBase()
         {
-            Debug.WriteLine(String.Format("IDisposable object finalized: {0}", GetType()));
+            Debug.WriteLine(string.Format("IDisposable object finalized: {0}", GetType()));
         }
 
 #endif
@@ -70,26 +68,17 @@ namespace Gwen.Renderer
         /// <summary>
         /// Rendering offset. No need to touch it usually.
         /// </summary>
-        public Point RenderOffset { get { return m_RenderOffset; } set { m_RenderOffset = value; } }
+        public Point RenderOffset { get => m_RenderOffset; set => m_RenderOffset = value; }
 
         /// <summary>
         /// Clipping rectangle.
         /// </summary>
-        public Rectangle ClipRegion { get { return m_ClipRegion; } set { m_ClipRegion = value; } }
+        public Rectangle ClipRegion { get => m_ClipRegion; set => m_ClipRegion = value; }
 
         /// <summary>
         /// Indicates whether the clip region is visible.
         /// </summary>
-        public bool ClipRegionVisible
-        {
-            get
-            {
-                if (m_ClipRegion.Width <= 0 || m_ClipRegion.Height <= 0)
-                    return false;
-
-                return true;
-            }
-        }
+        public bool ClipRegionVisible => m_ClipRegion.Width > 0 && m_ClipRegion.Height > 0;
 
         /// <summary>
         /// Draws a line.
@@ -129,10 +118,7 @@ namespace Gwen.Renderer
         /// <summary>
         /// Create a texture from the specified bitmap.
         /// </summary>
-        public virtual Texture CreateTexture(Bitmap bmp)
-        { 
-            return null;
-        }
+        public virtual Texture CreateTexture(Bitmap bmp) => null;
 
         /// <summary>
         /// Initializes texture from raw pixel data.
@@ -183,17 +169,14 @@ namespace Gwen.Renderer
         /// <summary>
         /// Cache to texture provider.
         /// </summary>
-        public virtual ICacheToTexture CTT { get { return null; } }
+        public virtual ICacheToTexture CTT => null;
 
         /// <summary>
         /// Loads the specified font.
         /// </summary>
         /// <param name="font">Font to load.</param>
         /// <returns>True if succeeded.</returns>
-        public virtual bool LoadFont(Font font)
-        {
-            return false;
-        }
+        public virtual bool LoadFont(Font font) => false;
 
         /// <summary>
         /// Frees the specified font.
@@ -208,10 +191,7 @@ namespace Gwen.Renderer
         /// <param name="font">Font to use.</param>
         /// <param name="text">Text to measure.</param>
         /// <returns>Width and height of the rendered text.</returns>
-        public virtual Point MeasureText(Font font, string text)
-        {
-            throw new NotImplementedException("Text rendering not implemented by Skin");
-        }
+        public virtual Point MeasureText(Font font, string text) => throw new NotImplementedException("Text rendering not implemented by Skin");
 
         /// <summary>
         /// Renders text using specified font.
@@ -219,10 +199,7 @@ namespace Gwen.Renderer
         /// <param name="font">Font to use.</param>
         /// <param name="position">Top-left corner of the text.</param>
         /// <param name="text">Text to render.</param>
-        public virtual void RenderText(Font font, Point position, string text)
-        {
-            throw new NotImplementedException("Text rendering not implemented by Skin");
-        }
+        public virtual void RenderText(Font font, Point position, string text) => throw new NotImplementedException("Text rendering not implemented by Skin");
 
         //
         // No need to implement these functions in your derived class, but if
@@ -247,11 +224,9 @@ namespace Gwen.Renderer
         /// </summary>
         /// <param name="x">X.</param>
         /// <param name="y">Y.</param>
-        public virtual void DrawPixel(int x, int y)
-        {
+        public virtual void DrawPixel(int x, int y) =>
             // [omeg] amazing ;)
             DrawFilledRect(new Rectangle(x, y, 1, 1));
-        }
 
         /// <summary>
         /// Gets pixel color of a specified texture. Slow.
@@ -260,10 +235,7 @@ namespace Gwen.Renderer
         /// <param name="x">X.</param>
         /// <param name="y">Y.</param>
         /// <returns>Pixel color.</returns>
-        public virtual Color PixelColor(Texture texture, uint x, uint y)
-        {
-            return PixelColor(texture, x, y, Color.White);
-        }
+        public virtual Color PixelColor(Texture texture, uint x, uint y) => PixelColor(texture, x, y, Color.White);
 
         /// <summary>
         /// Gets pixel color of a specified texture, returning default if otherwise failed. Slow.
@@ -273,10 +245,7 @@ namespace Gwen.Renderer
         /// <param name="y">Y.</param>
         /// <param name="defaultColor">Color to return on failure.</param>
         /// <returns>Pixel color.</returns>
-        public virtual Color PixelColor(Texture texture, uint x, uint y, Color defaultColor)
-        {
-            return defaultColor;
-        }
+        public virtual Color PixelColor(Texture texture, uint x, uint y, Color defaultColor) => defaultColor;
 
         /// <summary>
         /// Draws a round-corner rectangle.
@@ -352,19 +321,13 @@ namespace Gwen.Renderer
         /// <summary>
         /// Translates a panel's local drawing coordinate into view space, taking offsets into account.
         /// </summary>
-        public Rectangle Translate(Rectangle rect)
-        {
-            return new Rectangle(TranslateX(rect.X), TranslateY(rect.Y), Util.Ceil(rect.Width), Util.Ceil(rect.Height));
-        }
+        public Rectangle Translate(Rectangle rect) => new Rectangle(TranslateX(rect.X), TranslateY(rect.Y), Util.Ceil(rect.Width), Util.Ceil(rect.Height));
 
         /// <summary>
         /// Adds a point to the render offset.
         /// </summary>
         /// <param name="offset">Point to add.</param>
-        public void AddRenderOffset(Rectangle offset)
-        {
-            m_RenderOffset = new Point(m_RenderOffset.X + offset.X, m_RenderOffset.Y + offset.Y);
-        }
+        public void AddRenderOffset(Rectangle offset) => m_RenderOffset = new Point(m_RenderOffset.X + offset.X, m_RenderOffset.Y + offset.Y);
 
         /// <summary>
         /// Adds a rectangle to the clipping region.

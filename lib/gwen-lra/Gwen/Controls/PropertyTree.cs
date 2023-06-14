@@ -1,5 +1,4 @@
-﻿using System;
-using Gwen.ControlInternal;
+﻿using Gwen.ControlInternal;
 
 namespace Gwen.Controls
 {
@@ -24,11 +23,15 @@ namespace Gwen.Controls
         /// <returns>Newly created control</returns>
         public PropertyTable Add(string label, int startingbarposition = 80)
         {
-            PropertyTreeNode node = new PropertyTreeNode(this);
-            node.Text = label;
-            PropertyTable props = new PropertyTable(node, startingbarposition);
-            props.Dock = Dock.Fill;
-            props.AutoSizeToContents = true;
+            PropertyTreeNode node = new PropertyTreeNode(this)
+            {
+                Text = label
+            };
+            PropertyTable props = new PropertyTable(node, startingbarposition)
+            {
+                Dock = Dock.Fill,
+                AutoSizeToContents = true
+            };
             node.Table = props;
             return props;
         }
@@ -36,9 +39,6 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawCategoryHolder(this);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawCategoryHolder(this);
     }
 }

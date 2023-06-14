@@ -25,16 +25,12 @@ namespace Gwen.Controls
 
         #region Methods
 
-        protected override double CalculateValue()
-        {
-            return m_SliderBar.X / (double)(Width - m_SliderBar.Width);
-        }
-
+        protected override double CalculateValue() => m_SliderBar.X / (double)(Width - m_SliderBar.Width);
 
         protected override void ProcessLayout(Size size)
         {
             base.ProcessLayout(size);
-            m_SliderBar.SetSize(15, Height);
+            _ = m_SliderBar.SetSize(15, Height);
             UpdateBarFromValue();
         }
 
@@ -49,7 +45,7 @@ namespace Gwen.Controls
             base.OnMouseClickedLeft(x, y, down);
             if (down)
             {
-                IsMouseDepressed = false;//we forfeit our mouse down event and right to a mouse up event
+                IsMouseDepressed = false; // We forfeit our mouse down event and right to a mouse up event
 
                 m_SliderBar.MoveTo((int)(CanvasPosToLocal(new Point(x, y)).X - m_SliderBar.Width * 0.5), m_SliderBar.Y);
                 m_SliderBar.InputMouseClickedLeft(x, y, down);
@@ -61,15 +57,9 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawSlider(this, true, m_SnapToNotches && DrawNotches ? m_NotchCount : 0, m_SliderBar.Width, m_Value);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawSlider(this, true, m_SnapToNotches && DrawNotches ? m_NotchCount : 0, m_SliderBar.Width, m_Value);
 
-        protected override void UpdateBarFromValue()
-        {
-            m_SliderBar.MoveTo((int)((Width - m_SliderBar.Width) * (m_Value)), m_SliderBar.Y);
-        }
+        protected override void UpdateBarFromValue() => m_SliderBar.MoveTo((int)((Width - m_SliderBar.Width) * m_Value), m_SliderBar.Y);
 
         #endregion Methods
     }

@@ -1,25 +1,23 @@
 //#define CATCHERRORS
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading;
-using System.IO;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
 using linerider.IO;
 using linerider.IO.SOL;
+using linerider.Utils;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 
 namespace linerider.UI
 {
     public class LoadWindow : DialogBase
     {
-        private string title = "Load Track";
-        private TreeControl _tree;
-        private Button _load;
-        private Button _delete;
-        // while there should only be one load window at a time, in extreme 
+        private readonly string title = "Load Track";
+        private readonly TreeControl _tree;
+        private readonly Button _load;
+        private readonly Button _delete;
+        // While there should only be one load window at a time, in extreme 
         // cases the user could load a track, the window closes, the track
         // is loading, and opens another one. we want to consider the other
         // loading window a sister, and wait for its actions to complete.
@@ -65,7 +63,7 @@ namespace linerider.UI
                     Load(_tree.SelectedChildren[0]);
                 }
             };
-            SetSize(400, 400);
+            _ = SetSize(400, 400);
             // AutoSizeToContents = true;
             MakeModal(true);
             Setup();
@@ -76,10 +74,10 @@ namespace linerider.UI
             {
                 if (_tree.SelectedChildren.Count == 1)
                 {
-                    var itemdata = (ItemData)_tree.SelectedChildren[0].UserData;
+                    ItemData itemdata = (ItemData)_tree.SelectedChildren[0].UserData;
                     if (itemdata.ItemType == ItemType.Folder)
                     {
-                        var tracks = TrackIO.EnumerateTrackFiles(itemdata.Path);
+                        string[] tracks = TrackIO.EnumerateTrackFiles(itemdata.Path);
                         if (tracks.Length > 0)
                         {
                             Title = title + " - " + Path.GetFileName(tracks[0]);
@@ -96,32 +94,32 @@ namespace linerider.UI
                 }
             };
             string loadedfn;
-            using (var trk = _editor.CreateTrackReader())
+            using (TrackReader trk = _editor.CreateTrackReader())
             {
                 loadedfn = trk.Filename;
             }
-            var dirs = GetDirectories();
-            var rootfiles = GetTracks(Constants.TracksDirectory);
-            foreach (var file in rootfiles)
+            List<string> dirs = GetDirectories();
+            List<string> rootfiles = GetTracks(Constants.TracksDirectory);
+            foreach (string file in rootfiles)
             {
-                var filenode = _tree.AddNode(Path.GetFileName(file));
+                TreeNode filenode = _tree.AddNode(Path.GetFileName(file));
                 filenode.UserData = new ItemData(ItemType.TrackFile, file, Path.GetFileNameWithoutExtension(file));
                 if (loadedfn != null && file == loadedfn)
                 {
                     filenode.IsSelected = true;
                 }
             }
-            foreach (var dir in dirs)
+            foreach (string dir in dirs)
             {
-                var dirpath = Constants.TracksDirectory + dir + Path.DirectorySeparatorChar;
-                var tracks = GetTracks(dirpath);
+                string dirpath = Constants.TracksDirectory + dir + Path.DirectorySeparatorChar;
+                List<string> tracks = GetTracks(dirpath);
                 if (tracks.Count != 0)
                 {
-                    var node = _tree.AddNode(dir);
+                    TreeNode node = _tree.AddNode(dir);
                     node.UserData = new ItemData(ItemType.Folder, dirpath, dir);
-                    foreach (var file in tracks)
+                    foreach (string file in tracks)
                     {
-                        var filenode = node.AddNode(Path.GetFileName(file));
+                        TreeNode filenode = node.AddNode(Path.GetFileName(file));
                         filenode.UserData = new ItemData(ItemType.TrackFile, file, dir);
                         if (loadedfn != null && file == loadedfn)
                         {
@@ -134,126 +132,126 @@ namespace linerider.UI
         }
         private void Delete(TreeNode node)
         {
-            var itemdata = (ItemData)node.UserData;
+            ItemData itemdata = (ItemData)node.UserData;
             switch (itemdata.ItemType)
             {
                 case ItemType.Folder:
+                {
+                    MessageBox box = MessageBox.Show(
+                        _canvas,
+                        "Are you sure you want to delete this track folder?\nAll files inside of it will be permanently lost.",
+                        "Are you sure?",
+                        MessageBox.ButtonType.OkCancel);
+                    box.RenameButtons("Delete Folder");
+                    box.Dismissed +=
+                    (o, e) =>
                     {
-                        var box = MessageBox.Show(
-                            _canvas,
-                            "Are you sure you want to delete this track folder?\nAll files inside of it will be permanently lost.",
-                            "Are you sure?",
-                            MessageBox.ButtonType.OkCancel);
-                        box.RenameButtons("Delete Folder");
-                        box.Dismissed +=
-                        (o, e) =>
+                        if (e == DialogResult.OK)
                         {
-                            if (e == DialogResult.OK)
-                            {
-                                Directory.Delete(itemdata.Path, true);
-                                node.Parent.RemoveChild(node, false);
-                            }
-                        };
-                    }
-                    break;
+                            Directory.Delete(itemdata.Path, true);
+                            node.Parent.RemoveChild(node, false);
+                        }
+                    };
+                }
+                break;
                 case ItemType.TrackFile:
+                {
+                    MessageBox box = MessageBox.Show(
+                        _canvas,
+                        "Are you sure you want to delete this file?\nAll progress will be permanently lost.",
+                        $"Delete {Path.GetFileName(itemdata.Path)}?",
+                        MessageBox.ButtonType.OkCancel);
+                    box.RenameButtons("Delete File");
+                    box.Dismissed +=
+                    (o, e) =>
                     {
-                        var box = MessageBox.Show(
-                            _canvas,
-                            "Are you sure you want to delete this file?\nAll progress will be permanently lost.",
-                            $"Delete {Path.GetFileName(itemdata.Path)}?",
-                            MessageBox.ButtonType.OkCancel);
-                        box.RenameButtons("Delete File");
-                        box.Dismissed +=
-                        (o, e) =>
+                        if (e == DialogResult.OK)
                         {
-                            if (e == DialogResult.OK)
-                            {
-                                File.Delete(itemdata.Path);
-                                node.Parent.RemoveChild(node, false);
-                            }
-                        };
-                    }
-                    break;
+                            File.Delete(itemdata.Path);
+                            node.Parent.RemoveChild(node, false);
+                        }
+                    };
+                }
+                break;
                 case ItemType.Sol:
+                {
+                    MessageBox box = MessageBox.Show(
+                        _canvas,
+                        "Are you sure you want to delete this sol file?\nAll tracks contained within it will be permanently lost.",
+                        $"Delete {Path.GetFileName(itemdata.Path)}?",
+                        MessageBox.ButtonType.OkCancel);
+                    box.RenameButtons("Delete File");
+                    box.Dismissed +=
+                    (o, e) =>
                     {
-                        var box = MessageBox.Show(
-                            _canvas,
-                            "Are you sure you want to delete this sol file?\nAll tracks contained within it will be permanently lost.",
-                            $"Delete {Path.GetFileName(itemdata.Path)}?",
-                            MessageBox.ButtonType.OkCancel);
-                        box.RenameButtons("Delete File");
-                        box.Dismissed +=
-                        (o, e) =>
+                        if (e == DialogResult.OK)
                         {
-                            if (e == DialogResult.OK)
-                            {
-                                File.Delete(itemdata.Path);
-                                var parentnode = (TreeNode)node.Parent;
-                                parentnode.Parent.RemoveChild(parentnode, false);
-                            }
-                        };
-                    }
-                    break;
+                            File.Delete(itemdata.Path);
+                            TreeNode parentnode = (TreeNode)node.Parent;
+                            parentnode.Parent.RemoveChild(parentnode, false);
+                        }
+                    };
+                }
+                break;
             }
         }
         private void Load(TreeNode node)
         {
-            var itemdata = (ItemData)node.UserData;
+            ItemData itemdata = (ItemData)node.UserData;
             switch (itemdata.ItemType)
             {
                 case ItemType.Folder:
+                {
+                    string[] tracks = TrackIO.EnumerateTrackFiles(itemdata.Path);
+                    if (tracks.Length > 0)
                     {
-                        var tracks = TrackIO.EnumerateTrackFiles(itemdata.Path);
-                        if (tracks.Length > 0)
-                        {
-                            LoadTrack(tracks[0], itemdata.Name);
-                            Close();
-                        }
+                        LoadTrack(tracks[0], itemdata.Name);
+                        _ = Close();
                     }
-                    break;
+                }
+                break;
                 case ItemType.TrackFile:
+                {
+                    string path = itemdata.Path;
+                    if (path.EndsWith(".sol", StringComparison.OrdinalIgnoreCase))
                     {
-                        var path = itemdata.Path;
-                        if (path.EndsWith(".sol", StringComparison.OrdinalIgnoreCase))
+                        List<sol_track> sol = SOLLoader.LoadSol(path);
+                        if (sol.Count == 0)
+                            return;
+                        if (sol.Count == 1)
                         {
-                            var sol = SOLLoader.LoadSol(path);
-                            if (sol.Count == 0)
-                                return;
-                            if (sol.Count == 1)
-                            {
-                                LoadTrackSol(sol[0]);
-                                Close();
-                            }
-                            else if (node.Children.Count == 0)
-                            {
-                                foreach (var track in sol)
-                                {
-                                    var solnode = node.AddNode(track.name);
-                                    solnode.UserData = new ItemData(ItemType.Sol, path, track);
-                                }
-                                node.ExpandAll();
-                            }
+                            LoadTrackSol(sol[0]);
+                            _ = Close();
                         }
-                        else
+                        else if (node.Children.Count == 0)
                         {
-                            LoadTrack(itemdata.Path, itemdata.Name);
-                            Close();
+                            foreach (sol_track track in sol)
+                            {
+                                TreeNode solnode = node.AddNode(track.name);
+                                solnode.UserData = new ItemData(ItemType.Sol, path, track);
+                            }
+                            node.ExpandAll();
                         }
                     }
-                    break;
+                    else
+                    {
+                        LoadTrack(itemdata.Path, itemdata.Name);
+                        _ = Close();
+                    }
+                }
+                break;
                 case ItemType.Sol:
-                    {
-                        LoadTrackSol(itemdata.sol);
-                        Close();
-                    }
-                    break;
+                {
+                    LoadTrackSol(itemdata.sol);
+                    _ = Close();
+                }
+                break;
             }
         }
         private List<string> GetTracks(string directory)
         {
-            var tracks = TrackIO.EnumerateTrackFiles(directory);
-            var sol = TrackIO.EnumerateSolFiles(directory);
+            string[] tracks = TrackIO.EnumerateTrackFiles(directory);
+            string[] sol = TrackIO.EnumerateSolFiles(directory);
             List<string> ret = new List<string>();
             ret.AddRange(sol);
             ret.AddRange(tracks);
@@ -261,15 +259,15 @@ namespace linerider.UI
         }
         private List<string> GetDirectories()
         {
-            var ret = new List<string>();
-            var dir = Constants.TracksDirectory;
+            List<string> ret = new List<string>();
+            string dir = Constants.TracksDirectory;
             if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            var folders = Directory.GetDirectories(Constants.TracksDirectory);
-            foreach (var folder in folders)
+                _ = Directory.CreateDirectory(dir);
+            string[] folders = Directory.GetDirectories(Constants.TracksDirectory);
+            foreach (string folder in folders)
             {
-                var trackname = Path.GetFileName(folder);
-                if (trackname != Utils.Constants.DefaultTrackName)
+                string trackname = Path.GetFileName(folder);
+                if (trackname != Constants.DefaultTrackName)
                 {
                     ret.Add(trackname);
                 }
@@ -316,19 +314,11 @@ namespace linerider.UI
                 try
                 {
                     _canvas.Loading = true;
-                    Track track;
-                    if (file.EndsWith(".trk", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        track = TRKLoader.LoadTrack(file, name);
-                    }
-                    else if (file.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        track = JSONLoader.LoadTrack(file);
-                    }
-                    else
-                    {
-                        throw new Exception("Filetype unknown");
-                    }
+                    Track track = file.EndsWith(".trk", StringComparison.InvariantCultureIgnoreCase)
+                        ? TRKLoader.LoadTrack(file, name)
+                        : file.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase)
+                            ? JSONLoader.LoadTrack(file)
+                            : throw new Exception("Filetype unknown");
                     _editor.ChangeTrack(track);
                     Settings.LastSelectedTrack = file;
                     Settings.Save();

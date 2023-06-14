@@ -1,28 +1,29 @@
-﻿using System;
+﻿using Gwen;
+using Gwen.Controls;
+using linerider.IO;
+using linerider.Utils;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using Gwen;
-using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
-using linerider.IO;
 
 namespace linerider.UI
 {
     public class SaveWindow : DialogBase
     {
-        private ComboBox _savelist;
-        private TextBox _namebox;
-        private Label _errorbox;
-        private DropDownButton _savebutton;
+        private readonly ComboBox _savelist;
+        private readonly TextBox _namebox;
+        private readonly Label _errorbox;
+        private readonly DropDownButton _savebutton;
         private const string CreateNewTrack = "<create new track>";
         public SaveWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
             Title = "Save Track As...";
-            RichLabel l = new RichLabel(this);
-            l.Dock = Dock.Top;
-            l.AutoSizeToContents = true;
+            RichLabel l = new RichLabel(this)
+            {
+                Dock = Dock.Top,
+                AutoSizeToContents = true
+            };
             l.AddText("Files are saved to Documents/LRA/Tracks", Skin.Colors.Text.Foreground);
             _errorbox = new Label(this)
             {
@@ -49,7 +50,7 @@ namespace linerider.UI
             _savebutton = new DropDownButton(bottomcontainer)
             {
                 Dock = Dock.Right,
-                Text = "Save ("+Settings.DefaultSaveFormat+")",
+                Text = "Save (" + Settings.DefaultSaveFormat + ")",
                 UserData = Settings.DefaultSaveFormat,
                 Margin = new Margin(2, 0, 0, 0),
             };
@@ -85,20 +86,20 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            _savelist.AddItem(CreateNewTrack);
+            _ = _savelist.AddItem(CreateNewTrack);
             _savelist.SelectByText(CreateNewTrack);
-            var directories = GetDirectories();
-            foreach (var dir in directories)
+            List<string> directories = GetDirectories();
+            foreach (string dir in directories)
             {
-                _savelist.AddItem(dir);
+                _ = _savelist.AddItem(dir);
             }
             _savelist.SelectByText(_editor.Name);
         }
         private void Save()
         {
-            var filetype = (string)_savebutton.UserData;
-            var filename = _namebox.Text;
-            var folder = _savelist.SelectedItem.Text;
+            string filetype = (string)_savebutton.UserData;
+            string filename = _namebox.Text;
+            string folder = _savelist.SelectedItem.Text;
             if (folder == CreateNewTrack)
             {
                 folder = filename;
@@ -106,15 +107,15 @@ namespace linerider.UI
             if (
                 !TrackIO.CheckValidFilename(
                     folder + filename) ||
-                    filename == Utils.Constants.DefaultTrackName ||
+                    filename == Constants.DefaultTrackName ||
                     (folder.Length == 0))
             {
                 _errorbox.Text = "Error\n* Save name is invalid";
                 return;
             }
-            using (var trk = _editor.CreateTrackWriter())
+            using (TrackWriter trk = _editor.CreateTrackWriter())
             {
-                var l = trk.GetOldestLine();
+                Game.GameLine l = trk.GetOldestLine();
                 if (l == null)
                 {
                     _errorbox.Text = "Track must have at least one line";
@@ -127,28 +128,28 @@ namespace linerider.UI
                     switch (filetype)
                     {
                         case ".trk":
-                            {
-                                filepath = TrackIO.SaveTrackToFile(trk.Track, filename);
-                                Settings.LastSelectedTrack = filepath;
-                                Settings.Save();
-                            }
-                            break;
+                        {
+                            filepath = TrackIO.SaveTrackToFile(trk.Track, filename);
+                            Settings.LastSelectedTrack = filepath;
+                            Settings.Save();
+                        }
+                        break;
                         case ".sol":
-                            {
-                                if (!CheckSol(trk))
-                                    return;
-                                //purposely do not set this to lastselectedtrack
-                                //currently it's deemed non-performant and slow
-                                TrackIO.SaveToSOL(trk.Track, filename);
-                            }
-                            break;
+                        {
+                            if (!CheckSol(trk))
+                                return;
+                            // Purposely do not set this to lastselectedtrack
+                            // Currently it's deemed non-performant and slow
+                            _ = TrackIO.SaveToSOL(trk.Track, filename);
+                        }
+                        break;
                         case ".json":
-                            {
-                                filepath = TrackIO.SaveTrackToJsonFile(trk.Track, filename);
-                                Settings.LastSelectedTrack = filepath;
-                                Settings.Save();
-                            }
-                            break;
+                        {
+                            filepath = TrackIO.SaveTrackToJsonFile(trk.Track, filename);
+                            Settings.LastSelectedTrack = filepath;
+                            Settings.Save();
+                        }
+                        break;
                         default:
                             throw new InvalidOperationException("Unknown save filetype");
                     }
@@ -160,21 +161,18 @@ namespace linerider.UI
                     return;
                 }
             }
-            Close();
+            _ = Close();
         }
         private bool CheckSol(TrackReader trk)
         {
             Dictionary<string, bool> features;
             features = trk.GetFeatures();
-            bool six_one;
-            bool redmultiplier;
-            bool scenerywidth;
-            features.TryGetValue(TrackFeatures.six_one, out six_one);
-            features.TryGetValue(TrackFeatures.redmultiplier, out redmultiplier);
-            features.TryGetValue(TrackFeatures.scenerywidth, out scenerywidth);
+            _ = features.TryGetValue(TrackFeatures.six_one, out bool six_one);
+            _ = features.TryGetValue(TrackFeatures.redmultiplier, out bool redmultiplier);
+            _ = features.TryGetValue(TrackFeatures.scenerywidth, out bool scenerywidth);
             if (six_one || redmultiplier || scenerywidth)
             {
-                var msg = "*Error\nThe following features are incompatible with .sol:\n";
+                string msg = "*Error\nThe following features are incompatible with .sol:\n";
                 if (six_one)
                 {
                     msg += "\n* The track is based on 6.1";
@@ -194,15 +192,15 @@ namespace linerider.UI
         }
         private List<string> GetDirectories()
         {
-            var ret = new List<string>();
-            var dir = Constants.TracksDirectory;
+            List<string> ret = new List<string>();
+            string dir = Constants.TracksDirectory;
             if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            var folders = Directory.GetDirectories(Constants.TracksDirectory);
-            foreach (var folder in folders)
+                _ = Directory.CreateDirectory(dir);
+            string[] folders = Directory.GetDirectories(Constants.TracksDirectory);
+            foreach (string folder in folders)
             {
-                var trackname = Path.GetFileName(folder);
-                if (trackname != Utils.Constants.DefaultTrackName)
+                string trackname = Path.GetFileName(folder);
+                if (trackname != Constants.DefaultTrackName)
                 {
                     ret.Add(trackname);
                 }

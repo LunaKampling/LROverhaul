@@ -15,28 +15,25 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Drawing;
 using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
+using System;
+using System.Drawing;
 
 namespace linerider.UI
 {
     public class Playhead : HorizontalSlider
     {
         private const int MinimumFrames = 40;
-        private Editor _editor;
+        private readonly Editor _editor;
         private bool _wasdraggingoffset = false;
         private PlayheadMarker _flagmarker;
         private PlayheadMarker _endslider;
         private int _maxviewed = 40 * Settings.DefaultTimelineLength;
         public int MaxViewed
         {
-            get
-            {
-                return Math.Max(MinimumFrames, _maxviewed);
-            }
+            get => Math.Max(MinimumFrames, _maxviewed);
             set
             {
                 if (value != _maxviewed)
@@ -49,19 +46,11 @@ namespace linerider.UI
         {
             get
             {
-                var flag = _editor.GetFlag();
-                if (flag == null)
-                    return -1;
-                return flag.FrameID;
+                Game.RiderFrame flag = _editor.GetFlag();
+                return flag == null ? -1 : flag.FrameID;
             }
         }
-        public int DisplayMax
-        {
-            get
-            {
-                return _endslider.Frame;
-            }
-        }
+        public int DisplayMax => _endslider.Frame;
         public Playhead(ControlBase parent, Editor editor) : base(parent)
         {
             Dock = Dock.Bottom;
@@ -89,7 +78,7 @@ namespace linerider.UI
         }
         protected override void ProcessLayout(Size size)
         {
-            _endslider.SetSize(15, Height);
+            _ = _endslider.SetSize(15, Height);
             if (!_endslider.IsHeld)
             {
                 ResetEndMarker();
@@ -132,12 +121,12 @@ namespace linerider.UI
             MaxViewed = _endslider.Frame;
             if (_editor.Offset > MaxViewed)
             {
-                _editor.SetFrame((int)MaxViewed, false);
+                _editor.SetFrame(MaxViewed, false);
                 _editor.UpdateCamera();
                 _editor.Scheduler.Reset();
-                linerider.Audio.AudioService.EnsureSync();
+                Audio.AudioService.EnsureSync();
 
-                var flag = FlagFrame;
+                int flag = FlagFrame;
                 if (flag != -1)
                 {
                     _editor.Flag(MaxViewed, false);
@@ -157,29 +146,29 @@ namespace linerider.UI
             {
                 _wasdraggingoffset = false;
                 _editor.Scheduler.Reset();
-                linerider.Audio.AudioService.EnsureSync();
+                Audio.AudioService.EnsureSync();
             }
         }
         private int PercentToX(double perc, ControlBase control)
         {
-            var margin = control.Margin;
-            var w = (double)Width - (margin.Width + control.Width);
-            return (int)Math.Round(margin.Left + (perc * w));
+            Margin margin = control.Margin;
+            double w = (double)Width - (margin.Width + control.Width);
+            return (int)Math.Round(margin.Left + perc * w);
         }
         private void ResetEndMarker()
         {
-            var x = PercentToX(1, _endslider);
+            int x = PercentToX(1, _endslider);
             _endslider.X = x;
         }
         private void UpdateFlagMarker()
         {
-            var flagframe = FlagFrame;
+            int flagframe = FlagFrame;
 
             _flagmarker.IsHidden = flagframe == -1;
             if (flagframe != -1)
             {
-                var perc = flagframe / Max;
-                var x = PercentToX(perc, _flagmarker);
+                double perc = flagframe / Max;
+                int x = PercentToX(perc, _flagmarker);
 
                 _flagmarker.X = x;
             }

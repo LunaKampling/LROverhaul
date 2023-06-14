@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gwen.Input;
+using System;
 using System.Drawing;
-using Gwen.Input;
 
 namespace Gwen.Controls
 {
@@ -14,25 +14,19 @@ namespace Gwen.Controls
         /// </summary>
         public override int BarSize
         {
-            get { return m_Bar.Height; }
-            set { m_Bar.Height = value; }
+            get => m_Bar.Height;
+            set => m_Bar.Height = value;
         }
 
         /// <summary>
         /// Bar position (in pixels).
         /// </summary>
-        public override int BarPos
-        {
-            get { return m_Bar.Y - Width; }
-        }
+        public override int BarPos => m_Bar.Y - Width;
 
         /// <summary>
         /// Button size (in pixels).
         /// </summary>
-        public override int ButtonSize
-        {
-            get { return Width; }
-        }
+        public override int ButtonSize => Width;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VerticalScrollBar"/> class.
@@ -42,7 +36,7 @@ namespace Gwen.Controls
             : base(parent)
         {
             m_Bar.IsVertical = true;
-            
+
             m_ScrollButton[0].SetDirectionUp();
             m_ScrollButton[0].Clicked += NudgeUp;
 
@@ -79,19 +73,20 @@ namespace Gwen.Controls
             m_Bar.Margin = new Margin(0, ButtonSize, 0, ButtonSize);
 
             float barHeight = 0.0f;
-            if (m_ContentSize > 0.0f) barHeight = (m_ViewableContentSize / m_ContentSize) * (size.Height - (ButtonSize * 2));
+            if (m_ContentSize > 0.0f)
+                barHeight = m_ViewableContentSize / m_ContentSize * (size.Height - ButtonSize * 2);
 
             if (barHeight < ButtonSize)
-                barHeight = (int)(ButtonSize);
+                barHeight = ButtonSize;
 
-            m_Bar.Height = (int)(barHeight);
-            m_Bar.IsHidden = Height - (ButtonSize * 2) <= barHeight;
+            m_Bar.Height = (int)barHeight;
+            m_Bar.IsHidden = Height - ButtonSize * 2 <= barHeight;
 
-            //Based on our last scroll amount, produce a position for the bar
+            // Based on our last scroll amount, produce a position for the bar
             if (!m_Bar.IsHeld)
             {
-                int newY = (int)(ButtonSize + (ScrollAmount * ((Height - m_Bar.Height) - (ButtonSize * 2))));
-                m_Bar.MoveClampToParent(m_Bar.X, newY);
+                int newY = (int)(ButtonSize + ScrollAmount * (Height - m_Bar.Height - ButtonSize * 2));
+                _ = m_Bar.MoveClampToParent(m_Bar.X, newY);
             }
             base.ProcessLayout(size);
         }
@@ -99,41 +94,32 @@ namespace Gwen.Controls
         public virtual void NudgeUp(ControlBase control, EventArgs args)
         {
             if (!IsDisabled)
-                SetScrollAmount(ScrollAmount - NudgePercent, true);
+                _ = SetScrollAmount(ScrollAmount - NudgePercent, true);
         }
 
         public virtual void NudgeDown(ControlBase control, EventArgs args)
         {
             if (!IsDisabled)
-                SetScrollAmount(ScrollAmount + NudgePercent, true);
+                _ = SetScrollAmount(ScrollAmount + NudgePercent, true);
         }
 
-        public override void ScrollToTop()
-        {
-            SetScrollAmount(0, true);
-        }
+        public override void ScrollToTop() => SetScrollAmount(0, true);
 
-        public override void ScrollToBottom()
-        {
-            SetScrollAmount(1, true);
-        }
+        public override void ScrollToBottom() => SetScrollAmount(1, true);
 
         public override float NudgePercent
         {
             get
             {
                 if (m_Depressed)
-                    return m_ViewableContentSize / m_ContentSize;//page up/down
+                    return m_ViewableContentSize / m_ContentSize; // Page up/down
                 else
                     return base.NudgePercent;
             }
         }
         public override float NudgeAmount
         {
-            set
-            {
-                base.NudgeAmount = value;
-            }
+            set => base.NudgeAmount = value;
         }
 
         /// <summary>
@@ -163,10 +149,7 @@ namespace Gwen.Controls
             }
         }
 
-        protected override float CalculateScrolledAmount()
-        {
-            return (float)(m_Bar.Y - ButtonSize) / (Height - m_Bar.Height - (ButtonSize * 2));
-        }
+        protected override float CalculateScrolledAmount() => (float)(m_Bar.Y - ButtonSize) / (Height - m_Bar.Height - ButtonSize * 2);
 
         /// <summary>
         /// Sets the scroll amount (0-1).
@@ -178,10 +161,7 @@ namespace Gwen.Controls
         {
             value = Util.Clamp(value, 0, 1);
 
-            if (!base.SetScrollAmount(value, forceUpdate))
-                return false;
-
-            return true;
+            return base.SetScrollAmount(value, forceUpdate);
         }
 
         /// <summary>
@@ -192,7 +172,7 @@ namespace Gwen.Controls
         {
             if (m_Bar.IsHeld)
             {
-                SetScrollAmount(CalculateScrolledAmount(), false);
+                _ = SetScrollAmount(CalculateScrolledAmount(), false);
                 base.OnBarMoved(control, EventArgs.Empty);
             }
             else

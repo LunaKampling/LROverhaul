@@ -2,7 +2,6 @@
 
 using System;
 using System.Drawing;
-using Gwen.Controls;
 
 namespace Gwen.ControlInternal
 {
@@ -22,7 +21,7 @@ namespace Gwen.ControlInternal
         /// </remarks>
         public Font Font
         {
-            get { return m_Font; }
+            get => m_Font;
             set
             {
                 m_Font = value;
@@ -35,7 +34,7 @@ namespace Gwen.ControlInternal
         /// </summary>
         public string String
         {
-            get { return m_String; }
+            get => m_String;
             set
             {
                 m_String = value;
@@ -49,10 +48,7 @@ namespace Gwen.ControlInternal
         /// </summary>
         public Color TextColor
         {
-            get
-            {
-                return m_TextColor;
-            }
+            get => m_TextColor;
 
             set
             {
@@ -67,14 +63,11 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Text length in characters.
         /// </summary>
-        public int Length { get { return String.Length; } }
+        public int Length => String.Length;
 
         public override Padding Padding
         {
-            get
-            {
-                return Padding.Zero;
-            }
+            get => Padding.Zero;
             set
             {
                 if (value != Padding.Zero)
@@ -83,17 +76,14 @@ namespace Gwen.ControlInternal
                 }
             }
         }
-		public override Margin Margin
+        public override Margin Margin
         {
-            get
-            {
-                return Margin.Zero;
-            }
+            get => Margin.Zero;
             set
             {
                 if (value != Margin.Zero)
-				{
-					throw new Exception("Attempt to change Margin of internal text control");
+                {
+                    throw new Exception("Attempt to change Margin of internal text control");
                 }
             }
         }
@@ -106,7 +96,7 @@ namespace Gwen.ControlInternal
         {
             m_Font = Skin.DefaultFont;
 
-            m_String = String.Empty;
+            m_String = string.Empty;
             TextColor = Skin.Colors.Text.Foreground;
             MouseInputEnabled = false;
             KeyboardInputEnabled = false;
@@ -120,7 +110,8 @@ namespace Gwen.ControlInternal
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.SkinBase skin)
         {
-            if (Length == 0 || Font == null) return;
+            if (Length == 0 || Font == null)
+                return;
 
             skin.Renderer.DrawColor = TextColor;
 
@@ -130,33 +121,24 @@ namespace Gwen.ControlInternal
         /// <summary>
         /// Handler invoked when control's scale changes.
         /// </summary>
-        protected override void OnScaleChanged()
-        {
-            Invalidate();
-        }
+        protected override void OnScaleChanged() => Invalidate();
         public override Size GetSizeToFitContents()
-		{
-			if (String == null)
-                return new Size(Width,Height);
+        {
+            if (String == null)
+                return new Size(Width, Height);
 
-			if (Font == null)
-			{
-				throw new InvalidOperationException("Text.SizeToContents() - No Font!!\n");
-			}
-			Point p = Skin.Renderer.MeasureText(Font, String);
+            if (Font == null)
+            {
+                throw new InvalidOperationException("Text.SizeToContents() - No Font!!\n");
+            }
+            Point p = Skin.Renderer.MeasureText(Font, String);
             return new Size(p.X, p.Y);
         }
         /// <summary>
         /// Sizes the control to its contents.
         /// </summary>
-        public void SizeToContents()
-        {
-            SizeToChildren(true,true);
-        }
-        public override bool SizeToChildren(bool width = true, bool height = true)
-        {
-            return base.SizeToChildren(width, height);
-        }
+        public void SizeToContents() => SizeToChildren(true, true);
+        public override bool SizeToChildren(bool width = true, bool height = true) => base.SizeToChildren(width, height);
         /// <summary>
         /// Gets the coordinates of specified character in the text.
         /// </summary>
@@ -169,11 +151,11 @@ namespace Gwen.ControlInternal
                 return new Point(0, 0);
             }
 
-			string sub = String.Substring(0, index);
-			Point p = Skin.Renderer.MeasureText(Font, sub);
-			p.Y = 0;
+            string sub = String.Substring(0, index);
+            Point p = Skin.Renderer.MeasureText(Font, sub);
+            p.Y = 0;
 
-			return p;
+            return p;
         }
 
         /// <summary>
@@ -189,7 +171,7 @@ namespace Gwen.ControlInternal
             for (int i = 0; i < String.Length + 1; i++)
             {
                 Point cp = GetCharacterPosition(i);
-                int dist = Math.Abs(cp.X - p.X) + Math.Abs(cp.Y - p.Y); // this isn't proper // [omeg] todo: sqrt
+                int dist = Math.Abs(cp.X - p.X) + Math.Abs(cp.Y - p.Y); // This isn't proper // [omeg] todo: sqrt
 
                 if (dist > distance)
                     continue;
@@ -200,5 +182,5 @@ namespace Gwen.ControlInternal
 
             return c;
         }
-	}
+    }
 }

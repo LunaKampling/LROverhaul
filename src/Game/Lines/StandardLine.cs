@@ -16,12 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using linerider.Game;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System;
 
 namespace linerider.Game
 {
@@ -33,7 +29,7 @@ namespace linerider.Game
         /// </summary>
         public enum Ext
         {
-            //imperative to trk format this does not exceed 2 bits
+            // Imperative to trk format this does not exceed 2 bits
             None = 0,
             Left = 1,
             Right = 2,
@@ -55,24 +51,12 @@ namespace linerider.Game
         /// <summary>
         /// "Left" according to the inv field
         /// </summary>
-        public override Vector2d Start
-        {
-            get { return inv ? Position2 : Position1; }
-        }
+        public override Vector2d Start => inv ? Position2 : Position1;
         /// <summary>
         /// "Right" according to the inv field
         /// </summary>
-        public override Vector2d End
-        {
-            get { return inv ? Position1 : Position2; }
-        }
-        public override LineType Type
-        {
-            get
-            {
-                return LineType.Standard;
-            }
-        }
+        public override Vector2d End => inv ? Position1 : Position2;
+        public override LineType Type => LineType.Standard;
         public override System.Drawing.Color Color => Settings.Colors.StandardLine;
 
         protected StandardLine()
@@ -86,9 +70,7 @@ namespace linerider.Game
             CalculateConstants();
             Extension = Ext.None;
         }
-        public override string ToString()
-        {
-            return "{" +
+        public override string ToString() => "{" +
                 "\"type\":0," +
                 $"\"x1\":{Position1.X}," +
                 $"\"y1\":{Position1.Y}," +
@@ -98,19 +80,18 @@ namespace linerider.Game
                 $"\"leftExtended\":{(Extension == Ext.Left || Extension == Ext.Both ? "true" : "false")}," +
                 $"\"rightExtended\":{(Extension == Ext.Right || Extension == Ext.Both ? "true" : "false")}" +
                 "}";
-        }
         /// <summary>
         /// Calculates the line constants, needs called if a point changes.
         /// </summary>
         public virtual void CalculateConstants()
         {
             Difference = Position2 - Position1;
-            var sqrDistance = Difference.LengthSquared;
-            DotScalar = (1 / sqrDistance);
+            double sqrDistance = Difference.LengthSquared;
+            DotScalar = 1 / sqrDistance;
             Distance = Math.Sqrt(sqrDistance);
 
-            DiffNormal = Difference * (1 / Distance);//normalize
-            //flip to be the angle towards the top of the line
+            DiffNormal = Difference * (1 / Distance); // Normalize
+            // Flip to be the angle towards the top of the line
             DiffNormal = inv ? DiffNormal.PerpendicularRight : DiffNormal.PerpendicularLeft;
             ExtensionRatio = Math.Min(0.25, Zone / Distance);
         }
@@ -118,18 +99,18 @@ namespace linerider.Game
         {
             if (Vector2d.Dot(p.Momentum, DiffNormal) > 0)
             {
-                var startDelta = p.Location - this.Position1;
-                var disty = Vector2d.Dot(DiffNormal, startDelta);
-                if (disty > 0 && disty < StandardLine.Zone)
+                Vector2d startDelta = p.Location - Position1;
+                double disty = Vector2d.Dot(DiffNormal, startDelta);
+                if (disty > 0 && disty < Zone)
                 {
-                    var distx = Vector2d.Dot(startDelta, Difference) * DotScalar;
+                    double distx = Vector2d.Dot(startDelta, Difference) * DotScalar;
                     if (distx <= limit_right && distx >= limit_left)
                     {
-                        var pos = p.Location - disty * DiffNormal;
-                        var prev = p.Previous;
+                        Vector2d pos = p.Location - disty * DiffNormal;
+                        _ = p.Previous;
                         if (p.Friction != 0)
                         {
-                            var friction = DiffNormal.Yx * p.Friction * disty;
+                            Vector2d friction = DiffNormal.Yx * p.Friction * disty;
                             if (p.Previous.X >= pos.X)
                                 friction.X = -friction.X;
                             if (p.Previous.Y >= pos.Y)

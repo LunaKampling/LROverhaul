@@ -1,7 +1,7 @@
-﻿using System;
-using System.Drawing;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 using Gwen.Input;
+using System;
+using System.Drawing;
 
 namespace Gwen.DragDrop
 {
@@ -11,11 +11,11 @@ namespace Gwen.DragDrop
     public static class DragAndDrop
     {
         public static Package CurrentPackage;
-        public static Controls.ControlBase HoveredControl;
-        public static Controls.ControlBase SourceControl;
+        public static ControlBase HoveredControl;
+        public static ControlBase SourceControl;
 
-        private static Controls.ControlBase m_LastPressedControl;
-        private static Controls.ControlBase m_NewHoveredControl;
+        private static ControlBase m_LastPressedControl;
+        private static ControlBase m_NewHoveredControl;
         private static Point m_LastPressedPos;
         private static int m_MouseX;
         private static int m_MouseY;
@@ -39,15 +39,15 @@ namespace Gwen.DragDrop
             return true;
         }
 
-        private static bool ShouldStartDraggingControl( int x, int y )
+        private static bool ShouldStartDraggingControl(int x, int y)
         {
             // We're not holding a control down..
-            if (m_LastPressedControl == null) 
+            if (m_LastPressedControl == null)
                 return false;
 
             // Not been dragged far enough
             int length = Math.Abs(x - m_LastPressedPos.X) + Math.Abs(y - m_LastPressedPos.Y);
-            if (length < 5) 
+            if (length < 5)
                 return false;
 
             // Create the dragging package
@@ -82,7 +82,7 @@ namespace Gwen.DragDrop
             return true;
         }
 
-        private static void UpdateHoveredControl(Controls.ControlBase control, int x, int y)
+        private static void UpdateHoveredControl(ControlBase control, int x, int y)
         {
             //
             // We use this global variable to represent our hovered control
@@ -126,15 +126,12 @@ namespace Gwen.DragDrop
             HoveredControl = m_NewHoveredControl;
 
             // If we exist, tell us that we've started hovering.
-            if (HoveredControl != null)
-            {
-                HoveredControl.DragAndDrop_HoverEnter(CurrentPackage, x, y);
-            }
+            HoveredControl?.DragAndDrop_HoverEnter(CurrentPackage, x, y);
 
             m_NewHoveredControl = null;
         }
 
-        public static bool Start(Controls.ControlBase control, Package package)
+        public static bool Start(ControlBase control, Package package)
         {
             if (CurrentPackage != null)
             {
@@ -146,7 +143,7 @@ namespace Gwen.DragDrop
             return true;
         }
 
-        public static bool OnMouseButton(Controls.ControlBase hoveredControl, int x, int y, bool down)
+        public static bool OnMouseButton(ControlBase hoveredControl, int x, int y, bool down)
         {
             if (!down)
             {
@@ -157,13 +154,13 @@ namespace Gwen.DragDrop
                     return false;
 
                 // We were carrying something, drop it.
-                onDrop(x, y);
+                _ = onDrop(x, y);
                 return true;
             }
 
-            if (hoveredControl == null) 
+            if (hoveredControl == null)
                 return false;
-            if (!hoveredControl.DragAndDrop_Draggable()) 
+            if (!hoveredControl.DragAndDrop_Draggable())
                 return false;
 
             // Store the last clicked on control. Don't do anything yet, 
@@ -175,7 +172,7 @@ namespace Gwen.DragDrop
             return false;
         }
 
-        public static void OnMouseMoved(Controls.ControlBase hoveredControl, int x, int y)
+        public static void OnMouseMoved(ControlBase hoveredControl, int x, int y)
         {
             // Always keep these up to date, they're used to draw the dragged control.
             m_MouseX = x;
@@ -205,9 +202,9 @@ namespace Gwen.DragDrop
 
         public static void RenderOverlay(Canvas canvas, Skin.SkinBase skin)
         {
-            if (CurrentPackage == null) 
+            if (CurrentPackage == null)
                 return;
-            if (CurrentPackage.DrawControl == null) 
+            if (CurrentPackage.DrawControl == null)
                 return;
 
             Point old = skin.Renderer.RenderOffset;
@@ -220,7 +217,7 @@ namespace Gwen.DragDrop
             skin.Renderer.RenderOffset = old;
         }
 
-        public static void ControlDeleted(Controls.ControlBase control)
+        public static void ControlDeleted(ControlBase control)
         {
             if (SourceControl == control)
             {

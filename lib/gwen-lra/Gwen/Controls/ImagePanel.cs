@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Gwen.Controls
 {
@@ -21,8 +20,8 @@ namespace Gwen.Controls
         /// </summary>
         public string ImageName
         {
-            get { return m_Texture.Name; }
-            set { m_Texture.Load(value); }
+            get => m_Texture.Name;
+            set => m_Texture.Load(value);
         }
 
         #endregion Properties
@@ -70,18 +69,12 @@ namespace Gwen.Controls
         /// <summary>
         /// Sizes the control to its contents.
         /// </summary>
-        public virtual void SizeToContents()
-        {
-            SetSize(m_Texture.Width, m_Texture.Height);
-        }
+        public virtual void SizeToContents() => SetSize(m_Texture.Width, m_Texture.Height);
 
         /// <summary>
         /// Control has been clicked - invoked by input system. Windows use it to propagate activation.
         /// </summary>
-        public override void Touch()
-        {
-            base.Touch();
-        }
+        public override void Touch() => base.Touch();
 
         /// <summary>
         /// Handler for Space keyboard event.
@@ -111,6 +104,6 @@ namespace Gwen.Controls
         #endregion Methods
 
         private readonly float[] m_uv;
-        private Color m_DrawColor;
+        private readonly Color m_DrawColor;
     }
 }

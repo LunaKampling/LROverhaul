@@ -15,23 +15,14 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines whether the menu should be disposed on close.
         /// </summary>
-        public bool DeleteOnClose { get { return m_DeleteOnClose; } set { m_DeleteOnClose = value; } }
+        public bool DeleteOnClose { get; set; }
 
-        public bool IconMarginDisabled { get { return m_DisableIconMargin; } set { m_DisableIconMargin = value; } }
+        public bool IconMarginDisabled { get; set; }
 
-        protected override Margin PanelMargin
-        {
-            get
-            {
-                return Margin.Zero;
-            }
-        }
+        protected override Margin PanelMargin => Margin.Zero;
         public override bool IsHidden
         {
-            get
-            {
-                return base.IsHidden;
-            }
+            get => base.IsHidden;
             set
             {
                 if (value != base.IsHidden)
@@ -41,12 +32,12 @@ namespace Gwen.Controls
                 }
             }
         }
-        internal override bool IsMenuComponent { get { return true; } }
+        internal override bool IsMenuComponent => true;
 
         /// <summary>
         /// Determines whether the menu should open on mouse hover.
         /// </summary>
-        protected virtual bool ShouldHoverOpenMenu { get { return true; } }
+        protected virtual bool ShouldHoverOpenMenu => true;
 
         #endregion Properties
 
@@ -59,11 +50,11 @@ namespace Gwen.Controls
         public Menu(ControlBase parent)
             : base(parent)
         {
-            SetBounds(0, 0, 10, 10);
+            _ = SetBounds(0, 0, 10, 10);
             IconMarginDisabled = false;
 
             //   AutoHideBars = false;
-            
+
             EnableScroll(false, true);
             DeleteOnClose = false;
             AutoSizeToContents = true;
@@ -77,22 +68,18 @@ namespace Gwen.Controls
         /// <summary>
         /// Adds a divider menu item.
         /// </summary>
-        public virtual void AddDivider()
+        public virtual void AddDivider() => _ = new MenuDivider(this)
         {
-            MenuDivider divider = new MenuDivider(this);
-            divider.Dock = Dock.Top;
-            divider.Margin = new Margin(IconMarginDisabled ? 0 : 24, 0, 4, 0);
-        }
+            Dock = Dock.Top,
+            Margin = new Margin(IconMarginDisabled ? 0 : 24, 0, 4, 0)
+        };
 
         /// <summary>
         /// Adds a new menu item.
         /// </summary>
         /// <param name="text">Item text.</param>
         /// <returns>Newly created control.</returns>
-        public virtual MenuItem AddItem(string text)
-        {
-            return AddItem(text, String.Empty);
-        }
+        public virtual MenuItem AddItem(string text) => AddItem(text, string.Empty);
 
         /// <summary>
         /// Adds a new menu item.
@@ -103,8 +90,10 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public virtual MenuItem AddItem(string text, string iconName, string accelerator = "")
         {
-            MenuItem item = new MenuItem(this);
-            item.Padding = Padding.Four;
+            MenuItem item = new MenuItem(this)
+            {
+                Padding = Padding.Four
+            };
             item.SetText(text);
             item.SetImage(iconName);
             item.SetAccelerator(accelerator);
@@ -137,8 +126,8 @@ namespace Gwen.Controls
         public virtual void CloseAll()
         {
             //System.Diagnostics.Debug.Print("Menu.CloseAll: {0}", this);
-            var copy = Children.ToArray();
-            foreach (var child in copy)
+            ControlBase[] copy = Children.ToArray();
+            foreach (ControlBase child in copy)
             {
                 if (child is MenuItem menuitem)
                     menuitem.CloseMenu();
@@ -158,10 +147,7 @@ namespace Gwen.Controls
         /// Indicates whether any (sub)menu is open.
         /// </summary>
         /// <returns></returns>
-        public virtual bool IsMenuOpen()
-        {
-            return Children.Any(child => { if (child is MenuItem) return (child as MenuItem).IsMenuOpen; return false; });
-        }
+        public virtual bool IsMenuOpen() => Children.Any(child => { return child is MenuItem && (child as MenuItem).IsMenuOpen; });
 
         /// <summary>
         ///  Opens the menu.
@@ -172,25 +158,17 @@ namespace Gwen.Controls
             IsHidden = false;
             BringToFront();
             Point mouse = Input.InputHandler.MousePosition;
-            SetPosition(mouse.X+1, mouse.Y);
+            SetPosition(mouse.X + 1, mouse.Y);
             Invalidate();
         }
         private void UpdateCanvas()
         {
-            var canvas = GetCanvas();
+            Canvas canvas = GetCanvas();
             if (canvas != null)
             {
-                if (IsHidden)
-                {
-                    canvas.OpenMenus.Remove(this);
-                }
-                else
-                {
-                    canvas.OpenMenus.Add(this);
-                }
+                _ = IsHidden ? canvas.OpenMenus.Remove(this) : canvas.OpenMenus.Add(this);
             }
         }
-
 
         #endregion Methods
 
@@ -215,8 +193,8 @@ namespace Gwen.Controls
             item.Dock = Dock.Top;
             item.Alignment = Pos.CenterV | Pos.Left;
             item.HoverEnter += OnHoverItem;
-            item.SizeToChildren();
-            SizeToChildren();
+            _ = item.SizeToChildren();
+            _ = SizeToChildren();
             // Do this here - after Top Docking these values mean nothing in layout
             //  int w = item.Width + 10 + 32;
             //  if (w < Width) w = Width;
@@ -229,11 +207,13 @@ namespace Gwen.Controls
         /// <param name="control">Event source.</param>
         protected virtual void OnHoverItem(ControlBase control, EventArgs args)
         {
-            if (!ShouldHoverOpenMenu) return;
+            if (!ShouldHoverOpenMenu)
+                return;
 
-            MenuItem item = control as MenuItem;
-            if (null == item) return;
-            if (item.IsMenuOpen) return;
+            if (!(control is MenuItem item))
+                return;
+            if (item.IsMenuOpen)
+                return;
 
             CloseAll();
             item.OpenMenu();
@@ -243,10 +223,7 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawMenu(this, IconMarginDisabled);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawMenu(this, IconMarginDisabled);
 
         /// <summary>
         /// Renders under the actual control (shadows etc).
@@ -257,8 +234,5 @@ namespace Gwen.Controls
             base.RenderUnder(skin);
             skin.DrawShadow(this);
         }
-
-        private bool m_DeleteOnClose;
-        private bool m_DisableIconMargin;
     }
 }

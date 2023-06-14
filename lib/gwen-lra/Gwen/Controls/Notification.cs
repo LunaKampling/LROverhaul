@@ -1,8 +1,3 @@
-using System;
-using System.Drawing;
-using System.Diagnostics;
-using Gwen.ControlInternal;
-
 namespace Gwen.Controls
 {
     /// <summary>
@@ -10,22 +5,15 @@ namespace Gwen.Controls
     /// </summary>
     public class Notification : Container
     {
-        protected override Margin PanelMargin
-        {
-            get
+        protected override Margin PanelMargin => Margin.Three;
+        private readonly ControlBase m_TitleBar;
 
-            {
-                return Margin.Three;
-            }
-        }
-        private ControlBase m_TitleBar;
-        private bool m_DeleteOnClose = true;
         /// <summary>
         /// Determines whether the notification should be disposed on close.
         /// </summary>
-        public bool DeleteOnClose { get { return m_DeleteOnClose; } set { m_DeleteOnClose = value; } }
-        private RichLabel _label;
-        private Label _title;
+        public bool DeleteOnClose { get; set; } = true;
+        private readonly RichLabel _label;
+        private readonly Label _title;
         // public string Text
         // {
         //     get
@@ -58,7 +46,7 @@ namespace Gwen.Controls
             Dock = Dock.Bottom;
             Invalidate();
             IsHidden = true;
-            SetSize(200, 100);
+            _ = SetSize(200, 100);
 
             m_TitleBar = new ControlBase(null)
             {
@@ -66,7 +54,7 @@ namespace Gwen.Controls
                 Dock = Dock.Top,
                 Margin = new Margin(0, 0, 0, 6),
                 MouseInputEnabled = false
-                
+
             };
             PrivateChildren.Add(m_TitleBar);
             _title = new Label(m_TitleBar)
@@ -75,7 +63,7 @@ namespace Gwen.Controls
                 Text = "Notification",
                 Margin = new Margin(6, 3, 0, 0),
             };
-            _label = new RichLabel(this) { Dock = Dock.Fill, AutoSizeToContents = true};
+            _label = new RichLabel(this) { Dock = Dock.Fill, AutoSizeToContents = true };
             //Margin = new Margin(5, 5, 5, 5);
             Clicked += (o, e) =>
             {
@@ -120,7 +108,7 @@ namespace Gwen.Controls
             //     }
             // }
             if (ShouldDrawBackground)
-            skin.DrawNotification(this, fade);
+                skin.DrawNotification(this, fade);
             //InvalidateParent();
         }
 

@@ -6,35 +6,17 @@ namespace Gwen
     /// <summary>
     /// Represents inner spacing.
     /// </summary>
-    public struct Padding : IEquatable<Padding>
+    public readonly struct Padding : IEquatable<Padding>
     {
         public readonly int Top;
         public readonly int Bottom;
         public readonly int Left;
         public readonly int Right;
-        public int Width
-        {
-            get
-            {
-                return Left + Right;
-            }
-        }
-        public int Height
-        {
-            get
-            {
-                return Top + Bottom;
-            }
-        }
-        public Size Size
-        {
-            get
-            {
-                return new Size(Width, Height);
-            }
-        }
+        public int Width => Left + Right;
+        public int Height => Top + Bottom;
+        public Size Size => new Size(Width, Height);
 
-        // common values
+        // Common values
         public static readonly Padding Zero = new Padding(0, 0, 0, 0);
         public static readonly Padding One = new Padding(1, 1, 1, 1);
         public static readonly Padding Two = new Padding(2, 2, 2, 2);
@@ -50,16 +32,13 @@ namespace Gwen
             Right = right;
         }
 
-        public bool Equals(Padding other)
-        {
-            return other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
-        }
+        public bool Equals(Padding other) => other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
         public static Padding operator +(Padding lhs, Padding rhs)
         {
             return new Padding(
-                lhs.Left + rhs.Left, 
-                lhs.Top + rhs.Top, 
-                lhs.Right + rhs.Right, 
+                lhs.Left + rhs.Left,
+                lhs.Top + rhs.Top,
+                lhs.Right + rhs.Right,
                 lhs.Bottom + rhs.Bottom);
         }
         public static Padding operator -(Padding lhs, Padding rhs)
@@ -80,12 +59,7 @@ namespace Gwen
             return !lhs.Equals(rhs);
         }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof(Padding)) return false;
-            return Equals((Padding)obj);
-        }
+        public override bool Equals(object obj) => !(obj is null) && obj.GetType() == typeof(Padding) && Equals((Padding)obj);
 
         public override int GetHashCode()
         {

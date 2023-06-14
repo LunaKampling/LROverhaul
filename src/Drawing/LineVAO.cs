@@ -16,30 +16,21 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Rendering;
+using linerider.Utils;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Drawing;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using OpenTK;
-using linerider.Utils;
-using linerider.Rendering;
 
 namespace linerider.Drawing
 {
     public unsafe class LineVAO : GLArray<LineVertex>
     {
-        private Shader _shader;
+        private readonly Shader _shader;
         public float Scale = 1.0f;
         public int knobstate = 0;
-        public ErrorCode Error
-        {
-            get
-            {
-                return GL.GetError();
-            }
-        }
+        public ErrorCode Error => GL.GetError();
         public LineVAO()
         {
             _shader = Shaders.LineShader;
@@ -50,10 +41,10 @@ namespace linerider.Drawing
             Color color,
             float size)
         {
-            var d = end - start;
-            var rad = Angle.FromVector(d);
-            var line = LineRenderer.CreateTrackLine(start, end, size, Utility.ColorToRGBA_LE(color));
-            foreach (var v in line)
+            Vector2d d = end - start;
+            _ = Angle.FromVector(d);
+            LineVertex[] line = LineRenderer.CreateTrackLine(start, end, size, Utility.ColorToRGBA_LE(color));
+            foreach (LineVertex v in line)
             {
                 Array.Add(v);
             }
@@ -61,10 +52,10 @@ namespace linerider.Drawing
         protected override void BeginDraw()
         {
             _shader.Use();
-            var in_vertex = _shader.GetAttrib("in_vertex");
-            var in_color = _shader.GetAttrib("in_color");
-            var in_circle = _shader.GetAttrib("in_circle");
-            var in_linesize = _shader.GetAttrib("in_linesize");
+            int in_vertex = _shader.GetAttrib("in_vertex");
+            int in_color = _shader.GetAttrib("in_color");
+            int in_circle = _shader.GetAttrib("in_circle");
+            int in_linesize = _shader.GetAttrib("in_linesize");
             GL.EnableVertexAttribArray(in_vertex);
             GL.EnableVertexAttribArray(in_circle);
             GL.EnableVertexAttribArray(in_linesize);
@@ -79,15 +70,15 @@ namespace linerider.Drawing
                 GL.VertexAttribPointer(in_linesize, 2, VertexAttribPointerType.Float, false, LineVertex.Size, (IntPtr)ptr3);
                 GL.VertexAttribPointer(in_color, 4, VertexAttribPointerType.UnsignedByte, true, LineVertex.Size, (IntPtr)ptr4);
             }
-            var u_color = _shader.GetUniform("u_color");
-            var u_scale = _shader.GetUniform("u_scale");
-            var u_knobstate = _shader.GetUniform("u_knobstate");
-            var u_alphachannel = _shader.GetUniform("u_alphachannel");
+            int u_color = _shader.GetUniform("u_color");
+            int u_scale = _shader.GetUniform("u_scale");
+            int u_knobstate = _shader.GetUniform("u_knobstate");
+            int u_alphachannel = _shader.GetUniform("u_alphachannel");
             GL.Uniform4(u_color, 0f, 0f, 0f, 0f);
             GL.Uniform1(_shader.GetUniform("u_overlay"), 0);
             GL.Uniform1(u_alphachannel, 1);
             GL.Uniform1(u_scale, Scale);
-            GL.Uniform1(u_knobstate, (int)knobstate);
+            GL.Uniform1(u_knobstate, knobstate);
         }
         protected override void InternalDraw(PrimitiveType primitive)
         {

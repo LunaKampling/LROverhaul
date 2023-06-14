@@ -16,27 +16,23 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OpenTK.Audio;
 using OpenTK.Audio.OpenAL;
+using System;
 using System.Threading;
-using NVorbis;
 
 namespace linerider.Audio
 {
-    class AudioStreamer
+    internal class AudioStreamer
     {
-        //todo manually stretch samples for slow/fast play
-        //response: audio stretching turns out to be really complicated
-        //not sure what sort of dependency we want to include for that, if any
-        //maybe pursue waveform visualize instead
+        // TODO: manually stretch samples for slow/fast play.
+        // Response: audio stretching turns out to be really complicated.
+        // Not sure what sort of dependency we want to include for that, if any.
+        // Maybe pursue waveform visualize instead.
         private readonly object _sync = new object();
-        private ManualResetEvent _event = new ManualResetEvent(false);
-        private int[] _buffers;
-        private int _alsourceid;
+        private readonly ManualResetEvent _event = new ManualResetEvent(false);
+        private readonly int[] _buffers;
+        private readonly int _alsourceid;
         private AudioSource _stream;
         private bool _needsrefill = false;
         public float Speed { get; private set; }
@@ -47,7 +43,7 @@ namespace linerider.Audio
                 if (_stream == null || _stream.Channels == 0)
                     return 0;
 
-                var queued = 0;
+                int queued = 0;
                 float elapsed;
                 lock (_sync)
                 {
@@ -55,38 +51,17 @@ namespace linerider.Audio
                     AL.GetSource(_alsourceid, ALSourcef.SecOffset, out elapsed);
                 }
                 double buffertime = (double)_stream.SamplesPerBuffer / _stream.SampleRate / _stream.Channels;
-                double offset = (queued * buffertime);
-                //special case for if we're at the end of the audio.
+                double offset = queued * buffertime;
+                // Special case for if we're at the end of the audio.
                 if (_stream.ReadSamples != _stream.SamplesPerBuffer && queued > 1)
                 {
-                    offset -= buffertime - ((double)_stream.ReadSamples / _stream.SampleRate / _stream.Channels);
+                    offset -= buffertime - (double)_stream.ReadSamples / _stream.SampleRate / _stream.Channels;
                 }
-                if (Speed < 0)
-                {
-                    return _stream.Position + (offset - elapsed);
-                }
-                else
-                {
-                    return _stream.Position - (offset - elapsed);
-                }
+                return Speed < 0 ? _stream.Position + (offset - elapsed) : _stream.Position - (offset - elapsed);
             }
         }
-        public float Duration
-        {
-            get
-            {
-                if (_stream == null || _stream.Channels == 0)
-                    return 0;
-                return _stream.Duration;
-            }
-        }
-        public bool Playing
-        {
-            get
-            {
-                return AL.GetSourceState(_alsourceid) == ALSourceState.Playing;
-            }
-        }
+        public float Duration => _stream == null || _stream.Channels == 0 ? 0 : _stream.Duration;
+        public bool Playing => AL.GetSourceState(_alsourceid) == ALSourceState.Playing;
         public AudioStreamer()
         {
             _alsourceid = AL.GenSource();
@@ -130,7 +105,7 @@ namespace linerider.Audio
                         QueueBuffer(_buffers[i]);
                     }
                     AL.SourcePlay(_alsourceid);
-                    _event.Set();
+                    _ = _event.Set();
                 }
             }
         }
@@ -143,7 +118,7 @@ namespace linerider.Audio
                 AL.GetSource(_alsourceid, ALGetSourcei.BuffersQueued, out int queued);
                 for (int i = 0; i < queued; i++)
                 {
-                    AL.SourceUnqueueBuffer(_alsourceid);
+                    _ = AL.SourceUnqueueBuffer(_alsourceid);
 
                     AudioDevice.Check();
                 }
@@ -153,7 +128,7 @@ namespace linerider.Audio
                 }
                 catch
                 {
-                    //unqueueing buffers can fail
+                    // Unqueueing buffers can fail
                 }
             }
         }
@@ -184,8 +159,8 @@ namespace linerider.Audio
                     }
                     else
                     {
-                        _event.WaitOne();
-                        _event.Reset();
+                        _ = _event.WaitOne();
+                        _ = _event.Reset();
                     }
                 }
             }
@@ -198,7 +173,7 @@ namespace linerider.Audio
         {
             if (!_needsrefill)
                 return;
-            int len = (Speed > 0 ? _stream.ReadBuffer() : _stream.ReadBufferReversed());
+            int len = Speed > 0 ? _stream.ReadBuffer() : _stream.ReadBufferReversed();
             if (len > 0)
             {
                 AL.BufferData(buffer, _stream.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, _stream.Buffer, len * sizeof(short), _stream.SampleRate);
@@ -206,16 +181,15 @@ namespace linerider.Audio
                 AL.SourceQueueBuffer(_alsourceid, buffer);
                 AudioDevice.Check();
             }
-            if (len != _stream.SamplesPerBuffer)//we've reached the end
+            if (len != _stream.SamplesPerBuffer) // We've reached the end
                 _needsrefill = false;
         }
         private void RefillProcessed()
         {
-            var processed = 0;
-            AL.GetSource(_alsourceid, ALGetSourcei.BuffersProcessed, out processed);
+            AL.GetSource(_alsourceid, ALGetSourcei.BuffersProcessed, out int processed);
             for (int i = 0; i < processed; i++)
             {
-                var buffer = AL.SourceUnqueueBuffer(_alsourceid);
+                int buffer = AL.SourceUnqueueBuffer(_alsourceid);
                 QueueBuffer(buffer);
             }
         }

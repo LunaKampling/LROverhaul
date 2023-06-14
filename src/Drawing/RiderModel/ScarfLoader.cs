@@ -1,13 +1,8 @@
-﻿using linerider.Rendering;
-using linerider.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -19,8 +14,8 @@ namespace linerider.Drawing.RiderModel
 
     public class ScarfLoader
     {
-        private FileType Type;
-        private string Filepath;
+        private readonly FileType Type;
+        private readonly string Filepath;
 
         private enum FileType
         {
@@ -45,10 +40,7 @@ namespace linerider.Drawing.RiderModel
                 if (!isValidFile && !isLegacyFile)
                     throw new Exception("Is not valid scarf file");
 
-                if (isLegacyFile)
-                    Type = FileType.TextLegacy;
-                else
-                    Type = FileType.Text;
+                Type = isLegacyFile ? FileType.TextLegacy : FileType.Text;
             }
 
             Filepath = filepath;
@@ -81,9 +73,11 @@ namespace linerider.Drawing.RiderModel
 
             foreach (string line in lines)
             {
-                ScarfSegment segment = new ScarfSegment();
-                segment.Color = Convert.ToInt32(line.Substring(0, line.IndexOf(",")), 16);
-                segment.Opacity = Convert.ToByte(line.Substring(line.IndexOf(" ") + 1), 16);
+                ScarfSegment segment = new ScarfSegment
+                {
+                    Color = Convert.ToInt32(line.Substring(0, line.IndexOf(",")), 16),
+                    Opacity = Convert.ToByte(line.Substring(line.IndexOf(" ") + 1), 16)
+                };
                 segments.Add(segment);
             }
 
@@ -142,7 +136,7 @@ namespace linerider.Drawing.RiderModel
 
                 ScarfSegment segment = new ScarfSegment()
                 {
-                    Color = (int)(color.ToArgb() & 0x00FFFFFF),
+                    Color = color.ToArgb() & 0x00FFFFFF,
                     Opacity = color.A,
                 };
 

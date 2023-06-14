@@ -1,6 +1,3 @@
-using System;
-using System.Drawing;
-
 namespace Gwen.Controls
 {
     public class Tooltip : Label

@@ -1,11 +1,11 @@
+using OpenTK.Graphics;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using OpenTK.Graphics;
 
 namespace linerider.Utils
 {
-    static class Constants
+    internal static class Constants
     {
         public static Color4 TriggerBGColor = new Color4(244, 245, 249, 255);
         public static Color4 StaticTriggerBGColor = new Color4(244, 245, 249, 255);

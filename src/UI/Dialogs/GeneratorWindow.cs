@@ -1,24 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using Gwen;
 using Gwen.Controls;
-using linerider.Tools;
-using linerider.Utils;
-using linerider.IO;
-using OpenTK;
 using linerider.Game.LineGenerator;
+using OpenTK;
+using System;
 
 namespace linerider.UI
 {
     public class GeneratorWindow : DialogBase
     {
-        private CollapsibleList _typecontainer;
         private ControlBase _focus;
-        private int _tabscount = 0;
+        //private int _tabscount = 0;
         private bool GeneratePressed = false;
         private static bool initialised = false;
         private static GeneratorType _currentgen;
@@ -41,15 +32,12 @@ namespace linerider.UI
         private Spinner TenPCY;
         private Spinner TenPCRotation;
 
-        
         private static CircleGenerator gen_Circle;
         private static TenPCGenerator gen_10pc;
 
         private GeneratorType CurrentGenerator
         {
-            get{
-                return _currentgen;
-            }
+            get => _currentgen;
             set
             {
                 Render_Clear();
@@ -58,10 +46,10 @@ namespace linerider.UI
             }
         }
 
-        public GeneratorWindow(GameCanvas parent, Editor editor, Vector2d pos) : base(parent, null)
+        public GeneratorWindow(GameCanvas parent, Vector2d pos) : base(parent, null)
         {
             Title = $"Line Generator";
-            SetSize(450, 500);
+            _ = SetSize(450, 500);
             DisableResizing();
 
             /*_typecontainer = new CollapsibleList(this)
@@ -90,7 +78,7 @@ namespace linerider.UI
         {
             gen_Circle.DeleteLines();
             Console.WriteLine("ESCAPE!");
-            Close();
+            _ = Close();
             return true;
         }
         protected override bool OnKeyReturn(bool down)
@@ -99,7 +87,7 @@ namespace linerider.UI
             {
                 gen_Circle.DeleteLines();
                 Console.WriteLine("ESCAPE!");
-                Close();
+                _ = Close();
             }
             return true;
         }
@@ -142,7 +130,7 @@ namespace linerider.UI
             {
                 Render_Final();
                 GeneratePressed = true;
-                Close();
+                _ = Close();
             };
 
             PopulateCircle();
@@ -150,14 +138,14 @@ namespace linerider.UI
 
             GeneratorTypeBox = GwenHelper.CreateLabeledCombobox(top, "Generator Type:");
             GeneratorTypeBox.Dock = Dock.Top;
-            var tenpc = GeneratorTypeBox.AddItem("10-Point Cannon", "", GeneratorType.TenPC);
+            MenuItem tenpc = GeneratorTypeBox.AddItem("10-Point Cannon", "", GeneratorType.TenPC);
             tenpc.CheckChanged += (o, e) =>
             {
                 GeneratorOptions.Children.Clear();
                 TenPCOptions.Parent = GeneratorOptions;
                 CurrentGenerator = GeneratorType.TenPC;
             };
-            var circle = GeneratorTypeBox.AddItem("Circle", "", GeneratorType.Circle);
+            MenuItem circle = GeneratorTypeBox.AddItem("Circle", "", GeneratorType.Circle);
             circle.CheckChanged += (o, e) =>
             {
                 GeneratorOptions.Children.Clear();
@@ -269,21 +257,21 @@ namespace linerider.UI
                 gen_Circle.ReGenerate_Preview();
             };
 
-            GwenHelper.CreateLabeledControl(CircleGenOptions, "Radius", CircleRadius);
-            GwenHelper.CreateLabeledControl(CircleGenOptions, "Line Count", CircleLineCount);
-            GwenHelper.CreateLabeledControl(CircleGenOptions, "Centre X", CircleOffsetX);
-            GwenHelper.CreateLabeledControl(CircleGenOptions, "Centre Y", CircleOffsetY);
-            GwenHelper.CreateLabeledControl(CircleGenOptions, "Acceleration Multiplier", CircleMultiplier);
-            GwenHelper.CreateLabeledControl(CircleGenOptions, "Scenery Width Multiplier", CircleWidth);
+            _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Radius", CircleRadius);
+            _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Line Count", CircleLineCount);
+            _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Centre X", CircleOffsetX);
+            _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Centre Y", CircleOffsetY);
+            _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Acceleration Multiplier", CircleMultiplier);
+            _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Scenery Width Multiplier", CircleWidth);
 
-            var lineTypeRadioGroup = new RadioButtonGroup(CircleGenOptions)
+            RadioButtonGroup lineTypeRadioGroup = new RadioButtonGroup(CircleGenOptions)
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false
             };
-            var blueType = lineTypeRadioGroup.AddOption("Blue");
-            var redType = lineTypeRadioGroup.AddOption("Red");
-            var greenType = lineTypeRadioGroup.AddOption("Green");
+            RadioButton blueType = lineTypeRadioGroup.AddOption("Blue");
+            RadioButton redType = lineTypeRadioGroup.AddOption("Red");
+            RadioButton greenType = lineTypeRadioGroup.AddOption("Green");
             switch (gen_Circle.lineType)
             {
                 case LineType.Standard:
@@ -381,46 +369,42 @@ namespace linerider.UI
                 gen_10pc.ReGenerate_Preview();
             };
 
-            GwenHelper.CreateLabeledControl(TenPCOptions, "X Speed", TenPCX);
-            GwenHelper.CreateLabeledControl(TenPCOptions, "Y Speed", TenPCY);
-            GwenHelper.CreateLabeledControl(TenPCOptions, "Rotation Amount", TenPCRotation);
+            _ = GwenHelper.CreateLabeledControl(TenPCOptions, "X Speed", TenPCX);
+            _ = GwenHelper.CreateLabeledControl(TenPCOptions, "Y Speed", TenPCY);
+            _ = GwenHelper.CreateLabeledControl(TenPCOptions, "Rotation Amount", TenPCRotation);
         }
 
         private void CategorySelected(object sender, ItemSelectedEventArgs e)
         {
             if (_focus != e.SelectedItem.UserData)
             {
-                if (_focus != null)
-                {
-                    _focus.Hide();
-                }
+                _focus?.Hide();
                 _focus = (ControlBase)e.SelectedItem.UserData;
                 _focus.Show();
                 Settings.SettingsPane = (int)_focus.UserData;
                 Settings.Save();
             }
         }
-        
-        private ControlBase AddPage(CollapsibleCategory category, string name)
-        {
-            var btn = category.Add(name);
-            Panel panel = new Panel(this);
-            panel.Dock = Dock.Fill;
-            panel.Padding = Padding.Five;
-            panel.Hide();
-            panel.UserData = _tabscount;
-            btn.UserData = panel;
-            category.Selected += CategorySelected;
-            if (_tabscount == Settings.SettingsPane)
-                btn.Press();
-            _tabscount += 1;
-            return panel;
-        }
 
-        public override bool Close()
-        {
-            return base.Close();
-        }
+        //private ControlBase AddPage(CollapsibleCategory category, string name)
+        //{
+        //    Button btn = category.Add(name);
+        //    Panel panel = new Panel(this)
+        //    {
+        //        Dock = Dock.Fill,
+        //        Padding = Padding.Five
+        //    };
+        //    panel.Hide();
+        //    panel.UserData = _tabscount;
+        //    btn.UserData = panel;
+        //    category.Selected += CategorySelected;
+        //    if (_tabscount == Settings.SettingsPane)
+        //        btn.Press();
+        //    _tabscount += 1;
+        //    return panel;
+        //}
+
+        public override bool Close() => base.Close();
 
         protected override void CloseButtonPressed(ControlBase control, EventArgs args)
         {
@@ -431,7 +415,7 @@ namespace linerider.UI
             base.CloseButtonPressed(control, args);
         }
 
-        private void Render_Preview() //Renders the generator's preview lines
+        private void Render_Preview() // Renders the generator's preview lines
         {
             switch (CurrentGenerator)
             {
@@ -445,7 +429,7 @@ namespace linerider.UI
                     break;
             }
         }
-        private void Render_Final() //Renders the generator's final lines (which are the ones actually added to the track)
+        private void Render_Final() // Renders the generator's final lines (which are the ones actually added to the track)
         {
             switch (CurrentGenerator)
             {
@@ -463,7 +447,7 @@ namespace linerider.UI
                     break;
             }
         }
-        private void Render_Clear() //Clears all lines rendered by the current generator
+        private void Render_Clear() // Clears all lines rendered by the current generator
         {
             switch (CurrentGenerator)
             {

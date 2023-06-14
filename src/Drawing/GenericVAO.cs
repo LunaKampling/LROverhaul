@@ -18,13 +18,6 @@
 
 using OpenTK.Graphics.OpenGL;
 using System;
-using System.Drawing;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-using OpenTK;
-using linerider.Utils;
-using linerider.Rendering;
 
 namespace linerider.Drawing
 {

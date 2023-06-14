@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Gwen.Controls
+﻿namespace Gwen.Controls
 {
     /// <summary>
     /// Progress bar.
@@ -9,14 +7,13 @@ namespace Gwen.Controls
     {
 
         private float m_Progress;
-        private bool m_Horizontal;
 
         /// <summary>
         /// Progress value (0-1).
         /// </summary>
         public float Value
         {
-            get { return m_Progress; }
+            get => m_Progress;
             set
             {
                 if (value < 0)
@@ -30,7 +27,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Determines whether the control is horizontal.
         /// </summary>
-        public bool IsHorizontal { get { return m_Horizontal; } set { m_Horizontal = value; } }
+        public bool IsHorizontal { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgressBar"/> class.
@@ -51,9 +48,6 @@ namespace Gwen.Controls
         /// Renders the control using specified skin.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.SkinBase skin)
-        {
-            skin.DrawProgressBar(this, m_Horizontal, m_Progress);
-        }
+        protected override void Render(Skin.SkinBase skin) => skin.DrawProgressBar(this, IsHorizontal, m_Progress);
     }
 }

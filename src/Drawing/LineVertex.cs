@@ -16,12 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using OpenTK;
-using System.Drawing;
+using System.Runtime.InteropServices;
 namespace linerider.Drawing
 {
     /// <summary>
@@ -33,7 +29,7 @@ namespace linerider.Drawing
         public static readonly int Size = Marshal.SizeOf(typeof(LineVertex));
         public Vector2 Position;
         public int color;
-        // shorts for alignment or something
+        // Shorts for alignment or something
         // who knows
         /// <summary>
         /// 0 or 1

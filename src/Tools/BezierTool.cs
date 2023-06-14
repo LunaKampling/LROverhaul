@@ -16,19 +16,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using linerider.Rendering;
-using OpenTK;
-using System;
-using Color = System.Drawing.Color;
-using OpenTK.Input;
 using linerider.Game;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Linq;
-using System.Diagnostics;
-using linerider.Utils;
+using linerider.Rendering;
 using linerider.UI;
+using OpenTK;
+using OpenTK.Input;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace linerider.Tools
 {
@@ -36,36 +31,20 @@ namespace linerider.Tools
     {
         public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
         public override string Name => "Bezier Tool";
-        public override MouseCursor Cursor
-        {
-            get { return game.Cursors.List[CursorsHandler.Type.Line]; }
-        }
-        public override Swatch Swatch
-        {
-            get
-            {
-                return SharedSwatches.DrawingToolsSwatch;
-            }
-        }
-        public override bool ShowSwatch
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Line];
+        public override Swatch Swatch => SharedSwatches.DrawingToolsSwatch;
+        public override bool ShowSwatch => true;
         public bool Snapped = false;
-        private bool done = false;
         private const float MINIMUM_LINE = 0.01f;
         private bool _addflip;
-        private List<Vector2d> controlPoints = new List<Vector2d> {};
-        private List<GameLine> workingLines = new List<GameLine> {};
+        private readonly List<Vector2d> controlPoints = new List<Vector2d> { };
+        private readonly List<GameLine> workingLines = new List<GameLine> { };
         private Vector2d _end;
         private Vector2d _start;
         private bool moving = false;
         private int pointToMove = -1;
-        private float nodeSize => Settings.Bezier.NodeSize / game.Track.Zoom;
-        private float nodeThickness => 2f / game.Track.Zoom;
+        private float NodeSize => Settings.Bezier.NodeSize / game.Track.Zoom;
+        private float NodeThickness => 2f / game.Track.Zoom;
 
         public BezierTool()
             : base()
@@ -73,19 +52,16 @@ namespace linerider.Tools
             Swatch.Selected = LineType.Standard;
         }
 
-        public override void OnChangingTool()
-        {
-            Stop();
-        }
+        public override void OnChangingTool() => Stop();
         public override void OnMouseDown(Vector2d pos)
         {
             Active = true;
-            var gamepos = ScreenToGameCoords(pos);
+            Vector2d gamepos = ScreenToGameCoords(pos);
             if (EnableSnap)
             {
-                using (var trk = game.Track.CreateTrackReader())
+                using (TrackReader trk = game.Track.CreateTrackReader())
                 {
-                    var snap = TrySnapPoint(trk, gamepos, out bool success);
+                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
                     if (success)
                     {
                         _start = snap;
@@ -104,15 +80,14 @@ namespace linerider.Tools
                 Snapped = false;
             }
 
-
-            _addflip = UI.InputUtils.Check(UI.Hotkey.LineToolFlipLine);
+            _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
             _end = _start;
 
             int closestIndex = -1;
             double closestDist = 100000;
             for (int i = 0; i < controlPoints.Count; i++)
             {
-                var dist = GameRenderer.Distance(ScreenToGameCoords(pos), controlPoints[i]);
+                double dist = GameRenderer.Distance(ScreenToGameCoords(pos), controlPoints[i]);
                 if (dist < closestDist)
                 {
                     closestDist = dist;
@@ -120,7 +95,7 @@ namespace linerider.Tools
                 }
             }
 
-            if (closestIndex >= 0 && closestDist < nodeSize)
+            if (closestIndex >= 0 && closestDist < NodeSize)
             {
                 moving = true;
                 pointToMove = closestIndex;
@@ -145,7 +120,7 @@ namespace linerider.Tools
             double closestDist = 100000;
             for (int i = 0; i < controlPoints.Count; i++)
             {
-                var dist = GameRenderer.Distance(ScreenToGameCoords(pos), controlPoints[i]);
+                double dist = GameRenderer.Distance(ScreenToGameCoords(pos), controlPoints[i]);
                 if (dist < closestDist)
                 {
                     closestDist = dist;
@@ -153,7 +128,7 @@ namespace linerider.Tools
                 }
             }
 
-            if (closestIndex >= 0 && closestDist < nodeSize)
+            if (closestIndex >= 0 && closestDist < NodeSize)
             {
                 controlPoints.RemoveAt(closestIndex);
             }
@@ -164,10 +139,9 @@ namespace linerider.Tools
         {
             switch (k)
             {
-                case OpenTK.Input.Key.Space:
-                case OpenTK.Input.Key.KeypadEnter:
-                case OpenTK.Input.Key.Enter:
-                    done = true;
+                case Key.Space:
+                case Key.KeypadEnter:
+                case Key.Enter:
                     FinalizePlacement();
                     break;
             }
@@ -189,9 +163,9 @@ namespace linerider.Tools
                 }
                 else if (EnableSnap)
                 {
-                    using (var trk = game.Track.CreateTrackReader())
+                    using (TrackReader trk = game.Track.CreateTrackReader())
                     {
-                        var snap = TrySnapPoint(trk, _end, out bool snapped);
+                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
                         if (snapped && snap != _start)
                         {
                             _end = snap;
@@ -210,18 +184,18 @@ namespace linerider.Tools
             {
                 moving = false;
                 pointToMove = -1;
-                var diff = _end - _start;
-                var x = diff.X;
-                var y = diff.Y;
+                Vector2d diff = _end - _start;
+                _ = diff.X;
+                _ = diff.Y;
                 if (game.ShouldXySnap())
                 {
                     _end = Utility.SnapToDegrees(_start, _end);
                 }
                 else if (EnableSnap)
                 {
-                    using (var trk = game.Track.CreateTrackWriter())
+                    using (TrackWriter trk = game.Track.CreateTrackWriter())
                     {
-                        var snap = TrySnapPoint(trk, _end, out bool snapped);
+                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
                         if (snapped && snap != _start)
                         {
                             _end = snap;
@@ -239,17 +213,16 @@ namespace linerider.Tools
             {
                 GeneratePreview();
             }
-
         }
         private void GeneratePreview()
         {
             DeleteLines();
-            using (var trk = game.Track.CreateTrackWriter())
+            using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
                 trk.DisableUndo();
                 PlaceLines(trk, true);
             }
-            if(Settings.Bezier.Mode == (int)Settings.BezierMode.Direct)
+            if (Settings.Bezier.Mode == (int)Settings.BezierMode.Direct)
             {
                 RenderDirect();
             }
@@ -260,18 +233,17 @@ namespace linerider.Tools
         }
         private void RenderDirect()
         {
-            BezierCurve curve;
-            GameRenderer.GenerateBezierCurve2d(controlPoints.ToArray(), Settings.Bezier.Resolution, out curve);
+            _ = GameRenderer.GenerateBezierCurve2d(controlPoints.ToArray(), Settings.Bezier.Resolution, out BezierCurve curve);
             switch (Swatch.Selected)
             {
                 case LineType.Standard:
-                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.StandardLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.StandardLine, NodeSize, NodeThickness);
                     break;
                 case LineType.Scenery:
-                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.SceneryLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.SceneryLine, NodeSize, NodeThickness);
                     break;
                 case LineType.Acceleration:
-                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.AccelerationLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, curve, Settings.Colors.AccelerationLine, NodeSize, NodeThickness);
                     break;
             }
         }
@@ -280,13 +252,13 @@ namespace linerider.Tools
             switch (Swatch.Selected)
             {
                 case LineType.Standard:
-                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.StandardLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.StandardLine, NodeSize, NodeThickness);
                     break;
                 case LineType.Scenery:
-                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.SceneryLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.SceneryLine, NodeSize, NodeThickness);
                     break;
                 case LineType.Acceleration:
-                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.AccelerationLine, nodeSize, nodeThickness);
+                    GameRenderer.RenderPoints(controlPoints, Settings.Colors.AccelerationLine, NodeSize, NodeThickness);
                     break;
             }
         }
@@ -294,7 +266,7 @@ namespace linerider.Tools
         {
             Active = false;
             DeleteLines();
-            using (var trk = game.Track.CreateTrackWriter())
+            using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
                 PlaceLines(trk, false);
             }
@@ -307,26 +279,28 @@ namespace linerider.Tools
             if (controlPoints.Count > 1)
             {
                 List<Vector2> curvePoints = GameRenderer.GenerateBezierCurve(controlPoints.ToArray(), Settings.Bezier.Resolution).ToList();
-                if(!preview) game.Track.UndoManager.BeginAction();
+                if (!preview)
+                    game.Track.UndoManager.BeginAction();
                 for (int i = 1; i < curvePoints.Count; i++)
                 {
                     Vector2d _start = (Vector2d)curvePoints[i - 1];
                     Vector2d _end = (Vector2d)curvePoints[i];
                     if ((_end - _start).Length >= MINIMUM_LINE)
                     {
-                        var added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
+                        GameLine added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
                             Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                         workingLines.Add(added);
                     }
                 }
                 game.Track.NotifyTrackChanged();
-                if (!preview) game.Track.UndoManager.EndAction();
+                if (!preview)
+                    game.Track.UndoManager.EndAction();
             }
             game.Invalidate();
         }
         private void DeleteLines()
         {
-            using (var trk = game.Track.CreateTrackWriter())
+            using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
                 trk.DisableUndo();
                 if (workingLines.Count() == 0)
@@ -340,10 +314,7 @@ namespace linerider.Tools
                 game.Track.NotifyTrackChanged();
             }
         }
-        public override void Cancel()
-        {
-            Stop();
-        }
+        public override void Cancel() => Stop();
         public override void Stop()
         {
             Active = false;
