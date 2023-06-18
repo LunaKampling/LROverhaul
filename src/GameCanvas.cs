@@ -99,12 +99,11 @@ namespace linerider
         }
         private void CreateUI()
         {
-
             _usertooltip = new Tooltip(this) { IsHidden = true };
             ZoomSlider = new ZoomSlider(this, game.Track);
             _timeline = new TimelineWidget(this, game.Track);
 
-            ControlBase leftPanel = new Panel(this)
+            ControlBase leftArea = new Panel(this)
             {
                 Margin = new Margin(WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0, 0),
                 ShouldDrawBackground = false,
@@ -112,32 +111,32 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
             };
-            _ = new InfoBarLeft(leftPanel, game.Track)
+            _ = new InfoBarLeft(leftArea, game.Track)
             {
                 Dock = Dock.Top,
             };
-            _infobarcoords = new InfoBarCoords(leftPanel)
+            _infobarcoords = new InfoBarCoords(leftArea)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetContainer.WidgetMargin, 0, 0),
             };
 
-            WidgetContainer middlePanel = new WidgetContainer(this)
+            WidgetContainer topArea = new WidgetContainer(this)
             {
                 AutoSizeToContents = true,
                 Positioner = (o) => new Point(Width / 2 - o.Width / 2, WidgetContainer.WidgetMargin),
             };
-            _toolbar = new Toolbar(middlePanel, game)
+            _toolbar = new Toolbar(topArea, game)
             {
                 Dock = Dock.Top,
             };
-            _swatchbar = new SwatchBar(middlePanel, game.Track)
+            _swatchbar = new SwatchBar(topArea, game.Track)
             {
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
             };
 
-            ControlBase rightPanel = new Panel(this)
+            ControlBase rightArea = new Panel(this)
             {
                 Margin = new Margin(0, WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0),
                 ShouldDrawBackground = false,
@@ -145,7 +144,7 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Right,
             };
-            _ = new InfoBarRight(rightPanel, game.Track)
+            _ = new InfoBarRight(rightArea, game.Track)
             {
                 Dock = Dock.Top,
             };
@@ -153,8 +152,8 @@ namespace linerider
             _loadingsprite = new LoadingSprite(this)
             {
                 Positioner = (o) => new Point(
-                    middlePanel.X + middlePanel.Width,
-                    middlePanel.Y + WidgetContainer.WidgetPadding
+                    topArea.X + topArea.Width,
+                    topArea.Y + WidgetContainer.WidgetPadding
                 ),
             };
         }
