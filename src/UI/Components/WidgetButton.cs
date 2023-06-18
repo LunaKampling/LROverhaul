@@ -40,6 +40,11 @@ namespace linerider.UI.Components
                 InputUtils.RegisterHotkey(_hotkey, _hotkeycondition, () => Action(this, EventArgs.Empty));
             }
         }
+        public Hotkey TooltipHotkey
+        {
+            get => _tooltiphotkey == Hotkey.None ? Hotkey : _tooltiphotkey;
+            set => _tooltiphotkey = value;
+        }
         public Func<bool> HotkeyCondition
         {
             set
@@ -57,7 +62,8 @@ namespace linerider.UI.Components
         public new Color TextColor = Color.Black;
         private Func<bool> _hotkeycondition = () => true;
         private GwenEventHandler<EventArgs> _action;
-        private Hotkey _hotkey;
+        private Hotkey _tooltiphotkey = Hotkey.None;
+        private Hotkey _hotkey = Hotkey.None;
         private Bitmap _icon;
         private Color _color = Color.Empty;
 
@@ -73,8 +79,8 @@ namespace linerider.UI.Components
                 bool addHotkeyBrackets = !string.IsNullOrEmpty(Name);
                 string tooltip = Name;
 
-                if (Hotkey != Hotkey.None)
-                    tooltip += Settings.HotkeyToString(Hotkey, addHotkeyBrackets);
+                if (TooltipHotkey != Hotkey.None)
+                    tooltip += Settings.HotkeyToString(TooltipHotkey, addHotkeyBrackets);
 
                 return tooltip;
             }

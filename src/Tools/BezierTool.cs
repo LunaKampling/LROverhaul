@@ -29,8 +29,8 @@ namespace linerider.Tools
 {
     public class BezierTool : Tool
     {
-        public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
         public override string Name => "Bezier Tool";
+        public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
         public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Line];
         public override Swatch Swatch => SharedSwatches.DrawingToolsSwatch;
         public override bool ShowSwatch => true;
