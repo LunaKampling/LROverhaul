@@ -22,7 +22,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace linerider.UI
+namespace linerider.UI.Widgets
 {
     public class InfoBarRight : WidgetContainer
     {

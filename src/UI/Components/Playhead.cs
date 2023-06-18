@@ -17,11 +17,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using Gwen;
 using Gwen.Controls;
-using linerider.UI.Components;
 using System;
 using System.Drawing;
 
-namespace linerider.UI
+namespace linerider.UI.Components
 {
     public class Playhead : HorizontalSlider
     {

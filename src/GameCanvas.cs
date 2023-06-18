@@ -22,6 +22,7 @@ using Gwen.Skin;
 using linerider.Tools;
 using linerider.UI;
 using linerider.UI.Components;
+using linerider.UI.Widgets;
 using linerider.Utils;
 using OpenTK;
 using System;

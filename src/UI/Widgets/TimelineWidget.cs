@@ -21,7 +21,7 @@ using linerider.UI.Components;
 using System;
 using System.Drawing;
 
-namespace linerider.UI
+namespace linerider.UI.Widgets
 {
     public class TimelineWidget : WidgetContainer
     {

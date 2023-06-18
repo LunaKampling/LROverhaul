@@ -22,7 +22,7 @@ using OpenTK;
 using System;
 using System.Drawing;
 
-namespace linerider.UI
+namespace linerider.UI.Widgets
 {
     public class ZoomSlider : VerticalSlider
     {
