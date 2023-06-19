@@ -157,13 +157,8 @@ namespace linerider.UI.Widgets
                 Dock = Dock.Right,
                 Name = "Reset Camera",
                 Icon = GameResources.icon_reset_camera.Bitmap,
-                Action = (o, e) =>
-                {
-                    _editor.Zoom = _editor.Timeline.GetFrameZoom(_editor.Offset);
-                    _editor.UseUserZoom = false;
-                    _editor.UpdateCamera();
-                },
                 Hotkey = Hotkey.PlaybackResetCamera,
+                Action = (o, e) => _editor.ResetCamera(),
             };
 
         }

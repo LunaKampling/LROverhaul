@@ -653,6 +653,13 @@ namespace linerider
             }
         }
 
+        public void ResetCamera()
+        {
+            Zoom = Timeline.GetFrameZoom(Offset);
+            UseUserZoom = false;
+            UpdateCamera();
+        }
+
         public void UpdateCamera(bool reverse = false)
         {
             if (!UseUserZoom)
