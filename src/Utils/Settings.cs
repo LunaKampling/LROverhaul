@@ -73,6 +73,7 @@ namespace linerider
             public static bool ShowLineLength;
             public static bool ShowLineAngle;
             public static bool ShowLineID;
+            public static bool NoHitSelect;
         }
         public static class Colors
         {
@@ -251,6 +252,7 @@ namespace linerider
             Editor.ShowLineLength = true;
             Editor.ShowLineAngle = true;
             Editor.ShowLineID = false;
+            Editor.NoHitSelect = false;
             Colors.ExportBg = Constants.BgExportColor;
             Colors.EditorBg = Constants.BgEditorColor;
             Colors.EditorNightBg = Constants.BgEditorNightColor;
@@ -652,6 +654,7 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(Editor.MomentumVectors)), ref Editor.MomentumVectors);
             LoadBool(GetSetting(lines, nameof(Editor.RenderGravityWells)), ref Editor.RenderGravityWells);
             LoadBool(GetSetting(lines, nameof(Editor.DrawContactPoints)), ref Editor.DrawContactPoints);
+            LoadBool(GetSetting(lines, nameof(Editor.NoHitSelect)), ref Editor.NoHitSelect);
             LoadBool(GetSetting(lines, nameof(PreviewMode)), ref PreviewMode);
             LoadInt(GetSetting(lines, nameof(SlowmoSpeed)), ref SlowmoSpeed);
             LoadFloat(GetSetting(lines, nameof(DefaultPlayback)), ref DefaultPlayback);
@@ -796,6 +799,7 @@ namespace linerider
                 MakeSetting(nameof(Editor.MomentumVectors), Editor.MomentumVectors.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.RenderGravityWells), Editor.RenderGravityWells.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.DrawContactPoints), Editor.DrawContactPoints.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.NoHitSelect), Editor.NoHitSelect.ToString(Program.Culture)),
                 MakeSetting(nameof(PreviewMode), PreviewMode.ToString(Program.Culture)),
                 MakeSetting(nameof(SlowmoSpeed), SlowmoSpeed.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultPlayback), DefaultPlayback.ToString(Program.Culture)),

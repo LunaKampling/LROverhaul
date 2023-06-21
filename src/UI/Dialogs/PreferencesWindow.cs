@@ -615,6 +615,11 @@ namespace linerider.UI
                 Settings.Editor.ShowLineID = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
+            Checkbox nohit = GwenHelper.AddCheckbox(lineGroup, "Don't Select Hit Lines", Settings.Editor.NoHitSelect, (o, e) =>
+            {
+                Settings.Editor.NoHitSelect = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
 
             Panel lifelockGroup = GwenHelper.CreateHeaderPanel(selectGroup, "Lifelock Conditions");
             lifelockGroup.Dock = Dock.Right;
