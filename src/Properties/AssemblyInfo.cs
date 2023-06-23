@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyFileVersion("1.5.0.3")]
+[assembly: AssemblyFileVersion("1.5.0.4")]
 
 // Value indicating build type. Used as an app version postfix
 [assembly: AssemblyMetadata("TestVersion", "a")]
