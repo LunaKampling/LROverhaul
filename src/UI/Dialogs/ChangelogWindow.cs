@@ -12,17 +12,23 @@ namespace linerider.UI
             AutoSizeToContents = true;
 
             string changelogText =
-                "5/15/2023 \n" +
-                "*Change line type based on selection! Alt + 1/2/3 to change the line type \n" +
-                "*Copy line data to your clipboard! Ctrl+shift+c/v to copy/paste line data \n" +
-                "*Generators now contain a button within the top bar UI \n" +
-                "*.json files no longer make the background for exports 000000FF (Black)  \n" +
-                "*A few links have been changed to now point to the LROverhaul GitHub page \n" +
-                "*General hotkey changes \n" +
-                "*Toolbar buttons should be upscaled by now \n \n" +
-                "*Note: Bezier and Remount still need fixing \n" +
-                "*New selection mechanics have been tested, though if you happen to somehow crash \n" +
-                "the program, report it on the Trello page. Of course also send your log file.";
+                "6/23/2023 \n" +
+                "*Fixed a bug regarding hotkeys \n" +
+                "*Made Bosh more pleasing to the eye \n" +
+                "*Fixed zooming to now zoom at cursor position. \n" +
+                "*Made zooming linear instead of multiplicative to prevent odd zoom values \n" +
+                "*Changed .exe icons \n" +
+                "*Select tool can now select only unhit lines \n" +
+                "*Bezier knobs now always have the same thickness \n" +
+                "*Changed several menus' lay-out and functionality \n" +
+                "*Preview mode is autoenabled when the trigger window is open \n" +
+                "*Colour inputs now work using HEX instead of RGB \n" +
+                "*Added force reload for rider and scarf \n" +
+                "*New toolbar!!! New buttons!!! \n" +
+                "*Tracks now pre-load 30 seconds instead of a single second \n" +
+                "*Minor bug and UI fixes \n" +
+                "*Upgraded to .NET 4.8 \n" +
+                "*Global code clean-up\n";
 
             ControlBase bottomcontainer = new ControlBase(this)
             {
