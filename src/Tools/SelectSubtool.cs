@@ -187,6 +187,8 @@ namespace linerider.Tools
                 {
                     foreach (LineSelection v in _boxselection)
                     {
+                        if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(v.line.ID)) continue;
+                        
                         LineType linetypeSelected = v.GetLineType();
                         if (linetypeSelected == Swatch.Selected || Swatch.Selected == LineType.All)
                         {
@@ -217,6 +219,8 @@ namespace linerider.Tools
                 {
                     if (!_selectedlines.Contains(line.ID))
                     {
+                        if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(line.ID)) continue;
+
                         LineSelection selection = new LineSelection(line, true, null);
                         if (line.Type == Swatch.Selected || Swatch.Selected == LineType.All)
                         {
