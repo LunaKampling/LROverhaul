@@ -585,7 +585,7 @@ namespace linerider
             try
             {
                 if (!File.Exists(Program.UserDirectory + "settings-LRT.conf"))
-                    Save();
+                    ForceSave();
 
                 lines = File.ReadAllLines(Program.UserDirectory + "settings-LRT.conf");
             }
@@ -727,21 +727,23 @@ namespace linerider
             LoadDefaultKeybindings();
         }
 
-        public static void Save() => Debouncer.Debounce("Settings.Save", () =>
-                                              {
-                                                  List<string> lines = new List<string>();
+        public static void Save() => Debouncer.Debounce("Settings.Save", ForceSave, 1000);
 
-                                                  lines.AddRange(BuildMainSettingsList());
-                                                  lines.AddRange(BuildAddonSettingsList());
-                                                  lines.AddRange(BuildKeybindsList());
+        private static void ForceSave()
+        {
+            List<string> lines = new List<string>();
 
-                                                  try
-                                                  {
-                                                      string content = string.Join("\r\n", lines);
-                                                      File.WriteAllText(Program.UserDirectory + "settings-LRT.conf", content);
-                                                  }
-                                                  catch { }
-                                              }, 1000);
+            lines.AddRange(BuildMainSettingsList());
+            lines.AddRange(BuildAddonSettingsList());
+            lines.AddRange(BuildKeybindsList());
+
+            try
+            {
+                string content = string.Join("\r\n", lines);
+                File.WriteAllText(Program.UserDirectory + "settings-LRT.conf", content);
+            }
+            catch { }
+        }
 
         private static List<string> BuildMainSettingsList()
         {
