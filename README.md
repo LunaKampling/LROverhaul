@@ -8,7 +8,7 @@
 **Line Rider Overhaul** (or LRO) is a restoration project of LRA:CE. It has updated graphics, lots of bug fixes and new features to make Line Rider more user friendly.
 
 # Downloads
-You can download the latest version from [here](https://github.com/LunaKampling/LROverhaul/releases/tag/Initial).
+You can download the latest version from [here](https://github.com/LunaKampling/LROverhaul/releases/tag/Latest).
 * **Windows**: Windows older than Win10 19H1 (May 2019 update) may require [.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) to be installed manually.
 * **Mac/Linux**: You will need the [mono framework](http://www.mono-project.com/download/stable/) installed in order to run the executable file.
 
