@@ -1065,6 +1065,18 @@ namespace linerider
         }
         private void RegisterEditorHotkeys()
         {
+            InputUtils.RegisterHotkey(Hotkey.EditorQuickPan, () => !Track.Playing && !Canvas.IsModalOpen, () =>
+            {
+                CurrentTools.QuickPan = true;
+                Invalidate();
+                UpdateCursor();
+            },
+            () =>
+            {
+                CurrentTools.QuickPan = false;
+                Invalidate();
+                UpdateCursor();
+            });
             InputUtils.RegisterHotkey(Hotkey.EditorDragCanvas, () => !Track.Playing && !Canvas.IsModalOpen, () =>
             {
                 Vector2d mouse = InputUtils.GetMouse();
