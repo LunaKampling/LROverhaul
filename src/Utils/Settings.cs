@@ -157,7 +157,7 @@ namespace linerider
         public static int multiScarfSegments; // How many segments a multi scarf has
         public static int autosaveChanges; // Changes when autosave starts
         public static int autosaveMinutes; // Amount of minues per autosave
-        public static string AutosaveName = "Autosave"; // Name of autosave file
+        public static string AutosavePrefix; // Name of autosave file
         public static bool startWindowMaximized; // Start window maximized
         public static string DefaultSaveFormat; // What the save menu auto picks 
         public static string DefaultAutosaveFormat; // What the autosave format is
@@ -320,7 +320,7 @@ namespace linerider
             multiScarfSegments = 5;
             autosaveChanges = 50;
             autosaveMinutes = 5;
-            AutosaveName = "Autosave";
+            AutosavePrefix = "Autosave";
             startWindowMaximized = false;
             DefaultSaveFormat = ".trk";
             DefaultAutosaveFormat = ".trk";
@@ -675,7 +675,7 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(multiScarfAmount)), ref multiScarfAmount);
             LoadInt(GetSetting(lines, nameof(autosaveMinutes)), ref autosaveMinutes);
             LoadInt(GetSetting(lines, nameof(autosaveChanges)), ref autosaveChanges);
-            AutosaveName = GetSetting(lines, nameof(AutosaveName));
+            AutosavePrefix = GetSetting(lines, nameof(AutosavePrefix));
             LoadBool(GetSetting(lines, nameof(startWindowMaximized)), ref startWindowMaximized);
             DefaultSaveFormat = GetSetting(lines, nameof(DefaultSaveFormat));
             DefaultAutosaveFormat = GetSetting(lines, nameof(DefaultAutosaveFormat));
@@ -823,7 +823,7 @@ namespace linerider
                 MakeSetting(nameof(multiScarfAmount), multiScarfAmount.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveChanges), autosaveChanges.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveMinutes), autosaveMinutes.ToString(Program.Culture)),
-                MakeSetting(nameof(AutosaveName), AutosaveName),
+                MakeSetting(nameof(AutosavePrefix), AutosavePrefix),
                 MakeSetting(nameof(startWindowMaximized), startWindowMaximized.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultSaveFormat), DefaultSaveFormat),
                 MakeSetting(nameof(DefaultAutosaveFormat), DefaultAutosaveFormat),
