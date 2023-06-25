@@ -676,7 +676,7 @@ namespace linerider
                 {
                     if (Crash)
                     {
-                        string backupName = "Crash Backup " + DateTime.Now.Month + "." + DateTime.Now.Day + "." + +DateTime.Now.Year + "_" + DateTime.Now.Hour + "." + DateTime.Now.Minute;
+                        string backupName = "Crash Backup " + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");
                         switch (Settings.DefaultCrashBackupFormat)
                         {
                             case ".trk":
@@ -695,9 +695,10 @@ namespace linerider
                     }
                     else
                     {
-                        if (TrackChanges > Settings.autosaveChanges)
+                        if (TrackChanges >=  Settings.autosaveChanges)
                         {
                             TrackIO.CreateAutosave(_track);
+                            ResetTrackChangeCounter();
                         }
                     }
                 }
