@@ -984,7 +984,7 @@ namespace linerider.UI
                 Settings.autosaveMinutes = (int)((Spinner)o).Value;
                 Settings.Save();
             };
-            _ = GwenHelper.CreateLabeledControl(savesGroup, "Minutes between autosaves", autosaveMinutes);
+            _ = GwenHelper.CreateLabeledControl(savesGroup, "Minutes Between Autosaves", autosaveMinutes);
 
             Spinner autosaveChanges = new Spinner(savesGroup)
             {
@@ -997,7 +997,21 @@ namespace linerider.UI
                 Settings.autosaveChanges = (int)((Spinner)o).Value;
                 Settings.Save();
             };
-            _ = GwenHelper.CreateLabeledControl(savesGroup, "Min changes to start autosaving", autosaveChanges);
+            _ = GwenHelper.CreateLabeledControl(savesGroup, "Minimum Changes to Autosave", autosaveChanges);
+
+            TextBox autosaveName = new TextBox(savesGroup);
+            autosaveName.Text = Settings.AutosaveName;
+            autosaveName.TextChanged += (o, e) =>
+            {
+                string name = ((TextBox)o).Text;
+
+                if (name.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
+                {
+                    Settings.AutosaveName = name;
+                    Settings.Save();
+                }
+            };
+            _ = GwenHelper.CreateLabeledControl(savesGroup, "Autosave Prefix", autosaveName);
 
             ComboBox defaultSaveType = GwenHelper.CreateLabeledCombobox(savesGroup, "Default Save As Format:");
             _ = defaultSaveType.AddItem(".trk", "", ".trk");

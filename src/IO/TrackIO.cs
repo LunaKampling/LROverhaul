@@ -319,7 +319,7 @@ namespace linerider.IO
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
 
-            string autosaveString = "Autosave " + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");
+            string autosaveString = Settings.AutosaveName + " " + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");
             switch (Settings.DefaultAutosaveFormat)
             {
                 case ".trk":
