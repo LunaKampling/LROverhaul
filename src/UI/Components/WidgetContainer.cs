@@ -31,7 +31,7 @@ namespace linerider.UI.Components
         public static readonly int WidgetMargin = Utility.NumberToCurrentScale(3);
         public static readonly int WidgetPadding = Utility.NumberToCurrentScale(7);
         public static readonly int WidgetItemSpacing = Utility.NumberToCurrentScale(5);
-        private int borderRadius = Utility.NumberToCurrentScale(10);
+        private readonly int BorderRadius = Utility.NumberToCurrentScale(10);
 
         private Bordered _image;
         private Color _bgcolor
@@ -50,7 +50,7 @@ namespace linerider.UI.Components
             MouseInputEnabled = false;
             BackgroundAlpha = 128;
 
-            _image = new RoundedSquareTexture(borderRadius).Bordered;
+            _image = new RoundedSquareTexture(BorderRadius).Bordered;
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
