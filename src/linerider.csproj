@@ -262,6 +262,7 @@
     <Compile Include="Utils\GaussianBlur.cs" />
     <Compile Include="Utils\ResourceSync.cs" />
     <Compile Include="Utils\Line.cs" />
+    <Compile Include="Utils\RoundedSquareTexture.cs" />
     <Compile Include="Utils\Turtle.cs" />
     <Compile Include="Utils\Utility.cs" />
     <Compile Include="Utils\RectLRTB.cs" />
@@ -298,7 +299,6 @@
     <EmbeddedResource Include="Resources\ux\loading.svg" />
     <EmbeddedResource Include="Resources\ux\swatch.svg" />
     <EmbeddedResource Include="Resources\ux\swatch_active.svg" />
-    <EmbeddedResource Include="Resources\ux\widget_background.svg" />
     <EmbeddedResource Include="Resources\ux\tool_background.svg" />
     <EmbeddedResource Include="Resources\ux\multitool_indicator.svg" />
   </ItemGroup>
