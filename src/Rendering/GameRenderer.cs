@@ -90,19 +90,27 @@ namespace linerider.Rendering
             float linewidth,
             float growratio)
         {
-            Color knobdefault = Settings.Computed.BGColor;
-            float knobsize = highlight ? (0.8f + 0.1f * growratio) : 0.8f;
-            float size = linewidth * 2 * knobsize;
-            Color color = knobdefault;
+            Color color = Settings.Computed.BGColor;
+            float size = Math.Min(
+                Constants.KnobSize,
+                Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxKnobSize / Game.Track.Zoom
+            );
+
+            if (highlight)
+            {
+                float from = 1.1f; // +0.1f to hide antialiased pixels
+                size = size * from + 1f / Game.Track.Zoom * growratio;
+                color = Utility.MixColors(Settings.Computed.BGColor, Settings.Computed.LineColor, 0.5f);
+            }
+
             if (lifelock)
-                color = Color.FromArgb(0xff, 0x00, 0x00);
-            else if (highlight)
-                color = Color.FromArgb(0x70, 0x6B, 0x75);
-            RenderRoundedLine(
-                position,
-                position,
-                color,
-                size);
+            {
+                color = Constants.KnobLifelockColor;
+            }
+
+            size *= linewidth * 2;
+
+            RenderRoundedLine(position, position, color, size);
         }
         public static void RenderRoundedLine(Vector2d position, Vector2d position2, Color color, float thickness, bool knobs = false, bool redknobs = false)
         {

@@ -28,6 +28,17 @@ namespace linerider
         public static int NumberToCurrentScale(int value) => (int)Math.Round(value * Settings.Computed.UIScale);
         public static float NumberToCurrentScale(float value) => (float)Math.Round(value * Settings.Computed.UIScale);
         public static bool IsColorDark(Color color) => color.R * 0.2126 + color.G * 0.6652 + color.B * 0.0722 < 255 / 2;
+        public static Color MixColors(Color color1, Color color2, float proportion)
+        {
+            float proportionFrom = 1.0f - proportion;
+
+            return Color.FromArgb(
+                (int)(color1.A * proportionFrom + color2.A * proportion),
+                (int)(color1.R * proportionFrom + color2.R * proportion),
+                (int)(color1.G * proportionFrom + color2.G * proportion),
+                (int)(color1.B * proportionFrom + color2.B * proportion)
+            );
+        }
         public static Vector2d SnapToDegrees(Vector2d start, Vector2d end)
         {
             float degrees = (start - end).Length > 1 ? Settings.Editor.XySnapDegrees : 45;
