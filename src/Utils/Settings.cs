@@ -157,7 +157,7 @@ namespace linerider
         public static int multiScarfSegments; // How many segments a multi scarf has
         public static int autosaveChanges; // Changes when autosave starts
         public static int autosaveMinutes; // Amount of minues per autosave
-        public static string AutosavePrefix; // Name of autosave file
+        public static string AutosavePrefix = ""; // Name of autosave file
         public static bool startWindowMaximized; // Start window maximized
         public static string DefaultSaveFormat; // What the save menu auto picks 
         public static string DefaultAutosaveFormat; // What the autosave format is
