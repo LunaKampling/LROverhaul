@@ -154,6 +154,10 @@ namespace linerider
             {
                 Settings.DefaultCrashBackupFormat = ".trk";
             }
+            if (Settings.AutosavePrefix == null)
+            {
+                Settings.DefaultCrashBackupFormat = "Autosave";
+            }
             Settings.Save();
 
             if (!Directory.Exists(UserDirectory + "Songs"))
