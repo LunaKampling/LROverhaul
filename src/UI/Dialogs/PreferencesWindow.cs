@@ -1000,7 +1000,7 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(savesGroup, "Minimum Changes to Autosave", autosaveChanges);
 
             TextBox autosaveName = new TextBox(savesGroup);
-            autosaveName.Text = Settings.AutosavePrefix + "";
+            autosaveName.Text = Settings.AutosavePrefix;
             autosaveName.TextChanged += (o, e) =>
             {
                 string name = ((TextBox)o).Text;

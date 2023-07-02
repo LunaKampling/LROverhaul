@@ -156,7 +156,7 @@ namespace linerider
             }
             if (Settings.AutosavePrefix == null)
             {
-                Settings.DefaultCrashBackupFormat = "Autosave";
+                Settings.AutosavePrefix = "Autosave";
             }
             Settings.Save();
 
