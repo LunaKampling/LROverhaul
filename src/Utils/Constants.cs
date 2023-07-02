@@ -40,6 +40,8 @@ namespace linerider.Utils
         public const string RendersFolderName = "Renders";
         public const string TracksFolderName = "Tracks";
         public const string DefaultTrackName = "<untitled>";
+        public const string QuicksavePrefix = "Quicksave";
+        public const string CrashBackupPrefix = "Crash Backup";
 
         public const float DefaultZoom = 4;
         public const int PhysicsRate = 40;

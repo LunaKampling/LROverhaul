@@ -47,7 +47,7 @@ namespace linerider.UI
             int changes = _editor.TrackChanges;
 
             _title.IsHidden = rec;
-            _autosavelabel.IsHidden = rec || changes <= Settings.autosaveChanges;
+            _autosavelabel.IsHidden = rec || changes < Settings.autosaveChanges;
             _changedlines.IsHidden = rec || changes == 0;
             _linecount.IsHidden = rec;
             _selectioncount.IsHidden = rec || GetSelectedLinesCount() == 0;

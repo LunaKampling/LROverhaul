@@ -676,7 +676,7 @@ namespace linerider
                 {
                     if (Crash)
                     {
-                        string backupName = "Crash Backup " + DateTime.Now.Month + "." + DateTime.Now.Day + "." + +DateTime.Now.Year + "_" + DateTime.Now.Hour + "." + DateTime.Now.Minute;
+                        string backupName = Constants.CrashBackupPrefix + " " + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");
                         switch (Settings.DefaultCrashBackupFormat)
                         {
                             case ".trk":
@@ -695,9 +695,12 @@ namespace linerider
                     }
                     else
                     {
-                        if (TrackChanges > Settings.autosaveChanges)
+                        if (TrackChanges >=  Settings.autosaveChanges)
                         {
                             TrackIO.CreateAutosave(_track);
+                            ResetTrackChangeCounter();
+                            Settings.LastSelectedTrack = _track.Filename;
+                            Settings.Save();
                         }
                     }
                 }
@@ -781,6 +784,7 @@ namespace linerider
             {
                 game.Canvas.Loading = true;
                 string lasttrack;
+
                 if (Program.args.Length > 0)
                 {
                     Settings.LastSelectedTrack = Program.args[0];
@@ -793,7 +797,8 @@ namespace linerider
                     if (!lasttrack.StartsWith(trdr))
                         return;
                 }
-                if (lasttrack.Contains("Crash Backup"))
+
+                if (lasttrack.Contains(Constants.CrashBackupPrefix))
                 {
                     if (!GameCanvas.ShowLoadCrashBackup(lasttrack))
                     {
@@ -801,6 +806,7 @@ namespace linerider
                         return;
                     }
                 }
+
                 if (string.Equals(
                     Path.GetExtension(lasttrack),
                     ".trk",
