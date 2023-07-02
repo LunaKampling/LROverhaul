@@ -66,7 +66,7 @@ namespace linerider
             get => BaseZoom * Settings.ZoomMultiplier * Settings.Computed.UIScale;
             set
             {
-                BaseZoom = (float)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Local.MaxZoom);
+                BaseZoom = (float)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Computed.MaxZoom);
                 Invalidate();
             }
         }
@@ -444,7 +444,7 @@ namespace linerider
         {
             ZoomBy(percent);
 
-            bool isAtZoomLimit = Zoom == Settings.Local.MaxZoom || Zoom == (float)Constants.MinimumZoom;
+            bool isAtZoomLimit = Zoom == Settings.Computed.MaxZoom || Zoom == (float)Constants.MinimumZoom;
 
             if (Math.Abs(percent) < 0.00001 || isAtZoomLimit)
                 return;

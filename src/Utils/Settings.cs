@@ -50,7 +50,6 @@ namespace linerider
         public static class Local
         {
             public static bool RecordingMode;
-            public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
             public static bool TrackOverlay = false;
             public static bool TrackOverlayFixed = false;
             public static int TrackOverlayFixedFrame = 0;
@@ -184,6 +183,7 @@ namespace linerider
         // Computed settings
         public static class Computed
         {
+            public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
             public static float UIScale => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
             public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;

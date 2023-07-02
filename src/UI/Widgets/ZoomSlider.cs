@@ -50,7 +50,7 @@ namespace linerider.UI.Widgets
                 if (Held)
                 {
                     double val = Value;
-                    _editor.Zoom = (float)MathHelper.Clamp(Value, Constants.MinimumZoom, Settings.Local.MaxZoom);
+                    _editor.Zoom = (float)MathHelper.Clamp(Value, Constants.MinimumZoom, Settings.Computed.MaxZoom);
                 }
                 UpdateTooltip();
             };
