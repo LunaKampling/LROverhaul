@@ -30,6 +30,11 @@ namespace linerider
         public static bool IsColorDark(Color color) => color.R * 0.2126 + color.G * 0.6652 + color.B * 0.0722 < 255 / 2;
         public static Color MixColors(Color color1, Color color2, float proportion)
         {
+            if (proportion >= 1f)
+                return color2;
+            else if (proportion <= 0f)
+                return color1;
+
             float proportionFrom = 1.0f - proportion;
 
             return Color.FromArgb(
