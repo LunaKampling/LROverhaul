@@ -983,8 +983,10 @@ namespace linerider
             InputUtils.RegisterHotkey(Hotkey.PlaybackIterationNext, () => !Track.Playing, () =>
             {
                 StopTools();
+
                 if (!Track.Paused)
                     Track.TogglePause();
+
                 if (Track.IterationsOffset != 6)
                 {
                     Track.IterationsOffset++;
@@ -1001,22 +1003,22 @@ namespace linerider
             repeat: true);
             InputUtils.RegisterHotkey(Hotkey.PlaybackIterationPrev, () => !Track.Playing, () =>
             {
-                if (Track.Offset != 0)
+                if (Track.Offset == 0)
+                    return;
+
+                StopTools();
+                if (Track.IterationsOffset > 0)
                 {
-                    StopTools();
-                    if (Track.IterationsOffset > 0)
-                    {
-                        Track.IterationsOffset--;
-                    }
-                    else
-                    {
-                        Track.PreviousFrame();
-                        Track.IterationsOffset = 6;
-                        Invalidate();
-                        Track.UpdateCamera();
-                    }
-                    Track.InvalidateRenderRider();
+                    Track.IterationsOffset--;
                 }
+                else
+                {
+                    Track.PreviousFrame();
+                    Track.IterationsOffset = 6;
+                    Invalidate();
+                    Track.UpdateCamera();
+                }
+                Track.InvalidateRenderRider();
             },
             null,
             repeat: true);

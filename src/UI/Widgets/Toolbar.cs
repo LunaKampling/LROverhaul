@@ -22,6 +22,7 @@ namespace linerider.UI.Widgets
             _canvas = (GameCanvas)parent.GetCanvas();
             _editor = game.Track;
             _game = game;
+
             MakeButtons();
             MakeMenu();
         }

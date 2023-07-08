@@ -148,7 +148,6 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false,
-                //Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 AutoSizeToContents = true,
             };
 
