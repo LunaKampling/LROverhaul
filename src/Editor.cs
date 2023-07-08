@@ -517,7 +517,7 @@ namespace linerider
             if (Playing && _hasstopped)
             {
                 _savedcamera = Camera.GetCenter();
-                _savedzoom = Zoom;
+                _savedzoom = BaseZoom;
                 _hasstopped = false;
             }
             Scheduler.Reset();
