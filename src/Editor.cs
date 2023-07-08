@@ -606,7 +606,7 @@ namespace linerider
             int frame = _flag != null ? _flag.FrameID : 0;
             SetFrame(frame);
             Camera.BeginFrame(1, Zoom);
-            Camera.SetFrameCenter(Camera.GetCenter(true));
+            Camera.SetFrameCenter(Camera.GetFrameCamera(frame));
             Invalidate();
         }
         public void PlaybackSpeedUp()
