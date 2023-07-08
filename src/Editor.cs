@@ -39,6 +39,7 @@ namespace linerider
         private bool _loadingTrack = false;
         private int _prevSaveUndoPos = 0;
         private RiderFrame _flag;
+        private bool _hasflag;
         private Track _track;
         private int _iteration = 6;
         private bool _renderriderinvalid = true;
@@ -343,7 +344,7 @@ namespace linerider
             }
             DrawOptions drawOptions = new DrawOptions
             {
-                DrawFlag = _flag != null && !Settings.Local.RecordingMode
+                DrawFlag = HasFlag && !Settings.Local.RecordingMode
             };
             if (drawOptions.DrawFlag)
             {
@@ -498,13 +499,21 @@ namespace linerider
                 Scheduler.Reset();
             }
         }
-        public void Flag(int offset, bool canremove = true)
+        public void SetFlagFrame(int offset, bool canremove = true)
         {
-            if (offset < 0)
-                throw new ArgumentOutOfRangeException("Cannot set a flag to a negative frame");
-            _flag = canremove && _flag != null && _flag.FrameID == offset
-                ? null
-                : new RiderFrame { State = Timeline.GetFrame(offset), FrameID = offset };
+            offset = Math.Max(0, offset);
+            bool removeFlag = canremove && HasFlag && _flag.FrameID == offset;
+
+            if (removeFlag)
+                _hasflag = false;
+            else
+            {
+                _flag = new RiderFrame { State = Timeline.GetFrame(offset), FrameID = offset };
+                _hasflag = true;
+            }
+
+            //_flag = removeFlag ? null : new RiderFrame { State = Timeline.GetFrame(offset), FrameID = offset };
+
             Invalidate();
         }
 
@@ -551,7 +560,7 @@ namespace linerider
         {
             CancelTriggers();
             UseUserZoom = false;
-            int frame = _flag != null ? _flag.FrameID : 0;
+            int frame = HasFlag ? _flag.FrameID : 0;
             Start(frame);
         }
         public void StartIgnoreFlag()
@@ -603,7 +612,7 @@ namespace linerider
                 _hasstopped = true;
             }
             CancelTriggers();
-            int frame = _flag != null ? _flag.FrameID : 0;
+            int frame = HasFlag ? _flag.FrameID : 0;
             SetFrame(frame);
             Camera.BeginFrame(1, Zoom);
             Camera.SetFrameCenter(Camera.GetFrameCamera(frame));
@@ -730,7 +739,8 @@ namespace linerider
                     CurrentTools.CurrentTool.Stop();
                     _loadingTrack = true;
                     Stop();
-                    _flag = null;
+                    //_flag = null;
+                    _hasflag = false;
                     _track = trk;
 
                     Timeline = new Timeline(trk);
@@ -863,7 +873,9 @@ namespace linerider
         public TrackWriter CreateTrackWriter() => TrackWriter.AcquireWrite(_tracksync, _track, _renderer, UndoManager, Timeline, _cells);
         public TrackReader CreateTrackReader() => TrackReader.AcquireRead(_tracksync, _track, _cells);
 
-        internal RiderFrame GetFlag() => _flag;
+        public RiderFrame Flag => _flag;
+        public bool HasFlag => _hasflag;
+        //public bool HasFlag => _flag != null;
         private void CancelTriggers()
         {
             // TODO

@@ -79,7 +79,7 @@ namespace linerider.UI.Widgets
             {
                 Name = "Flag",
                 Icon = GameResources.icon_flag.Bitmap,
-                Action = (o, e) => _editor.Flag(_editor.Offset),
+                Action = (o, e) => _editor.SetFlagFrame(_editor.Offset),
                 Hotkey = Hotkey.PlaybackFlag,
             };
             _ = new WidgetButton(this)

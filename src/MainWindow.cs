@@ -1160,7 +1160,7 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorFocusFlag, () => !Track.Playing, () =>
             {
-                Game.RiderFrame flag = Track.GetFlag();
+                Game.RiderFrame flag = Track.Flag;
                 if (flag != null)
                 {
                     Track.Camera.SetFrameCenter(flag.State.CalculateCenter());
