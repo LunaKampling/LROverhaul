@@ -57,7 +57,8 @@ namespace linerider.UI.Widgets
             _fpslabel.IsHidden = rec && !Settings.Recording.ShowFps;
             _riderspeedlabel.IsHidden = rec && !Settings.Recording.ShowPpf;
             _zoomlabel.IsHidden = rec || Settings.UIShowZoom;
-            _playbackratelabel.IsHidden = rec || _editor.Scheduler.UpdatesPerSecond == 40;
+            _playbackratelabel.IsHidden = rec || _editor.Scheduler.Rate == 1;
+            _lockedcameralabel.IsHidden = rec || !Settings.Local.LockCamera;
             _notifylabel.IsHidden = rec || string.IsNullOrEmpty(_editor.CurrentNotifyMessage);
 
             _resetcamerawrapper.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
@@ -126,11 +127,7 @@ namespace linerider.UI.Widgets
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
-                TextRequest = (o, e) =>
-                {
-                    double rate = Math.Round(_editor.Scheduler.UpdatesPerSecond / 40.0, 3);
-                    return rate == 1 ? "" : $"Sim Speed: {rate}x";
-                },
+                TextRequest = (o, e) => $"Sim Speed: {_editor.Scheduler.Rate}x",
             };
 
             _notifylabel = new TrackLabel(this)
