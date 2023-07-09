@@ -246,7 +246,7 @@
     <Compile Include="UI\Widgets\TimelineBar.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\SwatchBar.cs" />
-    <Compile Include="UI\Widgets\ZoomSlider.cs" />
+    <Compile Include="UI\Widgets\ZoomBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Utils\Angle.cs" />

@@ -37,9 +37,9 @@ namespace linerider
     public class GameCanvas : Canvas
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
-        public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
+        private ZoomBar _zoom;
         private TimelineBar _timeline;
         private SwatchBar _swatchbar;
         private Toolbar _toolbar;
@@ -73,11 +73,11 @@ namespace linerider
         {
             // Process recording junk
             bool rec = Settings.Local.RecordingMode;
-            ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
             _swatchbar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
             _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timeline.IsHidden = rec;
+            _zoom.IsHidden = rec || !Settings.UIShowZoom;
             _loadingsprite.IsHidden = rec || !Loading;
             _speeddecreaseContainer.IsHidden = !Settings.UIShowSpeedButtons;
             _speedincreaseContainer.IsHidden = !Settings.UIShowSpeedButtons;
@@ -105,7 +105,6 @@ namespace linerider
         private void CreateUI()
         {
             _usertooltip = new Tooltip(this) { IsHidden = true };
-            ZoomSlider = new ZoomSlider(this, game.Track);
 
             ControlBase bottomArea = new WidgetContainer(this)
             {
@@ -115,6 +114,11 @@ namespace linerider
             _timeline = new TimelineBar(bottomArea, game.Track)
             {
                 Dock = Dock.Fill,
+            };
+            _zoom = new ZoomBar(bottomArea, game.Track)
+            {
+                Margin = new Margin(WidgetContainer.WidgetMargin, 0, 0, 0),
+                Dock = Dock.Right,
             };
 
             _speedincreaseContainer = new Panel(bottomArea)

@@ -1028,6 +1028,7 @@ namespace linerider
             },
             null,
             repeat: true);
+            InputUtils.RegisterHotkey(Hotkey.PlaybackResetCamera, () => true, () => Track.ResetCamera());
         }
         private void RegisterPopupHotkeys()
         {

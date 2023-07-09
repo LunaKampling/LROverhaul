@@ -60,8 +60,7 @@ namespace linerider.UI.Widgets
             _playbackratelabel.IsHidden = rec || _editor.Scheduler.Rate == 1;
             _lockedcameralabel.IsHidden = rec || !Settings.Local.LockCamera;
             _notifylabel.IsHidden = rec || string.IsNullOrEmpty(_editor.CurrentNotifyMessage);
-
-            _resetcamerawrapper.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
+            _resetcamerawrapper.IsHidden = rec || Settings.UIShowZoom || !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
 
             bool hasNoContent = Children.All(x => x.IsHidden);
             ShouldDrawBackground = !hasNoContent;
@@ -161,8 +160,8 @@ namespace linerider.UI.Widgets
                 Dock = Dock.Right,
                 Name = "Reset Camera",
                 Icon = GameResources.icon_reset_camera.Bitmap,
-                Hotkey = Hotkey.PlaybackResetCamera,
                 Action = (o, e) => _editor.ResetCamera(),
+                TooltipHotkey = Hotkey.PlaybackResetCamera,
             };
 
         }
