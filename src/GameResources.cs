@@ -200,15 +200,16 @@ namespace linerider
         internal static VectorResource icon_slowdown => GetVectorImage("icons.slowdown.svg");
         #endregion
         #region Resources: UX
-        internal static Bitmap ux_flagmarker => GetBitmap("ux.flagmarker.png");
-        internal static Bitmap ux_playheadmarker => GetBitmap("ux.playheadmarker.png");
-
         internal static VectorResource ux_loading => GetVectorImage("ux.loading.svg");
         internal static VectorResource ux_widget_background => GetVectorImage("ux.widget_background.svg");
         internal static VectorResource ux_tool_background => GetVectorImage("ux.tool_background.svg");
         internal static VectorResource ux_swatch => GetVectorImage("ux.swatch.svg");
         internal static VectorResource ux_swatch_active => GetVectorImage("ux.swatch_active.svg");
         internal static VectorResource ux_multitool_indicator => GetVectorImage("ux.multitool_indicator.svg");
+        internal static VectorResource ux_slider_background => GetVectorImage("ux.slider_background.svg");
+        internal static VectorResource ux_playhead_main => GetVectorImage("ux.playhead_main.svg");
+        internal static VectorResource ux_playhead_flag => GetVectorImage("ux.playhead_flag.svg");
+        internal static VectorResource ux_playhead_limiter => GetVectorImage("ux.playhead_limiter.svg");
         #endregion
     }
 }

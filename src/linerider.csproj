@@ -202,7 +202,9 @@
     <Compile Include="LRL\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Components\MultiSlider.cs" />
     <Compile Include="UI\Components\MultiToolButton.cs" />
+    <Compile Include="UI\Components\Playhead.cs" />
     <Compile Include="UI\Components\WidgetButton.cs" />
     <Compile Include="UI\Components\ToolButton.cs" />
     <Compile Include="UI\Dialogs\ChangelogWindow.cs" />
@@ -236,8 +238,6 @@
     <Compile Include="UI\Components\TrackLabel.cs" />
     <Compile Include="UI\Components\Sprite.cs" />
     <Compile Include="UI\Components\ImageButton.cs" />
-    <Compile Include="UI\Components\Playhead.cs" />
-    <Compile Include="UI\Components\PlayheadMarker.cs" />
     <Compile Include="UI\Components\WidgetContainer.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -245,7 +245,7 @@
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
     <Compile Include="UI\Widgets\InfoBarLeft.cs" />
     <Compile Include="UI\Widgets\InfoBarRight.cs" />
-    <Compile Include="UI\Widgets\TimelineWidget.cs" />
+    <Compile Include="UI\Widgets\Timeline.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\SwatchBar.cs" />
     <Compile Include="UI\Widgets\ZoomSlider.cs" />
@@ -294,13 +294,15 @@
     <EmbeddedResource Include="Resources\icons\speedup.svg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ux\flagmarker.png" />
-    <EmbeddedResource Include="Resources\ux\playheadmarker.png" />
     <EmbeddedResource Include="Resources\ux\loading.svg" />
     <EmbeddedResource Include="Resources\ux\swatch.svg" />
     <EmbeddedResource Include="Resources\ux\swatch_active.svg" />
     <EmbeddedResource Include="Resources\ux\tool_background.svg" />
     <EmbeddedResource Include="Resources\ux\multitool_indicator.svg" />
+    <EmbeddedResource Include="Resources\ux\slider_background.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_main.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_flag.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_limiter.svg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\cursors\pencil.svg" />

@@ -40,17 +40,19 @@ namespace linerider
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
-        private TimelineWidget _timeline;
+        private Timeline _timeline;
         private SwatchBar _swatchbar;
         private Toolbar _toolbar;
         private LoadingSprite _loadingsprite;
         private readonly MainWindow game;
         public PlatformImpl Platform;
+        private Panel _speedincreaseContainer;
+        private Panel _speeddecreaseContainer;
         public bool Loading { get; set; }
         public Color TextForeground => Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
         public bool IsModalOpen => Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null;
         private Tooltip _usertooltip;
-        public bool Scrubbing => _timeline.Playhead.Held;
+        public bool Scrubbing => _timeline.Scrubbing;
         public readonly Fonts Fonts;
 
         public GameCanvas(
@@ -76,8 +78,10 @@ namespace linerider
             _swatchbar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
             _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timeline.IsHidden = rec;
-
             _loadingsprite.IsHidden = rec || !Loading;
+            _speeddecreaseContainer.IsHidden = !Settings.UIShowSpeedButtons;
+            _speedincreaseContainer.IsHidden = !Settings.UIShowSpeedButtons;
+
             Tool selectedtool = CurrentTools.CurrentTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
             if (!_usertooltip.IsHidden)
@@ -102,7 +106,47 @@ namespace linerider
         {
             _usertooltip = new Tooltip(this) { IsHidden = true };
             ZoomSlider = new ZoomSlider(this, game.Track);
-            _timeline = new TimelineWidget(this, game.Track);
+
+            ControlBase bottomArea = new WidgetContainer(this)
+            {
+                Margin = new Margin(WidgetContainer.WidgetMargin * 25, 0, WidgetContainer.WidgetMargin * 25, WidgetContainer.WidgetMargin),
+                Dock = Dock.Bottom,
+            };
+            _timeline = new Timeline(bottomArea, game.Track)
+            {
+                Dock = Dock.Fill,
+            };
+
+            _speedincreaseContainer = new Panel(bottomArea)
+            {
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
+                Dock = Dock.Right,
+            };
+            _ = new WidgetButton(_speedincreaseContainer)
+            {
+                Dock = Dock.Bottom,
+                Name = "Increase Speed",
+                Icon = GameResources.icon_speedup.Bitmap,
+                Action = (o, e) => game.Track.PlaybackSpeedUp(),
+                Hotkey = Hotkey.PlaybackSpeedUp,
+            };
+            _speeddecreaseContainer = new Panel(bottomArea)
+            {
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
+                Dock = Dock.Left,
+            };
+            _= new WidgetButton(_speeddecreaseContainer)
+            {
+                Dock = Dock.Bottom,
+                Name = "Decrease Speed",
+                Icon = GameResources.icon_slowdown.Bitmap,
+                Action = (o, e) => game.Track.PlaybackSpeedDown(),
+                Hotkey = Hotkey.PlaybackSpeedDown,
+            };
 
             ControlBase leftArea = new Panel(this)
             {

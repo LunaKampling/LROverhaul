@@ -1,176 +1,218 @@
-﻿//  Author:
-//       Noah Ablaseau <nablaseau@hotmail.com>
-//
-//  Copyright (c) 2017 
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using Gwen;
-using Gwen.Controls;
+using Gwen.ControlInternal;
 using System;
 using System.Drawing;
 
 namespace linerider.UI.Components
 {
-    public class Playhead : HorizontalSlider
+    /// <summary>
+    /// Playhead to use with <see cref="MultiSlider"/> class.
+    /// </summary>
+    public class Playhead : Dragger
     {
-        private const int MinimumFrames = 40;
-        private readonly Editor _editor;
-        private bool _wasdraggingoffset = false;
-        private PlayheadMarker _flagmarker;
-        private PlayheadMarker _endslider;
-        private int _maxviewed = 40 * Settings.DefaultTimelineLength;
-        public int MaxViewed
+        private readonly MultiSlider _parent;
+        private Texture _texture;
+        private Bitmap _bitmap;
+        private int _value;
+        private int _y;
+
+        private Color _colorOverride = Color.Empty;
+        private Color ColorDefault => IsHovered ? Utility.MixColors(Settings.Computed.BGColor, Settings.Computed.LineColor, 0.5f) : Settings.Computed.LineColor;
+        private Color ColorCurrent => _colorOverride.IsEmpty ? ColorDefault : _colorOverride;
+
+        private int Min => _parent.Min;
+        private int Max => _parent.Max;
+        private int MinX => _parent.MinX + Margin.Left + (_parent.InternalPadding.Left - Width / 2);
+        private int MaxX => _parent.MaxX - Width - Margin.Right - (_parent.InternalPadding.Right - Width / 2);
+
+        /// <summary>
+        /// Invoked when the value has been changed.
+        /// </summary>
+        public event GwenEventHandler<PlayheadValueEventArgs> ValueChanged;
+
+        /// <summary>
+        /// Playhead bitmap.
+        /// </summary>
+        public Bitmap Bitmap
         {
-            get => Math.Max(MinimumFrames, _maxviewed);
+            get => _bitmap ?? new Bitmap(1, 1);
             set
             {
-                if (value != _maxviewed)
-                {
-                    _maxviewed = value;
-                }
+                _texture?.Dispose();
+                Texture tx = new Texture(Skin.Renderer);
+                Gwen.Renderer.OpenTK.LoadTextureInternal(tx, value);
+                Size = value.Size;
+                _texture = tx;
+                _bitmap = value;
+                Y = _y;
             }
         }
-        private int FlagFrame
+
+        /// <summary>
+        /// Current value.
+        /// </summary>
+        public int Value
         {
-            get
+            get => _value;
+            set
             {
-                Game.RiderFrame flag = _editor.GetFlag();
-                return flag == null ? -1 : flag.FrameID;
+                if (_value == value)
+                    return;
+
+                int oldValue = _value;
+                _value = Math.Max(Min, Math.Min(value, Max));
+                if (_value == oldValue)
+                    return;
+
+                SetPosFromValue(_value);
+                ValueChanged?.Invoke(this, new PlayheadValueEventArgs(_value, m_Held));
             }
         }
-        public int DisplayMax => _endslider.Frame;
-        public Playhead(ControlBase parent, Editor editor) : base(parent)
+
+        /// <summary>
+        /// Playhead position relative to slider. Auto adopts UI scale.
+        /// Set negative value to put it above the slider or positive value to put it below.
+        /// </summary>
+        public new int Y
         {
-            Dock = Dock.Bottom;
-            _editor = editor;
-            SnapToNotches = true;
-            DrawNotches = false;
-            IsTabable = false;
+            get => _y;
+            set
+            {
+                _y = value;
+                base.Y = Utility.NumberToCurrentScale(_parent.Padding.Top) + Utility.NumberToCurrentScale(value) + _parent.Bitmap.Height / 2 - Bitmap.Height / 2 + _parent.InternalPadding.Top;
+            }
+        }
+
+        /// <summary>
+        /// Represents outer spacing.
+        /// </summary>
+        public new Margin Margin
+        {
+            get => base.Margin;
+            set
+            {
+                base.Margin = new Margin(
+                    Utility.NumberToCurrentScale(value.Left),
+                    Utility.NumberToCurrentScale(value.Top),
+                    Utility.NumberToCurrentScale(value.Right),
+                    Utility.NumberToCurrentScale(value.Bottom)
+                );
+                if (Value == 0)
+                    X = MinX;
+            }
+        }
+
+        /// <summary>
+        /// Custom playhead color. Set it to <c>Color.Empty</c> to reset color.
+        /// </summary>
+        public Color Color
+        {
+            get => _colorOverride;
+            set => _colorOverride = value;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Playhead"/> class.
+        /// </summary>
+        /// <param name="parent">MultiSlider instance.</param>
+        public Playhead(MultiSlider parent) : base(parent)
+        {
+            _parent = parent;
+
             KeyboardInputEnabled = false;
+            MouseInputEnabled = true;
+            RestrictToParent = true;
+            IsTabable = false;
+            m_Target = this;
 
             Setup();
         }
-        public override void Think()
-        {
-            Min = 0;
-            _maxviewed = Math.Max(_maxviewed, _editor.Offset);
-            NotchCount = MaxViewed;
-            Max = NotchCount;
-            Value = _editor.Offset;
-            if (!_flagmarker.IsHeld)
-            {
-                UpdateFlagMarker();
-            }
 
-            base.Think();
-        }
-        protected override void ProcessLayout(Size size)
-        {
-            _ = _endslider.SetSize(15, Height);
-            if (!_endslider.IsHeld)
-            {
-                ResetEndMarker();
-            }
-            UpdateFlagMarker();
-            base.ProcessLayout(size);
-        }
         private void Setup()
         {
-            _flagmarker = new PlayheadMarker(this)
+            X = MinX;
+            Y = 0;
+
+            Point startPos = Point.Empty;
+            Pressed += (o, e) => startPos = new Point(X, Y);
+            Dragged += (o, e) => OnDragged(startPos);
+
+            Bitmap = GameResources.ux_playhead_main.Bitmap;
+
+            _parent.Resized += (o, e) => SetPosFromValue(_value);
+            _parent.RangeChanged += (o, e) =>
             {
-                //Cursor = Cursors.Hand,
-                Cursor = Cursors.SizeWE,
-                MouseInputEnabled = true,
+                if (_value > e.Max)
+                    Value = e.Max;
+                else if (_value < e.Min)
+                    Value = e.Min;
+                else
+                    SetPosFromValue(Value);
             };
-            _endslider = new PlayheadMarker(this)
-            {
-                Cursor = Cursors.SizeWE,
-                MouseInputEnabled = true,
-            };
-
-            _flagmarker.IsHidden = true;
-            _flagmarker.SetImage(GameResources.ux_flagmarker);
-            _endslider.SetImage(GameResources.ux_playheadmarker);
-            _endslider.SendToBack();
-
-            _flagmarker.Margin = new Margin(5, 0, 0, 32 - 12);
-            _endslider.Margin = new Margin(0, 0, 0, 0);
-            _flagmarker.Dragged += (o, e) =>
-            {
-                if (FlagFrame != _flagmarker.Frame)
-                    _editor.Flag(_flagmarker.Frame, false);
-                UpdateFlagMarker();
-            };
-            _endslider.Released += OnEndMoved;
-            ValueChanged += OnValueChanged;
         }
-        private void OnEndMoved(object sender, EventArgs e)
-        {
-            MaxViewed = _endslider.Frame;
-            if (_editor.Offset > MaxViewed)
-            {
-                _editor.SetFrame(MaxViewed, false);
-                _editor.UpdateCamera();
-                _editor.Scheduler.Reset();
-                Audio.AudioService.EnsureSync();
 
-                int flag = FlagFrame;
-                if (flag != -1)
-                {
-                    _editor.Flag(MaxViewed, false);
-                }
-            }
-            ResetEndMarker();
-        }
-        private void OnValueChanged(object sender, EventArgs e)
+        private void OnDragged(Point startPos)
         {
-            if (Held)
-            {
-                _editor.SetFrame((int)Value, false);
-                _editor.UpdateCamera();
-                _wasdraggingoffset = true;
-            }
-            else if (_wasdraggingoffset)
-            {
-                _wasdraggingoffset = false;
-                _editor.Scheduler.Reset();
-                Audio.AudioService.EnsureSync();
-            }
-        }
-        private int PercentToX(double perc, ControlBase control)
-        {
-            Margin margin = control.Margin;
-            double w = (double)Width - (margin.Width + control.Width);
-            return (int)Math.Round(margin.Left + perc * w);
-        }
-        private void ResetEndMarker()
-        {
-            int x = PercentToX(1, _endslider);
-            _endslider.X = x;
-        }
-        private void UpdateFlagMarker()
-        {
-            int flagframe = FlagFrame;
+            Y = startPos.Y; // Lock Y position
 
-            _flagmarker.IsHidden = flagframe == -1;
-            if (flagframe != -1)
-            {
-                double perc = flagframe / Max;
-                int x = PercentToX(perc, _flagmarker);
+            SetValueFromPos(X);
+        }
 
-                _flagmarker.X = x;
-            }
+        /// <summary>
+        /// Set value based on x position.
+        /// </summary>
+        /// <remarks>
+        /// Used by <see cref="MultiSlider"/>. Most likely you don't need to invoke this method manually.
+        /// </remarks>
+        /// <param name="x">Playhead X position</param>
+        public void SetValueFromPos(int x)
+        {
+            SetValueFromPos(x, false);
+        }
+
+        /// <summary>
+        /// Set value based on x position.
+        /// </summary>
+        /// <remarks>
+        /// Used by <see cref="MultiSlider"/>. Most likely you don't need to invoke this method manually.
+        /// </remarks>
+        /// <param name="x">Playhead X position</param>
+        /// <param name="triggerAsUser">Affects <c>ValueChanged</c>'s <c>byUser</c> argument</param>
+        public void SetValueFromPos(int x, bool triggerAsUser)
+        {
+            x = Math.Max(MinX, Math.Min(x, MaxX));
+
+            double raw = (double)(x - MinX) / (MaxX - MinX);
+            _value = (int)Math.Round(Min + raw * (Max - Min));
+            SetPosFromValue(_value);
+            ValueChanged?.Invoke(this, new PlayheadValueEventArgs(Value, triggerAsUser || m_Held));
+        }
+
+        /// <summary>
+        /// Set x position based on value.
+        /// </summary>
+        /// <remarks>
+        /// Used by <see cref="MultiSlider"/>. Most likely you want to use <see cref="Value"/> instead. 
+        /// </remarks>
+        /// <param name="value">New value</param>
+        public void SetPosFromValue(int value)
+        {
+            value = Math.Max(Min, Math.Min(value, Max));
+
+            double raw = (double)(value - Min) / (Max - Min);
+            X = (int)Math.Round(MinX + raw * (MaxX - MinX));
+        }
+
+        protected override void Render(Gwen.Skin.SkinBase skin)
+        {
+            skin.Renderer.DrawColor = Color.FromArgb(255, ColorCurrent);
+            skin.Renderer.DrawTexturedRect(_texture, RenderBounds);
+        }
+
+        public override void Dispose()
+        {
+            _texture?.Dispose();
+            base.Dispose();
         }
     }
 }
