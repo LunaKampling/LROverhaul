@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -41,17 +41,6 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Addons\AddonManager.cs" />
-    <Compile Include="Addons\BaseAddon.cs" />
-    <Compile Include="Addons\MagicAnimator.cs" />
-    <Compile Include="Addons\LineGenerator\Generator.cs" />
-    <Compile Include="Addons\LineGenerator\GeneratorType.cs" />
-    <Compile Include="Addons\LineGenerator\CircleGenerator.cs" />
-    <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
-    <Compile Include="Game\TriggerType.cs" />
-    <Compile Include="Game\GameTrigger.cs" />
-    <Compile Include="IO\json\RiderData.cs" />
-    <Compile Include="IO\TriggerConverter.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="GameCanvas.cs" />
     <Compile Include="Editor.cs" />
@@ -128,6 +117,8 @@
     <Compile Include="Game\Camera\CameraEntry.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\TriggerType.cs" />
+    <Compile Include="Game\GameTrigger.cs" />
     <Compile Include="Game\EditorCell.cs" />
     <Compile Include="Game\EditorGrid.cs" />
     <Compile Include="Game\FPSCounter.cs" />
@@ -173,8 +164,6 @@
   <ItemGroup>
     <Compile Include="IO\ffmpeg\FFMPEG.cs" />
     <Compile Include="IO\ffmpeg\FFMPEGParameters.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="IO\SOL\Amf0.cs" />
     <Compile Include="IO\SOL\Amf0Object.cs" />
     <Compile Include="IO\SOL\sol_track.cs" />
@@ -190,6 +179,7 @@
     <Compile Include="IO\TrackSave.cs" />
     <Compile Include="IO\TRKLoader.cs" />
     <Compile Include="IO\TRKWriter.cs" />
+    <Compile Include="IO\TriggerConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IO\json\JSONLoader.cs" />
@@ -197,8 +187,16 @@
     <Compile Include="IO\json\line_json.cs" />
     <Compile Include="IO\json\LZString.cs" />
     <Compile Include="IO\json\track_json.cs" />
+    <Compile Include="IO\json\RiderData.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addons\AddonManager.cs" />
+    <Compile Include="Addons\BaseAddon.cs" />
+    <Compile Include="Addons\MagicAnimator.cs" />
+    <Compile Include="Addons\LineGenerator\Generator.cs" />
+    <Compile Include="Addons\LineGenerator\GeneratorType.cs" />
+    <Compile Include="Addons\LineGenerator\CircleGenerator.cs" />
+    <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
     <Compile Include="LRL\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
