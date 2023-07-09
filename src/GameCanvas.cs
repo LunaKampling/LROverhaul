@@ -40,7 +40,7 @@ namespace linerider
         public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
         private InfoBarCoords _infobarcoords;
-        private Timeline _timeline;
+        private TimelineBar _timeline;
         private SwatchBar _swatchbar;
         private Toolbar _toolbar;
         private LoadingSprite _loadingsprite;
@@ -112,7 +112,7 @@ namespace linerider
                 Margin = new Margin(WidgetContainer.WidgetMargin * 25, 0, WidgetContainer.WidgetMargin * 25, WidgetContainer.WidgetMargin),
                 Dock = Dock.Bottom,
             };
-            _timeline = new Timeline(bottomArea, game.Track)
+            _timeline = new TimelineBar(bottomArea, game.Track)
             {
                 Dock = Dock.Fill,
             };

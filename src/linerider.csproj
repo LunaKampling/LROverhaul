@@ -245,7 +245,7 @@
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
     <Compile Include="UI\Widgets\InfoBarLeft.cs" />
     <Compile Include="UI\Widgets\InfoBarRight.cs" />
-    <Compile Include="UI\Widgets\Timeline.cs" />
+    <Compile Include="UI\Widgets\TimelineBar.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
     <Compile Include="UI\Widgets\SwatchBar.cs" />
     <Compile Include="UI\Widgets\ZoomSlider.cs" />

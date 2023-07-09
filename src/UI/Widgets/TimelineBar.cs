@@ -5,7 +5,7 @@ using System;
 
 namespace linerider.UI.Widgets
 {
-    public class Timeline : Panel
+    public class TimelineBar : Panel
     {
         private const int _framesInSecond = 40;
         private const int _lengthMin = _framesInSecond;
@@ -22,7 +22,7 @@ namespace linerider.UI.Widgets
 
         public bool Scrubbing => _slider.Playhead.IsHeld;
 
-        public Timeline(ControlBase parent, Editor editor) : base(parent)
+        public TimelineBar(ControlBase parent, Editor editor) : base(parent)
         {
             _canvas = (GameCanvas)GetCanvas();
             _editor = editor;
