@@ -1,5 +1,6 @@
 using Gwen;
 using Gwen.ControlInternal;
+using OpenTK;
 using System;
 using System.Drawing;
 
@@ -60,7 +61,7 @@ namespace linerider.UI.Components
                     return;
 
                 int oldValue = _value;
-                _value = Math.Max(Min, Math.Min(value, Max));
+                _value = MathHelper.Clamp(value, Min, Max);
                 if (_value == oldValue)
                     return;
 
@@ -180,7 +181,7 @@ namespace linerider.UI.Components
         /// <param name="triggerAsUser">Affects <c>ValueChanged</c>'s <c>byUser</c> argument</param>
         public void SetValueFromPos(int x, bool triggerAsUser)
         {
-            x = Math.Max(MinX, Math.Min(x, MaxX));
+            x = MathHelper.Clamp(x, MinX, MaxX);
 
             double raw = (double)(x - MinX) / (MaxX - MinX);
             _value = (int)Math.Round(Min + raw * (Max - Min));
@@ -197,7 +198,7 @@ namespace linerider.UI.Components
         /// <param name="value">New value</param>
         public void SetPosFromValue(int value)
         {
-            value = Math.Max(Min, Math.Min(value, Max));
+            value = MathHelper.Clamp(value, Min, Max);
 
             double raw = (double)(value - Min) / (Max - Min);
             X = (int)Math.Round(MinX + raw * (MaxX - MinX));

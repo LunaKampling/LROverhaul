@@ -35,7 +35,6 @@ namespace linerider.UI.Widgets
         private TrackLabel _playbackratelabel;
         private TrackLabel _lockedcameralabel;
         private TrackLabel _notifylabel;
-
         private Panel _resetcamerawrapper;
 
         private double ZoomRounded
@@ -118,7 +117,7 @@ namespace linerider.UI.Widgets
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
-                    string text = $"Zoom: {ZoomRounded}x";
+                    string text = $"Zoom: {ZoomRounded}\u00D7";
                     return _editor.UseUserZoom ? $"{text} *" : text;
                 },
             };

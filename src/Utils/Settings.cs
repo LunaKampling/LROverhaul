@@ -144,7 +144,6 @@ namespace linerider
         public static bool DrawAGWs; // Draw the normally invisible line extensions used to smooth curve collisions
         public static bool DrawFloatGrid; // Draw the exponential grid of floating-point 'regions' (used for angled kramuals)
         public static bool DrawCamera; // Draw the camera's area
-
         public static float ZoomMultiplier; // A constant multiplier for the zoom
 
         // LRTran settings

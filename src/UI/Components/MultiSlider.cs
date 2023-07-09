@@ -4,6 +4,7 @@ using System.Drawing;
 using Gwen.Skin.Texturing;
 using System;
 using Gwen.Input;
+using OpenTK;
 
 namespace linerider.UI.Components
 {
@@ -257,8 +258,8 @@ namespace linerider.UI.Components
                 return;
 
             Point Pos = CanvasPosToLocal(new Point(x, y));
-            Pos.X = Math.Max(0, Math.Min(Pos.X, Width));
-            Pos.Y = Math.Max(0, Math.Min(Pos.Y, Height));
+            Pos.X = MathHelper.Clamp(Pos.X, 0, Width);
+            Pos.Y = MathHelper.Clamp(Pos.Y, 0, Height);
             Dragged?.Invoke(this, new PointEventArgs(Pos));
         }
         
