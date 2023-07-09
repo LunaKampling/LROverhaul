@@ -33,6 +33,7 @@ namespace linerider.UI.Widgets
         private TrackLabel _riderspeedlabel;
         private TrackLabel _zoomlabel;
         private TrackLabel _playbackratelabel;
+        private TrackLabel _lockedcameralabel;
         private TrackLabel _notifylabel;
 
         private Panel _resetcamerawrapper;
@@ -128,6 +129,14 @@ namespace linerider.UI.Widgets
                 Alignment = Pos.Right | Pos.CenterV,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, e) => $"Sim Speed: {_editor.Scheduler.Rate}x",
+            };
+
+            _lockedcameralabel = new TrackLabel(this)
+            {
+                Dock = Dock.Top,
+                Alignment = Pos.Right | Pos.CenterV,
+                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
+                Text = "Camera is locked",
             };
 
             _notifylabel = new TrackLabel(this)

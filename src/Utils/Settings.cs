@@ -54,6 +54,7 @@ namespace linerider
             public static bool TrackOverlayFixed = false;
             public static int TrackOverlayFixedFrame = 0;
             public static int TrackOverlayOffset = -1;
+            public static bool LockCamera;
         }
         public static class Editor
         {
@@ -187,6 +188,7 @@ namespace linerider
             public static float UIScale => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
             public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
+            public static bool LockCamera => Local.RecordingMode ? false : Local.LockCamera;
         }
 
         static Settings()
@@ -431,6 +433,7 @@ namespace linerider
 
             SetupDefaultKeybind(Hotkey.PreferenceOnionSkinning, new Keybinding(Key.O, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.TogglePreviewMode, new Keybinding(Key.U, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.ToggleCameraLock, new Keybinding(Key.L, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
             SetupDefaultKeybind(Hotkey.Quicksave, new Keybinding(Key.S, KeyModifiers.Control));
 

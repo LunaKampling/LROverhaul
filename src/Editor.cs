@@ -535,7 +535,7 @@ namespace linerider
                 Camera.BeginFrame(1, Zoom);
                 Camera.SetFrameCenter(Camera.GetCenter(true));
             }
-            else
+            else if (!Settings.Computed.LockCamera)
             {
                 switch (Settings.PlaybackZoomType)
                 {
@@ -580,22 +580,27 @@ namespace linerider
             Paused = false;
             Offset = frameid;
             IterationsOffset = 6;
-            Camera.SetFrameCenter(Timeline.GetFrame(frameid).CalculateCenter());
 
             game.UpdateCursor();
-            switch (TrackRecorder.Recording ? 0 : Settings.PlaybackZoomType)
+
+            if (!Settings.Computed.LockCamera)
             {
-                case 0: // Default
-                    UseUserZoom = false;
-                    Zoom = Timeline.GetFrameZoom(Offset);
-                    break;
-                case 1: // Current
-                    UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
-                    break;
-                case 2: // Specific
-                    UseUserZoom = true;
-                    Zoom = Settings.PlaybackZoomValue;
-                    break;
+                Camera.SetFrameCenter(Timeline.GetFrame(frameid).CalculateCenter());
+
+                switch (TrackRecorder.Recording ? 0 : Settings.PlaybackZoomType)
+                {
+                    case 0: // Default
+                        UseUserZoom = false;
+                        Zoom = Timeline.GetFrameZoom(Offset);
+                        break;
+                    case 1: // Current
+                        UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
+                        break;
+                    case 2: // Specific
+                        UseUserZoom = true;
+                        Zoom = Settings.PlaybackZoomValue;
+                        break;
+                }
             }
             Scheduler.Reset();
             FramerateCounter.Reset();
@@ -607,15 +612,22 @@ namespace linerider
             Paused = true;
             if (!_hasstopped)
             {
-                Zoom = _savedzoom;
-                Camera.SetFrameCenter(_savedcamera);
+                if (!Settings.Computed.LockCamera)
+                {
+                    Zoom = _savedzoom;
+                    Camera.SetFrameCenter(_savedcamera);
+                }
                 _hasstopped = true;
             }
+
             CancelTriggers();
             int frame = HasFlag ? _flag.FrameID : 0;
             SetFrame(frame);
             Camera.BeginFrame(1, Zoom);
-            Camera.SetFrameCenter(Camera.GetFrameCamera(frame));
+
+            if (!Settings.Computed.LockCamera)
+                Camera.SetFrameCenter(Camera.GetFrameCamera(frame));
+
             Invalidate();
         }
         public void PlaybackSpeedUp()
@@ -671,6 +683,9 @@ namespace linerider
 
         public void UpdateCamera(bool reverse = false)
         {
+            if (Settings.Computed.LockCamera)
+                return;
+
             if (!UseUserZoom)
                 Zoom = Timeline.GetFrameZoom(Offset);
             Camera.SetFrame(Offset);

@@ -857,13 +857,19 @@ namespace linerider
                 Settings.Save();
                 Track.Invalidate();
             });
-
+            
             InputUtils.RegisterHotkey(Hotkey.TogglePreviewMode, () => true, () =>
             {
                 Settings.PreviewMode = !Settings.PreviewMode;
 
                 Settings.Save();
                 Track.Invalidate();
+            });
+
+            InputUtils.RegisterHotkey(Hotkey.ToggleCameraLock, () => true, () =>
+            {
+                if (Track.Paused)
+                    Settings.Local.LockCamera = !Settings.Local.LockCamera;
             });
 
             InputUtils.RegisterHotkey(Hotkey.PreferenceAllCheckboxSettings, () => true, () =>
