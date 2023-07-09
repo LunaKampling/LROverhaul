@@ -181,14 +181,6 @@ namespace linerider
                 Dock = Dock.Left,
             };
 
-            _loadingsprite = new LoadingSprite(this)
-            {
-                Positioner = (o) => new Point(
-                    topArea.X + topArea.Width,
-                    topArea.Y + WidgetContainer.WidgetPadding
-                ),
-            };
-
             ControlBase rightArea = new Panel(this)
             {
                 Margin = new Margin(0, WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0),
@@ -200,6 +192,14 @@ namespace linerider
             _ = new InfoBarRight(rightArea, game.Track)
             {
                 Dock = Dock.Top,
+            };
+
+            _loadingsprite = new LoadingSprite(this)
+            {
+                Positioner = (o) => new Point(
+                    topArea.X + topArea.Width,
+                    topArea.Y + WidgetContainer.WidgetPadding
+                ),
             };
         }
         protected override void OnChildAdded(ControlBase child)
