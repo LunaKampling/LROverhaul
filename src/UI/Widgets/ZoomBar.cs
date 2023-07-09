@@ -125,7 +125,7 @@ namespace linerider.UI.Widgets
         {
             _resetCameraContainer.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
 
-            if (_prevBaseZoom != _editor.BaseZoom || _prevSuperZoom != Settings.SuperZoom)
+            if (!_slider.Playhead.IsHeld && (_prevBaseZoom != _editor.BaseZoom || _prevSuperZoom != Settings.SuperZoom))
             {
                 _prevBaseZoom = _editor.BaseZoom;
                 _prevSuperZoom = Settings.SuperZoom;
