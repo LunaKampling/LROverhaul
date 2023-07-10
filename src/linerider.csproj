@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Addons\AddonManager.cs" />
     <Compile Include="Addons\BaseAddon.cs" />
+    <Compile Include="Addons\LineGenerator\LineGenerator.cs" />
     <Compile Include="Addons\MagicAnimator.cs" />
     <Compile Include="Addons\LineGenerator\Generator.cs" />
     <Compile Include="Addons\LineGenerator\GeneratorType.cs" />

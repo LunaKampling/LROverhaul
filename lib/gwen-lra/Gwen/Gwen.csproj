@@ -27,6 +27,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Align.cs" />
+    <Compile Include="Controls\SpinnerG17.cs" />
+    <Compile Include="Controls\TextBoxNumericG17.cs" />
     <Compile Include="Cursor.cs" />
     <Compile Include="Cursors.cs" />
     <Compile Include="DialogResult.cs" />

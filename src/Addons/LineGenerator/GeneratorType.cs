@@ -3,6 +3,7 @@
     public enum GeneratorType
     {
         Circle = 0,
-        TenPC = 1
+        TenPC = 1,
+        Line = 2
     }
 }

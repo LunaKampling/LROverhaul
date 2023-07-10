@@ -32,8 +32,19 @@ namespace linerider.UI
         private Spinner TenPCY;
         private Spinner TenPCRotation;
 
+        private ControlBase LineGenOptions;
+        private SpinnerG17 LineX1;
+        private SpinnerG17 LineY1;
+        private SpinnerG17 LineX2;
+        private SpinnerG17 LineY2;
+        private Spinner LineMultiplier;
+        private Spinner LineWidth;
+        private Checkbox LineInverse;
+        private Checkbox LineReverse;
+
         private static CircleGenerator gen_Circle;
         private static TenPCGenerator gen_10pc;
+        private static LineGenerator gen_Line;
 
         private GeneratorType CurrentGenerator
         {
@@ -66,6 +77,7 @@ namespace linerider.UI
             {
                 gen_Circle = new CircleGenerator("Circle Generator", 10.0, pos, 50, false);
                 gen_10pc = new TenPCGenerator("10PC Generator", new Vector2d(1.0, 1.0), 0.0);
+                gen_Line = new LineGenerator("Line Generator", new Vector2d(0, 0), new Vector2d(1, 1), LineType.Acceleration);
                 CurrentGenerator = GeneratorType.TenPC;
             }
 
@@ -135,9 +147,17 @@ namespace linerider.UI
 
             PopulateCircle();
             Populate10pc();
+            PopulateLine();
 
             GeneratorTypeBox = GwenHelper.CreateLabeledCombobox(top, "Generator Type:");
             GeneratorTypeBox.Dock = Dock.Top;
+            MenuItem line = GeneratorTypeBox.AddItem("Line", "", GeneratorType.Line);
+            line.CheckChanged += (o, e) =>
+            {
+                GeneratorOptions.Children.Clear();
+                LineGenOptions.Parent = GeneratorOptions;
+                CurrentGenerator = GeneratorType.Line;
+            };
             MenuItem tenpc = GeneratorTypeBox.AddItem("10-Point Cannon", "", GeneratorType.TenPC);
             tenpc.CheckChanged += (o, e) =>
             {
@@ -168,6 +188,10 @@ namespace linerider.UI
                 case GeneratorType.TenPC:
                     GeneratorTypeBox.SelectedItem = tenpc;
                     TenPCOptions.Parent = GeneratorOptions;
+                    break;
+                case GeneratorType.Line:
+                    GeneratorTypeBox.SelectedItem = line;
+                    LineGenOptions.Parent = GeneratorOptions;
                     break;
             }
 
@@ -374,6 +398,155 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(TenPCOptions, "Rotation Amount", TenPCRotation);
         }
 
+        private void PopulateLine()
+        {
+            LineGenOptions = new ControlBase(null)
+            {
+                Margin = new Margin(0, 0, 0, 0),
+                Dock = Dock.Top,
+                AutoSizeToContents = true
+            };
+
+            LineX1 = new SpinnerG17(null) //Start of line
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Line.positionStart.X
+            };
+            LineX1.ValueChanged += (o, e) =>
+            {
+                gen_Line.positionStart.X = LineX1.Value;
+                gen_Line.ReGenerate_Preview();
+            };
+            LineY1 = new SpinnerG17(null)
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Line.positionStart.Y
+            };
+            LineY1.ValueChanged += (o, e) =>
+            {
+                gen_Line.positionStart.Y = LineY1.Value;
+                gen_Line.ReGenerate_Preview();
+            };
+
+            LineX2 = new SpinnerG17(null) //End of line
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Line.positionEnd.X
+            };
+            LineX2.ValueChanged += (o, e) =>
+            {
+                gen_Line.positionEnd.X = LineX2.Value;
+                gen_Line.ReGenerate_Preview();
+            };
+            LineY2 = new SpinnerG17(null)
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Line.positionEnd.Y
+            };
+            LineY2.ValueChanged += (o, e) =>
+            {
+                gen_Line.positionEnd.Y = LineY2.Value;
+                gen_Line.ReGenerate_Preview();
+            };
+
+            LineMultiplier = new Spinner(null)
+            {
+                Min = 0,
+                Max = 255,
+                Value = gen_Line.multiplier,
+                IsDisabled = false
+            };
+            LineMultiplier.ValueChanged += (o, e) =>
+            {
+                gen_Line.multiplier = (int)LineMultiplier.Value;
+                gen_Line.ReGenerate_Preview();
+            };
+            LineWidth = new Spinner(null)
+            {
+                Min = 0.1,
+                Max = 25.5,
+                Value = gen_Line.width,
+                IncrementSize = 0.1,
+                IsDisabled = true
+            };
+            LineWidth.ValueChanged += (o, e) =>
+            {
+                gen_Line.width = (float)LineWidth.Value;
+                gen_Line.ReGenerate_Preview();
+            };
+
+            _ = GwenHelper.CreateLabeledControl(LineGenOptions, "Start X", LineX1);
+            _ = GwenHelper.CreateLabeledControl(LineGenOptions, "Start Y", LineY1);
+            _ = GwenHelper.CreateLabeledControl(LineGenOptions, "End X", LineX2);
+            _ = GwenHelper.CreateLabeledControl(LineGenOptions, "End Y", LineY2);
+            _ = GwenHelper.CreateLabeledControl(LineGenOptions, "Acceleration Multiplier", LineMultiplier);
+            _ = GwenHelper.CreateLabeledControl(LineGenOptions, "Scenery Width Multiplier", LineWidth);
+
+            RadioButtonGroup lineTypeRadioGroup = new RadioButtonGroup(LineGenOptions)
+            {
+                Dock = Dock.Top,
+                ShouldDrawBackground = false
+            };
+            RadioButton blueType = lineTypeRadioGroup.AddOption("Blue");
+            RadioButton redType = lineTypeRadioGroup.AddOption("Red");
+            RadioButton greenType = lineTypeRadioGroup.AddOption("Green");
+            switch (gen_Line.lineType)
+            {
+                case LineType.Standard:
+                    blueType.Select();
+                    break;
+                case LineType.Acceleration:
+                    redType.Select();
+                    break;
+                case LineType.Scenery:
+                    greenType.Select();
+                    break;
+                default:
+                    break;
+            }
+            blueType.CheckChanged += (o, e) =>
+            {
+                gen_Line.lineType = LineType.Standard;
+                gen_Line.ReGenerate_Preview();
+                LineMultiplier.Disable();
+                LineWidth.Disable();
+                LineInverse.Enable();
+                LineReverse.Disable();
+            };
+            redType.CheckChanged += (o, e) =>
+            {
+                gen_Line.lineType = LineType.Acceleration;
+                gen_Line.ReGenerate_Preview();
+                LineMultiplier.Enable();
+                LineWidth.Disable();
+                LineInverse.Enable();
+                LineReverse.Enable();
+            };
+            greenType.CheckChanged += (o, e) =>
+            {
+                gen_Line.lineType = LineType.Scenery;
+                gen_Line.ReGenerate_Preview();
+                LineMultiplier.Disable();
+                LineWidth.Enable();
+                LineInverse.Disable();
+                LineReverse.Disable();
+            };
+
+            LineInverse = GwenHelper.AddCheckbox(LineGenOptions, "Invert", gen_Line.invert, (o, e) =>
+            {
+                gen_Line.invert = ((Checkbox)o).IsChecked;
+                gen_Line.ReGenerate_Preview();
+            });
+            LineReverse = GwenHelper.AddCheckbox(LineGenOptions, "Reverse", gen_Line.reverse, (o, e) =>
+            {
+                gen_Line.reverse = ((Checkbox)o).IsChecked;
+                gen_Line.ReGenerate_Preview();
+            });
+        }
         private void CategorySelected(object sender, ItemSelectedEventArgs e)
         {
             if (_focus != e.SelectedItem.UserData)
@@ -427,6 +600,9 @@ namespace linerider.UI
                 case GeneratorType.TenPC:
                     gen_10pc.ReGenerate_Preview();
                     break;
+                case GeneratorType.Line:
+                    gen_Line.ReGenerate_Preview();
+                    break;
             }
         }
         private void Render_Final() // Renders the generator's final lines (which are the ones actually added to the track)
@@ -445,6 +621,11 @@ namespace linerider.UI
                     gen_10pc.Generate();
                     gen_10pc.Finalise();
                     break;
+                case GeneratorType.Line:
+                    gen_Line.DeleteLines();
+                    gen_Line.Generate();
+                    gen_Line.Finalise();
+                    break;
             }
         }
         private void Render_Clear() // Clears all lines rendered by the current generator
@@ -458,6 +639,9 @@ namespace linerider.UI
                     break;
                 case GeneratorType.TenPC:
                     gen_10pc.DeleteLines();
+                    break;
+                case GeneratorType.Line:
+                    gen_Line.DeleteLines();
                     break;
             }
         }
