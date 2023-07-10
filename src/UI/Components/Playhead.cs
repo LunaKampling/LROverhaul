@@ -1,5 +1,6 @@
 using Gwen;
 using Gwen.ControlInternal;
+using Gwen.Controls;
 using OpenTK;
 using System;
 using System.Drawing;
@@ -30,6 +31,11 @@ namespace linerider.UI.Components
         /// Invoked when the value has been changed.
         /// </summary>
         public event GwenEventHandler<PlayheadValueEventArgs> ValueChanged;
+
+        /// <summary>
+        /// Invoked when the control has been left-clicked.
+        /// </summary>
+        public override event GwenEventHandler<ClickedEventArgs> Clicked;
 
         /// <summary>
         /// Playhead bitmap.
@@ -69,6 +75,11 @@ namespace linerider.UI.Components
                 ValueChanged?.Invoke(this, new PlayheadValueEventArgs(_value, m_Held));
             }
         }
+
+        /// <summary>
+        /// When <c>falce</c>, playhead cannot be dragged.
+        /// </summary>
+        public bool AllowDragging = true;
 
         /// <summary>
         /// Playhead position relative to slider. Auto adopts UI scale.
@@ -152,11 +163,30 @@ namespace linerider.UI.Components
             };
         }
 
+        protected override void OnMouseClickedLeft(int x, int y, bool down)
+        {
+            base.OnMouseClickedLeft(x, y, down);
+
+            // "Clicked" event
+            if (!down)
+            {
+                Point releasePos = CanvasPosToLocal(new Point(x, y));
+                bool releasedInsideBounds = releasePos.X > 0 && releasePos.Y > 0 && releasePos.X <= RenderBounds.Width && releasePos.Y <= RenderBounds.Height;
+
+                if (releasedInsideBounds)
+                    Clicked?.Invoke(this, new ClickedEventArgs(x, y, down));
+            }
+        }
+
         private void OnDragged(Point startPos)
         {
             Y = startPos.Y; // Lock Y position
 
-            SetValueFromPos(X);
+            if (AllowDragging)
+                SetValueFromPos(X);
+            else
+                X = startPos.X;
+
         }
 
         /// <summary>
