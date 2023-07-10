@@ -96,5 +96,11 @@ namespace linerider.UI.Components
             skin.Renderer.DrawColor = Color.FromArgb(Alpha, Color);
             skin.Renderer.DrawTexturedRect(m_texture, RenderBounds);
         }
+
+        public override void Dispose()
+        {
+            m_texture?.Dispose();
+            base.Dispose();
+        }
     }
 }

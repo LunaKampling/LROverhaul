@@ -60,5 +60,11 @@ namespace linerider.UI.Components
                 base.Render(skin);
             }
         }
+
+        public override void Dispose()
+        {
+            m_texture?.Dispose();
+            base.Dispose();
+        }
     }
 }
