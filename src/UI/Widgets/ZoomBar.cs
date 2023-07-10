@@ -1,9 +1,9 @@
-using System;
 using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
 using linerider.Utils;
 using OpenTK;
+using System;
 
 namespace linerider.UI.Widgets
 {
@@ -11,7 +11,7 @@ namespace linerider.UI.Widgets
     {
         private readonly Editor _editor;
         private MultiSlider _slider;
-        private Panel _resetCameraContainer;
+        private Playhead _playheadDefaultZoom;
         private bool _prevSuperZoom;
         private float _prevBaseZoom;
         private int _notches = 100;
@@ -37,28 +37,14 @@ namespace linerider.UI.Widgets
             ShouldDrawBackground = false;
             MouseInputEnabled = false;
 
-            Width = Constants.ScreenSize.Width / 10;
+            // TODO: Make width dynamic?
+            Width = (int)(Constants.WindowSize.Width / (10 / Settings.Computed.UIScale));
 
             Setup();
         }
 
         private void Setup()
         {
-            _resetCameraContainer = new Panel(this)
-            {
-                ShouldDrawBackground = false,
-                AutoSizeToContents = true,
-                Dock = Dock.Right,
-            };
-            _ = new WidgetButton(_resetCameraContainer)
-            {
-                Dock = Dock.Right,
-                Name = "Reset Camera",
-                Icon = GameResources.icon_reset_camera.Bitmap,
-                Action = (o, e) => _editor.ResetCamera(),
-                TooltipHotkey = Hotkey.PlaybackResetCamera,
-            };
-
             Panel sliderPanel = new Panel(this)
             {
                 ShouldDrawBackground = false,
@@ -78,9 +64,19 @@ namespace linerider.UI.Widgets
                 if (!e.ByUser)
                     return;
 
-                SetZoomFromSlider(e.Value);
+                _editor.Zoom = SliderValueToZoom(e.Value);
             };
-            SetSliderFromZoom(_editor.BaseZoom);
+            _slider.Value = ZoomToSliderValue(_editor.BaseZoom);
+
+            _playheadDefaultZoom = new Playhead(_slider)
+            {
+                Cursor = Cursors.Hand,
+                Bitmap = GameResources.ux_playhead_defaultzoom.Bitmap,
+                AllowDragging = false,
+                Y = -9,
+            };
+            _playheadDefaultZoom.Clicked += (o, e) => _editor.ResetCamera();
+            _playheadDefaultZoom.SendToBack();
 
             Panel textPanel = new Panel(this)
             {
@@ -107,30 +103,33 @@ namespace linerider.UI.Widgets
             };
         }
 
-        public void SetSliderFromZoom(float zoom)
+        public int ZoomToSliderValue(float zoom)
         {
             double raw = (double)(zoom - Min) / (Max - Min);
-            _slider.Value = (int)Math.Round(MinVal + raw * (MaxVal - MinVal));
+            return (int)Math.Round(MinVal + raw * (MaxVal - MinVal));
         }
 
-        public void SetZoomFromSlider(int value)
+        public float SliderValueToZoom(int value)
         {
             value = (int)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Computed.MaxZoom);
 
             double raw = (double)(value - MinVal) / (MaxVal - MinVal);
-            _editor.Zoom = (float)Math.Round(Min + raw * (Max - Min));
+            return (float)Math.Round(Min + raw * (Max - Min));
         }
 
         public override void Think()
         {
-            _resetCameraContainer.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
+            _playheadDefaultZoom.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
+
+            if (!_playheadDefaultZoom.IsHidden)
+                _playheadDefaultZoom.Value = ZoomToSliderValue(_editor.Timeline.GetFrameZoom(_editor.Offset));
 
             if (!_slider.Playhead.IsHeld && (_prevBaseZoom != _editor.BaseZoom || _prevSuperZoom != Settings.SuperZoom))
             {
                 _prevBaseZoom = _editor.BaseZoom;
                 _prevSuperZoom = Settings.SuperZoom;
                 _slider.Max = (int)Max;
-                SetSliderFromZoom(_editor.BaseZoom);
+                _slider.Value = ZoomToSliderValue(_editor.BaseZoom);
             }
 
             base.Think();

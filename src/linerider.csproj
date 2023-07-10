@@ -301,6 +301,7 @@
     <EmbeddedResource Include="Resources\ux\playhead_main.svg" />
     <EmbeddedResource Include="Resources\ux\playhead_flag.svg" />
     <EmbeddedResource Include="Resources\ux\playhead_limiter.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_defaultzoom.svg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\cursors\pencil.svg" />

@@ -210,6 +210,7 @@ namespace linerider
         internal static VectorResource ux_playhead_main => GetVectorImage("ux.playhead_main.svg");
         internal static VectorResource ux_playhead_flag => GetVectorImage("ux.playhead_flag.svg");
         internal static VectorResource ux_playhead_limiter => GetVectorImage("ux.playhead_limiter.svg");
+        internal static VectorResource ux_playhead_defaultzoom => GetVectorImage("ux.playhead_defaultzoom.svg");
         #endregion
     }
 }
