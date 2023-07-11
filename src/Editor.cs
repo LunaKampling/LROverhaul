@@ -769,6 +769,8 @@ namespace linerider
                     }
                     Reset();
                     Camera.SetFrameCenter(Timeline.GetFrame(0).CalculateCenter());
+                    UseUserZoom = false;
+                    Zoom = trk.StartZoom;
                     _loadingTrack = false;
                     if (CurrentTools.CurrentTool.Active)
                     {
