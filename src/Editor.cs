@@ -445,7 +445,7 @@ namespace linerider
         {
             ZoomBy(percent);
 
-            bool isAtZoomLimit = Zoom == Settings.Computed.MaxZoom || Zoom == (float)Constants.MinimumZoom;
+            bool isAtZoomLimit = BaseZoom == Settings.Computed.MaxZoom || BaseZoom == (float)Constants.MinimumZoom;
 
             if (Math.Abs(percent) < 0.00001 || isAtZoomLimit)
                 return;
