@@ -14,10 +14,10 @@ namespace linerider.UI.Widgets
         private Playhead _playheadDefaultZoom;
         private bool _prevSuperZoom;
         private float _prevBaseZoom;
-        private int _notches = 100;
+        private int _notches = 200;
 
-        private double Min => Constants.MinimumZoom;
-        private double Max => Settings.Computed.MaxZoom;
+        private double MinZoom => Constants.MinimumZoom;
+        private double MaxZoom => Settings.Computed.MaxZoom;
         private double MinVal => _slider.Min;
         private double MaxVal => _slider.Max;
 
@@ -105,7 +105,7 @@ namespace linerider.UI.Widgets
 
         public int ZoomToSliderValue(float zoom)
         {
-            double raw = (double)(zoom - Min) / (Max - Min);
+            double raw = (double)(zoom - MinZoom) / (MaxZoom - MinZoom);
             return (int)Math.Round(MinVal + raw * (MaxVal - MinVal));
         }
 
@@ -114,7 +114,7 @@ namespace linerider.UI.Widgets
             value = (int)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Computed.MaxZoom);
 
             double raw = (double)(value - MinVal) / (MaxVal - MinVal);
-            return (float)Math.Round(Min + raw * (Max - Min));
+            return (float)Math.Round(MinZoom + raw * (MaxZoom - MinZoom));
         }
 
         public override void Think()
@@ -128,7 +128,6 @@ namespace linerider.UI.Widgets
             {
                 _prevBaseZoom = _editor.BaseZoom;
                 _prevSuperZoom = Settings.SuperZoom;
-                _slider.Max = (int)Max;
                 _slider.Value = ZoomToSliderValue(_editor.BaseZoom);
             }
 
