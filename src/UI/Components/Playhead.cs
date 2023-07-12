@@ -82,6 +82,11 @@ namespace linerider.UI.Components
         public bool AllowDragging = true;
 
         /// <summary>
+        /// Function to define the tooltip text before render.
+        /// </summary>
+        public TextRequestHandler TooltipRequest = null;
+
+        /// <summary>
         /// Playhead position relative to slider. Auto adopts UI scale.
         /// Set negative value to put it above the slider or positive value to put it below.
         /// </summary>
@@ -233,6 +238,14 @@ namespace linerider.UI.Components
 
             double raw = (double)(value - Min) / (Max - Min);
             X = (int)Math.Round(MinX + raw * (MaxX - MinX));
+        }
+        public override void Think()
+        {
+            if (TooltipRequest != null)
+            {
+                Tooltip = TooltipRequest(this, Tooltip);
+            }
+            base.Think();
         }
 
         protected override void Render(Gwen.Skin.SkinBase skin)
