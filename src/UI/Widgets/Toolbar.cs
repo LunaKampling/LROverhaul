@@ -5,7 +5,7 @@ using linerider.UI.Components;
 using System;
 using System.Drawing;
 
-namespace linerider.UI
+namespace linerider.UI.Widgets
 {
     public class Toolbar : WidgetContainer
     {
@@ -22,19 +22,41 @@ namespace linerider.UI
             _canvas = (GameCanvas)parent.GetCanvas();
             _editor = game.Track;
             _game = game;
+
             MakeButtons();
             MakeMenu();
         }
 
         private void MakeButtons()
         {
-            bool condition() => !_editor.Playing;
+            bool hotkeyCondition() => !_editor.Playing;
 
-            _ = new MultiToolButton(this, new Tool[] { CurrentTools.PencilTool, CurrentTools.SmoothPencilTool }, Hotkey.EditorPencilTool) { HotkeyCondition = condition };
-            _ = new MultiToolButton(this, new Tool[] { CurrentTools.LineTool, CurrentTools.BezierTool }, Hotkey.EditorLineTool) { HotkeyCondition = condition };
-            _ = new ToolButton(this, CurrentTools.EraserTool) { HotkeyCondition = condition };
-            _ = new ToolButton(this, CurrentTools.SelectTool) { HotkeyCondition = condition, Subtool = CurrentTools.SelectSubtool };
-            _ = new ToolButton(this, CurrentTools.PanTool) { HotkeyCondition = condition };
+            _ = new MultiToolButton(this, new Tool[] { CurrentTools.PencilTool, CurrentTools.SmoothPencilTool })
+            {
+                Hotkey = Hotkey.EditorPencilTool,
+                HotkeyCondition = hotkeyCondition,
+            };
+            _ = new MultiToolButton(this, new Tool[] { CurrentTools.LineTool, CurrentTools.BezierTool })
+            {
+                Hotkey = Hotkey.EditorLineTool,
+                HotkeyCondition = hotkeyCondition,
+            };
+            _ = new ToolButton(this, CurrentTools.EraserTool)
+            {
+                Hotkey = Hotkey.EditorEraserTool,
+                HotkeyCondition = hotkeyCondition,
+            };
+            _ = new ToolButton(this, CurrentTools.SelectTool)
+            {
+                Hotkey = Hotkey.EditorSelectTool,
+                HotkeyCondition = hotkeyCondition,
+                Subtool = CurrentTools.SelectSubtool,
+            };
+            _ = new ToolButton(this, CurrentTools.PanTool)
+            {
+                Hotkey = Hotkey.EditorPanTool,
+                HotkeyCondition = hotkeyCondition,
+            };
 
             WidgetButton playpausebtn = new WidgetButton(this)
             {
@@ -58,7 +80,7 @@ namespace linerider.UI
             {
                 Name = "Flag",
                 Icon = GameResources.icon_flag.Bitmap,
-                Action = (o, e) => _editor.Flag(_editor.Offset),
+                Action = (o, e) => _editor.SetFlagFrame(_editor.Offset),
                 Hotkey = Hotkey.PlaybackFlag,
             };
             _ = new WidgetButton(this)
@@ -67,7 +89,7 @@ namespace linerider.UI
                 Icon = GameResources.icon_generators.Bitmap,
                 Action = (o, e) => _canvas.ShowGeneratorWindow(OpenTK.Vector2d.Zero),
                 Hotkey = Hotkey.LineGeneratorWindow,
-                HotkeyCondition = condition,
+                HotkeyCondition = hotkeyCondition,
             };
             _ = new WidgetButton(this)
             {

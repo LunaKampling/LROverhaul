@@ -491,7 +491,7 @@ namespace linerider.UI
             };
             superzoom.Tooltip = "Allows the user to zoom in\nnearly 10x more than usual.";
 
-            Panel panelother = GwenHelper.CreateHeaderPanel(parent, "Other");
+            Panel otherGroup = GwenHelper.CreateHeaderPanel(parent, "Other");
 
             Spinner zoomMultiplier = new Spinner(this)
             {
@@ -506,7 +506,7 @@ namespace linerider.UI
                 Settings.Save();
             };
 
-            _ = GwenHelper.CreateLabeledControl(panelother, "Zoom Multiplier", zoomMultiplier);
+            _ = GwenHelper.CreateLabeledControl(otherGroup, "Zoom Multiplier", zoomMultiplier);
         }
         private void PopulateTools(ControlBase parent)
         {

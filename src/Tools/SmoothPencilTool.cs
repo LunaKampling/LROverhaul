@@ -27,9 +27,8 @@ namespace linerider.Tools
 {
     public class SmoothPencilTool : Tool
     {
-        public override Bitmap Icon => GameResources.icon_tool_smooth_pencil.Bitmap;
-        public override Hotkey Hotkey => Hotkey.EditorPencilTool;
         public override string Name => "Smooth Pencil Tool";
+        public override Bitmap Icon => GameResources.icon_tool_smooth_pencil.Bitmap;
 
         private bool SmoothMoved = false;
 

@@ -27,8 +27,8 @@ namespace linerider.Tools
 {
     public class PencilTool : Tool
     {
-        public override Bitmap Icon => GameResources.icon_tool_pencil.Bitmap;
         public override string Name => "Pencil Tool";
+        public override Bitmap Icon => GameResources.icon_tool_pencil.Bitmap;
         public override bool RequestsMousePrecision => DrawingScenery;
         public override Swatch Swatch => SharedSwatches.DrawingToolsSwatch;
         public override bool ShowSwatch => true;

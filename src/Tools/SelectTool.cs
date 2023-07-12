@@ -30,9 +30,8 @@ namespace linerider.Tools
 {
     public class SelectTool : Tool
     {
-        public override Bitmap Icon => GameResources.icon_tool_select.Bitmap;
-        public override Hotkey Hotkey => Hotkey.EditorSelectTool;
         public override string Name => "Select Tool";
+        public override Bitmap Icon => GameResources.icon_tool_select.Bitmap;
         public override Swatch Swatch => SharedSwatches.EraserAndSelectToolSwatch;
         public override bool ShowSwatch => true;
         public override string Tooltip

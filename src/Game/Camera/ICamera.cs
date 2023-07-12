@@ -159,7 +159,7 @@ namespace linerider.Game
             SetFrameCenter(GetCenter());
             InvalidateFrame(1);
         }
-        public DoubleRect getclamp(float zoom, int width, int height)
+        public DoubleRect GetClamp(float zoom, int width, int height)
         {
             DoubleRect ret = GetViewport(zoom, width, height);
             Vector2d pos = ret.Vector + ret.Size / 2;

@@ -4,7 +4,7 @@ using linerider.Tools;
 using linerider.UI.Components;
 using System.Drawing;
 
-namespace linerider.UI
+namespace linerider.UI.Widgets
 {
     public class SwatchBar : WidgetContainer
     {

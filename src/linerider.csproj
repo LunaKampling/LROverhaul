@@ -41,17 +41,6 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Addons\AddonManager.cs" />
-    <Compile Include="Addons\BaseAddon.cs" />
-    <Compile Include="Addons\MagicAnimator.cs" />
-    <Compile Include="Addons\LineGenerator\Generator.cs" />
-    <Compile Include="Addons\LineGenerator\GeneratorType.cs" />
-    <Compile Include="Addons\LineGenerator\CircleGenerator.cs" />
-    <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
-    <Compile Include="Game\TriggerType.cs" />
-    <Compile Include="Game\GameTrigger.cs" />
-    <Compile Include="IO\json\RiderData.cs" />
-    <Compile Include="IO\TriggerConverter.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="GameCanvas.cs" />
     <Compile Include="Editor.cs" />
@@ -128,6 +117,8 @@
     <Compile Include="Game\Camera\CameraEntry.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\TriggerType.cs" />
+    <Compile Include="Game\GameTrigger.cs" />
     <Compile Include="Game\EditorCell.cs" />
     <Compile Include="Game\EditorGrid.cs" />
     <Compile Include="Game\FPSCounter.cs" />
@@ -173,8 +164,6 @@
   <ItemGroup>
     <Compile Include="IO\ffmpeg\FFMPEG.cs" />
     <Compile Include="IO\ffmpeg\FFMPEGParameters.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="IO\SOL\Amf0.cs" />
     <Compile Include="IO\SOL\Amf0Object.cs" />
     <Compile Include="IO\SOL\sol_track.cs" />
@@ -190,6 +179,7 @@
     <Compile Include="IO\TrackSave.cs" />
     <Compile Include="IO\TRKLoader.cs" />
     <Compile Include="IO\TRKWriter.cs" />
+    <Compile Include="IO\TriggerConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IO\json\JSONLoader.cs" />
@@ -197,12 +187,22 @@
     <Compile Include="IO\json\line_json.cs" />
     <Compile Include="IO\json\LZString.cs" />
     <Compile Include="IO\json\track_json.cs" />
+    <Compile Include="IO\json\RiderData.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addons\AddonManager.cs" />
+    <Compile Include="Addons\BaseAddon.cs" />
+    <Compile Include="Addons\MagicAnimator.cs" />
+    <Compile Include="Addons\LineGenerator\Generator.cs" />
+    <Compile Include="Addons\LineGenerator\GeneratorType.cs" />
+    <Compile Include="Addons\LineGenerator\CircleGenerator.cs" />
+    <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
     <Compile Include="LRL\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Components\MultiSlider.cs" />
     <Compile Include="UI\Components\MultiToolButton.cs" />
+    <Compile Include="UI\Components\Playhead.cs" />
     <Compile Include="UI\Components\WidgetButton.cs" />
     <Compile Include="UI\Components\ToolButton.cs" />
     <Compile Include="UI\Dialogs\ChangelogWindow.cs" />
@@ -236,7 +236,6 @@
     <Compile Include="UI\Components\TrackLabel.cs" />
     <Compile Include="UI\Components\Sprite.cs" />
     <Compile Include="UI\Components\ImageButton.cs" />
-    <Compile Include="UI\Components\PlayheadMarker.cs" />
     <Compile Include="UI\Components\WidgetContainer.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -244,11 +243,10 @@
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
     <Compile Include="UI\Widgets\InfoBarLeft.cs" />
     <Compile Include="UI\Widgets\InfoBarRight.cs" />
-    <Compile Include="UI\Widgets\TimelineWidget.cs" />
+    <Compile Include="UI\Widgets\TimelineBar.cs" />
     <Compile Include="UI\Widgets\Toolbar.cs" />
-    <Compile Include="UI\Widgets\Playhead.cs" />
     <Compile Include="UI\Widgets\SwatchBar.cs" />
-    <Compile Include="UI\Widgets\ZoomSlider.cs" />
+    <Compile Include="UI\Widgets\ZoomBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Utils\Angle.cs" />
@@ -262,6 +260,7 @@
     <Compile Include="Utils\GaussianBlur.cs" />
     <Compile Include="Utils\ResourceSync.cs" />
     <Compile Include="Utils\Line.cs" />
+    <Compile Include="Utils\RoundedSquareTexture.cs" />
     <Compile Include="Utils\Turtle.cs" />
     <Compile Include="Utils\Utility.cs" />
     <Compile Include="Utils\RectLRTB.cs" />
@@ -293,14 +292,16 @@
     <EmbeddedResource Include="Resources\icons\speedup.svg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ux\flagmarker.png" />
-    <EmbeddedResource Include="Resources\ux\playheadmarker.png" />
     <EmbeddedResource Include="Resources\ux\loading.svg" />
     <EmbeddedResource Include="Resources\ux\swatch.svg" />
     <EmbeddedResource Include="Resources\ux\swatch_active.svg" />
-    <EmbeddedResource Include="Resources\ux\widget_background.svg" />
     <EmbeddedResource Include="Resources\ux\tool_background.svg" />
     <EmbeddedResource Include="Resources\ux\multitool_indicator.svg" />
+    <EmbeddedResource Include="Resources\ux\slider_background.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_main.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_flag.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_limiter.svg" />
+    <EmbeddedResource Include="Resources\ux\playhead_defaultzoom.svg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\cursors\pencil.svg" />

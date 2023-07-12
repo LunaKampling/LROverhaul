@@ -15,7 +15,7 @@ namespace linerider.Addons
 
         private static void MoveFrameRelative(List<LineSelection> selectedLines, int direction, bool isCompleteAction)
         {
-            RiderFrame flag = window.Track.GetFlag();
+            RiderFrame flag = window.Track.Flag;
             int currentFrame = window.Track.Offset;
             if (flag == null || currentFrame <= flag.FrameID)
             {
@@ -157,7 +157,7 @@ namespace linerider.Addons
             {
                 return;
             }
-            RiderFrame flag = window.Track.GetFlag();
+            RiderFrame flag = window.Track.Flag;
             int currentFrame = window.Track.Offset;
             int framesElapsed = currentFrame - flag.FrameID;
 
