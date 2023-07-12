@@ -134,6 +134,7 @@ namespace linerider.UI.Components
             KeyboardInputEnabled = false;
             MouseInputEnabled = true;
             RestrictToParent = true;
+            ToolTipProvider = true;
             IsTabable = false;
             m_Target = this;
 
