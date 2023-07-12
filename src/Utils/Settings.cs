@@ -267,8 +267,8 @@ namespace linerider
             Bezier.Resolution = 30;
             Bezier.NodeSize = 15;
             Bezier.Mode = (int)BezierMode.Direct;
-            PlaybackZoomType = 0;
-            PlaybackZoomValue = 4;
+            PlaybackZoomType = 1;
+            PlaybackZoomValue = Constants.DefaultZoom;
             Volume = 100;
             SuperZoom = false;
             NightMode = false;
