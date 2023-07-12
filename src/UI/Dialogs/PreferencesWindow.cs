@@ -309,14 +309,18 @@ namespace linerider.UI
                 Dock = Dock.Left,
                 ShouldDrawBackground = false,
             };
-            _ = pbzoom.AddOption("Default Zoom");
-            _ = pbzoom.AddOption("Current Zoom");
-            _ = pbzoom.AddOption("Specific Zoom");
+            RadioButton pbzoomOpt1 = pbzoom.AddOption("Frame Zoom");
+            RadioButton pbzoomOpt2 = pbzoom.AddOption("Current Camera Zoom (Default)");
+            RadioButton pbzoomOpt3 = pbzoom.AddOption("Specific Value");
+
+            pbzoomOpt1.Tooltip = "When playing, zoom matches current frame zoom\n(e.g.value set by a trigger).";
+            pbzoomOpt2.Tooltip = "When playing, zoom stays as is\n(no zoom jumps on playing track).";
+            pbzoomOpt3.Tooltip = "When playing, zoom sets to one specific value.";
 
             Spinner specificzoomspinner = new Spinner(zoomGroup)
             {
-                Max = 24,
-                Min = 1,
+                Max = Constants.MaxZoom,
+                Min = Constants.MinimumZoom,
             };
 
             // A bit hacky but simplest way to show compact zoom spinner next to a radio button
