@@ -38,21 +38,21 @@ namespace linerider
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
         public Gwen.Renderer.OpenTK Renderer;
-        private InfoBarCoords _infobarcoords;
+        private InfoBarCoords _infoBarCoords;
+        private TimelineBar _timelineBar;
+        private Panel _speedIncreaseWrapper;
+        private Panel _speedDecreaseWrapper;
         private ZoomBar _zoom;
-        private TimelineBar _timeline;
-        private SwatchBar _swatchbar;
+        private SwatchBar _swatchBar;
         private Toolbar _toolbar;
-        private LoadingSprite _loadingsprite;
+        private LoadingSprite _loadingSprite;
         private readonly MainWindow game;
         public PlatformImpl Platform;
-        private Panel _speedincreaseContainer;
-        private Panel _speeddecreaseContainer;
         public bool Loading { get; set; }
         public Color TextForeground => Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
         public bool IsModalOpen => Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null;
         private Tooltip _usertooltip;
-        public bool Scrubbing => _timeline.Scrubbing;
+        public bool Scrubbing => _timelineBar.Scrubbing;
         public readonly Fonts Fonts;
 
         public GameCanvas(
@@ -74,13 +74,13 @@ namespace linerider
             // Process recording junk
             bool rec = Settings.Local.RecordingMode;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
-            _swatchbar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
-            _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
-            _timeline.IsHidden = rec;
+            _swatchBar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
+            _infoBarCoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
+            _timelineBar.IsHidden = rec;
             _zoom.IsHidden = rec || !Settings.UIShowZoom;
-            _loadingsprite.IsHidden = rec || !Loading;
-            _speeddecreaseContainer.IsHidden = !Settings.UIShowSpeedButtons;
-            _speedincreaseContainer.IsHidden = !Settings.UIShowSpeedButtons;
+            _loadingSprite.IsHidden = rec || !Loading;
+            _speedDecreaseWrapper.IsHidden = !Settings.UIShowSpeedButtons;
+            _speedIncreaseWrapper.IsHidden = !Settings.UIShowSpeedButtons;
 
             Tool selectedtool = CurrentTools.CurrentTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
@@ -111,7 +111,7 @@ namespace linerider
                 Margin = new Margin(WidgetContainer.WidgetMargin * 25, 0, WidgetContainer.WidgetMargin * 25, WidgetContainer.WidgetMargin),
                 Dock = Dock.Bottom,
             };
-            _timeline = new TimelineBar(bottomArea, game.Track)
+            _timelineBar = new TimelineBar(bottomArea, game.Track)
             {
                 Dock = Dock.Fill,
             };
@@ -121,31 +121,31 @@ namespace linerider
                 Dock = Dock.Right,
             };
 
-            _speedincreaseContainer = new Panel(bottomArea)
+            _speedIncreaseWrapper = new Panel(bottomArea)
             {
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 AutoSizeToContents = true,
                 Dock = Dock.Right,
             };
-            _ = new WidgetButton(_speedincreaseContainer)
+            _ = new WidgetButton(_speedIncreaseWrapper)
             {
-                Dock = Dock.Bottom,
+                Dock = Dock.Top,
                 Name = "Increase Speed",
                 Icon = GameResources.icon_speedup.Bitmap,
                 Action = (o, e) => game.Track.PlaybackSpeedUp(),
                 Hotkey = Hotkey.PlaybackSpeedUp,
             };
-            _speeddecreaseContainer = new Panel(bottomArea)
+            _speedDecreaseWrapper = new Panel(bottomArea)
             {
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
             };
-            _= new WidgetButton(_speeddecreaseContainer)
+            _= new WidgetButton(_speedDecreaseWrapper)
             {
-                Dock = Dock.Bottom,
+                Dock = Dock.Top,
                 Name = "Decrease Speed",
                 Icon = GameResources.icon_slowdown.Bitmap,
                 Action = (o, e) => game.Track.PlaybackSpeedDown(),
@@ -164,7 +164,7 @@ namespace linerider
             {
                 Dock = Dock.Top,
             };
-            _infobarcoords = new InfoBarCoords(leftArea)
+            _infoBarCoords = new InfoBarCoords(leftArea)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetContainer.WidgetMargin, 0, 0),
@@ -179,7 +179,7 @@ namespace linerider
             {
                 Dock = Dock.Top,
             };
-            _swatchbar = new SwatchBar(topArea, game.Track)
+            _swatchBar = new SwatchBar(topArea, game.Track)
             {
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
@@ -198,7 +198,7 @@ namespace linerider
                 Dock = Dock.Top,
             };
 
-            _loadingsprite = new LoadingSprite(this)
+            _loadingSprite = new LoadingSprite(this)
             {
                 Positioner = (o) => new Point(
                     topArea.X + topArea.Width,

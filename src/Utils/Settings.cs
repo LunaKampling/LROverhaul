@@ -295,7 +295,7 @@ namespace linerider
             ScreenshotResIndependentZoom = true;
 
             UIScale = 0f;
-            UIShowZoom = false;
+            UIShowZoom = true;
             UIShowSpeedButtons = false;
             DefaultTimelineLength = 30;
             DefaultTriggerLength = 40;

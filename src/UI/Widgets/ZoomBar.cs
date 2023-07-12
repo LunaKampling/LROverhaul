@@ -84,6 +84,7 @@ namespace linerider.UI.Widgets
                 AutoSizeToContents = true,
                 MouseInputEnabled = false,
                 Dock = Dock.Bottom,
+                Margin = new Margin(0, WidgetContainer.WidgetMargin, 0, 0),
                 Padding = new Padding( // Same as in TimelineBar
                     _slider.AbsolutePadding.Left,
                     WidgetContainer.WidgetPadding,
