@@ -103,18 +103,50 @@ namespace linerider.UI.Widgets
             };
         }
 
-        public int ZoomToSliderValue(float zoom)
-        {
-            double raw = (double)(zoom - MinZoom) / (MaxZoom - MinZoom);
-            return (int)Math.Round(MinVal + raw * (MaxVal - MinVal));
-        }
-
+        /// <summary>
+        /// Nonlinearly converts slider value to zoom value
+        /// </summary>
+        /// <param name="value">Slider value</param>
+        /// <returns>Zoom value</returns>
         public float SliderValueToZoom(int value)
         {
-            value = (int)MathHelper.Clamp(value, Constants.MinimumZoom, Settings.Computed.MaxZoom);
+            // Legacy linear method just for reference
+            //double raw = (double)(value - MinVal) / (MaxVal - MinVal);
+            //return (float)(MinZoom + raw * (MaxZoom - MinZoom));
 
-            double raw = (double)(value - MinVal) / (MaxVal - MinVal);
-            return (float)Math.Round(MinZoom + raw * (MaxZoom - MinZoom));
+            value = (int)MathHelper.Clamp(value, MinVal, MaxVal);
+
+            double maxValRelative = MaxVal - MinVal;
+            double maxZoomRelative = MaxZoom - MinZoom;
+            double valRelative = value - MinVal;
+
+            double mul = (Math.Pow(maxValRelative + 1, valRelative / maxValRelative) - 1) / maxValRelative;
+            double result = maxZoomRelative * mul + MinZoom;
+
+            return (float)result;
+        }
+
+        /// <summary>
+        /// Nonlinearly converts zoom value to slider value
+        /// </summary>
+        /// <param name="zoom">Zoom value</param>
+        /// <returns>Slider value</returns>
+        public int ZoomToSliderValue(float zoom)
+        {
+            // Legacy linear method just for reference
+            //double raw = (double)(zoom - MinZoom) / (MaxZoom - MinZoom);
+            //return (int)Math.Round(MinVal + raw * (MaxVal - MinVal));
+
+            zoom = (float)MathHelper.Clamp(zoom, MinZoom, MaxZoom);
+
+            double maxValRelative = MaxVal - MinVal;
+            double maxZoomRelative = MaxZoom - MinZoom;
+            double zoomRelative = zoom - MinZoom;
+
+            double raw = Math.Log(zoomRelative / maxZoomRelative * maxValRelative + 1) * maxValRelative / Math.Log(maxValRelative + 1);
+            double result = raw + MinVal;
+
+            return (int)Math.Round(result);
         }
 
         public override void Think()
