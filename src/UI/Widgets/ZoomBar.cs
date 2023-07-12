@@ -155,7 +155,13 @@ namespace linerider.UI.Widgets
             _playheadDefaultZoom.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
 
             if (!_playheadDefaultZoom.IsHidden)
-                _playheadDefaultZoom.Value = ZoomToSliderValue(_editor.Timeline.GetFrameZoom(_editor.Offset));
+            {
+                float frameZoom = _editor.Timeline.GetFrameZoom(_editor.Offset);
+                _playheadDefaultZoom.Value = ZoomToSliderValue(frameZoom);
+                _playheadDefaultZoom.Tooltip = $"Frame actual zoom: {frameZoom}x\nClick to set as current zoom";
+                if (Hotkey.PlaybackResetCamera != Hotkey.None)
+                    _playheadDefaultZoom.Tooltip += $" (or press {Settings.HotkeyToString(Hotkey.PlaybackResetCamera)})";
+            }
 
             if (!_slider.Playhead.IsHeld && (_prevBaseZoom != _editor.BaseZoom || _prevSuperZoom != Settings.SuperZoom))
             {
