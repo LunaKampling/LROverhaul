@@ -75,7 +75,6 @@ namespace linerider.UI
         PreferenceDrawDebugGrid,
         PreferenceDrawDebugCamera,
         TogglePreviewMode,
-        ToggleCameraLock,
 
         PreferencesWindow,
         GameMenuWindow,

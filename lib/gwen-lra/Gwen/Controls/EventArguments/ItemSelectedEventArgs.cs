@@ -6,7 +6,7 @@ namespace Gwen.Controls
     {
         public ControlBase SelectedItem { get; private set; }
 
-        public ItemSelectedEventArgs(ControlBase selecteditem)
+        internal ItemSelectedEventArgs(ControlBase selecteditem)
         {
             SelectedItem = selecteditem;
         }

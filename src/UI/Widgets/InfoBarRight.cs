@@ -22,7 +22,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace linerider.UI.Widgets
+namespace linerider.UI
 {
     public class InfoBarRight : WidgetContainer
     {
@@ -33,8 +33,8 @@ namespace linerider.UI.Widgets
         private TrackLabel _riderspeedlabel;
         private TrackLabel _zoomlabel;
         private TrackLabel _playbackratelabel;
-        private TrackLabel _lockedcameralabel;
         private TrackLabel _notifylabel;
+
         private Panel _resetcamerawrapper;
 
         private double ZoomRounded
@@ -57,10 +57,10 @@ namespace linerider.UI.Widgets
             _fpslabel.IsHidden = rec && !Settings.Recording.ShowFps;
             _riderspeedlabel.IsHidden = rec && !Settings.Recording.ShowPpf;
             _zoomlabel.IsHidden = rec || Settings.UIShowZoom;
-            _playbackratelabel.IsHidden = rec || _editor.Scheduler.Rate == 1;
-            _lockedcameralabel.IsHidden = rec || !Settings.Local.LockCamera;
+            _playbackratelabel.IsHidden = rec || _editor.Scheduler.UpdatesPerSecond == 40;
             _notifylabel.IsHidden = rec || string.IsNullOrEmpty(_editor.CurrentNotifyMessage);
-            _resetcamerawrapper.IsHidden = rec || Settings.UIShowZoom || !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
+
+            _resetcamerawrapper.IsHidden = !_editor.UseUserZoom && _editor.BaseZoom == _editor.Timeline.GetFrameZoom(_editor.Offset);
 
             bool hasNoContent = Children.All(x => x.IsHidden);
             ShouldDrawBackground = !hasNoContent;
@@ -116,7 +116,7 @@ namespace linerider.UI.Widgets
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 TextRequest = (o, e) =>
                 {
-                    string text = $"Zoom: {ZoomRounded}\u00D7";
+                    string text = $"Zoom: {ZoomRounded}x";
                     return _editor.UseUserZoom ? $"{text} *" : text;
                 },
             };
@@ -126,15 +126,11 @@ namespace linerider.UI.Widgets
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
-                TextRequest = (o, e) => $"Sim Speed: {_editor.Scheduler.Rate}x",
-            };
-
-            _lockedcameralabel = new TrackLabel(this)
-            {
-                Dock = Dock.Top,
-                Alignment = Pos.Right | Pos.CenterV,
-                Margin = new Margin(0, WidgetItemSpacing, 0, 0),
-                Text = "Camera is locked",
+                TextRequest = (o, e) =>
+                {
+                    double rate = Math.Round(_editor.Scheduler.UpdatesPerSecond / 40.0, 3);
+                    return rate == 1 ? "" : $"Sim Speed: {rate}x";
+                },
             };
 
             _notifylabel = new TrackLabel(this)
@@ -152,6 +148,7 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false,
+                //Margin = new Margin(0, WidgetItemSpacing, 0, 0),
                 AutoSizeToContents = true,
             };
 
@@ -160,8 +157,13 @@ namespace linerider.UI.Widgets
                 Dock = Dock.Right,
                 Name = "Reset Camera",
                 Icon = GameResources.icon_reset_camera.Bitmap,
-                Action = (o, e) => _editor.ResetCamera(),
-                TooltipHotkey = Hotkey.PlaybackResetCamera,
+                Action = (o, e) =>
+                {
+                    _editor.Zoom = _editor.Timeline.GetFrameZoom(_editor.Offset);
+                    _editor.UseUserZoom = false;
+                    _editor.UpdateCamera();
+                },
+                Hotkey = Hotkey.PlaybackResetCamera,
             };
 
         }

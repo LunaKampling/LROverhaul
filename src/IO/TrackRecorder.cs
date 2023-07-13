@@ -144,7 +144,7 @@ namespace linerider.IO
 
         public static void RecordTrack(MainWindow game, bool smooth, bool music)
         {
-            Game.RiderFrame flag = game.Track.Flag;
+            Game.RiderFrame flag = game.Track.GetFlag();
             if (flag == null)
                 return;
             Size resolution = new Size(Settings.Recording.RecordingWidth, Settings.Recording.RecordingHeight);

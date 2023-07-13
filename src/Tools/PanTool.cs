@@ -30,8 +30,9 @@ namespace linerider.Tools
         private Vector2d lastposition;
         private bool zoom = false;
 
-        public override string Name => "Hand Tool";
         public override Bitmap Icon => GameResources.icon_tool_pan.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorPanTool;
+        public override string Name => "Hand Tool";
         public override MouseCursor Cursor => Active
                     ? zoom ? game.Cursors.List[CursorsHandler.Type.Zoom] : game.Cursors.List[CursorsHandler.Type.DragActive]
                     : game.Cursors.List[CursorsHandler.Type.DragInactive];

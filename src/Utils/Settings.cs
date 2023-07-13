@@ -50,11 +50,11 @@ namespace linerider
         public static class Local
         {
             public static bool RecordingMode;
+            public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
             public static bool TrackOverlay = false;
             public static bool TrackOverlayFixed = false;
             public static int TrackOverlayFixedFrame = 0;
             public static int TrackOverlayOffset = -1;
-            public static bool LockCamera;
         }
         public static class Editor
         {
@@ -145,6 +145,7 @@ namespace linerider
         public static bool DrawAGWs; // Draw the normally invisible line extensions used to smooth curve collisions
         public static bool DrawFloatGrid; // Draw the exponential grid of floating-point 'regions' (used for angled kramuals)
         public static bool DrawCamera; // Draw the camera's area
+
         public static float ZoomMultiplier; // A constant multiplier for the zoom
 
         // LRTran settings
@@ -185,11 +186,9 @@ namespace linerider
         // Computed settings
         public static class Computed
         {
-            public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
             public static float UIScale => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
             public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
-            public static bool LockCamera => Local.RecordingMode ? false : Local.LockCamera;
         }
 
         static Settings()
@@ -267,8 +266,8 @@ namespace linerider
             Bezier.Resolution = 30;
             Bezier.NodeSize = 15;
             Bezier.Mode = (int)BezierMode.Direct;
-            PlaybackZoomType = 1;
-            PlaybackZoomValue = Constants.DefaultZoom;
+            PlaybackZoomType = 0;
+            PlaybackZoomValue = 4;
             Volume = 100;
             SuperZoom = false;
             NightMode = false;
@@ -436,7 +435,6 @@ namespace linerider
 
             SetupDefaultKeybind(Hotkey.PreferenceOnionSkinning, new Keybinding(Key.O, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.TogglePreviewMode, new Keybinding(Key.U, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.ToggleCameraLock, new Keybinding(Key.L, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
             SetupDefaultKeybind(Hotkey.Quicksave, new Keybinding(Key.S, KeyModifiers.Control));
 

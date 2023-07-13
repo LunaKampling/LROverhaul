@@ -4,7 +4,6 @@ uniform int u_knobstate;
 uniform bool u_alphachannel;
 uniform bool u_overlay;
 uniform vec4 u_knobcolor;
-uniform float u_knobsize;
 // Basically u/v coordinates to the circle.
 varying vec2 v_circle;
 varying vec2 v_linesize;
@@ -16,7 +15,7 @@ float v_scale;
 float v_ratio;
 
 const float radius = 0.5;
-float knobradius = u_knobsize / 2;
+const float knobradius = 0.4;
 float getedge(float rad, float scale)
 {
     return rad - (rad / (u_scale * v_scale * scale)); 

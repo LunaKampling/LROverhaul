@@ -243,7 +243,7 @@ namespace linerider.UI
         }
         private bool CheckRecord()
         {
-            if (!_editor.HasFlag)
+            if (_editor.GetFlag() == null)
             {
                 SetError("No flag detected. Place one at the end of the track\nso the recorder knows where to stop.");
                 return false;

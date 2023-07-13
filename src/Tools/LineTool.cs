@@ -28,8 +28,8 @@ namespace linerider.Tools
 {
     public class LineTool : Tool
     {
-        public override string Name => "Line Tool";
         public override Bitmap Icon => GameResources.icon_tool_line.Bitmap;
+        public override string Name => "Line Tool";
         public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Line];
         public override Swatch Swatch => SharedSwatches.DrawingToolsSwatch;
         public override bool ShowSwatch => true;

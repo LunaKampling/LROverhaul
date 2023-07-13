@@ -120,13 +120,8 @@ namespace linerider.Tools
         protected GameLine SelectLine(TrackReader trk, Vector2d position, out bool knob)
         {
             knob = false;
-
-            float relativeKnobSize = Math.Min(
-                Constants.KnobSize,
-                Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxKnobSize / game.Track.Zoom
-            );
-            GameLine[] ends = LineEndsInRadius(trk, position, relativeKnobSize - 1f);
-
+            _ = game.Track.Zoom;
+            GameLine[] ends = LineEndsInRadius(trk, position, SnapRadius);
             if (ends.Length > 0)
             {
                 knob = true;

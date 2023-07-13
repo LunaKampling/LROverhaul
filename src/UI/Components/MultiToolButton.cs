@@ -13,18 +13,9 @@ namespace linerider.UI.Components
         private readonly Texture _indicatortexture;
         private ToolButton CurrentButton => _buttons[_currentidx];
 
-        public new Hotkey Hotkey
-        {
-            get => base.Hotkey;
-            set
-            {
-                base.Hotkey = value;
-                foreach (ToolButton toolButton in _buttons)
-                    toolButton.TooltipHotkey = value;
-            }
-        }
-
-        public MultiToolButton(ControlBase parent, Tool[] tools) : base(parent)
+        public MultiToolButton(ControlBase parent, Tool[] tools) : this(parent, tools, Hotkey.None)
+        { }
+        public MultiToolButton(ControlBase parent, Tool[] tools, Hotkey hotkey) : base(parent)
         {
             Texture tx = new Texture(parent.Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, GameResources.ux_multitool_indicator.Bitmap);
@@ -32,7 +23,7 @@ namespace linerider.UI.Components
 
             foreach (Tool tool in tools)
             {
-                ToolButton toolButton = new ToolButton(this, tool)
+                ToolButton toolButton = new ToolButton(this, tool, false)
                 {
                     Action = (o, e) => SelectNextTool(),
                     IsHidden = true,
@@ -41,7 +32,12 @@ namespace linerider.UI.Components
             }
 
             CurrentButton.IsHidden = false;
-            Action = (o, e) => SelectNextTool();
+
+            if (hotkey != Hotkey.None)
+            {
+                Action = (o, e) => SelectNextTool();
+                Hotkey = hotkey;
+            }
 
             Width = _buttons[0].Width;
             Height = _buttons[0].Height;

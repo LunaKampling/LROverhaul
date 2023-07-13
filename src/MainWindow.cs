@@ -857,19 +857,13 @@ namespace linerider
                 Settings.Save();
                 Track.Invalidate();
             });
-            
+
             InputUtils.RegisterHotkey(Hotkey.TogglePreviewMode, () => true, () =>
             {
                 Settings.PreviewMode = !Settings.PreviewMode;
 
                 Settings.Save();
                 Track.Invalidate();
-            });
-
-            InputUtils.RegisterHotkey(Hotkey.ToggleCameraLock, () => true, () =>
-            {
-                if (Track.Paused)
-                    Settings.Local.LockCamera = !Settings.Local.LockCamera;
             });
 
             InputUtils.RegisterHotkey(Hotkey.PreferenceAllCheckboxSettings, () => true, () =>
@@ -989,10 +983,8 @@ namespace linerider
             InputUtils.RegisterHotkey(Hotkey.PlaybackIterationNext, () => !Track.Playing, () =>
             {
                 StopTools();
-
                 if (!Track.Paused)
                     Track.TogglePause();
-
                 if (Track.IterationsOffset != 6)
                 {
                     Track.IterationsOffset++;
@@ -1009,26 +1001,25 @@ namespace linerider
             repeat: true);
             InputUtils.RegisterHotkey(Hotkey.PlaybackIterationPrev, () => !Track.Playing, () =>
             {
-                if (Track.Offset == 0)
-                    return;
-
-                StopTools();
-                if (Track.IterationsOffset > 0)
+                if (Track.Offset != 0)
                 {
-                    Track.IterationsOffset--;
+                    StopTools();
+                    if (Track.IterationsOffset > 0)
+                    {
+                        Track.IterationsOffset--;
+                    }
+                    else
+                    {
+                        Track.PreviousFrame();
+                        Track.IterationsOffset = 6;
+                        Invalidate();
+                        Track.UpdateCamera();
+                    }
+                    Track.InvalidateRenderRider();
                 }
-                else
-                {
-                    Track.PreviousFrame();
-                    Track.IterationsOffset = 6;
-                    Invalidate();
-                    Track.UpdateCamera();
-                }
-                Track.InvalidateRenderRider();
             },
             null,
             repeat: true);
-            InputUtils.RegisterHotkey(Hotkey.PlaybackResetCamera, () => true, () => Track.ResetCamera());
         }
         private void RegisterPopupHotkeys()
         {
@@ -1181,7 +1172,7 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.EditorFocusFlag, () => !Track.Playing, () =>
             {
-                Game.RiderFrame flag = Track.Flag;
+                Game.RiderFrame flag = Track.GetFlag();
                 if (flag != null)
                 {
                     Track.Camera.SetFrameCenter(flag.State.CalculateCenter());

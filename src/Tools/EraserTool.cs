@@ -25,8 +25,9 @@ namespace linerider.Tools
 {
     public class EraserTool : Tool
     {
-        public override string Name => "Eraser Tool";
         public override Bitmap Icon => GameResources.icon_tool_eraser.Bitmap;
+        public override Hotkey Hotkey => Hotkey.EditorEraserTool;
+        public override string Name => "Eraser Tool";
         public override Swatch Swatch => SharedSwatches.EraserAndSelectToolSwatch;
         public override bool RequestsMousePrecision => false;
         public override bool ShowSwatch => true;

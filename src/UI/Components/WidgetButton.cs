@@ -40,11 +40,6 @@ namespace linerider.UI.Components
                 InputUtils.RegisterHotkey(_hotkey, _hotkeycondition, () => Action(this, EventArgs.Empty));
             }
         }
-        public Hotkey TooltipHotkey
-        {
-            get => _tooltiphotkey == Hotkey.None ? Hotkey : _tooltiphotkey;
-            set => _tooltiphotkey = value;
-        }
         public Func<bool> HotkeyCondition
         {
             set
@@ -62,8 +57,7 @@ namespace linerider.UI.Components
         public new Color TextColor = Color.Black;
         private Func<bool> _hotkeycondition = () => true;
         private GwenEventHandler<EventArgs> _action;
-        private Hotkey _tooltiphotkey = Hotkey.None;
-        private Hotkey _hotkey = Hotkey.None;
+        private Hotkey _hotkey;
         private Bitmap _icon;
         private Color _color = Color.Empty;
 
@@ -79,8 +73,8 @@ namespace linerider.UI.Components
                 bool addHotkeyBrackets = !string.IsNullOrEmpty(Name);
                 string tooltip = Name;
 
-                if (TooltipHotkey != Hotkey.None)
-                    tooltip += Settings.HotkeyToString(TooltipHotkey, addHotkeyBrackets);
+                if (Hotkey != Hotkey.None)
+                    tooltip += Settings.HotkeyToString(Hotkey, addHotkeyBrackets);
 
                 return tooltip;
             }
@@ -95,12 +89,6 @@ namespace linerider.UI.Components
             m_Text.TextColor = TextColor;
             skin.Renderer.DrawColor = Color.FromArgb(Alpha, Color);
             skin.Renderer.DrawTexturedRect(m_texture, RenderBounds);
-        }
-
-        public override void Dispose()
-        {
-            m_texture?.Dispose();
-            base.Dispose();
         }
     }
 }

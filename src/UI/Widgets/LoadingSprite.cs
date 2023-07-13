@@ -24,7 +24,7 @@ using Svg;
 using System;
 using System.Drawing;
 
-namespace linerider.UI.Widgets
+namespace linerider.UI
 {
     public class LoadingSprite : Sprite
     {

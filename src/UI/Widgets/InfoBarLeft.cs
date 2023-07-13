@@ -23,7 +23,7 @@ using linerider.UI.Components;
 using System;
 using System.Linq;
 
-namespace linerider.UI.Widgets
+namespace linerider.UI
 {
     public class InfoBarLeft : WidgetContainer
     {
