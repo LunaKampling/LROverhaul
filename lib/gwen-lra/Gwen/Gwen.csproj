@@ -27,8 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Align.cs" />
-    <Compile Include="Controls\SpinnerG17.cs" />
-    <Compile Include="Controls\TextBoxNumericG17.cs" />
     <Compile Include="Cursor.cs" />
     <Compile Include="Cursors.cs" />
     <Compile Include="DialogResult.cs" />
@@ -114,6 +112,8 @@
     <Compile Include="Controls\MenuItem.cs" />
     <Compile Include="Controls\MenuStrip.cs" />
     <Compile Include="Controls\Spinner.cs" />
+    <Compile Include="Controls\SpinnerG17.cs" />
+
     <Compile Include="ControlInternal\RadioButtonButton.cs" />
     <Compile Include="Controls\RadioButtonGroup.cs" />
     <Compile Include="Controls\ScrollControl.cs" />
@@ -124,6 +124,7 @@
     <!-- <Compile Include="Controls\TabTitleBar.cs" /> -->
     <Compile Include="Controls\TextBox.cs" />
     <Compile Include="Controls\TextBoxNumeric.cs" />
+    <Compile Include="Controls\TextBoxNumericG17.cs" />
     <Compile Include="Controls\TextBoxPassword.cs" />
     <Compile Include="Controls\TreeControl.cs" />
     <Compile Include="Controls\TreeNode.cs" />

@@ -22,6 +22,7 @@ using Gwen.Skin;
 using linerider.Tools;
 using linerider.UI;
 using linerider.UI.Components;
+using linerider.UI.Widgets;
 using linerider.Utils;
 using OpenTK;
 using System;
@@ -36,20 +37,22 @@ namespace linerider
     public class GameCanvas : Canvas
     {
         public static readonly Queue<Action> QueuedActions = new Queue<Action>();
-        public ZoomSlider ZoomSlider;
         public Gwen.Renderer.OpenTK Renderer;
-        private InfoBarCoords _infobarcoords;
-        private TimelineWidget _timeline;
-        private SwatchBar _swatchbar;
+        private InfoBarCoords _infoBarCoords;
+        private TimelineBar _timelineBar;
+        private Panel _speedIncreaseWrapper;
+        private Panel _speedDecreaseWrapper;
+        private ZoomBar _zoom;
+        private SwatchBar _swatchBar;
         private Toolbar _toolbar;
-        private LoadingSprite _loadingsprite;
+        private LoadingSprite _loadingSprite;
         private readonly MainWindow game;
         public PlatformImpl Platform;
         public bool Loading { get; set; }
         public Color TextForeground => Settings.NightMode ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Foreground;
         public bool IsModalOpen => Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null;
         private Tooltip _usertooltip;
-        public bool Scrubbing => _timeline.Playhead.Held;
+        public bool Scrubbing => _timelineBar.Scrubbing;
         public readonly Fonts Fonts;
 
         public GameCanvas(
@@ -70,13 +73,15 @@ namespace linerider
         {
             // Process recording junk
             bool rec = Settings.Local.RecordingMode;
-            ZoomSlider.IsHidden = rec || !Settings.UIShowZoom;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
-            _swatchbar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
-            _infobarcoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
-            _timeline.IsHidden = rec;
+            _swatchBar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
+            _infoBarCoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
+            _timelineBar.IsHidden = rec;
+            _zoom.IsHidden = rec || !Settings.UIShowZoom;
+            _loadingSprite.IsHidden = rec || !Loading;
+            _speedDecreaseWrapper.IsHidden = !Settings.UIShowSpeedButtons;
+            _speedIncreaseWrapper.IsHidden = !Settings.UIShowSpeedButtons;
 
-            _loadingsprite.IsHidden = rec || !Loading;
             Tool selectedtool = CurrentTools.CurrentTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
             if (!_usertooltip.IsHidden)
@@ -99,12 +104,55 @@ namespace linerider
         }
         private void CreateUI()
         {
-
             _usertooltip = new Tooltip(this) { IsHidden = true };
-            ZoomSlider = new ZoomSlider(this, game.Track);
-            _timeline = new TimelineWidget(this, game.Track);
 
-            ControlBase leftPanel = new Panel(this)
+            ControlBase bottomArea = new WidgetContainer(this)
+            {
+                Margin = new Margin(WidgetContainer.WidgetMargin * 25, 0, WidgetContainer.WidgetMargin * 25, WidgetContainer.WidgetMargin),
+                Dock = Dock.Bottom,
+            };
+            _timelineBar = new TimelineBar(bottomArea, game.Track)
+            {
+                Dock = Dock.Fill,
+            };
+            _zoom = new ZoomBar(bottomArea, game.Track)
+            {
+                Margin = new Margin(WidgetContainer.WidgetMargin, 0, 0, 0),
+                Dock = Dock.Right,
+            };
+
+            _speedIncreaseWrapper = new Panel(bottomArea)
+            {
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
+                Dock = Dock.Right,
+            };
+            _ = new WidgetButton(_speedIncreaseWrapper)
+            {
+                Dock = Dock.Top,
+                Name = "Increase Speed",
+                Icon = GameResources.icon_speedup.Bitmap,
+                Action = (o, e) => game.Track.PlaybackSpeedUp(),
+                Hotkey = Hotkey.PlaybackSpeedUp,
+            };
+            _speedDecreaseWrapper = new Panel(bottomArea)
+            {
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
+                Dock = Dock.Left,
+            };
+            _= new WidgetButton(_speedDecreaseWrapper)
+            {
+                Dock = Dock.Top,
+                Name = "Decrease Speed",
+                Icon = GameResources.icon_slowdown.Bitmap,
+                Action = (o, e) => game.Track.PlaybackSpeedDown(),
+                Hotkey = Hotkey.PlaybackSpeedDown,
+            };
+
+            ControlBase leftArea = new Panel(this)
             {
                 Margin = new Margin(WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0, 0),
                 ShouldDrawBackground = false,
@@ -112,32 +160,32 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
             };
-            _ = new InfoBarLeft(leftPanel, game.Track)
+            _ = new InfoBarLeft(leftArea, game.Track)
             {
                 Dock = Dock.Top,
             };
-            _infobarcoords = new InfoBarCoords(leftPanel)
+            _infoBarCoords = new InfoBarCoords(leftArea)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetContainer.WidgetMargin, 0, 0),
             };
 
-            WidgetContainer middlePanel = new WidgetContainer(this)
+            WidgetContainer topArea = new WidgetContainer(this)
             {
                 AutoSizeToContents = true,
                 Positioner = (o) => new Point(Width / 2 - o.Width / 2, WidgetContainer.WidgetMargin),
             };
-            _toolbar = new Toolbar(middlePanel, game)
+            _toolbar = new Toolbar(topArea, game)
             {
                 Dock = Dock.Top,
             };
-            _swatchbar = new SwatchBar(middlePanel, game.Track)
+            _swatchBar = new SwatchBar(topArea, game.Track)
             {
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
             };
 
-            ControlBase rightPanel = new Panel(this)
+            ControlBase rightArea = new Panel(this)
             {
                 Margin = new Margin(0, WidgetContainer.WidgetMargin, WidgetContainer.WidgetMargin, 0),
                 ShouldDrawBackground = false,
@@ -145,16 +193,16 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Right,
             };
-            _ = new InfoBarRight(rightPanel, game.Track)
+            _ = new InfoBarRight(rightArea, game.Track)
             {
                 Dock = Dock.Top,
             };
 
-            _loadingsprite = new LoadingSprite(this)
+            _loadingSprite = new LoadingSprite(this)
             {
                 Positioner = (o) => new Point(
-                    middlePanel.X + middlePanel.Width,
-                    middlePanel.Y + WidgetContainer.WidgetPadding
+                    topArea.X + topArea.Width,
+                    topArea.Y + WidgetContainer.WidgetPadding
                 ),
             };
         }

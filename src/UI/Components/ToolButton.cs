@@ -11,9 +11,7 @@ namespace linerider.UI.Components
         public Tool Subtool;
         private readonly Texture ActiveToolBackground;
 
-        public ToolButton(ControlBase parent, Tool tool) : this(parent, tool, true)
-        { }
-        public ToolButton(ControlBase parent, Tool tool, bool registerEvents) : base(parent)
+        public ToolButton(ControlBase parent, Tool tool) : base(parent)
         {
             Texture tx = new Texture(parent.Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, GameResources.ux_tool_background.Bitmap);
@@ -21,28 +19,10 @@ namespace linerider.UI.Components
 
             Tool = tool;
             Name = tool.Name;
-
-            if (registerEvents)
-            {
-                Action = (o, e) => CurrentTools.SetTool(Tool);
-                Hotkey = tool.Hotkey;
-            }
+            Action = (o, e) => CurrentTools.SetTool(Tool);
 
             SetImage(tool.Icon);
             _ = SetSize(tool.Icon.Width, tool.Icon.Height);
-        }
-        public override string Tooltip
-        {
-            get
-            {
-                bool addHotkeyBrackets = !string.IsNullOrEmpty(Tool.Name);
-                string tooltip = Tool.Name;
-
-                if (Tool.Hotkey != Hotkey.None)
-                    tooltip += Settings.HotkeyToString(Tool.Hotkey, addHotkeyBrackets);
-
-                return tooltip;
-            }
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
@@ -79,6 +59,12 @@ namespace linerider.UI.Components
             {
                 base.Render(skin);
             }
+        }
+
+        public override void Dispose()
+        {
+            m_texture?.Dispose();
+            base.Dispose();
         }
     }
 }

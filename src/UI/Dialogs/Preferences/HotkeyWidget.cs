@@ -84,6 +84,8 @@ namespace linerider.UI
             AddBinding(editorTable, "Toggle Debug Grid", Hotkey.PreferenceDrawDebugGrid);
             AddBinding(editorTable, "Toggle Debug Camera", Hotkey.PreferenceDrawDebugCamera);
             AddBinding(editorTable, "Toggle Preview Mode", Hotkey.TogglePreviewMode);
+            AddBinding(editorTable, "Toggle Camera Lock", Hotkey.ToggleCameraLock,
+                "Prevent camera from following rider. Can be useful during editing.");
 
             AddBinding(editorTable, "Remove Newest Line", Hotkey.EditorRemoveLatestLine);
             AddBinding(editorTable, "Undo Last Action", Hotkey.EditorUndo);
