@@ -20,7 +20,7 @@ using Gwen.Controls;
 using linerider.LRL;
 using linerider.UI.Components;
 
-namespace linerider.UI
+namespace linerider.UI.Widgets
 {
     public class InfoBarCoords : WidgetContainer
     {

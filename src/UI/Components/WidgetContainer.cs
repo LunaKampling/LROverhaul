@@ -31,8 +31,8 @@ namespace linerider.UI.Components
         public static readonly int WidgetMargin = Utility.NumberToCurrentScale(3);
         public static readonly int WidgetPadding = Utility.NumberToCurrentScale(7);
         public static readonly int WidgetItemSpacing = Utility.NumberToCurrentScale(5);
+        private readonly int BorderRadius = Utility.NumberToCurrentScale(10);
 
-        protected Texture _texture;
         private Bordered _image;
         private Color _bgcolor
         {
@@ -45,25 +45,12 @@ namespace linerider.UI.Components
         public WidgetContainer(ControlBase parent) : base(parent)
         {
             Padding = new Padding(WidgetPadding, WidgetPadding, WidgetPadding, WidgetPadding);
-            SetImage(GameResources.ux_widget_background.Bitmap);
             ShouldDrawBackground = true;
             AutoSizeToContents = true;
             MouseInputEnabled = false;
             BackgroundAlpha = 128;
-        }
-        private void SetImage(Bitmap bmp)
-        {
-            _texture?.Dispose();
 
-            Texture tx = new Texture(Skin.Renderer);
-            Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
-            _texture = tx;
-
-            int middleX = (int)Math.Round((double)bmp.Width / 2);
-            int middleY = (int)Math.Round((double)bmp.Height / 2);
-            Margin bounds = new Margin(middleX, middleY, middleX, middleY);
-
-            _image = new Bordered(_texture, 0, 0, bmp.Width, bmp.Height, bounds);
+            _image = new RoundedSquareTexture(BorderRadius).Bordered;
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {

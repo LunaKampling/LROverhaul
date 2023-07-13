@@ -27,7 +27,7 @@ namespace linerider.Game
 {
     public partial class Timeline
     {
-        private struct frameinfo
+        private struct FrameInfo
         {
             public Rider Rider;
             public float Zoom;
@@ -36,7 +36,7 @@ namespace linerider.Game
         }
         private readonly HitTestManager _hittest = new HitTestManager();
         private readonly ResourceSync _framesync = new ResourceSync();
-        private readonly AutoArray<frameinfo> _frames = new AutoArray<frameinfo>();
+        private readonly AutoArray<FrameInfo> _frames = new AutoArray<FrameInfo>();
         private readonly Track _track;
         public event EventHandler<int> FrameInvalidated;
         public Timeline(Track track)
@@ -91,7 +91,7 @@ namespace linerider.Game
             {
                 _hittest.Reset();
                 _frames.Clear();
-                _frames.Add(new frameinfo()
+                _frames.Add(new FrameInfo()
                 {
                     Rider = state,
                     Zoom = zoom,
@@ -277,9 +277,9 @@ namespace linerider.Game
         /// </summary>
         public void ThreadUnsafeRunFrames(int start, int count)
         {
-            frameinfo[] steps = new frameinfo[count];
+            FrameInfo[] steps = new FrameInfo[count];
             List<LinkedList<int>> collisionlist = new List<LinkedList<int>>(count);
-            frameinfo current = _frames[start - 1];
+            FrameInfo current = _frames[start - 1];
             int framecount = _frames.Count;
             Bone[] bones = _track.Bones;
             using (changesync.AcquireWrite())
