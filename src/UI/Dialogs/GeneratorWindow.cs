@@ -699,7 +699,7 @@ namespace linerider.UI
             });
             KramualFrame = new Spinner(null) //End of line
             {
-                Min = -30000000000,
+                Min = 0,
                 Max = 30000000000,
                 Value = gen_Kramual.frame,
                 IsDisabled = !gen_Kramual.overrideFrame
@@ -719,8 +719,8 @@ namespace linerider.UI
             });
             KramualIteration = new Spinner(null)
             {
-                Min = -30000000000,
-                Max = 30000000000,
+                Min = 0,
+                Max = 6,
                 Value = gen_Kramual.iteration,
                 IsDisabled = !gen_Kramual.overrideIteration
             };
