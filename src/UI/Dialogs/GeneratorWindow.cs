@@ -42,9 +42,22 @@ namespace linerider.UI
         private Checkbox LineInverse;
         private Checkbox LineReverse;
 
+        private ControlBase KramualGenOptions;
+        private SpinnerG17 KramualX;
+        private SpinnerG17 KramualY;
+        private Spinner KramualFrame;
+        private Spinner KramualIteration;
+        private Spinner KramualMultiplier;
+        private Checkbox KramualInverse;
+        private Checkbox KramualFrameOverride;
+        private Checkbox KramualIterationOverride;
+        private Checkbox KramualPositionOverride;
+        private Checkbox KramualReverse;
+
         private static CircleGenerator gen_Circle;
         private static TenPCGenerator gen_10pc;
         private static LineGenerator gen_Line;
+        private static KramualGenerator gen_Kramual;
 
         private GeneratorType CurrentGenerator
         {
@@ -78,7 +91,8 @@ namespace linerider.UI
                 gen_Circle = new CircleGenerator("Circle Generator", 10.0, pos, 50, false);
                 gen_10pc = new TenPCGenerator("10PC Generator", new Vector2d(1.0, 1.0), 0.0);
                 gen_Line = new LineGenerator("Line Generator", new Vector2d(0, 0), new Vector2d(1, 1), LineType.Acceleration);
-                CurrentGenerator = GeneratorType.TenPC;
+                gen_Kramual = new KramualGenerator("Kramual Generator", new Vector2d(0, 0), LineType.Standard);
+                CurrentGenerator = GeneratorType.Circle;
             }
 
             Setup();
@@ -148,9 +162,17 @@ namespace linerider.UI
             PopulateCircle();
             Populate10pc();
             PopulateLine();
+            PopulateKramual();
 
             GeneratorTypeBox = GwenHelper.CreateLabeledCombobox(top, "Generator Type:");
             GeneratorTypeBox.Dock = Dock.Top;
+            MenuItem kramual = GeneratorTypeBox.AddItem("Kramual", "", GeneratorType.Kramual);
+            kramual.CheckChanged += (o, e) =>
+            {
+                GeneratorOptions.Children.Clear();
+                KramualGenOptions.Parent = GeneratorOptions;
+                CurrentGenerator = GeneratorType.Kramual;
+            };
             MenuItem line = GeneratorTypeBox.AddItem("Line", "", GeneratorType.Line);
             line.CheckChanged += (o, e) =>
             {
@@ -192,6 +214,10 @@ namespace linerider.UI
                 case GeneratorType.Line:
                     GeneratorTypeBox.SelectedItem = line;
                     LineGenOptions.Parent = GeneratorOptions;
+                    break;
+                case GeneratorType.Kramual:
+                    GeneratorTypeBox.SelectedItem = kramual;
+                    KramualGenOptions.Parent = GeneratorOptions;
                     break;
             }
 
@@ -259,7 +285,7 @@ namespace linerider.UI
                 Min = 0,
                 Max = 255,
                 Value = gen_Circle.multiplier,
-                IsDisabled = true
+                IsDisabled = gen_Circle.lineType != LineType.Acceleration
             };
             CircleMultiplier.ValueChanged += (o, e) =>
             {
@@ -273,7 +299,7 @@ namespace linerider.UI
                 Max = 25.5,
                 Value = gen_Circle.width,
                 IncrementSize = 0.1,
-                IsDisabled = true
+                IsDisabled = gen_Circle.lineType != LineType.Scenery
             };
             CircleWidth.ValueChanged += (o, e) =>
             {
@@ -348,6 +374,14 @@ namespace linerider.UI
                 gen_Circle.reverse = ((Checkbox)o).IsChecked;
                 gen_Circle.ReGenerate_Preview();
             });
+            if (gen_Circle.lineType == LineType.Scenery)
+            {
+                CircleInverse.Disable();
+            }
+            if (gen_Circle.lineType != LineType.Acceleration)
+            {
+                CircleReverse.Disable();
+            }
         }
 
         private void Populate10pc()
@@ -458,7 +492,7 @@ namespace linerider.UI
                 Min = 0,
                 Max = 255,
                 Value = gen_Line.multiplier,
-                IsDisabled = false
+                IsDisabled = gen_Line.lineType != LineType.Acceleration
             };
             LineMultiplier.ValueChanged += (o, e) =>
             {
@@ -471,7 +505,7 @@ namespace linerider.UI
                 Max = 25.5,
                 Value = gen_Line.width,
                 IncrementSize = 0.1,
-                IsDisabled = true
+                IsDisabled = gen_Line.lineType != LineType.Scenery
             };
             LineWidth.ValueChanged += (o, e) =>
             {
@@ -546,6 +580,213 @@ namespace linerider.UI
                 gen_Line.reverse = ((Checkbox)o).IsChecked;
                 gen_Line.ReGenerate_Preview();
             });
+            if (gen_Line.lineType == LineType.Scenery)
+            {
+                LineInverse.Disable();
+            }
+            if (gen_Line.lineType != LineType.Acceleration)
+            {
+                LineReverse.Disable();
+            }
+        }
+
+        private void PopulateKramual()
+        {
+            KramualGenOptions = new ControlBase(null)
+            {
+                Margin = new Margin(0, 0, 0, 0),
+                Dock = Dock.Top,
+                AutoSizeToContents = true
+            };
+            //override position
+            KramualPositionOverride = GwenHelper.AddCheckbox(KramualGenOptions, "Override position", gen_Kramual.overridePosition, (o, e) =>
+            {
+                gen_Kramual.overridePosition = ((Checkbox)o).IsChecked; //bunch of logic to disable certain spinners
+                if (((Checkbox)o).IsChecked)
+                {
+                    if (gen_Kramual.vert)
+                    {
+                        gen_Kramual.position.X = KramualX.Value;
+                        KramualY.Disable();
+                        KramualX.Enable();
+                    }
+                    else
+                    {
+                        gen_Kramual.position.Y = KramualY.Value;
+                        KramualX.Disable();
+                        KramualY.Enable();
+                    }
+                }
+                else
+                {
+                    KramualX.Disable();
+                    KramualY.Disable();
+                }
+                gen_Kramual.ReGenerate_Preview();
+            });
+
+            KramualX = new SpinnerG17(null) //coordinates for override
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Kramual.position.X,
+                IsDisabled = !gen_Kramual.vert | !gen_Kramual.overridePosition
+            };
+            KramualX.ValueChanged += (o, e) =>
+            {
+                gen_Kramual.position.X = KramualX.Value;
+                gen_Kramual.ReGenerate_Preview();
+            };
+            KramualY = new SpinnerG17(null)
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Kramual.position.Y,
+                IsDisabled = gen_Kramual.vert | !gen_Kramual.overridePosition
+            };
+            KramualY.ValueChanged += (o, e) =>
+            {
+                gen_Kramual.position.Y = KramualY.Value;
+                gen_Kramual.ReGenerate_Preview();
+            };
+            _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "X Position", KramualX);
+            _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "Y Position", KramualY);
+
+            RadioButtonGroup axisRadioGroup = new RadioButtonGroup(KramualGenOptions) //horizontal or vertical kramual?
+            {
+                Dock = Dock.Top,
+                ShouldDrawBackground = false
+            };
+            RadioButton horizontal = axisRadioGroup.AddOption("Horizontal");
+            RadioButton vertical = axisRadioGroup.AddOption("Vertical");
+            switch (gen_Kramual.vert)
+            {
+                case false:
+                    horizontal.Select();
+                    break;
+                case true:
+                    vertical.Select();
+                    break;
+                default:
+                    break;
+            }
+            horizontal.CheckChanged += (o, e) =>
+            {
+                gen_Kramual.vert = false;
+                gen_Kramual.ReGenerate_Preview();
+                if (gen_Kramual.overridePosition)
+                {
+                    KramualY.Enable();
+                    KramualX.Disable();
+                }
+            };
+            vertical.CheckChanged += (o, e) =>
+            {
+                gen_Kramual.vert = true;
+                gen_Kramual.ReGenerate_Preview();
+                if (gen_Kramual.overridePosition)
+                {
+                    KramualX.Enable();
+                    KramualY.Disable();
+                }
+            };
+
+            KramualFrameOverride = GwenHelper.AddCheckbox(KramualGenOptions, "Override Frame", gen_Kramual.overrideFrame, (o, e) => //override frame
+            {
+                gen_Kramual.overrideFrame = ((Checkbox)o).IsChecked;
+                KramualFrame.IsDisabled = !((Checkbox)o).IsChecked;
+                gen_Kramual.ReGenerate_Preview();
+            });
+            KramualFrame = new Spinner(null) //End of line
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Kramual.frame,
+                IsDisabled = !gen_Kramual.overrideFrame
+            };
+            KramualFrame.ValueChanged += (o, e) =>
+            {
+                gen_Kramual.frame = (int)KramualFrame.Value;
+                gen_Kramual.ReGenerate_Preview();
+            };
+            _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "Frame", KramualFrame);
+
+            KramualIterationOverride = GwenHelper.AddCheckbox(KramualGenOptions, "Override Iteration", gen_Kramual.overrideIteration, (o, e) => //override iteration
+            {
+                gen_Kramual.overrideIteration = ((Checkbox)o).IsChecked;
+                KramualIteration.IsDisabled = !((Checkbox)o).IsChecked;
+                gen_Kramual.ReGenerate_Preview();
+            });
+            KramualIteration = new Spinner(null)
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Kramual.iteration,
+                IsDisabled = !gen_Kramual.overrideIteration
+            };
+            KramualIteration.ValueChanged += (o, e) =>
+            {
+                gen_Kramual.iteration = (int)KramualIteration.Value;
+                gen_Kramual.ReGenerate_Preview();
+            };
+            _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "Iteration", KramualIteration);
+
+            KramualMultiplier = new Spinner(null) //red line multiplier
+            {
+                Min = 0,
+                Max = 255,
+                Value = gen_Kramual.multiplier,
+                IsDisabled = gen_Kramual.lineType != LineType.Acceleration
+            };
+            KramualMultiplier.ValueChanged += (o, e) =>
+            {
+                gen_Kramual.multiplier = (int)KramualMultiplier.Value;
+                gen_Kramual.ReGenerate_Preview();
+            };
+            _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "Acceleration Multiplier", KramualMultiplier);
+
+            RadioButtonGroup lineTypeRadioGroup = new RadioButtonGroup(KramualGenOptions) //linetype
+            {
+                Dock = Dock.Top,
+                ShouldDrawBackground = false
+            };
+            RadioButton blueType = lineTypeRadioGroup.AddOption("Blue");
+            RadioButton redType = lineTypeRadioGroup.AddOption("Red");
+            switch (gen_Kramual.lineType)
+            {
+                case LineType.Standard:
+                    blueType.Select();
+                    break;
+                case LineType.Acceleration:
+                    redType.Select();
+                    break;
+                default:
+                    break;
+            }
+            blueType.CheckChanged += (o, e) =>
+            {
+                gen_Kramual.lineType = LineType.Standard;
+                gen_Kramual.ReGenerate_Preview();
+                KramualMultiplier.Disable();
+                KramualReverse.Disable();
+            };
+            redType.CheckChanged += (o, e) =>
+            {
+                gen_Kramual.lineType = LineType.Acceleration;
+                gen_Kramual.ReGenerate_Preview();
+                KramualMultiplier.Enable();
+                KramualReverse.Enable();
+            };
+
+            KramualReverse = GwenHelper.AddCheckbox(KramualGenOptions, "Reverse", gen_Kramual.reverse, (o, e) => //reverse mode for red lines
+            {
+                gen_Kramual.reverse = ((Checkbox)o).IsChecked;
+                gen_Kramual.ReGenerate_Preview();
+            });
+            if (gen_Kramual.lineType != LineType.Acceleration)
+            {
+                KramualReverse.Disable();
+            }
         }
         private void CategorySelected(object sender, ItemSelectedEventArgs e)
         {
@@ -603,6 +844,9 @@ namespace linerider.UI
                 case GeneratorType.Line:
                     gen_Line.ReGenerate_Preview();
                     break;
+                case GeneratorType.Kramual:
+                    gen_Kramual.ReGenerate_Preview();
+                    break;
             }
         }
         private void Render_Final() // Renders the generator's final lines (which are the ones actually added to the track)
@@ -626,6 +870,11 @@ namespace linerider.UI
                     gen_Line.Generate();
                     gen_Line.Finalise();
                     break;
+                case GeneratorType.Kramual:
+                    gen_Kramual.DeleteLines();
+                    gen_Kramual.Generate();
+                    gen_Kramual.Finalise();
+                    break;
             }
         }
         private void Render_Clear() // Clears all lines rendered by the current generator
@@ -642,6 +891,9 @@ namespace linerider.UI
                     break;
                 case GeneratorType.Line:
                     gen_Line.DeleteLines();
+                    break;
+                case GeneratorType.Kramual:
+                    gen_Kramual.DeleteLines();
                     break;
             }
         }
