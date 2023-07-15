@@ -74,6 +74,14 @@ namespace linerider.UI.Widgets
                 Bitmap = GameResources.ux_playhead_defaultzoom.Bitmap,
                 AllowDragging = false,
                 Y = -9,
+                TooltipRequest = (o, e) =>
+                {
+                    float frameZoom = _editor.Timeline.GetFrameZoom(_editor.Offset);
+                    string result = $"Frame actual zoom: {frameZoom}x\nClick to set as current zoom";
+                    if (Hotkey.PlaybackResetCamera != Hotkey.None)
+                        result += $" (or press {Settings.HotkeyToString(Hotkey.PlaybackResetCamera)})";
+                    return result;
+                },
             };
             _playheadDefaultZoom.Clicked += (o, e) => _editor.ResetCamera();
             _playheadDefaultZoom.SendToBack();
@@ -158,9 +166,6 @@ namespace linerider.UI.Widgets
             {
                 float frameZoom = _editor.Timeline.GetFrameZoom(_editor.Offset);
                 _playheadDefaultZoom.Value = ZoomToSliderValue(frameZoom);
-                _playheadDefaultZoom.Tooltip = $"Frame actual zoom: {frameZoom}x\nClick to set as current zoom";
-                if (Hotkey.PlaybackResetCamera != Hotkey.None)
-                    _playheadDefaultZoom.Tooltip += $" (or press {Settings.HotkeyToString(Hotkey.PlaybackResetCamera)})";
             }
 
             if (!_slider.Playhead.IsHeld && (_prevBaseZoom != _editor.BaseZoom || _prevSuperZoom != Settings.SuperZoom))

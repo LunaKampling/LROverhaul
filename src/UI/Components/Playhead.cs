@@ -241,7 +241,7 @@ namespace linerider.UI.Components
         }
         public override void Think()
         {
-            if (TooltipRequest != null)
+            if (TooltipRequest != null && IsHovered)
             {
                 Tooltip = TooltipRequest(this, Tooltip);
             }
