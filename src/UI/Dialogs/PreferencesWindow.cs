@@ -1092,6 +1092,15 @@ namespace linerider.UI
             defaultQuicksaveType.SelectByUserData(Settings.DefaultQuicksaveFormat);
             defaultAutosaveType.SelectByUserData(Settings.DefaultAutosaveFormat);
             defaultAutosaveType.SelectByUserData(Settings.DefaultCrashBackupFormat);
+
+            Button openHomePageBtn = new Button(parent)
+            {
+                Dock = Dock.Bottom,
+                Text = "Open project page (GitHub)",
+                Alignment = Pos.CenterH | Pos.CenterV,
+                Margin = new Margin(10, 0, 10, 10),
+            };
+            openHomePageBtn.Clicked += (o, e) => GameCanvas.OpenUrl(Constants.GithubPageHeader);
         }
         private void PopulateRBLAnimation(ControlBase parent)
         {
