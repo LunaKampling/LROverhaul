@@ -38,8 +38,8 @@ namespace linerider
         }
         public enum PlaybackZoomMode
         {
-            AsIs = 1,
-            Frame = 0,
+            AsIs = 0,
+            Frame = 1,
             Specific = 2
         }
         public static class Recording
