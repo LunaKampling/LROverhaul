@@ -309,13 +309,13 @@ namespace linerider.UI
                 Dock = Dock.Left,
                 ShouldDrawBackground = false,
             };
-            RadioButton pbzoomOpt1 = pbzoom.AddOption("Frame Zoom");
-            RadioButton pbzoomOpt2 = pbzoom.AddOption("Current Camera Zoom (Default)");
-            RadioButton pbzoomOpt3 = pbzoom.AddOption("Specific Value");
+            RadioButton asIsType = pbzoom.AddOption("Keep As Is");
+            RadioButton frameType = pbzoom.AddOption("Current Frame Zoom");
+            RadioButton specificType = pbzoom.AddOption("Specific Value");
 
-            pbzoomOpt1.Tooltip = "When playing, zoom matches current frame zoom\n(e.g.value set by a trigger).";
-            pbzoomOpt2.Tooltip = "When playing, zoom stays as is\n(no zoom jumps on playing track).";
-            pbzoomOpt3.Tooltip = "When playing, zoom sets to one specific value.";
+            asIsType.Tooltip = "When playing, zoom stays as is\n(if you have camera zoomed in, it stays zoomed in).";
+            frameType.Tooltip = "When playing, zoom matches current frame zoom\n(either track zoom or value set by triggers).";
+            specificType.Tooltip = "When playing, zoom sets to a specific value.";
 
             Spinner specificzoomspinner = new Spinner(zoomGroup)
             {
@@ -327,18 +327,44 @@ namespace linerider.UI
             ControlBase specificzoomwrapper = GwenHelper.CreateLabeledControl(zoomGroup, "", specificzoomspinner);
             specificzoomwrapper.Dock = Dock.Bottom;
 
-            pbzoom.SelectionChanged += (o, e) =>
+            frameType.CheckChanged += (o, e) =>
             {
-                Settings.PlaybackZoomType = ((RadioButtonGroup)o).SelectedIndex;
+                Settings.PlaybackZoomType = Settings.PlaybackZoomMode.Frame;
                 Settings.Save();
-                specificzoomwrapper.IsHidden = ((RadioButtonGroup)o).SelectedIndex != 2;
+                specificzoomwrapper.IsHidden = true;
             };
+            asIsType.CheckChanged += (o, e) =>
+            {
+                Settings.PlaybackZoomType = Settings.PlaybackZoomMode.AsIs;
+                Settings.Save();
+                specificzoomwrapper.IsHidden = true;
+            };
+            specificType.CheckChanged += (o, e) =>
+            {
+                Settings.PlaybackZoomType = Settings.PlaybackZoomMode.Specific;
+                Settings.Save();
+                specificzoomwrapper.IsHidden = false;
+            };
+
             specificzoomspinner.ValueChanged += (o, e) =>
             {
                 Settings.PlaybackZoomValue = (float)((Spinner)o).Value;
                 Settings.Save();
             };
-            pbzoom.SetSelection(Settings.PlaybackZoomType);
+
+            switch (Settings.PlaybackZoomType)
+            {
+                case Settings.PlaybackZoomMode.Frame:
+                    frameType.Select();
+                    break;
+                case Settings.PlaybackZoomMode.AsIs:
+                    asIsType.Select();
+                    break;
+                case Settings.PlaybackZoomMode.Specific:
+                    specificType.Select();
+                    break;
+            }
+
             specificzoomspinner.Value = Settings.PlaybackZoomValue;
 
             Panel framerateGroup = GwenHelper.CreateHeaderPanel(parent, "Frame Control");
@@ -551,7 +577,7 @@ namespace linerider.UI
             };
             RadioButton directType = bezierModeSelector.AddOption("Direct Visualization Mode");
             RadioButton traceType = bezierModeSelector.AddOption("Trace Visualization Mode");
-            switch ((Settings.BezierMode)Settings.Bezier.Mode)
+            switch (Settings.Bezier.Mode)
             {
                 case Settings.BezierMode.Direct:
                     directType.Select();
@@ -562,12 +588,12 @@ namespace linerider.UI
             }
             directType.CheckChanged += (o, e) =>
             {
-                Settings.Bezier.Mode = (int)Settings.BezierMode.Direct;
+                Settings.Bezier.Mode = Settings.BezierMode.Direct;
                 Settings.Save();
             };
             traceType.CheckChanged += (o, e) =>
             {
-                Settings.Bezier.Mode = (int)Settings.BezierMode.Trace;
+                Settings.Bezier.Mode = Settings.BezierMode.Trace;
                 Settings.Save();
             };
 

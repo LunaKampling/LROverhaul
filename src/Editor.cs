@@ -539,14 +539,14 @@ namespace linerider
             {
                 switch (Settings.PlaybackZoomType)
                 {
-                    case 0: // Default
+                    case Settings.PlaybackZoomMode.Frame:
                         UseUserZoom = false;
                         Zoom = Timeline.GetFrameZoom(Offset);
                         break;
-                    case 1: // Current
+                    case Settings.PlaybackZoomMode.AsIs:
                         UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
                         break;
-                    case 2: // Specific
+                    case Settings.PlaybackZoomMode.Specific:
                         UseUserZoom = true;
                         Zoom = Settings.PlaybackZoomValue;
                         break;
@@ -587,16 +587,16 @@ namespace linerider
             {
                 Camera.SetFrameCenter(Timeline.GetFrame(frameid).CalculateCenter());
 
-                switch (TrackRecorder.Recording ? 0 : Settings.PlaybackZoomType)
+                switch (TrackRecorder.Recording ? Settings.PlaybackZoomMode.Frame : Settings.PlaybackZoomType)
                 {
-                    case 0: // Default
+                    case Settings.PlaybackZoomMode.Frame:
                         UseUserZoom = false;
                         Zoom = Timeline.GetFrameZoom(Offset);
                         break;
-                    case 1: // Current
+                    case Settings.PlaybackZoomMode.AsIs:
                         UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
                         break;
-                    case 2: // Specific
+                    case Settings.PlaybackZoomMode.Specific:
                         UseUserZoom = true;
                         Zoom = Settings.PlaybackZoomValue;
                         break;

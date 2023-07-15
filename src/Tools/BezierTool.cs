@@ -222,13 +222,14 @@ namespace linerider.Tools
                 trk.DisableUndo();
                 PlaceLines(trk, true);
             }
-            if (Settings.Bezier.Mode == (int)Settings.BezierMode.Direct)
+            switch (Settings.Bezier.Mode)
             {
-                RenderDirect();
-            }
-            else if (Settings.Bezier.Mode == (int)Settings.BezierMode.Trace)
-            {
-                RenderTrace();
+                case Settings.BezierMode.Direct:
+                    RenderDirect();
+                    break;
+                case Settings.BezierMode.Trace:
+                    RenderTrace();
+                    break;
             }
         }
         private void RenderDirect()

@@ -36,6 +36,12 @@ namespace linerider
             Direct = 0,
             Trace = 1
         }
+        public enum PlaybackZoomMode
+        {
+            AsIs = 1,
+            Frame = 0,
+            Specific = 2
+        }
         public static class Recording
         {
             public static bool ShowTools = false;
@@ -91,7 +97,7 @@ namespace linerider
         {
             public static int Resolution;
             public static int NodeSize;
-            public static int Mode;
+            public static BezierMode Mode;
         }
 
         public static class SmoothPencil
@@ -99,7 +105,7 @@ namespace linerider
             public static int smoothStabilizer = 10;
             public static int smoothUpdateSpeed = 0;
         }
-        public static int PlaybackZoomType;
+        public static PlaybackZoomMode PlaybackZoomType;
         public static float PlaybackZoomValue;
         public static float Volume;
         public static bool SuperZoom;
@@ -266,8 +272,8 @@ namespace linerider
             Colors.StandardLine = Constants.BlueLineColor;
             Bezier.Resolution = 30;
             Bezier.NodeSize = 15;
-            Bezier.Mode = (int)BezierMode.Direct;
-            PlaybackZoomType = 1;
+            Bezier.Mode = BezierMode.Direct;
+            PlaybackZoomType = PlaybackZoomMode.AsIs;
             PlaybackZoomValue = Constants.DefaultZoom;
             Volume = 100;
             SuperZoom = false;
@@ -607,7 +613,7 @@ namespace linerider
         }
         public static void LoadMainSettings(string[] lines)
         {
-            LoadInt(GetSetting(lines, nameof(PlaybackZoomType)), ref PlaybackZoomType);
+            Enum.TryParse(GetSetting(lines, nameof(PlaybackZoomType)), out PlaybackZoomType);
             LoadFloat(GetSetting(lines, nameof(PlaybackZoomValue)), ref PlaybackZoomValue);
             LoadFloat(GetSetting(lines, nameof(Volume)), ref Volume);
             LoadFloat(GetSetting(lines, nameof(ScrollSensitivity)), ref ScrollSensitivity);
@@ -699,7 +705,7 @@ namespace linerider
             LoadColor(GetSetting(lines, nameof(Colors.StandardLine)), ref Colors.StandardLine);
             LoadInt(GetSetting(lines, nameof(Bezier.Resolution)), ref Bezier.Resolution);
             LoadInt(GetSetting(lines, nameof(Bezier.NodeSize)), ref Bezier.NodeSize);
-            LoadInt(GetSetting(lines, nameof(Bezier.Mode)), ref Bezier.Mode);
+            Enum.TryParse(GetSetting(lines, nameof(Bezier.Mode)), out Bezier.Mode);
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothStabilizer)), ref SmoothPencil.smoothStabilizer);
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothUpdateSpeed)), ref SmoothPencil.smoothUpdateSpeed);
             LoadBool(GetSetting(lines, nameof(InvisibleRider)), ref InvisibleRider);
@@ -762,7 +768,8 @@ namespace linerider
                 MakeSetting(nameof(PredictiveCamera), PredictiveCamera.ToString(Program.Culture)),
                 MakeSetting(nameof(CheckForUpdates), CheckForUpdates.ToString(Program.Culture)),
                 MakeSetting(nameof(SmoothPlayback), SmoothPlayback.ToString(Program.Culture)),
-                MakeSetting(nameof(PlaybackZoomType), PlaybackZoomType.ToString(Program.Culture)),
+                //MakeSetting(nameof(PlaybackZoomType), PlaybackZoomType.ToString()),
+                MakeSetting(nameof(PlaybackZoomType), ((int)PlaybackZoomType).ToString(Program.Culture)), // Temporarily force int value for backward compatibility
                 MakeSetting(nameof(PlaybackZoomValue), PlaybackZoomValue.ToString(Program.Culture)),
                 MakeSetting(nameof(RoundLegacyCamera), RoundLegacyCamera.ToString(Program.Culture)),
 
@@ -847,7 +854,8 @@ namespace linerider
                 MakeSetting(nameof(Colors.StandardLine), SaveColor(Colors.StandardLine)),
                 MakeSetting(nameof(Bezier.Resolution), Bezier.Resolution.ToString(Program.Culture)),
                 MakeSetting(nameof(Bezier.NodeSize), Bezier.NodeSize.ToString(Program.Culture)),
-                MakeSetting(nameof(Bezier.Mode), Bezier.Mode.ToString(Program.Culture)),
+                //MakeSetting(nameof(Bezier.Mode), Bezier.Mode.ToString()),
+                MakeSetting(nameof(Bezier.Mode), ((int)Bezier.Mode).ToString(Program.Culture)), // Temporarily force int value for backward compatibility
                 MakeSetting(nameof(SmoothPencil.smoothStabilizer), SmoothPencil.smoothStabilizer.ToString(Program.Culture)),
                 MakeSetting(nameof(SmoothPencil.smoothUpdateSpeed), SmoothPencil.smoothUpdateSpeed.ToString(Program.Culture)),
                 MakeSetting(nameof(InvisibleRider), InvisibleRider.ToString(Program.Culture)),
