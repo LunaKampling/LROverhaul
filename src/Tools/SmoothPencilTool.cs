@@ -20,6 +20,7 @@ using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
 using OpenTK;
+using System.Diagnostics;
 using System.Drawing;
 using Color = System.Drawing.Color;
 

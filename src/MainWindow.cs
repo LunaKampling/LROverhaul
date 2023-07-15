@@ -149,6 +149,10 @@ namespace linerider
                 {
                     CurrentTools.PencilTool.OnMouseMoved(InputUtils.GetMouse());
                 }
+                if (Track.Playing && CurrentTools.SmoothPencilTool.Active)
+                {
+                    CurrentTools.SmoothPencilTool.OnMouseMoved(InputUtils.GetMouse());
+                }
                 if ((Settings.PreviewMode || TrackRecorder.Recording) && !(TrackRecorder.Recording && !Settings.Recording.EnableColorTriggers))
                 {
                     /* BG triggers and Line trigger updates */
@@ -440,11 +444,11 @@ namespace linerider
                             }
                         }
                     }
-                    else if (CurrentTools.CurrentTool == CurrentTools.PencilTool)
+                    else if (CurrentTools.CurrentTool == CurrentTools.PencilTool || CurrentTools.CurrentTool == CurrentTools.SmoothPencilTool)
                     {
                         if (e.Button == MouseButton.Left)
                         {
-                            CurrentTools.PencilTool.OnMouseDown(new Vector2d(e.X, e.Y));
+                            CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y));
                         }
                     }
                 }
