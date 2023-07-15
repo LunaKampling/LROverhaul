@@ -53,7 +53,7 @@ namespace linerider.Utils
         public const float MaxSuperZoom = 200;
         public const int MaxFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
         public const float KnobSize = 0.8f;
-        public const float MaxKnobSize = MaxZoom;
+        public const float MaxLimitedKnobSize = MaxZoom;
         public const string InternalDefaultName = "*default*";
 
         public static readonly Size ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);

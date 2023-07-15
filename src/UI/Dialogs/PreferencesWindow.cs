@@ -18,7 +18,7 @@ namespace linerider.UI
         public PreferencesWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
             Title = "Preferences";
-            _ = SetSize(500, 525);
+            _ = SetSize(500, 550);
             MinimumSize = Size;
             ControlBase bottom = new ControlBase(this)
             {
@@ -626,6 +626,14 @@ namespace linerider.UI
             smStabilizer.Tooltip = "Determines by how much your lines are dragged behind";
 
             Panel selectGroup = GwenHelper.CreateHeaderPanel(parent, "Select Tool");
+
+            Checkbox smallknobs = GwenHelper.AddCheckbox(selectGroup, "Limit Line Knobs Size", Settings.LimitLineKnobsSize, (o, e) =>
+            {
+                Settings.LimitLineKnobsSize = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
+            //smallknobs.Tooltip = $"Make line knobs smaller at high zoom values ({Constants.MaxLimitedKnobSize}x and higher)";
+            smallknobs.Tooltip = $"Make line knobs smaller at {Constants.MaxLimitedKnobSize}x zoom and higher";
 
             Panel lineGroup = GwenHelper.CreateHeaderPanel(selectGroup, "Line Info");
             lineGroup.Dock = Dock.Left;

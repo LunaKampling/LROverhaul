@@ -186,10 +186,10 @@ namespace linerider.Rendering
             counter += 2;
             GL.VertexAttribPointer(in_linesize, 2, VertexAttribPointerType.Float, false, LineVertex.Size, counter);
             Color global = OverrideColor;
-            float relativeKnobSize = Math.Min(
+            float relativeKnobSize = Settings.LimitLineKnobsSize ? Math.Min(
                 Constants.KnobSize,
-                Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxKnobSize / Scale
-            );
+                Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxLimitedKnobSize / Scale
+            ) : Constants.KnobSize;
             if (!Overlay)
                 GL.Uniform4(_shader.GetUniform("u_color"),
                     global.R / 255f, global.G / 255f, global.B / 255f, OverridePriority / 255f);

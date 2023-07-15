@@ -142,6 +142,7 @@ namespace linerider
         public static int DefaultTriggerLength;
 
         public static float ScrollSensitivity;
+        public static bool LimitLineKnobsSize;
         public static int SettingsPane;
         public static bool MuteAudio;
         public static bool PreviewMode;
@@ -309,6 +310,7 @@ namespace linerider
             DefaultTimelineLength = 30;
             DefaultTriggerLength = Constants.PhysicsRate;
 
+            LimitLineKnobsSize = false;
             ScrollSensitivity = 1;
             SettingsPane = 0;
             MuteAudio = false;
@@ -653,6 +655,7 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
+            LoadBool(GetSetting(lines, nameof(LimitLineKnobsSize)), ref LimitLineKnobsSize);
             LoadInt(GetSetting(lines, nameof(SettingsPane)), ref SettingsPane);
             LoadBool(GetSetting(lines, nameof(MuteAudio)), ref MuteAudio);
             LoadBool(GetSetting(lines, nameof(Editor.HitTest)), ref Editor.HitTest);
@@ -802,6 +805,7 @@ namespace linerider
                 MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoOrange), Editor.LifeLockNoOrange.ToString(Program.Culture)),
+                MakeSetting(nameof(LimitLineKnobsSize), LimitLineKnobsSize.ToString(Program.Culture)),
                 MakeSetting(nameof(SettingsPane), SettingsPane.ToString(Program.Culture)),
                 MakeSetting(nameof(MuteAudio), MuteAudio.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.HitTest), Editor.HitTest.ToString(Program.Culture)),

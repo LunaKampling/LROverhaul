@@ -91,15 +91,16 @@ namespace linerider.Rendering
             float growratio)
         {
             Color color = Settings.Computed.BGColor;
-            float size = Math.Min(
+            float size = Settings.LimitLineKnobsSize ? Math.Min(
                 Constants.KnobSize,
-                Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxKnobSize / Game.Track.Zoom
-            );
+                Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxLimitedKnobSize / Game.Track.Zoom
+            ) : Constants.KnobSize;
 
             if (highlight)
             {
-                float from = 1.1f; // +0.1f to hide antialiased pixels
-                size = size * from + 1f / Game.Track.Zoom * growratio;
+                float from = size * 1.05f; // +0.05f to hide antialiased pixels
+                float to = 1.05f;
+                size = from + (to - 1f) * growratio;
                 color = Utility.MixColors(Settings.Computed.BGColor, Settings.Computed.LineColor, 0.5f);
             }
 
