@@ -852,7 +852,7 @@ namespace linerider.UI
         }
         private void PopulateRider(ControlBase parent)
         {
-            string manualUrl = $"{Constants.GithubPageHeader}/tree/main/Examples";
+            string manualUrl = $"{Constants.GithubPageHeader}/tree/main/Customization/Rider";
 
             Panel generalGroup = GwenHelper.CreateHeaderPanel(parent, "General");
 
