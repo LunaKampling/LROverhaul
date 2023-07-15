@@ -18,6 +18,7 @@
 using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
+using linerider.Utils;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace linerider.UI.Widgets
                     bool rec = Settings.Local.RecordingMode;
                     if (rec && Settings.Recording.ShowFps)
                     {
-                        return Settings.RecordSmooth ? "60 FPS" : "40 FPS";
+                        return Settings.RecordSmooth ? $"{Constants.FrameRate} FPS" : $"{Constants.PhysicsRate} FPS";
                     }
                     else if (!_fpswatch.IsRunning || _fpswatch.ElapsedMilliseconds > 500)
                     {

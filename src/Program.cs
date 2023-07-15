@@ -186,7 +186,7 @@ namespace linerider
 
                     ms.Dispose();
                     glGame.Title = WindowTitle;
-                    glGame.Run(60, 0); // TODO: Maybe not limit this
+                    glGame.Run(Constants.FrameRate, 0); // TODO: Maybe not limit this
                 }
                 Audio.AudioService.CloseDevice();
             }

@@ -25,7 +25,7 @@ namespace linerider.Game
     public abstract class ICamera
     {
         protected AutoArray<CameraEntry> _frames = new AutoArray<CameraEntry>();
-        private const int cacherate = 40;
+        private const int cacherate = Constants.PhysicsRate;
         private readonly AutoArray<Vector2d> _framecache = new AutoArray<Vector2d>();
         private Vector2d _prevcamera = Vector2d.Zero;
         private int _prevframe = -1;

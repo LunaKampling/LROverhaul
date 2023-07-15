@@ -46,11 +46,12 @@ namespace linerider.Utils
 
         public const float DefaultZoom = 4;
         public const int PhysicsRate = 40;
+        public const int FrameRate = 60;
         public static bool ScaleCamera = true;
         public const double MinimumZoom = 0.1;
         public const float MaxZoom = 24;
         public const float MaxSuperZoom = 200;
-        public const int MaxFrames = 40 * 60 * 60 * 3; // 3 hours of frames
+        public const int MaxFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
         public const float KnobSize = 0.8f;
         public const float MaxKnobSize = MaxZoom;
         public const string InternalDefaultName = "*default*";

@@ -222,7 +222,7 @@ namespace linerider.IO
                     }
                     byte[] firstframe = GrabScreenshot(game, frontbuffer);
                     SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, firstframe, dir + Path.DirectorySeparatorChar + "tmp" + 0 + ".png");
-                    int framecount = smooth ? (frame + 1) * 60 / 40 : frame + 1; // Add an extra frame
+                    int framecount = smooth ? (frame + 1) * Constants.FrameRate / Constants.PhysicsRate : frame + 1; // Add an extra frame
 
                     double frametime = 0;
                     Stopwatch sw = Stopwatch.StartNew();
@@ -233,7 +233,7 @@ namespace linerider.IO
                         if (smooth)
                         {
                             double oldspot = frametime;
-                            frametime += 40f / 60f;
+                            frametime += (float)Constants.PhysicsRate / Constants.FrameRate;
                             if (i == 0)
                             {
                                 // BUGFIX:
@@ -281,7 +281,7 @@ namespace linerider.IO
                     if (!hardexit)
                     {
                         FFMPEGParameters parameters = new FFMPEGParameters();
-                        parameters.AddOption("framerate", smooth ? "60" : "40");
+                        parameters.AddOption("framerate", smooth ? Constants.FrameRate.ToString() : Constants.PhysicsRate.ToString());
                         parameters.AddOption("i", "\"" + dir + Path.DirectorySeparatorChar + "tmp%d.png" + "\"");
                         if (music && !string.IsNullOrEmpty(game.Track.Song.Location) && game.Track.Song.Enabled)
                         {
@@ -293,7 +293,7 @@ namespace linerider.IO
                             parameters.AddOption("i", "\"" + fn + "\"");
                             parameters.AddOption("c:a", "aac");
                         }
-                        double duration = framecount / (smooth ? 60.0 : 40.0);
+                        double duration = (double)framecount / (smooth ? Constants.FrameRate : Constants.PhysicsRate);
                         parameters.AddOption("t", duration.ToString(Program.Culture));
                         parameters.AddOption("vf", "vflip"); // We save images upside down expecting FFmpeg to flip more efficiently.
 

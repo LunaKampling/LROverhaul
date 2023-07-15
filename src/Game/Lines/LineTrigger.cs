@@ -16,21 +16,23 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Utils;
+
 namespace linerider.Game
 {
     public class LineTrigger
     {
         public bool ZoomTrigger = false;
         public float ZoomTarget = 4;
-        public int ZoomFrames = 40;
+        public int ZoomFrames = Constants.PhysicsRate;
         public int LineID = -1;
         public LineTrigger()
         {
         }
         public bool CompareTo(LineTrigger other) => other != null
-&& ZoomTrigger == other.ZoomTrigger &&
-            ZoomTarget == other.ZoomTarget &&
-            ZoomFrames == other.ZoomFrames;
+            && ZoomTrigger == other.ZoomTrigger
+            && ZoomTarget == other.ZoomTarget
+            && ZoomFrames == other.ZoomFrames;
         public bool Activate(int hitdelta, ref float currentzoom)
         {
             bool handled = false;

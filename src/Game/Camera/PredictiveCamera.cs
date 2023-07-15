@@ -1,3 +1,4 @@
+using linerider.Utils;
 using OpenTK;
 namespace linerider.Game
 {
@@ -17,7 +18,7 @@ namespace linerider.Game
         /// <returns>The reduced position in game coords</returns>
         private Vector2d CameraMotionReducer(int frame)
         {
-            const int forwardcount = 40;
+            const int forwardcount = Constants.PhysicsRate;
             EnsureFrame(frame + forwardcount);
             Vector2d offset = CalculateOffset(frame);
             CameraBoundingBox box = CameraBoundingBox.Create(Vector2d.Zero, _zoom);

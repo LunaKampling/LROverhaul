@@ -1,15 +1,15 @@
 using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
+using linerider.Utils;
 using System;
 
 namespace linerider.UI.Widgets
 {
     public class TimelineBar : Panel
     {
-        private const int _framesInSecond = 40;
-        private const int _lengthMin = _framesInSecond;
-        private readonly int _lengthDefault = _framesInSecond * Settings.DefaultTimelineLength;
+        private const int _lengthMin = Constants.PhysicsRate;
+        private readonly int _lengthDefault = Constants.PhysicsRate * Settings.DefaultTimelineLength;
         private readonly Editor _editor;
         private readonly GameCanvas _canvas;
         private MultiSlider _slider;
@@ -157,9 +157,9 @@ namespace linerider.UI.Widgets
         {
             string format = "mm\\:ss";
             string formatlong = "h\\:" + format;
-            TimeSpan currts = TimeSpan.FromSeconds((double)frameid / _framesInSecond);
+            TimeSpan currts = TimeSpan.FromSeconds((double)frameid / Constants.PhysicsRate);
             string time = currts.ToString(currts.Hours > 0 ? formatlong : format);
-            string frame = (frameid % _framesInSecond).ToString("D2");
+            string frame = (frameid % Constants.PhysicsRate).ToString("D2");
             return time + ":" + frame;
         }
         public override void Think()

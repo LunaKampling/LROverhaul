@@ -338,7 +338,7 @@ namespace linerider.IO
             Timeline timeline = new Timeline(
                 track);
             timeline.Restart(track.GetStart(), 1);
-            int framecount = 40 * 60 * 5;
+            int framecount = Constants.PhysicsRate * Constants.FrameRate * 5;
 
             string filename = TRKWriter.SaveTrack(track, track.Name + ".test");
             if (File.Exists(filename + ".result"))

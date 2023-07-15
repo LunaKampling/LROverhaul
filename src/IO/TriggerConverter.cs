@@ -1,4 +1,5 @@
 ﻿using linerider.Game;
+using linerider.Utils;
 using System.Collections.Generic;
 
 namespace linerider.IO
@@ -12,7 +13,7 @@ namespace linerider.IO
         public static List<GameTrigger> ConvertTriggers(List<LineTrigger> triggers, Track track)
         {
             List<GameTrigger> gametriggers = new List<GameTrigger>();
-            const int minute = 40 * 60;
+            const int minute = Constants.PhysicsRate * 60;
             int lasthit = 0;
             Rider rider = track.GetStart();
             HitTestManager hittest = new HitTestManager();

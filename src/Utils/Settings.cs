@@ -301,7 +301,7 @@ namespace linerider
             UIShowZoom = true;
             UIShowSpeedButtons = false;
             DefaultTimelineLength = 30;
-            DefaultTriggerLength = 40;
+            DefaultTriggerLength = Constants.PhysicsRate;
 
             ScrollSensitivity = 1;
             SettingsPane = 0;

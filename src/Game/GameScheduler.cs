@@ -56,7 +56,7 @@ namespace linerider
             DefaultSpeed();
         }
         public void DefaultSpeed() => UpdatesPerSecond = (int)Math.Round(Constants.PhysicsRate * Settings.DefaultPlayback);
-        public double Rate => Math.Round(UpdatesPerSecond / 40.0, 3);
+        public double Rate => Math.Round((double)UpdatesPerSecond / Constants.PhysicsRate, 3);
 
         public int UnqueueUpdates()
         {
