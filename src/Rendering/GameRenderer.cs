@@ -123,7 +123,7 @@ namespace linerider.Rendering
                     LineVAO vao = GetLineVAO();
                     vao.Scale = GameDrawingMatrix.Scale;
                     vao.AddLine(position, position2, color, thickness);
-                    vao.knobstate = knobs ? (redknobs ? 2 : 1) : 0;
+                    vao.knobstate = knobs ? (redknobs ? (int)KnobState.LifeLock : (int)KnobState.Shown) : (int)KnobState.Hidden;
                     vao.Draw(PrimitiveType.Triangles);
                     GameDrawingMatrix.Exit();
                 }
@@ -147,7 +147,7 @@ namespace linerider.Rendering
                     vao.AddLine(vec2, vec3, color, thickness);
                     vao.AddLine(vec3, vec4, color, thickness);
                     vao.AddLine(vec4, vec1, color, thickness);
-                    vao.knobstate = 0;
+                    vao.knobstate = (int)KnobState.Hidden;
                     vao.Draw(PrimitiveType.Triangles);
                     if (gamecoords)
                         GameDrawingMatrix.Exit();
