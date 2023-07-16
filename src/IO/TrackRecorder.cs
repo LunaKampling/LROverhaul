@@ -285,9 +285,7 @@ namespace linerider.IO
                         parameters.AddOption("i", "\"" + dir + Path.DirectorySeparatorChar + "tmp%d.png" + "\"");
                         if (music && !string.IsNullOrEmpty(game.Track.Song.Location) && game.Track.Song.Enabled)
                         {
-                            string fn = Program.UserDirectory + "Songs" +
-                                     Path.DirectorySeparatorChar +
-                                     game.Track.Song.Location;
+                            string fn = Path.Combine(Constants.SongsDirectory, game.Track.Song.Location);
 
                             parameters.AddOption("ss", game.Track.Song.Offset.ToString(Program.Culture));
                             parameters.AddOption("i", "\"" + fn + "\"");

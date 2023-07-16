@@ -36,10 +36,13 @@ namespace linerider.Utils
         public static Color MomentumVectorColor = Color.Red;
         public static Color KnobLifelockColor = Color.Red;
 
-        public static readonly string TracksDirectory = Program.UserDirectory + TracksFolderName + System.IO.Path.DirectorySeparatorChar;
-        public static readonly string RendersDirectory = Program.UserDirectory + RendersFolderName + System.IO.Path.DirectorySeparatorChar;
-        public const string RendersFolderName = "Renders";
-        public const string TracksFolderName = "Tracks";
+        public static readonly string ConfigFilePath = System.IO.Path.Combine(Program.UserDirectory, "settings-LRT.conf");
+        public static readonly string FFmpegBaseDirectory = Program.GetUserDirPath("ffmpeg");
+        public static readonly string RendersDirectory = Program.GetUserDirPath("Renders");
+        public static readonly string RidersDirectory = Program.GetUserDirPath("Riders");
+        public static readonly string ScarvesDirectory = Program.GetUserDirPath("Scarves");
+        public static readonly string SongsDirectory = Program.GetUserDirPath("Songs");
+        public static readonly string TracksDirectory = Program.GetUserDirPath("Tracks");
         public const string DefaultTrackName = "<untitled>";
         public const string QuicksavePrefix = "Quicksave";
         public const string CrashBackupPrefix = "Crash Backup";

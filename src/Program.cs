@@ -87,6 +87,7 @@ namespace linerider
                 return _currdir;
             }
         }
+        public static string GetUserDirPath(string dirName) => UserDirectory + dirName + Path.DirectorySeparatorChar;
 
         public static void Crash(Exception e, bool nothrow = false)
         {
@@ -131,45 +132,7 @@ namespace linerider
             }
 #endif
             args = givenArgs;
-            if (!Directory.Exists(UserDirectory))
-            {
-                Directory.CreateDirectory(UserDirectory);
-                System.Windows.Forms.MessageBox.Show("LRA User directory created at:\r\n" + UserDirectory);
-            }
             Settings.Load();
-            // Create critical settings if needed
-            if (Settings.DefaultSaveFormat == null)
-            {
-                Settings.DefaultSaveFormat = ".trk";
-            }
-            if (Settings.DefaultQuicksaveFormat == null)
-            {
-                Settings.DefaultQuicksaveFormat = ".trk";
-            }
-            if (Settings.DefaultAutosaveFormat == null)
-            {
-                Settings.DefaultAutosaveFormat = ".trk";
-            }
-            if (Settings.DefaultCrashBackupFormat == null)
-            {
-                Settings.DefaultCrashBackupFormat = ".trk";
-            }
-            if (Settings.AutosavePrefix == null)
-            {
-                Settings.AutosavePrefix = "Autosave";
-            }
-            Settings.Save();
-
-            if (!Directory.Exists(UserDirectory + "Songs"))
-                Directory.CreateDirectory(UserDirectory + "Songs");
-            if (!Directory.Exists(UserDirectory + "Tracks"))
-                Directory.CreateDirectory(UserDirectory + "Tracks");
-            if (!Directory.Exists(UserDirectory + "Riders"))
-                Directory.CreateDirectory(UserDirectory + "Riders");
-            if (!Directory.Exists(UserDirectory + "Scarves"))
-                Directory.CreateDirectory(UserDirectory + "Scarves");
-            if (!Directory.Exists(UserDirectory + "Renders"))
-                Directory.CreateDirectory(UserDirectory + "Renders");
 
             Random = new Random();
             GameResources.Init();

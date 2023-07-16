@@ -111,7 +111,7 @@ namespace linerider
         public static bool SmoothCamera;
         public static bool PredictiveCamera;
         public static bool RoundLegacyCamera;
-        public static bool SmoothPlayback = false;
+        public static bool SmoothPlayback;
         public static bool CheckForUpdates;
 
         public static string RecordResolution;
@@ -590,23 +590,66 @@ namespace linerider
         }
         public static void Load()
         {
-            string[] lines = null;
-            try
-            {
-                if (!File.Exists(Program.UserDirectory + "settings-LRT.conf"))
-                    ForceSave();
+            ValidateUserDataFolder();
 
-                lines = File.ReadAllLines(Program.UserDirectory + "settings-LRT.conf");
-            }
-            catch { }
+            string[] lines = File.ReadAllLines(Constants.ConfigFilePath);
 
             LoadMainSettings(lines);
             LoadAddonSettings(lines);
             LoadKeybinds(lines);
 
-            string lasttrack = GetSetting(lines, nameof(LastSelectedTrack));
-            if (File.Exists(lasttrack) && lasttrack.StartsWith(Constants.TracksDirectory))
-                LastSelectedTrack = lasttrack;
+            PostprocessValues();
+        }
+        public static void ValidateUserDataFolder()
+        {
+            string dir = Program.UserDirectory;
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+                System.Windows.Forms.MessageBox.Show("LRA User directory created at:\r\n" + dir);
+            }
+
+            if (!File.Exists(Constants.ConfigFilePath))
+                ForceSave();
+
+            if (!Directory.Exists(Constants.RendersDirectory))
+                Directory.CreateDirectory(Constants.RendersDirectory);
+
+            if (!Directory.Exists(Constants.RidersDirectory))
+                Directory.CreateDirectory(Constants.RidersDirectory);
+
+            if (!Directory.Exists(Constants.ScarvesDirectory))
+                Directory.CreateDirectory(Constants.ScarvesDirectory);
+
+            if (!Directory.Exists(Constants.SongsDirectory))
+                Directory.CreateDirectory(Constants.SongsDirectory);
+
+            if (!Directory.Exists(Constants.TracksDirectory))
+                Directory.CreateDirectory(Constants.TracksDirectory);
+        }
+        public static void PostprocessValues()
+        {
+            if (DefaultSaveFormat == null)
+                DefaultSaveFormat = ".trk";
+
+            if (DefaultQuicksaveFormat == null)
+                DefaultQuicksaveFormat = ".trk";
+
+            if (DefaultAutosaveFormat == null)
+                DefaultAutosaveFormat = ".trk";
+
+            if (DefaultCrashBackupFormat == null)
+                DefaultCrashBackupFormat = ".trk";
+
+            if (AutosavePrefix == null)
+                AutosavePrefix = "Autosave";
+
+            if (SelectedBoshSkin == null)
+                SelectedBoshSkin = Constants.InternalDefaultName;
+
+            if (SelectedScarf == null)
+                SelectedScarf = Constants.InternalDefaultName;
 
             Volume = MathHelper.Clamp(Volume, 0, 100);
         }
@@ -708,14 +751,16 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothStabilizer)), ref SmoothPencil.smoothStabilizer);
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothUpdateSpeed)), ref SmoothPencil.smoothUpdateSpeed);
             LoadBool(GetSetting(lines, nameof(InvisibleRider)), ref InvisibleRider);
+
             if (multiScarfSegments == 0)
-            {
                 multiScarfSegments++;
-            }
+
             if (ScarfSegments == 0)
-            {
                 ScarfSegments++;
-            }
+
+            string lasttrack = GetSetting(lines, nameof(LastSelectedTrack));
+            if (File.Exists(lasttrack) && lasttrack.StartsWith(Constants.TracksDirectory))
+                LastSelectedTrack = lasttrack;
         }
         public static void LoadAddonSettings(string[] lines)
         {
@@ -750,7 +795,7 @@ namespace linerider
             try
             {
                 string content = string.Join("\r\n", lines);
-                File.WriteAllText(Program.UserDirectory + "settings-LRT.conf", content);
+                File.WriteAllText(Constants.ConfigFilePath, content);
             }
             catch { }
         }

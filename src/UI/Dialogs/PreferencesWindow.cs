@@ -833,7 +833,7 @@ namespace linerider.UI
 
             ComboBox boshSkinCombobox = GwenHelper.CreateLabeledCombobox(generalGroup, "Rider:");
             _ = boshSkinCombobox.AddItem("Default", Constants.InternalDefaultName, Constants.InternalDefaultName);
-            string[] riderPaths = Directory.GetDirectories(Path.Combine(Program.UserDirectory, "Riders"));
+            string[] riderPaths = Directory.GetDirectories(Constants.RidersDirectory);
             foreach (string riderPath in riderPaths)
             {
                 string riderName = Path.GetFileName(riderPath);
@@ -848,7 +848,7 @@ namespace linerider.UI
 
             ComboBox scarfCombobox = GwenHelper.CreateLabeledCombobox(generalGroup, "Scarf:");
             _ = scarfCombobox.AddItem("Default", Constants.InternalDefaultName, Constants.InternalDefaultName);
-            string[] scarfPaths = Directory.GetFiles(Path.Combine(Program.UserDirectory, "Scarves"));
+            string[] scarfPaths = Directory.GetFiles(Constants.ScarvesDirectory);
             foreach (string scarfPath in scarfPaths)
             {
                 string ext = Path.GetExtension(scarfPath).ToLower();

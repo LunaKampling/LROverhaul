@@ -33,7 +33,7 @@ namespace linerider.UI
                  _editor.Song = song;
              };
             Songs.Dock = Dock.Fill;
-            string filedir = Program.UserDirectory + "Songs";
+            string filedir = Constants.SongsDirectory;
             if (Directory.Exists(filedir))
             {
                 string[] songfiles = Directory.GetFiles(filedir, "*.*");
@@ -109,9 +109,7 @@ namespace linerider.UI
             {
                 if (!IsHidden)
                     return;
-                string fn = Program.UserDirectory + "Songs" +
-                         Path.DirectorySeparatorChar +
-                         _editor.Song.Location;
+                string fn = Path.Combine(Constants.SongsDirectory, _editor.Song.Location);
                 if (_editor.Song.Enabled && File.Exists(fn))
                 {
                     if (!IsOgg(fn) &&

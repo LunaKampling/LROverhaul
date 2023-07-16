@@ -1,5 +1,6 @@
 ﻿using linerider.Audio;
 using linerider.Game;
+using linerider.Utils;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -242,9 +243,7 @@ namespace linerider.IO
                     try
                     {
                         string[] strings = song.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        string fn = Program.UserDirectory + "Songs" +
-                                 Path.DirectorySeparatorChar +
-                                 strings[0];
+                        string fn = Path.Combine(Constants.SongsDirectory, strings[0]);
                         if (File.Exists(fn))
                         {
                             if (AudioService.LoadFile(ref fn))

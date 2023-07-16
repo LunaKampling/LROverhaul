@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -31,19 +32,17 @@ namespace linerider.IO.ffmpeg
         {
             get
             {
-                string dir = Program.UserDirectory + "ffmpeg" + Path.DirectorySeparatorChar;
+                string dir = Constants.FFmpegBaseDirectory;
+
                 if (OpenTK.Configuration.RunningOnMacOS)
                     dir += "mac" + Path.DirectorySeparatorChar;
                 else if (OpenTK.Configuration.RunningOnWindows)
                     dir += "win" + Path.DirectorySeparatorChar;
                 else if (OpenTK.Configuration.RunningOnUnix)
-                {
                     dir += "linux" + Path.DirectorySeparatorChar;
-                }
                 else
-                {
                     return null;
-                }
+
                 return dir;
             }
         }
@@ -52,7 +51,8 @@ namespace linerider.IO.ffmpeg
             get
             {
                 string dir = ffmpeg_dir;
-                return dir == null ? null : OpenTK.Configuration.RunningOnWindows ? dir + "ffmpeg.exe" : dir + "ffmpeg";
+                string binaryName = OpenTK.Configuration.RunningOnWindows ? "ffmpeg.exe" : "ffmpeg";
+                return dir != null ? dir + binaryName : null;
             }
         }
         static FFMPEG()

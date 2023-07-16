@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using linerider.Utils;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace linerider.Drawing.RiderModel
 
         public ResourcesCustom(string skinName)
         {
-            SkinPath = Path.Combine(Program.UserDirectory, "Riders", skinName);
+            SkinPath = Path.Combine(Constants.RidersDirectory, skinName);
             Cache.SetHome(SkinPath);
         }
 
