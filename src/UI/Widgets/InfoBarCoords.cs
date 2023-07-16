@@ -17,7 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using Gwen;
 using Gwen.Controls;
-using linerider.LRL;
+using linerider.Addons;
 using linerider.UI.Components;
 
 namespace linerider.UI.Widgets

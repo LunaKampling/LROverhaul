@@ -2,7 +2,7 @@ using linerider.Game;
 using linerider.Rendering;
 using System.Windows.Forms;
 
-namespace linerider.LRL
+namespace linerider.Addons
 {
     public static class Coordinates
     {
@@ -62,13 +62,9 @@ namespace linerider.LRL
             Rider rider = game.Track.Timeline.GetFrame(frame, iteration);
 
             if (xClipboard)
-            {
                 Clipboard.SetText(rider.Body[integerClipboard].Location.X.ToString("G17"));
-            }
             if (yClipboard)
-            {
                 Clipboard.SetText(rider.Body[integerClipboard].Location.Y.ToString("G17"));
-            }
         }
     };
 }

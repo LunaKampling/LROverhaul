@@ -199,7 +199,7 @@
     <Compile Include="Addons\LineGenerator\TenPCGenerator.cs" />
     <Compile Include="Addons\LineGenerator\LineGenerator.cs" />
     <Compile Include="Addons\LineGenerator\KramualGenerator.cs" />
-    <Compile Include="LRL\Coordinates.cs" />
+    <Compile Include="Addons\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UI\Components\MultiSlider.cs" />
