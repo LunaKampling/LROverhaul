@@ -546,10 +546,6 @@ namespace linerider
                     case Settings.PlaybackZoomMode.AsIs:
                         UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
                         break;
-                    case Settings.PlaybackZoomMode.Specific:
-                        UseUserZoom = true;
-                        Zoom = Settings.PlaybackZoomValue;
-                        break;
                 }
 
                 UpdateCamera();
@@ -595,10 +591,6 @@ namespace linerider
                         break;
                     case Settings.PlaybackZoomMode.AsIs:
                         UseUserZoom = Timeline.GetFrameZoom(Offset) != Zoom;
-                        break;
-                    case Settings.PlaybackZoomMode.Specific:
-                        UseUserZoom = true;
-                        Zoom = Settings.PlaybackZoomValue;
                         break;
                 }
             }

@@ -39,8 +39,7 @@ namespace linerider
         public enum PlaybackZoomMode
         {
             AsIs = 0,
-            Frame = 1,
-            Specific = 2
+            Frame = 1
         }
         public static class Recording
         {
@@ -106,7 +105,6 @@ namespace linerider
             public static int smoothUpdateSpeed = 0;
         }
         public static PlaybackZoomMode PlaybackZoomType;
-        public static float PlaybackZoomValue;
         public static float Volume;
         public static bool SuperZoom;
         public static bool NightMode;
@@ -275,7 +273,6 @@ namespace linerider
             Bezier.NodeSize = 15;
             Bezier.Mode = BezierMode.Direct;
             PlaybackZoomType = PlaybackZoomMode.AsIs;
-            PlaybackZoomValue = Constants.DefaultZoom;
             Volume = 100;
             SuperZoom = false;
             NightMode = false;
@@ -616,7 +613,6 @@ namespace linerider
         public static void LoadMainSettings(string[] lines)
         {
             Enum.TryParse(GetSetting(lines, nameof(PlaybackZoomType)), out PlaybackZoomType);
-            LoadFloat(GetSetting(lines, nameof(PlaybackZoomValue)), ref PlaybackZoomValue);
             LoadFloat(GetSetting(lines, nameof(Volume)), ref Volume);
             LoadFloat(GetSetting(lines, nameof(ScrollSensitivity)), ref ScrollSensitivity);
             LoadBool(GetSetting(lines, nameof(SuperZoom)), ref SuperZoom);
@@ -773,7 +769,6 @@ namespace linerider
                 MakeSetting(nameof(SmoothPlayback), SmoothPlayback.ToString(Program.Culture)),
                 //MakeSetting(nameof(PlaybackZoomType), PlaybackZoomType.ToString()),
                 MakeSetting(nameof(PlaybackZoomType), ((int)PlaybackZoomType).ToString(Program.Culture)), // Temporarily force int value for backward compatibility
-                MakeSetting(nameof(PlaybackZoomValue), PlaybackZoomValue.ToString(Program.Culture)),
                 MakeSetting(nameof(RoundLegacyCamera), RoundLegacyCamera.ToString(Program.Culture)),
 
                 MakeSetting(nameof(RecordResolution), RecordResolution),

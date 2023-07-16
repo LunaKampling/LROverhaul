@@ -311,44 +311,18 @@ namespace linerider.UI
             };
             RadioButton asIsType = pbzoom.AddOption("Keep As Is");
             RadioButton frameType = pbzoom.AddOption("Current Frame Zoom");
-            RadioButton specificType = pbzoom.AddOption("Specific Value");
 
             asIsType.Tooltip = "When playing, zoom stays as is\n(if you have camera zoomed in, it stays zoomed in).";
             frameType.Tooltip = "When playing, zoom matches current frame zoom\n(either track zoom or value set by triggers).";
-            specificType.Tooltip = "When playing, zoom sets to a specific value.";
-
-            Spinner specificzoomspinner = new Spinner(zoomGroup)
-            {
-                Max = Constants.MaxZoom,
-                Min = Constants.MinimumZoom,
-            };
-
-            // A bit hacky but simplest way to show compact zoom spinner next to a radio button
-            ControlBase specificzoomwrapper = GwenHelper.CreateLabeledControl(zoomGroup, "", specificzoomspinner);
-            specificzoomwrapper.Dock = Dock.Bottom;
 
             frameType.CheckChanged += (o, e) =>
             {
                 Settings.PlaybackZoomType = Settings.PlaybackZoomMode.Frame;
                 Settings.Save();
-                specificzoomwrapper.IsHidden = true;
             };
             asIsType.CheckChanged += (o, e) =>
             {
                 Settings.PlaybackZoomType = Settings.PlaybackZoomMode.AsIs;
-                Settings.Save();
-                specificzoomwrapper.IsHidden = true;
-            };
-            specificType.CheckChanged += (o, e) =>
-            {
-                Settings.PlaybackZoomType = Settings.PlaybackZoomMode.Specific;
-                Settings.Save();
-                specificzoomwrapper.IsHidden = false;
-            };
-
-            specificzoomspinner.ValueChanged += (o, e) =>
-            {
-                Settings.PlaybackZoomValue = (float)((Spinner)o).Value;
                 Settings.Save();
             };
 
@@ -360,12 +334,7 @@ namespace linerider.UI
                 case Settings.PlaybackZoomMode.AsIs:
                     asIsType.Select();
                     break;
-                case Settings.PlaybackZoomMode.Specific:
-                    specificType.Select();
-                    break;
             }
-
-            specificzoomspinner.Value = Settings.PlaybackZoomValue;
 
             Panel framerateGroup = GwenHelper.CreateHeaderPanel(parent, "Frame Control");
             Checkbox smooth = GwenHelper.AddCheckbox(framerateGroup, "Smooth Playback", Settings.SmoothPlayback, (o, e) =>
