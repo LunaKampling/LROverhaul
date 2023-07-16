@@ -1,5 +1,6 @@
 #version 120
 uniform float u_scale;
+uniform int u_slicestate;
 uniform int u_knobstate;
 uniform bool u_alphachannel;
 uniform bool u_overlay;
@@ -41,6 +42,11 @@ void main()
     float rightdist = distance(scaled, vec2(0.5, 0.5));
     float edgedist = min(leftdist, rightdist);
     vec4 color = vec4(v_color.rgb, 1.0);
+
+    if (u_slicestate > 0 &&
+        (u_slicestate == 1 && scaled.y <= 0.5) ||
+        (u_slicestate == 2 && scaled.y > 0.5))
+        discard;
     
     if (!u_overlay && 
         (u_knobstate > 0 && v_selectflags <= 0.0) && edgedist < knobradius)

@@ -198,7 +198,8 @@ namespace linerider.Rendering
             GL.Uniform1(_shader.GetUniform("u_overlay"), Overlay ? 1 : 0);
             GL.Uniform1(_shader.GetUniform("u_knobstate"), (int)KnobState);
             GL.Uniform4(_shader.GetUniform("u_knobcolor"), Settings.Computed.BGColor);
-             GL.Uniform1(_shader.GetUniform("u_knobsize"), relativeKnobSize);
+            GL.Uniform1(_shader.GetUniform("u_knobsize"), relativeKnobSize);
+            GL.Uniform1(_shader.GetUniform("u_slicestate"), 1); // 0 - full line, 1 - top half, 2 - bottom half
         }
         public void Draw()
         {
