@@ -94,8 +94,6 @@ namespace linerider.UI
 
             page = AddPage(cat, "Keybindings");
             PopulateKeybinds(page);
-            page = AddPage(cat, "Audio");
-            PopulateAudio(page);
             page = AddPage(cat, "Other");
             PopulateOther(page);
 
@@ -935,31 +933,49 @@ namespace linerider.UI
             };
         }
         private void PopulateKeybinds(ControlBase parent) => _ = new HotkeyWidget(parent);
-        private void PopulateAudio(ControlBase parent)
+        private void PopulateOther(ControlBase parent)
         {
-            Panel generalGroup = GwenHelper.CreateHeaderPanel(parent, "General");
-            Checkbox syncenabled = GwenHelper.AddCheckbox(generalGroup, "Mute", Settings.MuteAudio, (o, e) =>
+            Panel audioGroup = GwenHelper.CreateHeaderPanel(parent, "Audio");
+
+            Label volumeLabel = new Label(null)
+            {
+                Dock = Dock.Left,
+                Text = "Volume",
+            };
+
+            Checkbox mute = GwenHelper.AddCheckbox(audioGroup, "Mute", Settings.MuteAudio, (o, e) =>
             {
                 Settings.MuteAudio = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            HorizontalSlider vol = new HorizontalSlider(null)
+            mute.Dock = Dock.Right;
+
+            HorizontalSlider volume = new HorizontalSlider(null)
             {
+                Dock = Dock.Fill,
                 Min = 0,
                 Max = 100,
                 Value = Settings.Volume,
-                Width = 80,
+                Margin = new Margin(10, 0, 20, 0)
             };
-            vol.ValueChanged += (o, e) =>
+            volume.ValueChanged += (o, e) =>
             {
-                Settings.Volume = (float)vol.Value;
+                Settings.Volume = (float)volume.Value;
                 Settings.Save();
             };
-            _ = GwenHelper.CreateLabeledControl(generalGroup, "Volume", vol);
-            vol.Width = 200;
-        }
-        private void PopulateOther(ControlBase parent)
-        {
+
+            ControlBase audioControls = new ControlBase(audioGroup)
+            {
+                Children =
+                {
+                    volumeLabel,
+                    volume,
+                    mute
+                },
+                AutoSizeToContents = true,
+                Dock = Dock.Top,
+            };
+
             Panel updatesGroup = GwenHelper.CreateHeaderPanel(parent, "Updates");
 
             Checkbox showid = GwenHelper.AddCheckbox(updatesGroup, "Check For Updates", Settings.CheckForUpdates, (o, e) =>
