@@ -897,8 +897,10 @@ namespace linerider.UI
                 Settings.Save();
             };
 
-            scarfCombobox.SelectByUserData(Settings.SelectedScarf);
             boshSkinCombobox.SelectByUserData(Settings.SelectedBoshSkin);
+            scarfCombobox.SelectByUserData(Settings.SelectedScarf);
+            boshSkinCombobox.Width = 150;
+            scarfCombobox.Width = 150;
 
             Panel scarfGroup = GwenHelper.CreateHeaderPanel(parent, "Scarf Settings");
 
