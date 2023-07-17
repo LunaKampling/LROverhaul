@@ -99,7 +99,7 @@ namespace linerider.UI
                 loadedfn = trk.Filename;
             }
             List<string> dirs = GetDirectories();
-            List<string> rootfiles = GetTracks(Constants.TracksDirectory);
+            List<string> rootfiles = GetTracks(Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName));
             foreach (string file in rootfiles)
             {
                 TreeNode filenode = _tree.AddNode(Path.GetFileName(file));
@@ -111,7 +111,7 @@ namespace linerider.UI
             }
             foreach (string dir in dirs)
             {
-                string dirpath = Constants.TracksDirectory + dir + Path.DirectorySeparatorChar;
+                string dirpath = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName, dir) + Path.DirectorySeparatorChar;
                 List<string> tracks = GetTracks(dirpath);
                 if (tracks.Count != 0)
                 {
@@ -260,14 +260,14 @@ namespace linerider.UI
         private List<string> GetDirectories()
         {
             List<string> ret = new List<string>();
-            string dir = Constants.TracksDirectory;
+            string dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
-            string[] folders = Directory.GetDirectories(Constants.TracksDirectory);
+            string[] folders = Directory.GetDirectories(dir);
             foreach (string folder in folders)
             {
                 string trackname = Path.GetFileName(folder);
-                if (trackname != Constants.DefaultTrackName)
+                if (trackname != Constants.InternalDefaultTrackName)
                 {
                     ret.Add(trackname);
                 }

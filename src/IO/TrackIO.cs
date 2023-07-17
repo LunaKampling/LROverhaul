@@ -150,7 +150,7 @@ namespace linerider.IO
         {
             string trackname = Path.GetFileNameWithoutExtension(trkfile);
             string dirname = Path.GetDirectoryName(trkfile);
-            string[] dirs = Directory.GetDirectories(Constants.TracksDirectory);
+            string[] dirs = Directory.GetDirectories(Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName));
             foreach (string dir in dirs)
             {
                 if (string.Equals(
@@ -164,9 +164,8 @@ namespace linerider.IO
             }
             return trackname;
         }
-        public static string GetTrackDirectory(Track track) => Constants.TracksDirectory +
-            track.Name +
-            Path.DirectorySeparatorChar;
+
+        public static string GetTrackDirectory(Track track) => Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName, track.Name) + Path.DirectorySeparatorChar;
         public static string ExtractSaveName(string filepath)
         {
             string filename = Path.GetFileName(filepath);
@@ -188,7 +187,7 @@ namespace linerider.IO
         }
         public static bool QuickSave(Track track)
         {
-            if (track.Name == Constants.DefaultTrackName)
+            if (track.Name == Constants.InternalDefaultTrackName)
                 return false;
             string dir = GetTrackDirectory(track);
             if (track.Filename != null)
@@ -312,10 +311,8 @@ namespace linerider.IO
         public static void CreateAutosave(Track track)
         {
             string dir = GetTrackDirectory(track);
-            if (track.Name.Equals("*") || track.Name.Equals("<untitled>"))
-            {
-                dir = Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
-            }
+            if (track.Name.Equals("*") || track.Name.Equals(Constants.InternalDefaultTrackName))
+                dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName, Constants.DefaultTrackName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
 
@@ -388,16 +385,10 @@ namespace linerider.IO
         private static int GetSaveIndex(Track track)
         {
             string dir = GetTrackDirectory(track);
-
-            if (track.Name.Equals("<untitled>"))
-            {
-                dir = Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
-            }
-
+            if (track.Name.Equals(Constants.InternalDefaultTrackName))
+                dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName, Constants.DefaultTrackName);
             if (!Directory.Exists(dir))
-            {
                 _ = Directory.CreateDirectory(dir);
-            }
             string[] trackfiles =
                 EnumerateTrackFiles(dir);
             int saveindex = 0;

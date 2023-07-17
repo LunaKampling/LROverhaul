@@ -248,7 +248,7 @@ namespace linerider.UI
                 SetError("No flag detected. Place one at the end of the track\nso the recorder knows where to stop.");
                 return false;
             }
-            else if (_editor.Name == Utils.Constants.DefaultTrackName)
+            else if (_editor.Name == Utils.Constants.InternalDefaultTrackName)
             {
                 SetError("Please save your track before recording.");
                 return false;

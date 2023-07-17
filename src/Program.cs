@@ -46,7 +46,7 @@ namespace linerider
         public static string[] args;
 
         /// <summary>
-        /// Gets the current directory. Ends in Path.DirectorySeperator
+        /// Gets the default user data directory. Ends in Path.DirectorySeperator
         /// </summary>
         public static string UserDirectory
         {
@@ -73,11 +73,14 @@ namespace linerider
                     {
                         _userdir = xdg_dir;
                     }
-                    _userdir += Path.DirectorySeparatorChar + "LRA" + Path.DirectorySeparatorChar;
+                    _userdir += Path.DirectorySeparatorChar + Constants.UserDirFolderName + Path.DirectorySeparatorChar;
                 }
                 return _userdir;
             }
         }
+        /// <summary>
+        /// Gets the directory where the executable file is placed. Ends in Path.DirectorySeperator
+        /// </summary>
         public static string CurrentDirectory
         {
             get
@@ -87,7 +90,6 @@ namespace linerider
                 return _currdir;
             }
         }
-        public static string GetUserDirPath(string dirName) => UserDirectory + dirName + Path.DirectorySeparatorChar;
 
         public static void Crash(Exception e, bool nothrow = false)
         {
@@ -107,12 +109,16 @@ namespace linerider
                 System.Windows.Forms.MessageBoxButtons.YesNo)
                  == System.Windows.Forms.DialogResult.Yes)
             {
-                if (!File.Exists(UserDirectory + "log.txt"))
-                    File.Create(UserDirectory + "log.txt").Dispose();
+                string logDir = Settings.Local.UserDirPath;
+                if (logDir == null || !Directory.Exists(Settings.Local.UserDirPath))
+                    logDir = CurrentDirectory;
+
+                if (!File.Exists(logDir + "log.txt"))
+                    File.Create(logDir + "log.txt").Dispose();
 
                 string append = WindowTitle + "\r\n" + e.ToString() + "\r\n";
-                string begin = File.ReadAllText(UserDirectory + "log.txt", System.Text.Encoding.ASCII);
-                File.WriteAllText(UserDirectory + "log.txt", begin + append, System.Text.Encoding.ASCII);
+                string begin = File.ReadAllText(logDir + "log.txt", System.Text.Encoding.ASCII);
+                File.WriteAllText(logDir + "log.txt", begin + append, System.Text.Encoding.ASCII);
             }
             if (!nothrow)
                 throw e;

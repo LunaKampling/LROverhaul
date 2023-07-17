@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace linerider.Utils
@@ -36,16 +37,23 @@ namespace linerider.Utils
         public static Color MomentumVectorColor = Color.Red;
         public static Color KnobLifelockColor = Color.Red;
 
-        public static readonly string ConfigFilePath = System.IO.Path.Combine(Program.UserDirectory, "settings-LRT.conf");
-        public static readonly string FFmpegBaseDirectory = Program.GetUserDirPath("ffmpeg");
-        public static readonly string RendersDirectory = Program.GetUserDirPath("Renders");
-        public static readonly string RidersDirectory = Program.GetUserDirPath("Riders");
-        public static readonly string ScarvesDirectory = Program.GetUserDirPath("Scarves");
-        public static readonly string SongsDirectory = Program.GetUserDirPath("Songs");
-        public static readonly string TracksDirectory = Program.GetUserDirPath("Tracks");
-        public const string DefaultTrackName = "<untitled>";
+        public const string UserDirFolderName = "LRA";
+        public const string UserDirPortableFolderName = "User Data";
+        public const string ConfigFileName = "settings-LRT.conf";
+        public const string FFmpegBaseFolderName = "ffmpeg";
+        public const string RendersFolderName = "Renders";
+        public const string RidersFolderName = "Riders";
+        public const string ScarvesFolderName = "Scarves";
+        public const string SongsFolderName = "Songs";
+        public const string TracksFolderName = "Tracks";
+
+        public static readonly string RelativeLastTrackIndicator = $".{Path.DirectorySeparatorChar}";
+        public const string InternalDefaultTrackName = "<untitled>";
+        public const string DefaultTrackName = "Unnamed Track";
         public const string QuicksavePrefix = "Quicksave";
         public const string CrashBackupPrefix = "Crash Backup";
+        public const string InternalDefaultName = "*default*";
+        public const string DefaultName = "<Default>";
 
         public const float DefaultZoom = 4;
         public const int PhysicsRate = 40;
@@ -57,7 +65,6 @@ namespace linerider.Utils
         public const int MaxFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
         public const float KnobSize = 0.8f;
         public const float MaxLimitedKnobSize = MaxZoom;
-        public const string InternalDefaultName = "*default*";
 
         public static readonly Size ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         public static readonly Size WindowSize = new Size(Math.Max(1280, (int)Math.Round(ScreenSize.Width / 1.5)), Math.Max(720, (int)Math.Round(ScreenSize.Height / 1.5)));

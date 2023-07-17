@@ -809,20 +809,16 @@ namespace linerider
             try
             {
                 game.Canvas.Loading = true;
-                string lasttrack;
+                string lasttrack = Settings.LastSelectedTrack;
 
                 if (Program.args.Length > 0)
                 {
-                    Settings.LastSelectedTrack = Program.args[0];
-                    lasttrack = Settings.LastSelectedTrack;
+                    lasttrack = Program.args[0];
+                    Settings.LastSelectedTrack = lasttrack;
                 }
-                else
-                {
-                    lasttrack = Settings.LastSelectedTrack;
-                    string trdr = Constants.TracksDirectory;
-                    if (!lasttrack.StartsWith(trdr))
-                        return;
-                }
+
+                if (!File.Exists(lasttrack))
+                    return;
 
                 if (lasttrack.Contains(Constants.CrashBackupPrefix))
                 {
@@ -854,7 +850,7 @@ namespace linerider
                     lock (LoadSync)
                     {
                         Track track = JSONLoader.LoadTrack(lasttrack);
-                        if (track.Name == Constants.DefaultTrackName ||
+                        if (track.Name == Constants.InternalDefaultTrackName ||
                         string.IsNullOrEmpty(track.Name))
                             track.Name = trackname;
                         ChangeTrack(track);

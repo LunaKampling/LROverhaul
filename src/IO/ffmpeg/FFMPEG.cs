@@ -32,14 +32,15 @@ namespace linerider.IO.ffmpeg
         {
             get
             {
-                string dir = Constants.FFmpegBaseDirectory;
+                string baseDir = Path.Combine(Settings.Local.UserDirPath, Constants.FFmpegBaseFolderName);
 
+                string dir;
                 if (OpenTK.Configuration.RunningOnMacOS)
-                    dir += "mac" + Path.DirectorySeparatorChar;
+                    dir = Path.Combine(baseDir, "mac");
                 else if (OpenTK.Configuration.RunningOnWindows)
-                    dir += "win" + Path.DirectorySeparatorChar;
+                    dir = Path.Combine(baseDir, "win");
                 else if (OpenTK.Configuration.RunningOnUnix)
-                    dir += "linux" + Path.DirectorySeparatorChar;
+                    dir = Path.Combine(baseDir, "linux");
                 else
                     return null;
 
@@ -50,9 +51,9 @@ namespace linerider.IO.ffmpeg
         {
             get
             {
-                string dir = ffmpeg_dir;
-                string binaryName = OpenTK.Configuration.RunningOnWindows ? "ffmpeg.exe" : "ffmpeg";
-                return dir != null ? dir + binaryName : null;
+                string baseDir = ffmpeg_dir;
+                string executableFileName = OpenTK.Configuration.RunningOnWindows ? "ffmpeg.exe" : "ffmpeg";
+                return baseDir != null ? Path.Combine(baseDir, executableFileName) : null;
             }
         }
         static FFMPEG()

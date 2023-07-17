@@ -115,14 +115,14 @@ namespace linerider.IO
                 game.ProcessEvents();
 
                 string date = DateTime.UtcNow.ToString("yyyy-MM-dd hh.mm.ss");
-                string filename = game.Track.Name == Constants.DefaultTrackName
-                    ? $"{Constants.RendersDirectory}Untitled Track {date}.png"
-                    : $"{Constants.RendersDirectory}{game.Track.Name} {date}.png";
+                string dirPath = Path.Combine(Settings.Local.UserDirPath, Constants.RendersFolderName);
+                string fileName = game.Track.Name == Constants.InternalDefaultTrackName ? $"${Constants.DefaultTrackName} {date}.png" : $"{game.Track.Name} {date}.png";
+                string filePath = dirPath + fileName;
                 bool recmodesave = Settings.Local.RecordingMode;
                 Settings.Local.RecordingMode = true;
                 game.Render();
                 byte[] screenshotframe = GrabScreenshot(game, frontbuffer, true);
-                SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, screenshotframe, filename);
+                SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, screenshotframe, filePath);
 
                 SafeFrameBuffer.BindFramebuffer(FramebufferTarget.Framebuffer, 0); // Delete the FBOs
                 SafeFrameBuffer.DeleteFramebuffer(frontbuffer);
@@ -208,20 +208,20 @@ namespace linerider.IO
                     string errormessage = "An unknown error occured during recording.";
                     game.Title = Program.WindowTitle + " [Recording | Hold ESC to cancel]";
                     game.ProcessEvents();
-                    string filename = Constants.RendersDirectory + game.Track.Name + ".mp4";
+                    string filename = Path.Combine(Settings.Local.UserDirPath, Constants.RendersFolderName, $"{game.Track.Name}.mp4");
                     Game.RiderFrame flagbackup = flag;
                     bool hardexit = false;
                     bool recmodesave = Settings.Local.RecordingMode;
                     Settings.Local.RecordingMode = true;
                     game.Track.StartIgnoreFlag();
                     game.Render();
-                    string dir = Constants.RendersDirectory + game.Track.Name + "_rec";
+                    string dir = Path.Combine(Settings.Local.UserDirPath, Constants.RendersFolderName, $"{game.Track.Name}_rec");
                     if (!Directory.Exists(dir))
                     {
                         _ = Directory.CreateDirectory(dir);
                     }
                     byte[] firstframe = GrabScreenshot(game, frontbuffer);
-                    SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, firstframe, dir + Path.DirectorySeparatorChar + "tmp" + 0 + ".png");
+                    SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, firstframe, Path.Combine(dir, "tmp0.png"));
                     int framecount = smooth ? (frame + 1) * Constants.FrameRate / Constants.PhysicsRate : frame + 1; // Add an extra frame
 
                     double frametime = 0;
@@ -257,7 +257,7 @@ namespace linerider.IO
                         try
                         {
                             byte[] screenshot = GrabScreenshot(game, frontbuffer);
-                            SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, screenshot, dir + Path.DirectorySeparatorChar + "tmp" + (i + 1) + ".png");
+                            SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, screenshot, Path.Combine(dir, $"tmp{i + 1}.png"));
                         }
                         catch (Exception)
                         {
@@ -282,10 +282,10 @@ namespace linerider.IO
                     {
                         FFMPEGParameters parameters = new FFMPEGParameters();
                         parameters.AddOption("framerate", smooth ? Constants.FrameRate.ToString() : Constants.PhysicsRate.ToString());
-                        parameters.AddOption("i", "\"" + dir + Path.DirectorySeparatorChar + "tmp%d.png" + "\"");
+                        parameters.AddOption("i", $"\"{Path.Combine(dir, "tmp%d.png")}\"");
                         if (music && !string.IsNullOrEmpty(game.Track.Song.Location) && game.Track.Song.Enabled)
                         {
-                            string fn = Path.Combine(Constants.SongsDirectory, game.Track.Song.Location);
+                            string fn = Path.Combine(Settings.Local.UserDirPath, Constants.SongsFolderName, game.Track.Song.Location);
 
                             parameters.AddOption("ss", game.Track.Song.Offset.ToString(Program.Culture));
                             parameters.AddOption("i", "\"" + fn + "\"");

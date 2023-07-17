@@ -12,7 +12,7 @@ namespace linerider.Drawing.RiderModel
 
         public ResourcesCustom(string skinName)
         {
-            SkinPath = Path.Combine(Constants.RidersDirectory, skinName);
+            SkinPath = Path.Combine(Settings.Local.UserDirPath, Constants.RidersFolderName, skinName);
             Cache.SetHome(SkinPath);
         }
 

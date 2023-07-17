@@ -35,7 +35,7 @@ namespace linerider
         public Dictionary<int, GameLine> LineLookup = new Dictionary<int, GameLine>();
         public List<GameTrigger> Triggers = new List<GameTrigger>();
 
-        public string Name = Constants.DefaultTrackName;
+        public string Name = Constants.InternalDefaultTrackName;
         public string Filename = null;
         public Song Song;
         private Vector2d _start = Vector2d.Zero;

@@ -1,5 +1,6 @@
 using linerider.Game;
 using linerider.IO.json;
+using linerider.Utils;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -120,13 +121,11 @@ namespace linerider.IO
                 }
             }
             string dir = TrackIO.GetTrackDirectory(trk);
-            if (trk.Name.Equals("<untitled>"))
-            {
-                dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
-            }
+            if (trk.Name.Equals(Constants.InternalDefaultTrackName))
+                dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName, Constants.DefaultTrackName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
-            string filename = dir + savename + ".track.json";
+            string filename = Path.Combine(dir, savename + ".track.json");
             using (FileStream file = File.Create(filename))
             {
                 byte[] bytes = JsonSerializer.Serialize(trackobj);

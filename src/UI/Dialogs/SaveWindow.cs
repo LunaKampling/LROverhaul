@@ -107,7 +107,7 @@ namespace linerider.UI
             if (
                 !TrackIO.CheckValidFilename(
                     folder + filename) ||
-                    filename == Constants.DefaultTrackName ||
+                    filename == Constants.InternalDefaultTrackName ||
                     (folder.Length == 0))
             {
                 _errorbox.Text = "Error\n* Save name is invalid";
@@ -193,14 +193,14 @@ namespace linerider.UI
         private List<string> GetDirectories()
         {
             List<string> ret = new List<string>();
-            string dir = Constants.TracksDirectory;
+            string dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
-            string[] folders = Directory.GetDirectories(Constants.TracksDirectory);
+            string[] folders = Directory.GetDirectories(dir);
             foreach (string folder in folders)
             {
                 string trackname = Path.GetFileName(folder);
-                if (trackname != Constants.DefaultTrackName)
+                if (trackname != Constants.InternalDefaultTrackName)
                 {
                     ret.Add(trackname);
                 }

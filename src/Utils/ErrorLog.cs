@@ -29,7 +29,11 @@ namespace linerider.Utils
         {
             try
             {
-                StreamWriter fs = File.AppendText(Program.UserDirectory + "errors.txt");
+                string dir = Settings.Local.UserDirPath;
+                if (dir == null || !Directory.Exists(Settings.Local.UserDirPath))
+                    dir = Program.CurrentDirectory;
+
+                StreamWriter fs = File.AppendText(dir + "errors.txt");
                 fs.WriteLine(log);
                 fs.Dispose();
             }

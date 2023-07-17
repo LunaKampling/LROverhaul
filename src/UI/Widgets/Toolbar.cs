@@ -155,7 +155,7 @@ namespace linerider.UI.Widgets
             _ = AddMenuItem("New", () => NewTrack());
             AddDivider();
             _ = AddMenuItem("Preferences", Hotkey.PreferencesWindow, () => _canvas.ShowPreferencesDialog());
-            _ = AddMenuItem("Open User Directory", () => GameCanvas.OpenUrl(Program.UserDirectory));
+            _ = AddMenuItem("Open User Directory", () => GameCanvas.OpenUrl(Settings.Local.UserDirPath));
             AddDivider();
             _ = AddMenuItem("Track Properties", Hotkey.TrackPropertiesWindow, () => _canvas.ShowTrackPropertiesDialog());
             _ = AddMenuItem("Triggers", Hotkey.TriggerMenuWindow, () => _canvas.ShowTriggerWindow());
@@ -216,7 +216,7 @@ namespace linerider.UI.Widgets
         private void SetNewTrack()
         {
             _editor.Stop();
-            _editor.ChangeTrack(new Track() { Name = Utils.Constants.DefaultTrackName });
+            _editor.ChangeTrack(new Track() { Name = Utils.Constants.InternalDefaultTrackName });
             Settings.LastSelectedTrack = "";
             Settings.Save();
             _editor.Invalidate();

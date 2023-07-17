@@ -54,6 +54,7 @@ namespace linerider
         }
         public static class Local
         {
+            public static string UserDirPath;
             public static bool RecordingMode;
             public static bool TrackOverlay = false;
             public static bool TrackOverlayFixed = false;
@@ -179,10 +180,27 @@ namespace linerider
         public static bool OnionSkinning;
         public static int PastOnionSkins;
         public static int FutureOnionSkins;
-        public static string LastSelectedTrack = "";
+        private static string _lastSelectedTrack = "";
         public static Dictionary<Hotkey, KeyConflicts> KeybindConflicts = new Dictionary<Hotkey, KeyConflicts>();
         public static Dictionary<Hotkey, List<Keybinding>> Keybinds = new Dictionary<Hotkey, List<Keybinding>>();
         private static readonly Dictionary<Hotkey, List<Keybinding>> DefaultKeybinds = new Dictionary<Hotkey, List<Keybinding>>();
+        public static string LastSelectedTrack
+        {
+            get
+            {
+                if (_lastSelectedTrack.StartsWith(Constants.RelativeLastTrackIndicator))
+                    return Path.Combine(Local.UserDirPath, _lastSelectedTrack.Substring(Constants.RelativeLastTrackIndicator.Length));
+                else
+                    return _lastSelectedTrack;
+            }
+            set
+            {
+                if (value.StartsWith(Local.UserDirPath))
+                    _lastSelectedTrack = Constants.RelativeLastTrackIndicator + value.Substring(Local.UserDirPath.Length);
+                else
+                    _lastSelectedTrack = value;
+            }
+        }
 
         // Malizma Addon Settings
         public static bool InvisibleRider;
@@ -592,7 +610,7 @@ namespace linerider
         {
             ValidateUserDataFolder();
 
-            string[] lines = File.ReadAllLines(Constants.ConfigFilePath);
+            string[] lines = File.ReadAllLines(Path.Combine(Local.UserDirPath, Constants.ConfigFileName));
 
             LoadMainSettings(lines);
             LoadAddonSettings(lines);
@@ -602,7 +620,12 @@ namespace linerider
         }
         public static void ValidateUserDataFolder()
         {
-            string dir = Program.UserDirectory;
+            string defaultPath = Program.UserDirectory;
+            string portablePath = Path.Combine(Program.CurrentDirectory, Constants.UserDirPortableFolderName) + Path.DirectorySeparatorChar;
+            bool isPortableMode = Directory.Exists(portablePath);
+            string dir = isPortableMode ? portablePath : defaultPath;
+
+            Local.UserDirPath = dir;
 
             if (!Directory.Exists(dir))
             {
@@ -610,23 +633,19 @@ namespace linerider
                 System.Windows.Forms.MessageBox.Show("LRA User directory created at:\r\n" + dir);
             }
 
-            if (!File.Exists(Constants.ConfigFilePath))
+            if (!File.Exists(Path.Combine(Local.UserDirPath, Constants.ConfigFileName)))
                 ForceSave();
 
-            if (!Directory.Exists(Constants.RendersDirectory))
-                Directory.CreateDirectory(Constants.RendersDirectory);
-
-            if (!Directory.Exists(Constants.RidersDirectory))
-                Directory.CreateDirectory(Constants.RidersDirectory);
-
-            if (!Directory.Exists(Constants.ScarvesDirectory))
-                Directory.CreateDirectory(Constants.ScarvesDirectory);
-
-            if (!Directory.Exists(Constants.SongsDirectory))
-                Directory.CreateDirectory(Constants.SongsDirectory);
-
-            if (!Directory.Exists(Constants.TracksDirectory))
-                Directory.CreateDirectory(Constants.TracksDirectory);
+            TouchUserDir(Constants.RendersFolderName);
+            TouchUserDir(Constants.RidersFolderName);
+            TouchUserDir(Constants.ScarvesFolderName);
+            TouchUserDir(Constants.SongsFolderName);
+            TouchUserDir(Constants.TracksFolderName);
+        }
+        private static void TouchUserDir(string folderName)
+        {
+            if (!Directory.Exists(Path.Combine(Local.UserDirPath, folderName)))
+                _ = Directory.CreateDirectory(Path.Combine(Local.UserDirPath, folderName));
         }
         public static void PostprocessValues()
         {
@@ -655,6 +674,7 @@ namespace linerider
         }
         public static void LoadMainSettings(string[] lines)
         {
+            LastSelectedTrack = GetSetting(lines, nameof(LastSelectedTrack));
             Enum.TryParse(GetSetting(lines, nameof(PlaybackZoomType)), out PlaybackZoomType);
             LoadFloat(GetSetting(lines, nameof(Volume)), ref Volume);
             LoadFloat(GetSetting(lines, nameof(ScrollSensitivity)), ref ScrollSensitivity);
@@ -757,10 +777,6 @@ namespace linerider
 
             if (ScarfSegments == 0)
                 ScarfSegments++;
-
-            string lasttrack = GetSetting(lines, nameof(LastSelectedTrack));
-            if (File.Exists(lasttrack) && lasttrack.StartsWith(Constants.TracksDirectory))
-                LastSelectedTrack = lasttrack;
         }
         public static void LoadAddonSettings(string[] lines)
         {
@@ -795,7 +811,7 @@ namespace linerider
             try
             {
                 string content = string.Join("\r\n", lines);
-                File.WriteAllText(Constants.ConfigFilePath, content);
+                File.WriteAllText(Path.Combine(Local.UserDirPath, Constants.ConfigFileName), content);
             }
             catch { }
         }
@@ -804,7 +820,7 @@ namespace linerider
         {
             List<string> lines = new List<string>
             {
-                MakeSetting(nameof(LastSelectedTrack), LastSelectedTrack),
+                MakeSetting(nameof(LastSelectedTrack), _lastSelectedTrack),
                 MakeSetting(nameof(Volume), Volume.ToString(Program.Culture)),
                 MakeSetting(nameof(SuperZoom), SuperZoom.ToString(Program.Culture)),
                 MakeSetting(nameof(NightMode), NightMode.ToString(Program.Culture)),

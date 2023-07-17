@@ -49,7 +49,7 @@ namespace linerider.Drawing.RiderModel
                 }
                 else
                 {
-                    string scarfLocation = Path.Combine(Program.UserDirectory, "Scarves", Settings.SelectedScarf);
+                    string scarfLocation = Path.Combine(Settings.Local.UserDirPath, Constants.ScarvesFolderName, Settings.SelectedScarf);
                     ScarfLoader loader = new ScarfLoader(scarfLocation);
 
                     ScarfColors.RemoveAll();

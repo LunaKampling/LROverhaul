@@ -1,5 +1,6 @@
 ﻿using linerider.Game;
 using linerider.IO.SOL;
+using linerider.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,13 +28,11 @@ namespace linerider.IO
         public static string SaveTrack(Track track, string savename)
         {
             string dir = TrackIO.GetTrackDirectory(track);
-            if (track.Name.Equals("<untitled>"))
-            {
-                dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
-            }
+            if (track.Name.Equals(Constants.InternalDefaultTrackName))
+                dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName, Constants.DefaultTrackName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
-            string filename = dir + savename + ".sol";
+            string filename = Path.Combine(dir, savename + ".sol");
             BigEndianWriter bw = new BigEndianWriter();
             bw.WriteShort(0x00BF); // .sol version
             bw.WriteInt(0); // Length, placeholder            

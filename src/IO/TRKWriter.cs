@@ -1,4 +1,5 @@
 ﻿using linerider.Game;
+using linerider.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,13 +12,11 @@ namespace linerider.IO
         public static string SaveTrack(Track trk, string savename)
         {
             string dir = TrackIO.GetTrackDirectory(trk);
-            if (trk.Name.Equals("<untitled>"))
-            {
-                dir = Utils.Constants.TracksDirectory + "Unnamed Track" + Path.DirectorySeparatorChar;
-            }
+            if (trk.Name.Equals(Constants.InternalDefaultTrackName))
+                dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName, Constants.DefaultTrackName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
-            string filename = dir + savename + ".trk";
+            string filename = Path.Combine(dir, savename + ".trk");
             using (FileStream file = File.Create(filename))
             {
                 BinaryWriter bw = new BinaryWriter(file);

@@ -832,8 +832,8 @@ namespace linerider.UI
             Panel generalGroup = GwenHelper.CreateHeaderPanel(parent, "General");
 
             ComboBox boshSkinCombobox = GwenHelper.CreateLabeledCombobox(generalGroup, "Rider:");
-            _ = boshSkinCombobox.AddItem("Default", Constants.InternalDefaultName, Constants.InternalDefaultName);
-            string[] riderPaths = Directory.GetDirectories(Constants.RidersDirectory);
+            _ = boshSkinCombobox.AddItem(Constants.DefaultName, Constants.InternalDefaultName, Constants.InternalDefaultName);
+            string[] riderPaths = Directory.GetDirectories(Path.Combine(Settings.Local.UserDirPath, Constants.RidersFolderName));
             foreach (string riderPath in riderPaths)
             {
                 string riderName = Path.GetFileName(riderPath);
@@ -847,8 +847,8 @@ namespace linerider.UI
             };
 
             ComboBox scarfCombobox = GwenHelper.CreateLabeledCombobox(generalGroup, "Scarf:");
-            _ = scarfCombobox.AddItem("Default", Constants.InternalDefaultName, Constants.InternalDefaultName);
-            string[] scarfPaths = Directory.GetFiles(Constants.ScarvesDirectory);
+            _ = scarfCombobox.AddItem(Constants.DefaultName, Constants.InternalDefaultName, Constants.InternalDefaultName);
+            string[] scarfPaths = Directory.GetFiles(Path.Combine(Settings.Local.UserDirPath, Constants.ScarvesFolderName));
             foreach (string scarfPath in scarfPaths)
             {
                 string ext = Path.GetExtension(scarfPath).ToLower();

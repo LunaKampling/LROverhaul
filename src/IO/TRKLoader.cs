@@ -243,7 +243,7 @@ namespace linerider.IO
                     try
                     {
                         string[] strings = song.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        string fn = Path.Combine(Constants.SongsDirectory, strings[0]);
+                        string fn = Path.Combine(Settings.Local.UserDirPath, Constants.SongsFolderName, strings[0]);
                         if (File.Exists(fn))
                         {
                             if (AudioService.LoadFile(ref fn))
