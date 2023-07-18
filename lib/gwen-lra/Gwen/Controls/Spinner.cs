@@ -70,7 +70,8 @@ namespace Gwen.Controls
             get => m_Value;
             set
             {
-
+                if (IncrementSize > 1)
+                    value = value - value % IncrementSize + (m_Min % 2 == 0 ? 0 : 1);
                 if (value < m_Min)
                     value = m_Min;
                 if (value > m_Max)
