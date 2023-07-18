@@ -1,5 +1,7 @@
-﻿using OpenTK;
+﻿using linerider.Drawing.RiderModel;
+using OpenTK;
 using System.Collections.Generic;
+
 namespace linerider.Game
 {
     public class RiderConstants
@@ -28,7 +30,7 @@ namespace linerider.Game
         {
             List<Vector2d> scarfVectors = new List<Vector2d>();
             double scarfPos = 0;
-            for (int i = 0; i < Settings.ScarfSegments; i++)
+            for (int i = 0; i < ScarfColors.TotalSegments; i++)
             {
                 if (i % 2 == 0)
                 {
@@ -94,7 +96,7 @@ namespace linerider.Game
             Bones = bonelist.ToArray();
             bonelist = new List<Bone>();
 
-            for (int i = 0; i < Settings.ScarfSegments; i++)
+            for (int i = 0; i < ScarfColors.TotalSegments; i++)
             {
                 AddScarfBone(bonelist, i + 1);
             }

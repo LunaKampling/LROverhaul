@@ -869,46 +869,49 @@ namespace linerider.UI
             boshSkinCombobox.Width = 150;
             scarfCombobox.Width = 150;
 
-            Panel scarfGroup = GwenHelper.CreateHeaderPanel(parent, "Scarf Settings");
+            Panel scarfGroup = GwenHelper.CreateHeaderPanel(parent, "Scarf Settings *");
 
-            Spinner scarfSegments = new Spinner(parent)
+            Spinner scarvesAmount = new Spinner(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
-                Value = Settings.ScarfSegments,
+                Value = Settings.ScarfAmount,
             };
-            scarfSegments.ValueChanged += (o, e) =>
+            scarvesAmount.ValueChanged += (o, e) =>
             {
-                Settings.ScarfSegments = (int)((Spinner)o).Value;
+                Settings.ScarfAmount = (int)((Spinner)o).Value;
                 Settings.Save();
             };
-            _ = GwenHelper.CreateLabeledControl(scarfGroup, "Scarf Segments *", scarfSegments);
+            _ = GwenHelper.CreateLabeledControl(scarfGroup, "Scarves Amount:", scarvesAmount);
 
-            Spinner multiScarfAmount = new Spinner(parent)
+            Spinner scarfSegmentsMain = new Spinner(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
-                Value = Settings.multiScarfAmount,
+                IncrementSize = 2,
+                Value = Settings.ScarfSegmentsPrimary,
             };
-            multiScarfAmount.ValueChanged += (o, e) =>
+            scarfSegmentsMain.ValueChanged += (o, e) =>
             {
-                Settings.multiScarfAmount = (int)((Spinner)o).Value;
+                Settings.ScarfSegmentsPrimary = (int)((Spinner)o).Value;
                 Settings.Save();
             };
-            _ = GwenHelper.CreateLabeledControl(scarfGroup, "Multi-Scarf Amount *", multiScarfAmount);
+            _ = GwenHelper.CreateLabeledControl(scarfGroup, "Segments (Primary Scarf):", scarfSegmentsMain);
 
-            Spinner multiScarfSegments = new Spinner(parent)
+            Spinner scarfSegmentsSecondary = new Spinner(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
-                Value = Settings.multiScarfSegments,
+                IncrementSize = 2,
+                Value = Settings.ScarfSegmentsSecondary,
             };
-            multiScarfSegments.ValueChanged += (o, e) =>
+            scarfSegmentsSecondary.ValueChanged += (o, e) =>
             {
-                Settings.multiScarfSegments = (int)((Spinner)o).Value;
+                int value = (int)((Spinner)o).Value;
+                Settings.ScarfSegmentsSecondary = value;
                 Settings.Save();
             };
-            _ = GwenHelper.CreateLabeledControl(scarfGroup, "Multi-Scarf Segments *", multiScarfSegments);
+            _ = GwenHelper.CreateLabeledControl(scarfGroup, "Segments (Secondary Scarves):", scarfSegmentsSecondary);
             _ = GwenHelper.CreateHintLabel(scarfGroup, "* Restart required");
 
             Button openManualBtn = new Button(parent)

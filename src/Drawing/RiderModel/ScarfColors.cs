@@ -9,6 +9,7 @@ namespace linerider.Drawing.RiderModel
         private static readonly List<byte> Opacity = new List<byte>();
         public static List<int> GetColorList() => Colors;
         public static List<byte> GetOpacityList() => Opacity;
+        public static int TotalSegments => Settings.ScarfSegmentsPrimary + (Settings.ScarfAmount - 1) * (Settings.ScarfSegmentsSecondary + 1);
         public static void Add(int color, byte opacity)
         {
             Colors.Add(color);
@@ -41,7 +42,7 @@ namespace linerider.Drawing.RiderModel
         }
         public static void Normalize() // Make sure scarf is long enough
         {
-            while (Count() < Settings.ScarfSegments)
+            while (Count() < TotalSegments)
             {
                 GetColorList().AddRange(GetColorList());
                 GetOpacityList().AddRange(GetOpacityList());

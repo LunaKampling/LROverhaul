@@ -425,40 +425,34 @@ namespace linerider.Game
             {
                 scarf = Scarf.Step(friction: true);
 
-                if (Settings.multiScarfAmount * Settings.multiScarfSegments > RiderConstants.ScarfBones.Length)
+                if (Settings.ScarfAmount > 1) // If using dual scarf
                 {
-                    Settings.multiScarfAmount = 1;
-                } // If too big set to zero
-
-                if (Settings.multiScarfAmount > 1) // If using dual scarf
-                {
-
-                    List<SimulationPoint>[] scarves = new List<SimulationPoint>[Settings.multiScarfAmount];
+                    List<SimulationPoint>[] scarves = new List<SimulationPoint>[Settings.ScarfAmount];
                     List<SimulationPoint> finalScarf = new List<SimulationPoint>();
 
-                    for (int i = 0; i < Settings.multiScarfAmount; i++)
+                    for (int i = 0; i < Settings.ScarfAmount; i++)
                     {
-                        scarf[i * Settings.multiScarfSegments] = body[RiderConstants.BodyShoulder];
+                        scarf[i * (Settings.ScarfSegmentsSecondary + 1)] = body[RiderConstants.BodyShoulder];
                         scarves[i] = new List<SimulationPoint>();
 
-                        if (i != Settings.multiScarfAmount - 1)
+                        if (i != Settings.ScarfAmount - 1)
                         {
-                            for (int k = 0; k < Settings.multiScarfSegments; k++)
+                            for (int k = 0; k < (Settings.ScarfSegmentsSecondary + 1); k++)
                             {
-                                scarves[i].Add(scarf[k + i * Settings.multiScarfSegments]);
+                                scarves[i].Add(scarf[k + i * (Settings.ScarfSegmentsSecondary + 1)]);
                             }
                         }
                         else
                         {
-                            for (int k = 0; k < scarf.Length - i * Settings.multiScarfSegments; k++)
+                            for (int k = 0; k < scarf.Length - i * (Settings.ScarfSegmentsSecondary + 1); k++)
                             {
-                                scarves[i].Add(scarf[k + i * Settings.multiScarfSegments]);
+                                scarves[i].Add(scarf[k + i * (Settings.ScarfSegmentsSecondary + 1)]);
                             }
                         }
 
                         SimulationPoint[] scarfArr = scarves[i].ToArray();
 
-                        FlutterScarf(scarfArr, frameid, Utility.LengthFast(scarf[i * Settings.multiScarfSegments].Momentum) + i * 5);
+                        FlutterScarf(scarfArr, frameid, Utility.LengthFast(scarf[i * (Settings.ScarfSegmentsSecondary + 1)].Momentum) + i * 5);
                         ProcessScarfBones(RiderConstants.ScarfBones, scarfArr);
 
                         for (int j = 0; j < scarfArr.Length; j++)

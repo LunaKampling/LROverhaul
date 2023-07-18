@@ -155,11 +155,11 @@ namespace linerider
 
         // LRTran settings
         public static string SelectedScarf; // What custom scarf is selected
-        public static int ScarfSegments; // How many scarf segments on restart
         public static string SelectedBoshSkin; // What bosh skin is selected
         public static bool showChangelog; // Show the changelog
-        public static int multiScarfAmount; // How many scarves the rider has
-        public static int multiScarfSegments; // How many segments a multi scarf has
+        public static int ScarfAmount; // How many scarves the rider has
+        public static int ScarfSegmentsPrimary; // How many segments primary scarf has
+        public static int ScarfSegmentsSecondary; // How many segments secondary scarves have
         public static int autosaveChanges; // Changes when autosave starts
         public static int autosaveMinutes; // Amount of minues per autosave
         public static string AutosavePrefix; // Name of autosave file
@@ -336,12 +336,12 @@ namespace linerider
             OnionSkinning = false;
             PastOnionSkins = 10;
             FutureOnionSkins = 20;
-            ScarfSegments = 5;
+            ScarfSegmentsPrimary = 5;
             SelectedScarf = Constants.InternalDefaultName;
             SelectedBoshSkin = Constants.InternalDefaultName;
             showChangelog = true;
-            multiScarfAmount = 1;
-            multiScarfSegments = 5;
+            ScarfAmount = 1;
+            ScarfSegmentsSecondary = 5;
             autosaveChanges = 50;
             autosaveMinutes = 5;
             AutosavePrefix = "Autosave";
@@ -671,6 +671,16 @@ namespace linerider
                 SelectedScarf = Constants.InternalDefaultName;
 
             Volume = MathHelper.Clamp(Volume, 0, 100);
+
+            ScarfAmount = Math.Max(1, ScarfAmount);
+            ScarfSegmentsPrimary = Math.Max(1, ScarfSegmentsPrimary);
+            ScarfSegmentsSecondary = Math.Max(1, ScarfSegmentsSecondary);
+
+            // Allow only odd numbers
+            if (ScarfSegmentsPrimary % 2 == 0)
+                ScarfSegmentsPrimary++;
+            if (ScarfSegmentsSecondary % 2 == 0)
+                ScarfSegmentsSecondary++;
         }
         public static void LoadMainSettings(string[] lines)
         {
@@ -738,11 +748,11 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(Editor.ShowLineAngle)), ref Editor.ShowLineAngle);
             LoadBool(GetSetting(lines, nameof(Editor.ShowLineID)), ref Editor.ShowLineID);
             SelectedScarf = GetSetting(lines, nameof(SelectedScarf));
-            LoadInt(GetSetting(lines, nameof(ScarfSegments)), ref ScarfSegments);
+            LoadInt(GetSetting(lines, nameof(ScarfSegmentsPrimary)), ref ScarfSegmentsPrimary);
             SelectedBoshSkin = GetSetting(lines, nameof(SelectedBoshSkin));
             LoadBool(GetSetting(lines, nameof(showChangelog)), ref showChangelog);
-            LoadInt(GetSetting(lines, nameof(multiScarfSegments)), ref multiScarfSegments);
-            LoadInt(GetSetting(lines, nameof(multiScarfAmount)), ref multiScarfAmount);
+            LoadInt(GetSetting(lines, nameof(ScarfSegmentsSecondary)), ref ScarfSegmentsSecondary);
+            LoadInt(GetSetting(lines, nameof(ScarfAmount)), ref ScarfAmount);
             LoadInt(GetSetting(lines, nameof(autosaveMinutes)), ref autosaveMinutes);
             LoadInt(GetSetting(lines, nameof(autosaveChanges)), ref autosaveChanges);
             AutosavePrefix = GetSetting(lines, nameof(AutosavePrefix));
@@ -771,12 +781,6 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothStabilizer)), ref SmoothPencil.smoothStabilizer);
             LoadInt(GetSetting(lines, nameof(SmoothPencil.smoothUpdateSpeed)), ref SmoothPencil.smoothUpdateSpeed);
             LoadBool(GetSetting(lines, nameof(InvisibleRider)), ref InvisibleRider);
-
-            if (multiScarfSegments == 0)
-                multiScarfSegments++;
-
-            if (ScarfSegments == 0)
-                ScarfSegments++;
         }
         public static void LoadAddonSettings(string[] lines)
         {
@@ -885,11 +889,11 @@ namespace linerider
                 MakeSetting(nameof(Editor.ShowLineLength), Editor.ShowLineLength.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.ShowLineID), Editor.ShowLineID.ToString(Program.Culture)),
                 MakeSetting(nameof(SelectedScarf), SelectedScarf),
-                MakeSetting(nameof(ScarfSegments), ScarfSegments.ToString(Program.Culture)),
                 MakeSetting(nameof(SelectedBoshSkin), SelectedBoshSkin),
+                MakeSetting(nameof(ScarfAmount), ScarfAmount.ToString(Program.Culture)),
+                MakeSetting(nameof(ScarfSegmentsPrimary), ScarfSegmentsPrimary.ToString(Program.Culture)),
+                MakeSetting(nameof(ScarfSegmentsSecondary), ScarfSegmentsSecondary.ToString(Program.Culture)),
                 MakeSetting(nameof(showChangelog), showChangelog.ToString(Program.Culture)),
-                MakeSetting(nameof(multiScarfSegments), multiScarfSegments.ToString(Program.Culture)),
-                MakeSetting(nameof(multiScarfAmount), multiScarfAmount.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveChanges), autosaveChanges.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveMinutes), autosaveMinutes.ToString(Program.Culture)),
                 MakeSetting(nameof(AutosavePrefix), AutosavePrefix),
