@@ -785,7 +785,7 @@ namespace linerider
             {
                 ResetTrackChangeCounter();
                 Settings.LastSelectedTrack = _track.Filename;
-                Settings.Save();
+                Settings.ForceSave();
             }
             else
             {

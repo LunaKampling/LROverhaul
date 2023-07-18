@@ -800,7 +800,7 @@ namespace linerider
 
         public static void Save() => Debouncer.Debounce("Settings.Save", ForceSave, 1000);
 
-        private static void ForceSave()
+        public static void ForceSave()
         {
             List<string> lines = new List<string>();
 
