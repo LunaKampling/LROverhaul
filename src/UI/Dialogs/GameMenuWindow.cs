@@ -20,23 +20,19 @@ namespace linerider.UI
         private void Setup()
         {
             Margin btnmargin = new Margin(10, 5, 10, 5);
+            Margin btnseparatormargin = new Margin(10, 5, 10, 20);
+
             Button save = new Button(this)
             {
                 Text = "Save Track",
                 Dock = Dock.Top,
-                Margin = new Margin(10, 5, 10, 5)
+                Margin = btnmargin
             };
             Button load = new Button(this)
             {
                 Text = "Load Track",
                 Dock = Dock.Top,
-                Margin = btnmargin
-            };
-            Button props = new Button(this)
-            {
-                Text = "Preferences",
-                Dock = Dock.Top,
-                Margin = btnmargin
+                Margin = btnseparatormargin
             };
             Button trackprops = new Button(this)
             {
@@ -44,14 +40,22 @@ namespace linerider.UI
                 Dock = Dock.Top,
                 Margin = btnmargin
             };
-            props.Clicked += (o, e) =>
+            Button triggers = new Button(this)
             {
-                _canvas.ShowPreferencesDialog();
-                _ = Close();
+                Text = "Triggers",
+                Dock = Dock.Top,
+                Margin = btnseparatormargin
             };
-            trackprops.Clicked += (o, e) =>
+            Button preferences = new Button(this)
             {
-                _canvas.ShowTrackPropertiesDialog();
+                Text = "Preferences",
+                Dock = Dock.Top,
+                Margin = btnmargin
+            };
+
+            save.Clicked += (o, e) =>
+            {
+                _canvas.ShowSaveDialog();
                 _ = Close();
             };
             load.Clicked += (o, e) =>
@@ -59,9 +63,19 @@ namespace linerider.UI
                 _canvas.ShowLoadDialog();
                 _ = Close();
             };
-            save.Clicked += (o, e) =>
+            trackprops.Clicked += (o, e) =>
             {
-                _canvas.ShowSaveDialog();
+                _canvas.ShowTrackPropertiesDialog();
+                _ = Close();
+            };
+            triggers.Clicked += (o, e) =>
+            {
+                _canvas.ShowTriggerWindow();
+                _ = Close();
+            };
+            preferences.Clicked += (o, e) =>
+            {
+                _canvas.ShowPreferencesDialog();
                 _ = Close();
             };
         }
