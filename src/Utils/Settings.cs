@@ -188,14 +188,14 @@ namespace linerider
         {
             get
             {
-                if (_lastSelectedTrack.StartsWith(Constants.RelativeLastTrackIndicator))
+                if (!string.IsNullOrEmpty(_lastSelectedTrack) && _lastSelectedTrack.StartsWith(Constants.RelativeLastTrackIndicator))
                     return Path.Combine(Local.UserDirPath, _lastSelectedTrack.Substring(Constants.RelativeLastTrackIndicator.Length));
                 else
                     return _lastSelectedTrack;
             }
             set
             {
-                if (value.StartsWith(Local.UserDirPath))
+                if (!string.IsNullOrEmpty(value) && value.StartsWith(Local.UserDirPath))
                     _lastSelectedTrack = Constants.RelativeLastTrackIndicator + value.Substring(Local.UserDirPath.Length);
                 else
                     _lastSelectedTrack = value;
