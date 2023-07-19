@@ -109,11 +109,15 @@ namespace linerider.UI
             {
                 if (!IsHidden)
                     return;
-                string fn = Path.Combine(Settings.Local.UserDirPath, Constants.SongsFolderName, _editor.Song.Location);
-                if (_editor.Song.Enabled && File.Exists(fn))
+
+                if (_editor.Song.Enabled)
                 {
-                    if (!IsOgg(fn) &&
-                        !IO.ffmpeg.FFMPEG.HasExecutable)
+                    string songFilePath = Path.Combine(Settings.Local.UserDirPath, Constants.SongsFolderName, _editor.Song.Location);
+
+                    if (!File.Exists(songFilePath))
+                        return;
+
+                    if (!IsOgg(songFilePath) && !IO.ffmpeg.FFMPEG.HasExecutable)
                     {
                         Audio.Song song = _editor.Song;
                         song.Location = null;
@@ -123,10 +127,10 @@ namespace linerider.UI
                     else
                     {
                         _canvas.Loading = true;
-                        _ = Audio.AudioService.LoadFile(ref fn);
+                        _ = Audio.AudioService.LoadFile(ref songFilePath);
 
                         Audio.Song song = _editor.Song;
-                        song.Location = Path.GetFileName(fn);
+                        song.Location = Path.GetFileName(songFilePath);
                         _editor.Song = song;
 
                         _canvas.Loading = false;
