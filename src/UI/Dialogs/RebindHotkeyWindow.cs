@@ -16,7 +16,7 @@ namespace linerider.UI
         {
             _binding = new Keybinding();
             _lasthit = _binding;
-            Title = $"Rebind \"{label}\" (ESC to cancel)";
+            Title = $"Rebind \"{label}\"";
             _ = SetSize(350, 110);
             DisableResizing();
             MakeModal(true);
@@ -49,7 +49,14 @@ namespace linerider.UI
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
                 Alignment = Pos.CenterH | Pos.Top,
-                Text = "Enter your new key combination and press enter",
+                Text = "Enter your new key combination and press Enter.",
+            };
+            _ = new Label(this)
+            {
+                Dock = Dock.Top,
+                AutoSizeToContents = true,
+                Alignment = Pos.CenterH | Pos.Top,
+                Text = "Press Esc to cancel.",
             };
             Panel container = new Panel(this)
             {

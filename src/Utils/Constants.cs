@@ -47,7 +47,7 @@ namespace linerider.Utils
         public const string SongsFolderName = "Songs";
         public const string TracksFolderName = "Tracks";
 
-        public static readonly string RelativeLastTrackIndicator = $".{Path.DirectorySeparatorChar}";
+        public static readonly string LastTrackRelativePrefix = $".{Path.DirectorySeparatorChar}";
         public const string InternalDefaultTrackName = "<untitled>";
         public const string DefaultTrackName = "Unnamed Track";
         public const string QuicksavePrefix = "Quicksave";

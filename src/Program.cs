@@ -96,30 +96,43 @@ namespace linerider
             if (!_crashed)
             {
                 _crashed = true;
-                glGame.Track.BackupTrack();
+                try
+                {
+                    glGame.Track.BackupTrack();
+                }
+                catch
+                { }
             }
-            if (System.Windows.Forms.MessageBox.Show(
-                "Unhandled Exception: " +
-                e.Message +
-                Environment.NewLine +
-                e.StackTrace +
-                Environment.NewLine +
-                "Would you like to export the crash data to a log.txt?",
-                "Error!",
-                System.Windows.Forms.MessageBoxButtons.YesNo)
-                 == System.Windows.Forms.DialogResult.Yes)
+
+            string logDir = Settings.Local.UserDirPath;
+            if (logDir == null || !Directory.Exists(Settings.Local.UserDirPath))
+                logDir = CurrentDirectory;
+
+            string logFilePath = logDir + "log.txt";
+            string msgBoxSpearator = Environment.NewLine + Environment.NewLine;
+            string title = "Game crashed!";
+            string msg = $"Unhandled Exception: {e.Message}{msgBoxSpearator}{e.StackTrace}{msgBoxSpearator}{msgBoxSpearator}Would you like to export the crash data to a log file?{msgBoxSpearator}Log file path: {logFilePath}";
+
+            System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
+
+            if (btn == System.Windows.Forms.DialogResult.Yes)
             {
-                string logDir = Settings.Local.UserDirPath;
-                if (logDir == null || !Directory.Exists(Settings.Local.UserDirPath))
-                    logDir = CurrentDirectory;
+                string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
+                string headerSeparator = new string('-', 3);
+                string header = $"{headerSeparator} {FullVersion} {headerSeparator} {now} {headerSeparator}";
+                string newLine = "\r\n";
 
-                if (!File.Exists(logDir + "log.txt"))
-                    File.Create(logDir + "log.txt").Dispose();
+                if (!File.Exists(logFilePath))
+                    File.Create(logFilePath).Dispose();
 
-                string append = WindowTitle + "\r\n" + e.ToString() + "\r\n";
-                string begin = File.ReadAllText(logDir + "log.txt", System.Text.Encoding.ASCII);
-                File.WriteAllText(logDir + "log.txt", begin + append, System.Text.Encoding.ASCII);
+                string oldRecords = File.ReadAllText(logFilePath, System.Text.Encoding.UTF8);
+                string newRecord = header + newLine + newLine + e.ToString() + newLine;
+                if (!string.IsNullOrEmpty(oldRecords))
+                    newRecord = newLine + newRecord;
+
+                File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
             }
+
             if (!nothrow)
                 throw e;
         }

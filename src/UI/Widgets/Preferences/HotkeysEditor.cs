@@ -1,14 +1,14 @@
 using Gwen;
 using Gwen.Controls;
 
-namespace linerider.UI
+namespace linerider.UI.Widgets
 {
-    public class HotkeyWidget : ControlBase
+    public class HotkeysEditor : ControlBase
     {
         private readonly PropertyTree _kbtree;
         private readonly Button _btnreset;
         private readonly GameCanvas _canvas;
-        public HotkeyWidget(ControlBase parent) : base(parent)
+        public HotkeysEditor(ControlBase parent) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
             _kbtree = new PropertyTree(this)
@@ -24,14 +24,14 @@ namespace linerider.UI
             _btnreset = new Button(container)
             {
                 Dock = Dock.Right,
-                Text = "Default Keybindings"
+                Text = "Default Hotkeys"
             };
             _btnreset.Clicked += (o, e) =>
             {
                 MessageBox box = MessageBox.Show(
                     _canvas,
-                    "Are you sure you want to reset your keybindings to default settings?",
-                    "Reset keybindings?",
+                    "Are you sure you want to reset your hotkeys to default settings?",
+                    "Reset hotkeys?",
                     MessageBox.ButtonType.OkCancel);
                 box.RenameButtons("Reset");
                 box.Dismissed += (_o, result) =>
@@ -290,8 +290,8 @@ namespace linerider.UI
             if (conflict != Hotkey.None)
             {
                 MessageBox mbox = MessageBox.Show(_canvas,
-                    $"Keybinding conflicts with {conflict}, If you proceed you will overwrite it.\nDo you want to continue?",
-                    "Conflict detected", MessageBox.ButtonType.OkCancel);
+                    $"Keybinding \"{Settings.HotkeyToString(conflict)}\" conflicts with <{conflict}>.\nIf you proceed you will overwrite it.\n\nDo you want to continue?",
+                    "Conflict detected", MessageBox.ButtonType.OkCancel, true, true, false);
                 mbox.Dismissed += (o, e) =>
                 {
                     if (e == DialogResult.OK)

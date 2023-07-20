@@ -92,8 +92,8 @@ namespace linerider.UI
 
             cat = _prefcontainer.Add("Application");
 
-            page = AddPage(cat, "Keybindings");
-            PopulateKeybinds(page);
+            page = AddPage(cat, "Hotkeys");
+            PopulateHotkeys(page);
             page = AddPage(cat, "Other");
             PopulateOther(page);
 
@@ -935,7 +935,7 @@ namespace linerider.UI
                 RiderLoader.ReloadAll();
             };
         }
-        private void PopulateKeybinds(ControlBase parent) => _ = new HotkeyWidget(parent);
+        private void PopulateHotkeys(ControlBase parent) => _ = new Widgets.HotkeysEditor(parent);
         private void PopulateOther(ControlBase parent)
         {
             Panel audioGroup = GwenHelper.CreateHeaderPanel(parent, "Audio");

@@ -232,7 +232,6 @@
     <Compile Include="UI\Dialogs\SaveWindow.cs" />
     <Compile Include="UI\Dialogs\TrackInfoWindow.cs" />
     <Compile Include="UI\Dialogs\RebindHotkeyWindow.cs" />
-    <Compile Include="UI\Dialogs\Preferences\HotkeyWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UI\Components\TrackLabel.cs" />
@@ -241,6 +240,7 @@
     <Compile Include="UI\Components\WidgetContainer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Widgets\Preferences\HotkeysEditor.cs" />
     <Compile Include="UI\Widgets\InfoBarCoords.cs" />
     <Compile Include="UI\Widgets\LoadingSprite.cs" />
     <Compile Include="UI\Widgets\InfoBarLeft.cs" />

@@ -34,7 +34,6 @@ namespace linerider.Drawing.RiderModel
             for (int i = 1; i < Settings.ScarfAmount; i++)
             {
                 int index = i * (Settings.ScarfSegmentsSecondary + 1) + (i - 1) - (1 + i);
-                //ScarfColors.Insert(0x0000FF, 0xFF, index);
                 ScarfColors.Insert(0x0000FF, 0x00, index);
             }
         }
