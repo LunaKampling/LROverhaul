@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Gwen.Controls
@@ -17,26 +18,28 @@ namespace Gwen.Controls
         public DialogResult Result { get; set; }
         public string Text { get; private set; }
         private readonly ButtonType _buttons;
-        public static MessageBox Show(Canvas canvas, string text, string title, bool modal = true, bool dim = false)
+        private bool _wordwrap;
+        public static MessageBox Show(Canvas canvas, string text, string title, bool modal = true, bool dim = false, bool wordwrap = true)
         {
-            MessageBox ret = new MessageBox(canvas, text, title, ButtonType.Ok);
+            MessageBox ret = new MessageBox(canvas, text, title, ButtonType.Ok, wordwrap);
             if (modal)
                 ret.MakeModal(dim);
             ret.ShowCentered();
             return ret;
         }
-        public static MessageBox Show(Canvas canvas, string text, string title, ButtonType buttons, bool modal = true, bool dim = false)
+        public static MessageBox Show(Canvas canvas, string text, string title, ButtonType buttons, bool modal = true, bool dim = false, bool wordwrap = true)
         {
-            MessageBox ret = new MessageBox(canvas, text, title, buttons);
+            MessageBox ret = new MessageBox(canvas, text, title, buttons, wordwrap);
             if (modal)
                 ret.MakeModal(dim);
             ret.ShowCentered();
             return ret;
         }
-        public MessageBox(ControlBase ctrl, string text, string title, ButtonType buttons) : base(ctrl, title)
+        public MessageBox(ControlBase ctrl, string text, string title, ButtonType buttons, bool wordwrap) : base(ctrl, title)
         {
             Text = text;
             _buttons = buttons;
+            _wordwrap = wordwrap;
             DeleteOnClose = true;
             Container = new ControlBase(m_Panel)
             {
@@ -88,21 +91,28 @@ namespace Gwen.Controls
         }
         private void SetupText(string text)
         {
-            int charsize = Skin.Renderer.MeasureText(Skin.DefaultFont, "_").X;
-            int maxwidth = Math.Max(charsize * 30, MinimumSize.Width - PanelMargin.Width);
-            int maxwidth2 = maxwidth + maxwidth / 2;
-            System.Collections.Generic.List<string> wrapped1 = Skin.DefaultFont.WordWrap(text, maxwidth);
-            System.Collections.Generic.List<string> wrapped2 = Skin.DefaultFont.WordWrap(text, maxwidth2);
-            System.Collections.Generic.List<string> wrap = wrapped2;
-            // This is a cheat that doesnt work perfectly, but decently for making
-            // short messageboxes appear ok
-            if (wrapped1.Count == wrapped2.Count)
+            if (_wordwrap)
             {
-                wrap = wrapped1;
+                int charsize = Skin.Renderer.MeasureText(Skin.DefaultFont, "_").X;
+                int maxwidth = Math.Max(charsize * 30, MinimumSize.Width - PanelMargin.Width);
+                int maxwidth2 = maxwidth + maxwidth / 2;
+                List<string> wrapped1 = Skin.DefaultFont.WordWrap(text, maxwidth);
+                List<string> wrapped2 = Skin.DefaultFont.WordWrap(text, maxwidth2);
+                List<string> wrap = wrapped2;
+                // This is a cheat that doesnt work perfectly, but decently for making
+                // short messageboxes appear ok
+                if (wrapped1.Count == wrapped2.Count)
+                {
+                    wrap = wrapped1;
+                }
+                foreach (string line in wrap)
+                {
+                    AddLine(line);
+                }
             }
-            foreach (string line in wrap)
+            else
             {
-                AddLine(line);
+                AddLine(text);
             }
         }
         public void RenameButtons(string ok, string cancel = "")
