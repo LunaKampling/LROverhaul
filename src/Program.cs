@@ -79,6 +79,10 @@ namespace linerider
             }
         }
         /// <summary>
+        /// Gets the portable user data directory. Ends in Path.DirectorySeperator
+        /// </summary>
+        public static string UserPortableDirectory => Path.Combine(CurrentDirectory, Constants.UserDirPortableFolderName) + Path.DirectorySeparatorChar;
+        /// <summary>
         /// Gets the directory where the executable file is placed. Ends in Path.DirectorySeperator
         /// </summary>
         public static string CurrentDirectory

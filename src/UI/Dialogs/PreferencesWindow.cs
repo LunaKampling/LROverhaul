@@ -94,6 +94,8 @@ namespace linerider.UI
 
             page = AddPage(cat, "Hotkeys");
             PopulateHotkeys(page);
+            page = AddPage(cat, "User Data");
+            PopulateUserData(page);
             page = AddPage(cat, "Other");
             PopulateOther(page);
 
@@ -930,12 +932,67 @@ namespace linerider.UI
                 Alignment = Pos.CenterH | Pos.CenterV,
                 Margin = new Margin(10, 0, 10, 10),
             };
-            forceReloadBtn.Clicked += (o, e) =>
-            {
-                RiderLoader.ReloadAll();
-            };
+            forceReloadBtn.Clicked += (o, e) => RiderLoader.ReloadAll();
         }
         private void PopulateHotkeys(ControlBase parent) => _ = new Widgets.HotkeysEditor(parent);
+        private void PopulateUserData(ControlBase parent)
+        {
+            bool isPortable = Settings.Computed.IsUserDirPortable;
+
+            Panel currPathGroup = GwenHelper.CreateHeaderPanel(parent, "Current User Folder Location");
+            Label currPathLabel = new Label(currPathGroup)
+            {
+                TextColor = System.Drawing.Color.Gray,
+                Dock = Dock.Top,
+                Text = Settings.Local.UserDirPath,
+            };
+            Button openUserDirBtn = new Button(currPathGroup)
+            {
+                Dock = Dock.Bottom,
+                Text = "Open directory",
+                Alignment = Pos.CenterH | Pos.CenterV,
+                Margin = new Margin(10, 5, 10, 10),
+            };
+            openUserDirBtn.Clicked += (o, e) => GameCanvas.OpenUrl(Settings.Local.UserDirPath);
+
+            Panel portableGroup = GwenHelper.CreateHeaderPanel(parent, "Portable Mode");
+            Label portableStatusLabel = new Label(null)
+            {
+                Dock = Dock.Left,
+                Text = "Is Portable:",
+            };
+            Label portableStatus = new Label(null)
+            {
+                TextColor = isPortable ? System.Drawing.Color.Green : System.Drawing.Color.Gray,
+                Dock = Dock.Left,
+                Text = isPortable.ToString(),
+                Margin = new Margin(5, 0, 0, 0),
+            };
+            ControlBase portableControls = new ControlBase(portableGroup)
+            {
+                Children =
+                {
+                    portableStatusLabel,
+                    portableStatus,
+                },
+                AutoSizeToContents = true,
+                Dock = Dock.Top,
+            };
+
+            Button transferUserDirBtn = new Button(portableGroup)
+            {
+                Dock = Dock.Top,
+                Text = "Switch " + (isPortable ? "from" : "to") + " portable mode",
+                Alignment = Pos.CenterH | Pos.CenterV,
+                Margin = new Margin(10, 5, 10, 0),
+            };
+            transferUserDirBtn.Clicked += (o, e) =>
+            {
+                UserFolderTransferrerWindow wnd = new UserFolderTransferrerWindow(_canvas, _editor);
+                wnd.ShowCentered();
+                _ = Close();
+            };
+        }
         private void PopulateOther(ControlBase parent)
         {
             Panel audioGroup = GwenHelper.CreateHeaderPanel(parent, "Audio");

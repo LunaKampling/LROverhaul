@@ -213,6 +213,7 @@ namespace linerider
             public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
             public static bool LockCamera => Local.RecordingMode ? false : Local.LockCamera;
+            public static bool IsUserDirPortable => Local.UserDirPath != Program.UserDirectory;
         }
 
         static Settings()
@@ -620,21 +621,19 @@ namespace linerider
         }
         public static void ValidateUserDataFolder()
         {
-            string defaultPath = Program.UserDirectory;
-            string portablePath = Path.Combine(Program.CurrentDirectory, Constants.UserDirPortableFolderName) + Path.DirectorySeparatorChar;
-            bool isPortableMode = Directory.Exists(portablePath);
-            string dir = isPortableMode ? portablePath : defaultPath;
+            Local.UserDirPath = Directory.Exists(Program.UserPortableDirectory) && !File.Exists(Path.Combine(Program.UserPortableDirectory, "TO_BE_DELETED"))
+                ? Program.UserPortableDirectory
+                : Program.UserDirectory;
 
-            Local.UserDirPath = dir;
-
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-                System.Windows.Forms.MessageBox.Show("LRA User directory created at:\r\n" + dir);
-            }
+            if (!Directory.Exists(Local.UserDirPath))
+                Directory.CreateDirectory(Local.UserDirPath);
 
             if (!File.Exists(Path.Combine(Local.UserDirPath, Constants.ConfigFileName)))
+            {
+                RestoreDefaultSettings();
+                SetupDefaultKeybinds();
                 ForceSave();
+            }
 
             TouchUserDir(Constants.RendersFolderName);
             TouchUserDir(Constants.RidersFolderName);
@@ -812,12 +811,11 @@ namespace linerider
             lines.AddRange(BuildAddonSettingsList());
             lines.AddRange(BuildKeybindsList());
 
-            try
-            {
-                string content = string.Join("\r\n", lines);
-                File.WriteAllText(Path.Combine(Local.UserDirPath, Constants.ConfigFileName), content);
-            }
-            catch { }
+            if (!Directory.Exists(Local.UserDirPath))
+                Directory.CreateDirectory(Local.UserDirPath);
+
+            string content = string.Join("\r\n", lines);
+            File.WriteAllText(Path.Combine(Local.UserDirPath, Constants.ConfigFileName), content);
         }
 
         private static List<string> BuildMainSettingsList()

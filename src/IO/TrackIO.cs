@@ -194,8 +194,8 @@ namespace linerider.IO
             {
                 // If we loaded this file from /Tracks and not 
                 // /Tracks/{trackname}/file.trk then it doesnt have a folder
-                // the user will have to decide one. we will not quicksave it.
-                if (!track.Filename.StartsWith(dir, StringComparison.OrdinalIgnoreCase))
+                // the user will have to decide one. We will not quicksave it.
+                if (!track.Filename.Contains(Path.Combine(Constants.TracksFolderName, track.Name)))
                     return false;
 
             }
