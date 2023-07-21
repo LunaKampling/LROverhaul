@@ -8,6 +8,7 @@ namespace linerider.UI.Widgets
         private readonly PropertyTree _kbtree;
         private readonly Button _btnreset;
         private readonly GameCanvas _canvas;
+        private readonly string _tooltipPostfix = " [?]";
         public HotkeysEditor(ControlBase parent) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
@@ -198,7 +199,7 @@ namespace linerider.UI.Widgets
             };
             if (tooltip != null)
             {
-                label += " [?]";
+                label += _tooltipPostfix;
             }
             PropertyRow row = table.Add(label, prop);
             if (tooltip != null)
@@ -259,7 +260,10 @@ namespace linerider.UI.Widgets
         private void ShowHotkeyWindow(Hotkey hotkey, LabelProperty prop, int kbindex)
         {
             PropertyRow row = (PropertyRow)prop.Parent;
-            RebindHotkeyWindow wnd = new RebindHotkeyWindow(_canvas, row.Label.ToString());
+            string bindingName = row.Label.ToString();
+            if (bindingName.EndsWith(_tooltipPostfix))
+                bindingName = bindingName.Remove(bindingName.Length - _tooltipPostfix.Length);
+            RebindHotkeyWindow wnd = new RebindHotkeyWindow(_canvas, bindingName);
             wnd.KeybindChanged += (x, newbind) =>
             {
                 _ = TryNewKeybind(hotkey, newbind, kbindex);
