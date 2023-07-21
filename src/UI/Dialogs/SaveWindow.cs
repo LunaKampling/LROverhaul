@@ -24,7 +24,7 @@ namespace linerider.UI
                 Dock = Dock.Top,
                 AutoSizeToContents = true
             };
-            l.AddText("Files are saved to Documents/LRA/Tracks", Skin.Colors.Text.Foreground);
+            l.AddText($"Files are saved to the \"{Constants.TracksFolderName}\" folder.", Skin.Colors.Text.Foreground);
             _errorbox = new Label(this)
             {
                 Dock = Dock.Top,

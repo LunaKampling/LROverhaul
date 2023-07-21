@@ -1,6 +1,7 @@
 using Gwen;
 using Gwen.Controls;
 using linerider.Drawing;
+using linerider.Utils;
 using System.Drawing;
 
 namespace linerider.UI
@@ -10,8 +11,8 @@ namespace linerider.UI
         private readonly RichLabel _descriptionlabel;
         private readonly Label _error;
         private readonly MainWindow _game;
-        private const string howto = "You are about to export a capture of this current track.\n" +
-            "It will be located in your line rider user directory (Documents/LRA/Renders).\n\n" +
+        private readonly string howto = "You are about to export a capture of this current track.\n" +
+            $"It will be located in your line rider user directory in the \"{Constants.RendersFolderName}\" folder.\n\n" +
             "This may take a few seconds for very high-resolution captures." +
             "The window will become unresponsive during this time.\n\n" +
             "If the image fails to record properly, try a smaller resolution.";

@@ -1,6 +1,7 @@
 using Gwen;
 using Gwen.Controls;
 using linerider.Drawing;
+using linerider.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,8 +13,8 @@ namespace linerider.UI
         private readonly RichLabel _descriptionlabel;
         private readonly Label _error;
         private readonly MainWindow _game;
-        private const string howto = "You are about to export your track as a video file. Make sure the end of the track is marked by a flag. " +
-            "It will be located in your line rider user directory (Documents/LRA/Renders).\n" +
+        private readonly string howto = "You are about to export your track as a video file. Make sure the end of the track is marked by a flag. " +
+            $"It will be located in your line rider user directory in the \"{Constants.RendersFolderName}\" folder.\n\n" +
             "Please allow some minutes depending on your computer speed. " +
             "The window will become unresponsive during this time.\n\n" +
             "After recording, a console window may open to encode the video. " +
