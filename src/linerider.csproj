@@ -202,15 +202,6 @@
     <Compile Include="Addons\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Components\MultiSlider.cs" />
-    <Compile Include="UI\Components\MultiToolButton.cs" />
-    <Compile Include="UI\Components\Playhead.cs" />
-    <Compile Include="UI\Components\WidgetButton.cs" />
-    <Compile Include="UI\Components\ToolButton.cs" />
-    <Compile Include="UI\Dialogs\ChangelogWindow.cs" />
-    <Compile Include="UI\Dialogs\ScreenshotWindow.cs" />
-    <Compile Include="UI\Dialogs\GeneratorWindow.cs" />
-    <Compile Include="UI\Dialogs\TriggerWindow.cs" />
     <Compile Include="UI\CursorsHandler.cs" />
     <Compile Include="UI\PlatformImpl.cs" />
     <Compile Include="UI\Hotkey.cs" />
@@ -232,12 +223,22 @@
     <Compile Include="UI\Dialogs\SaveWindow.cs" />
     <Compile Include="UI\Dialogs\TrackInfoWindow.cs" />
     <Compile Include="UI\Dialogs\RebindHotkeyWindow.cs" />
+    <Compile Include="UI\Dialogs\ChangelogWindow.cs" />
+    <Compile Include="UI\Dialogs\ScreenshotWindow.cs" />
+    <Compile Include="UI\Dialogs\GeneratorWindow.cs" />
+    <Compile Include="UI\Dialogs\TriggerWindow.cs" />
+    <Compile Include="UI\Dialogs\UserFolderTransferrerWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UI\Components\TrackLabel.cs" />
     <Compile Include="UI\Components\Sprite.cs" />
     <Compile Include="UI\Components\ImageButton.cs" />
     <Compile Include="UI\Components\WidgetContainer.cs" />
+    <Compile Include="UI\Components\MultiSlider.cs" />
+    <Compile Include="UI\Components\MultiToolButton.cs" />
+    <Compile Include="UI\Components\Playhead.cs" />
+    <Compile Include="UI\Components\WidgetButton.cs" />
+    <Compile Include="UI\Components\ToolButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UI\Widgets\Preferences\HotkeysEditor.cs" />
