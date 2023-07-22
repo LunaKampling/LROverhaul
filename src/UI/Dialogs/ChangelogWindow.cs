@@ -1,6 +1,9 @@
 using Gwen;
 using Gwen.Controls;
 using linerider.Utils;
+using System;
+using System.Drawing;
+using System.Linq;
 
 namespace linerider.UI
 {
@@ -8,76 +11,40 @@ namespace linerider.UI
     {
         public ChangelogWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
-            Title = "Changelog for " + Program.FullVersion;
-            AutoSizeToContents = true;
+            System.Collections.Generic.List<string> changelogLines = AssemblyInfo.ChangelogLines.Split('\n').ToList();
 
-            string changelogText =
-                "6/23/2023 \n" +
-                "*Fixed a bug regarding hotkeys \n" +
-                "*Made Bosh more pleasing to the eye \n" +
-                "*Fixed zooming to now zoom at cursor position. \n" +
-                "*Made zooming linear instead of multiplicative to prevent odd zoom values \n" +
-                "*Changed .exe icons \n" +
-                "*Select tool can now select only unhit lines \n" +
-                "*Bezier knobs now always have the same thickness \n" +
-                "*Changed several menus' lay-out and functionality \n" +
-                "*Preview mode is autoenabled when the trigger window is open \n" +
-                "*Colour inputs now work using HEX instead of RGB \n" +
-                "*Added force reload for rider and scarf \n" +
-                "*New toolbar!!! New buttons!!! \n" +
-                "*Tracks now pre-load 30 seconds instead of a single second \n" +
-                "*Minor bug and UI fixes \n" +
-                "*Upgraded to .NET 4.8 \n" +
-                "*Global code clean-up\n";
+            // Use first changelog line as window title
+            string title = changelogLines[0];
+            changelogLines.RemoveRange(0, 2); // Remove title and following empty line
+            if (title.StartsWith("#"))
+                title = title.Substring(1).Trim();
+
+            string changelogText = string.Join("\n", changelogLines);
+            AutoSizeToContents = true;
+            Title = title;
+
+            MinimumSize = new Size(250, MinimumSize.Height);
 
             ControlBase bottomcontainer = new ControlBase(this)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = new Margin(0, 10, 0, 0),
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true
             };
 
-            Button btncontinue = new Button(null)
-            {
-                Text = "Continue",
-                Name = "btncontinue",
-                Dock = Dock.Right,
-                Margin = new Margin(10, 0, 0, 0),
-                AutoSizeToContents = true,
-            };
-            btncontinue.Clicked += (o, e) =>
-            {
-                _ = Close();
-            };
-
-            Button btndontshow = new Button(null)
-            {
-                Text = "Continue and don\'t show again",
-                Name = "btndontshow",
-                Dock = Dock.Right,
-                Margin = new Margin(10, 0, 0, 0),
-                AutoSizeToContents = true,
-            };
-            btndontshow.Clicked += (o, e) =>
-            {
-                Settings.showChangelog = false;
-                Settings.Save();
-                _ = Close();
-            };
-
             Button btngithub = new Button(null)
             {
-                Text = "Previous Changelogs (Github)",
+                Text = "Previous Changelogs",
                 Name = "btngithub",
-                Dock = Dock.Right,
-                Margin = new Margin(10, 0, 0, 0),
+                Dock = Dock.Left,
+                Margin = new Margin(0, 0, 0, 0),
                 AutoSizeToContents = true,
             };
             btngithub.Clicked += (o, e) =>
             {
                 try
                 {
-                    GameCanvas.OpenUrl($"{Constants.GithubPageHeader}/tree/master/Changelogs");
+                    GameCanvas.OpenUrl($"{Constants.GithubPageHeader}/tree/main/Changelogs");
                 }
                 catch
                 {
@@ -86,6 +53,15 @@ namespace linerider.UI
                 _ = Close();
             };
 
+            Button btnclose = new Button(null)
+            {
+                Text = "Close",
+                Dock = Dock.Right,
+                Margin = new Margin(10, 0, 0, 0),
+                AutoSizeToContents = true,
+            };
+            btnclose.Clicked += CloseButtonPressed;
+
             ControlBase buttoncontainer = new ControlBase(bottomcontainer)
             {
                 Margin = new Margin(0, 0, 0, 0),
@@ -93,8 +69,7 @@ namespace linerider.UI
                 AutoSizeToContents = true,
                 Children =
                 {
-                    btncontinue,
-                    btndontshow,
+                    btnclose,
                     btngithub,
                 }
             };
@@ -108,27 +83,12 @@ namespace linerider.UI
             MakeModal(true);
             DisableResizing();
         }
-
-        private void CreateLabeledControl(ControlBase parent, string label, ControlBase control)
+        protected override void CloseButtonPressed(ControlBase control, EventArgs args)
         {
-            control.Dock = Dock.Right;
-            _ = new ControlBase(parent)
-            {
-                Children =
-                {
-                    new Label(null)
-                    {
-                        Text = label,
-                        Dock = Dock.Left,
-                        Alignment = Pos.Left | Pos.CenterV,
-                        Margin = new Margin(0,0,10,0)
-                    },
-                    control
-                },
-                AutoSizeToContents = true,
-                Dock = Dock.Top,
-                Margin = new Margin(0, 1, 0, 1)
-            };
+            // Force update settings so it contains actual LRO version
+            Settings.Save();
+
+            base.CloseButtonPressed(control, args);
         }
     }
 }

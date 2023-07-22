@@ -256,13 +256,6 @@ namespace linerider
         }
         public void ShowChangelog()
         {
-            if (Settings.showChangelog != true)
-                return;
-
-            string subVer = AssemblyInfo.SubVersion.ToLower().Trim();
-            if (subVer == "closed" || subVer == "test")
-                return;
-
             ShowDialog(new ChangelogWindow(this, game.Track));
         }
 
@@ -291,7 +284,8 @@ namespace linerider
         {
             if (Program.NewVersion == null)
                 return;
-            MessageBox window = MessageBox.Show(this, "Would you like to download the latest version?", "Update Available! v" + Program.NewVersion, MessageBox.ButtonType.OkCancel);
+
+            MessageBox window = MessageBox.Show(this, "Would you like to download the latest version?", "Update Available! v" + Program.NewVersion, MessageBox.ButtonType.OkCancel, true, true);
             window.RenameButtons("Go to Download");
             window.Dismissed += (o, e) =>
             {

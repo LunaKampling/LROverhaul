@@ -36,8 +36,7 @@ namespace linerider
         public static string BinariesFolder = "bin";
         public static readonly CultureInfo Culture = new CultureInfo("en-US");
         public static string NewVersion = null;
-        public static string FullVersion = AssemblyInfo.FullVersion;
-        public static readonly string WindowTitle = AssemblyInfo.Title + " \u22C5 " + FullVersion;
+        public static readonly string WindowTitle = AssemblyInfo.Title + " \u22C5 " + AssemblyInfo.FullVersion;
         public static Random Random;
         private static bool _crashed;
         private static MainWindow glGame;
@@ -123,7 +122,7 @@ namespace linerider
             {
                 string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
                 string headerSeparator = new string('-', 3);
-                string header = $"{headerSeparator} {FullVersion} {headerSeparator} {now} {headerSeparator}";
+                string header = $"{headerSeparator} {AssemblyInfo.FullVersion} {headerSeparator} {now} {headerSeparator}";
                 string newLine = "\r\n";
 
                 if (!File.Exists(logFilePath))
@@ -197,12 +196,10 @@ namespace linerider
                     {
                         using (WebClient wc = new WebClient())
                         {
-                            string recentversion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version");
-                            int idx = recentversion.IndexOfAny(new char[] { '\r', '\n' });
-                            if (idx != -1)
-                                recentversion = recentversion.Remove(idx);
-                            if (recentversion != AssemblyInfo.Version && recentversion.Length > 0)
-                                NewVersion = recentversion;
+                            string recentVersion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version").Trim();
+
+                            if (recentVersion != AssemblyInfo.Version && recentVersion.Length > 0)
+                                NewVersion = recentVersion;
                         }
                     }
                     catch
@@ -222,8 +219,9 @@ namespace linerider
     {
         public static string Title => GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title);
         public static string Version => GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
-        public static string SubVersion => GetExecutingAssemblyAttribute<AssemblyMetadataAttribute>(a => a.Key == "SubVersion" ? a.Value : string.Empty);
         public static string FullVersion => GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
+        public static string SubVersion => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().SubVersion;
+        public static string ChangelogLines => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog;
 
         private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {

@@ -254,7 +254,12 @@ namespace linerider
         {
             if (firstGameUpdate)
             {
-                Canvas.ShowChangelog();
+                if (Settings.Local.Version != AssemblyInfo.Version)
+                {
+                    string subVer = AssemblyInfo.SubVersion.ToLower().Trim();
+                    if (subVer != "closed" && subVer != "test")
+                        Canvas.ShowChangelog();
+                }
                 firstGameUpdate = false;
             }
 

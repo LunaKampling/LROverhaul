@@ -430,7 +430,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- ### Auto export LR version to external file ### -->
+  <!-- ### Process LRO version and read latest changelog file ### -->
   <Target Name="Build" Condition="'$(_InvalidConfigurationWarning)' != 'true'" DependsOnTargets="$(BuildDependsOn)" Returns="$(TargetPath)">
     <!-- Run "CleanUp" even after build fail -->
     <OnError ExecuteTargets="CleanUp" />
@@ -442,21 +442,27 @@
   <Target Name="BeforeBuild">
     <!-- Read AssemblyInformationalVersion -->
     <PropertyGroup>
-      <In>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs'))</In>
+      <FilePath>$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs</FilePath>
+      <AssemblyInfoLines>$([System.IO.File]::ReadAllText('$(FilePath)'))</AssemblyInfoLines>
       <Pattern>\[assembly: AssemblyInformationalVersion\("(?&lt;Version&gt;\d+\.\d+\.\d+\.\d+)(?&lt;SubVersion&gt;[\s0-9A-Za-z-.]+)?</Pattern>
-      <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups["Version"].Value)</AssemblyVersion>
-      <AssemblySubVersion>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups["SubVersion"].Value)</AssemblySubVersion>
+      <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Match($(AssemblyInfoLines), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups["Version"].Value)</AssemblyVersion>
+      <AssemblySubVersion>$([System.Text.RegularExpressions.Regex]::Match($(AssemblyInfoLines), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups["SubVersion"].Value)</AssemblySubVersion>
     </PropertyGroup>
     <!-- Export version to "..\version" -->
     <WriteLinesToFile File="@(VersionFile)" Lines="$(AssemblyVersion)" Overwrite="true" />
+    <!-- Read changelog file -->
+    <PropertyGroup>
+      <FilePath>..\Changelogs\$(AssemblyVersion).md</FilePath>
+      <ChangelogLines>$([System.IO.File]::ReadAllText('$(FilePath)'))</ChangelogLines>
+    </PropertyGroup>
     <!-- Generate some assembly fields (AssemblyFileVersion and SubVersion) -->
     <ItemGroup>
       <AssemblyAttributes Include="AssemblyFileVersion">
         <_Parameter1>$(AssemblyVersion)</_Parameter1>
       </AssemblyAttributes>
-      <AssemblyAttributes Include="AssemblyMetadata">
-        <_Parameter1>SubVersion</_Parameter1>
-        <_Parameter2>$(AssemblySubVersion)</_Parameter2>
+      <AssemblyAttributes Include="linerider.CustomAttributes">
+        <_Parameter1>$(AssemblySubVersion)</_Parameter1>
+        <_Parameter2>$(ChangelogLines)</_Parameter2>
       </AssemblyAttributes>
     </ItemGroup>
     <!-- Generate a file with extra assembly fields from above -->
@@ -469,5 +475,5 @@
     <!-- Cleanup after build -->
     <Delete Files="@(AssemblyGeneratedInfoFile)" />
   </Target>
-  <!-- ### / Auto export LR version to external file ### -->
+  <!-- ### Process LRO version and read latest changelog file ### -->
 </Project>

@@ -54,6 +54,7 @@ namespace linerider
         }
         public static class Local
         {
+            public static string Version;
             public static string UserDirPath;
             public static bool RecordingMode;
             public static bool TrackOverlay = false;
@@ -156,7 +157,6 @@ namespace linerider
         // LRTran settings
         public static string SelectedScarf; // What custom scarf is selected
         public static string SelectedBoshSkin; // What bosh skin is selected
-        public static bool showChangelog; // Show the changelog
         public static int ScarfAmount; // How many scarves the rider has
         public static int ScarfSegmentsPrimary; // How many segments primary scarf has
         public static int ScarfSegmentsSecondary; // How many segments secondary scarves have
@@ -340,7 +340,6 @@ namespace linerider
             ScarfSegmentsPrimary = 5;
             SelectedScarf = Constants.InternalDefaultName;
             SelectedBoshSkin = Constants.InternalDefaultName;
-            showChangelog = true;
             ScarfAmount = 1;
             ScarfSegmentsSecondary = 5;
             autosaveChanges = 50;
@@ -683,6 +682,7 @@ namespace linerider
         }
         public static void LoadMainSettings(string[] lines)
         {
+            Local.Version = GetSetting(lines, nameof(Local.Version));
             LastSelectedTrack = GetSetting(lines, nameof(LastSelectedTrack));
             Enum.TryParse(GetSetting(lines, nameof(PlaybackZoomType)), out PlaybackZoomType);
             LoadFloat(GetSetting(lines, nameof(Volume)), ref Volume);
@@ -749,7 +749,6 @@ namespace linerider
             SelectedScarf = GetSetting(lines, nameof(SelectedScarf));
             LoadInt(GetSetting(lines, nameof(ScarfSegmentsPrimary)), ref ScarfSegmentsPrimary);
             SelectedBoshSkin = GetSetting(lines, nameof(SelectedBoshSkin));
-            LoadBool(GetSetting(lines, nameof(showChangelog)), ref showChangelog);
             LoadInt(GetSetting(lines, nameof(ScarfSegmentsSecondary)), ref ScarfSegmentsSecondary);
             LoadInt(GetSetting(lines, nameof(ScarfAmount)), ref ScarfAmount);
             LoadInt(GetSetting(lines, nameof(autosaveMinutes)), ref autosaveMinutes);
@@ -822,6 +821,7 @@ namespace linerider
         {
             List<string> lines = new List<string>
             {
+                MakeSetting(nameof(Local.Version), AssemblyInfo.Version),
                 MakeSetting(nameof(LastSelectedTrack), _lastSelectedTrack),
                 MakeSetting(nameof(Volume), Volume.ToString(Program.Culture)),
                 MakeSetting(nameof(SuperZoom), SuperZoom.ToString(Program.Culture)),
@@ -891,7 +891,6 @@ namespace linerider
                 MakeSetting(nameof(ScarfAmount), ScarfAmount.ToString(Program.Culture)),
                 MakeSetting(nameof(ScarfSegmentsPrimary), ScarfSegmentsPrimary.ToString(Program.Culture)),
                 MakeSetting(nameof(ScarfSegmentsSecondary), ScarfSegmentsSecondary.ToString(Program.Culture)),
-                MakeSetting(nameof(showChangelog), showChangelog.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveChanges), autosaveChanges.ToString(Program.Culture)),
                 MakeSetting(nameof(autosaveMinutes), autosaveMinutes.ToString(Program.Culture)),
                 MakeSetting(nameof(AutosavePrefix), AutosavePrefix),

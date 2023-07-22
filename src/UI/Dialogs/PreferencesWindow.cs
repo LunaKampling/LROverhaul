@@ -1044,14 +1044,8 @@ namespace linerider.UI
                 Settings.Save();
             });
 
-            Checkbox showChangelog = GwenHelper.AddCheckbox(updatesGroup, "Enable Changelog", Settings.showChangelog, (o, e) =>
-            {
-                Settings.showChangelog = ((Checkbox)o).IsChecked;
-                Settings.Save();
-            });
-
             Panel windowGroup = GwenHelper.CreateHeaderPanel(parent, "Window");
-            Checkbox maximizeWin = GwenHelper.AddCheckbox(windowGroup, "Maximize Window On Startup", Settings.showChangelog, (o, e) =>
+            Checkbox maximizeWin = GwenHelper.AddCheckbox(windowGroup, "Maximize Window On Startup", Settings.startWindowMaximized, (o, e) =>
             {
                 Settings.startWindowMaximized = ((Checkbox)o).IsChecked;
                 Settings.Save();
@@ -1156,6 +1150,15 @@ namespace linerider.UI
                 Margin = new Margin(10, 0, 10, 10),
             };
             openHomePageBtn.Clicked += (o, e) => GameCanvas.OpenUrl(Constants.GithubPageHeader);
+
+            Button showChangelogButton = new Button(parent)
+            {
+                Dock = Dock.Bottom,
+                Text = $"Show changelog ({AssemblyInfo.Version})",
+                Alignment = Pos.CenterH | Pos.CenterV,
+                Margin = new Margin(10, 0, 10, 10),
+            };
+            showChangelogButton.Clicked += (o, e) => _canvas.ShowChangelog();
         }
         private void PopulateRBLAnimation(ControlBase parent)
         {
