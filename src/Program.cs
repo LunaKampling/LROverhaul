@@ -35,8 +35,8 @@ namespace linerider
 #endif
         public static string BinariesFolder = "bin";
         public static readonly CultureInfo Culture = new CultureInfo("en-US");
-        public static string FullVersion = AssemblyInfo.Version + (AssemblyInfo.TestVersion.Length > 1 ? " " : "") + AssemblyInfo.TestVersion;
         public static string NewVersion = null;
+        public static string FullVersion = AssemblyInfo.FullVersion;
         public static readonly string WindowTitle = AssemblyInfo.Title + " \u22C5 " + FullVersion;
         public static Random Random;
         private static bool _crashed;
@@ -185,7 +185,8 @@ namespace linerider
         }
         public static void UpdateCheck()
         {
-            if (AssemblyInfo.TestVersion.ToLower().Contains("closed"))
+            string subVer = AssemblyInfo.SubVersion.ToLower().Trim();
+            if (subVer == "closed" || subVer == "test")
                 return;
 
             if (Settings.CheckForUpdates)
@@ -221,7 +222,8 @@ namespace linerider
     {
         public static string Title => GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title);
         public static string Version => GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
-        public static string TestVersion => GetExecutingAssemblyAttribute<AssemblyMetadataAttribute>(a => a.Value);
+        public static string SubVersion => GetExecutingAssemblyAttribute<AssemblyMetadataAttribute>(a => a.Key == "SubVersion" ? a.Value : string.Empty);
+        public static string FullVersion => GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
 
         private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {

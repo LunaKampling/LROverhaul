@@ -430,4 +430,44 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- ### Auto export LR version to external file ### -->
+  <Target Name="Build" Condition="'$(_InvalidConfigurationWarning)' != 'true'" DependsOnTargets="$(BuildDependsOn)" Returns="$(TargetPath)">
+    <!-- Run "CleanUp" even after build fail -->
+    <OnError ExecuteTargets="CleanUp" />
+  </Target>
+  <ItemGroup>
+    <VersionFile Include="..\version" />
+    <AssemblyGeneratedInfoFile Include="$(MSBuildProjectDirectory)\Properties\AssemblyGeneratedInfo.cs" />
+  </ItemGroup>
+  <Target Name="BeforeBuild">
+    <!-- Read AssemblyInformationalVersion -->
+    <PropertyGroup>
+      <In>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs'))</In>
+      <Pattern>\[assembly: AssemblyInformationalVersion\("(?&lt;Version&gt;\d+\.\d+\.\d+\.\d+)(?&lt;SubVersion&gt;[\s0-9A-Za-z-.]+)?</Pattern>
+      <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups["Version"].Value)</AssemblyVersion>
+      <AssemblySubVersion>$([System.Text.RegularExpressions.Regex]::Match($(In), $(Pattern), System.Text.RegularExpressions.RegexOptions.Multiline).Groups["SubVersion"].Value)</AssemblySubVersion>
+    </PropertyGroup>
+    <!-- Export version to "..\version" -->
+    <WriteLinesToFile File="@(VersionFile)" Lines="$(AssemblyVersion)" Overwrite="true" />
+    <!-- Generate some assembly fields (AssemblyFileVersion and SubVersion) -->
+    <ItemGroup>
+      <AssemblyAttributes Include="AssemblyFileVersion">
+        <_Parameter1>$(AssemblyVersion)</_Parameter1>
+      </AssemblyAttributes>
+      <AssemblyAttributes Include="AssemblyMetadata">
+        <_Parameter1>SubVersion</_Parameter1>
+        <_Parameter2>$(AssemblySubVersion)</_Parameter2>
+      </AssemblyAttributes>
+    </ItemGroup>
+    <!-- Generate a file with extra assembly fields from above -->
+    <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" Language="C#" OutputFile="@(AssemblyGeneratedInfoFile)">
+      <Output TaskParameter="OutputFile" ItemName="Compile" />
+      <Output TaskParameter="OutputFile" ItemName="FileWrites" />
+    </WriteCodeFragment>
+  </Target>
+  <Target Name="CleanUp" AfterTargets="AfterBuild">
+    <!-- Cleanup after build -->
+    <Delete Files="@(AssemblyGeneratedInfoFile)" />
+  </Target>
+  <!-- ### / Auto export LR version to external file ### -->
 </Project>

@@ -257,9 +257,12 @@ namespace linerider
         public void ShowChangelog()
         {
             if (Settings.showChangelog != true)
-            {
                 return;
-            }
+
+            string subVer = AssemblyInfo.SubVersion.ToLower().Trim();
+            if (subVer == "closed" || subVer == "test")
+                return;
+
             ShowDialog(new ChangelogWindow(this, game.Track));
         }
 
