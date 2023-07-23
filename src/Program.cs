@@ -29,10 +29,6 @@ namespace linerider
 {
     public static class Program
     {
-#if DEBUG
-        public static bool IsDebugged = false;
-        public static bool LogGL => false;
-#endif
         public static string BinariesFolder = "bin";
         public static readonly CultureInfo Culture = new CultureInfo("en-US");
         public static string NewVersion = null;
@@ -143,8 +139,7 @@ namespace linerider
         public static void NonFatalError(string err) => System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
         public static void Run(string[] givenArgs)
         {
-#if DEBUG
-            if (IsDebugged)
+            if (Debugger.IsAttached)
             {
                 Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
             }
@@ -152,7 +147,6 @@ namespace linerider
             {
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             }
-#endif
             args = givenArgs;
             Settings.Load();
 
