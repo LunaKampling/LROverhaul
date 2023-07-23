@@ -4,14 +4,17 @@ using linerider.Utils;
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace linerider.UI
 {
     public class ChangelogWindow : DialogBase
     {
+        private List<string> _changelogLines;
         public ChangelogWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
-            System.Collections.Generic.List<string> changelogLines = AssemblyInfo.ChangelogLines.Split('\n').ToList();
+            List<string> changelogLines = AssemblyInfo.ChangelogLines;
 
             // Use first changelog line as window title
             string title = changelogLines[0];
@@ -19,11 +22,70 @@ namespace linerider.UI
             if (title.StartsWith("#"))
                 title = title.Substring(1).Trim();
 
-            string changelogText = string.Join("\n", changelogLines);
-            AutoSizeToContents = true;
+            _changelogLines = changelogLines;
             Title = title;
 
-            MinimumSize = new Size(250, MinimumSize.Height);
+            MinimumSize = new Size(450, 400);
+            Setup();
+            MakeModal(true);
+            DisableResizing();
+        }
+
+        private void Setup()
+        {
+            Gwen.Font fontNormal = _canvas.Fonts.Default;
+            Gwen.Font fontBold = _canvas.Fonts.DefaultBold;
+            Color colorNormal = Skin.Colors.Text.Foreground;
+            Color colorGray = Color.Gray;
+
+            ScrollControl scrollContainer = new ScrollControl(this)
+            {
+                Dock = Dock.Fill,
+            };
+            scrollContainer.EnableScroll(false, true);
+
+            RichLabel textContainer = new RichLabel(scrollContainer)
+            {
+                Dock = Dock.Top,
+                AutoSizeToContents = true,
+                Margin = new Margin(0, 0, 15, 0),
+            };
+            foreach (string l in _changelogLines)
+            {
+                if (string.IsNullOrEmpty(l))
+                {
+                    textContainer.AddLineBreak();
+                    continue;
+                }
+
+                string line = l;
+                Gwen.Font font = fontNormal;
+                Color color = colorNormal;
+
+                // Header line (starts with any # count)
+                if (line.StartsWith("#"))
+                {
+                    line = line.Trim(new char[] { '#', ' ' });
+                    font = fontBold;
+                }
+
+                // Italic line (cannot render it italic so rendering it gray colored)
+                else if (line.StartsWith("*") && line.EndsWith("*") || line.StartsWith("_") && line.EndsWith("_"))
+                {
+                    line = line.Trim(new char[] { '*', '_', ' ' });
+                    color = colorGray;
+                }
+
+                // Bold line
+                else if (line.StartsWith("**") && line.EndsWith("**") || line.StartsWith("__") && line.EndsWith("__"))
+                {
+                    line = line.Trim(new char[] { '*', '_', ' ' });
+                    font = fontBold;
+                }
+
+                textContainer.AddText(line, color, font);
+                textContainer.AddLineBreak();
+            }
 
             ControlBase bottomcontainer = new ControlBase(this)
             {
@@ -35,9 +97,7 @@ namespace linerider.UI
             Button btngithub = new Button(null)
             {
                 Text = "Previous Changelogs",
-                Name = "btngithub",
                 Dock = Dock.Left,
-                Margin = new Margin(0, 0, 0, 0),
                 AutoSizeToContents = true,
             };
             btngithub.Clicked += (o, e) =>
@@ -48,7 +108,7 @@ namespace linerider.UI
                 }
                 catch
                 {
-                    _ = MessageBox.Show(parent, "Unable to open your browser.", "Error!");
+                    _ = MessageBox.Show(_canvas, "Unable to open your browser.", "Error!");
                 }
                 _ = Close();
             };
@@ -57,7 +117,6 @@ namespace linerider.UI
             {
                 Text = "Close",
                 Dock = Dock.Right,
-                Margin = new Margin(10, 0, 0, 0),
                 AutoSizeToContents = true,
             };
             btnclose.Clicked += CloseButtonPressed;
@@ -73,16 +132,8 @@ namespace linerider.UI
                     btngithub,
                 }
             };
-
-            RichLabel l = new RichLabel(this)
-            {
-                Dock = Dock.Top,
-                AutoSizeToContents = true
-            };
-            l.AddText(changelogText, Skin.Colors.Text.Foreground);
-            MakeModal(true);
-            DisableResizing();
         }
+
         protected override void CloseButtonPressed(ControlBase control, EventArgs args)
         {
             // Force update settings so it contains actual LRO version
