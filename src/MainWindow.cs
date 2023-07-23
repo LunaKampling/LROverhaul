@@ -256,7 +256,7 @@ namespace linerider
             {
                 if (Settings.Local.Version != AssemblyInfo.Version)
                 {
-                    string subVer = AssemblyInfo.SubVersion.ToLower().Trim();
+                    string subVer = AssemblyInfo.SubVersion;
                     if (subVer != "closed" && subVer != "test")
                         Canvas.ShowChangelog();
                 }

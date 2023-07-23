@@ -184,7 +184,7 @@ namespace linerider
         }
         public static void UpdateCheck()
         {
-            string subVer = AssemblyInfo.SubVersion.ToLower().Trim();
+            string subVer = AssemblyInfo.SubVersion;
             if (subVer == "closed" || subVer == "test")
                 return;
 
@@ -221,7 +221,7 @@ namespace linerider
         public static string Version => GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
         public static string FullVersion => GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
         public static string SubVersion => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().SubVersion;
-        public static string ChangelogLines => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog;
+        public static System.Collections.Generic.List<string> ChangelogLines => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog;
 
         private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {
