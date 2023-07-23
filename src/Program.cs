@@ -140,13 +140,10 @@ namespace linerider
         public static void Run(string[] givenArgs)
         {
             if (Debugger.IsAttached)
-            {
                 Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
-            }
             else
-            {
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            }
+
             args = givenArgs;
             Settings.Load();
 

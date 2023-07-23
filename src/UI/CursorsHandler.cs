@@ -204,10 +204,8 @@ namespace linerider.UI
             string[] hotspotCoords = hotspotData.Replace("M", "").Split(',');
 
             // Parse double values coords regardless of OS settings
-            double rawX;
-            double rawY;
-            double.TryParse(hotspotCoords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out rawX);
-            double.TryParse(hotspotCoords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out rawY);
+            double.TryParse(hotspotCoords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out double rawX);
+            double.TryParse(hotspotCoords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture.NumberFormat, out double rawY);
 
             hotspot = new Point()
             {
