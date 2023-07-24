@@ -177,6 +177,7 @@ namespace linerider
         public static float animationRelativeVelY;
 
         public static bool ColorPlayback;
+        public static bool LockTrackDuration;
         public static bool OnionSkinning;
         public static int PastOnionSkins;
         public static int FutureOnionSkins;
@@ -740,6 +741,7 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(SlowmoSpeed)), ref SlowmoSpeed);
             LoadFloat(GetSetting(lines, nameof(DefaultPlayback)), ref DefaultPlayback);
             LoadBool(GetSetting(lines, nameof(ColorPlayback)), ref ColorPlayback);
+            LoadBool(GetSetting(lines, nameof(LockTrackDuration)), ref LockTrackDuration);
             LoadBool(GetSetting(lines, nameof(OnionSkinning)), ref OnionSkinning);
             LoadInt(GetSetting(lines, nameof(PastOnionSkins)), ref PastOnionSkins);
             LoadInt(GetSetting(lines, nameof(FutureOnionSkins)), ref FutureOnionSkins);
@@ -880,6 +882,7 @@ namespace linerider
                 MakeSetting(nameof(SlowmoSpeed), SlowmoSpeed.ToString(Program.Culture)),
                 MakeSetting(nameof(DefaultPlayback), DefaultPlayback.ToString(Program.Culture)),
                 MakeSetting(nameof(ColorPlayback), ColorPlayback.ToString(Program.Culture)),
+                MakeSetting(nameof(LockTrackDuration), LockTrackDuration.ToString(Program.Culture)),
                 MakeSetting(nameof(OnionSkinning), OnionSkinning.ToString(Program.Culture)),
                 MakeSetting(nameof(PastOnionSkins), PastOnionSkins.ToString(Program.Culture)),
                 MakeSetting(nameof(FutureOnionSkins), FutureOnionSkins.ToString(Program.Culture)),

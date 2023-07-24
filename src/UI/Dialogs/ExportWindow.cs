@@ -37,7 +37,8 @@ namespace linerider.UI
             Title = "Export Video";
             _descriptionlabel = new RichLabel(this)
             {
-                AutoSizeToContents = true
+                AutoSizeToContents = true,
+                Padding = new Padding(0, 10, 0, 0),
             };
             if (!SafeFrameBuffer.CanRecord)
             {
@@ -55,7 +56,7 @@ namespace linerider.UI
                 Dock = Dock.Top,
                 TextColor = Color.Red,
                 IsHidden = true,
-                Margin = new Margin(0, 0, 0, 10)
+                Padding = new Padding(0, 10, 0, 0),
             };
             AutoSizeToContents = true;
             MinimumSize = new Size(400, 300);
@@ -238,18 +239,18 @@ namespace linerider.UI
                         throw new Exception("Invalid resolution: " + qualitycb.SelectedItem.Text);
                     }
 
-                    Settings.Save();
+                    Settings.ForceSave();
                     Record();
                 };
         }
         private bool CheckRecord()
         {
-            if (!_editor.HasFlag)
+            if (!_editor.HasFlag && !Settings.LockTrackDuration)
             {
                 SetError("No flag detected. Place one at the end of the track\nso the recorder knows where to stop.");
                 return false;
             }
-            else if (_editor.Name == Utils.Constants.InternalDefaultTrackName)
+            else if (_editor.Name == Constants.InternalDefaultTrackName)
             {
                 SetError("Please save your track before recording.");
                 return false;

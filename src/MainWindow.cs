@@ -123,6 +123,17 @@ namespace linerider
         public bool ShouldXySnap() => Settings.Editor.ForceXySnap || InputUtils.CheckPressed(Hotkey.ToolXYSnap);
         public void Render(float blend = 1)
         {
+            if (Settings.LockTrackDuration && Track.Playing && !TrackRecorder.Recording)
+            {
+                if (Track.Offset >= Canvas.TrackDuration)
+                    Track.TogglePause();
+                if (Track.Offset > Canvas.TrackDuration)
+                {
+                    Track.SetFrame(Canvas.TrackDuration);
+                    Track.UpdateCamera();
+                }
+            }
+
             bool shouldrender = _invalidated ||
              Canvas.NeedsRedraw ||
             Track.Playing ||
@@ -954,6 +965,9 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.PlaybackFrameNext, () => true, () =>
             {
+                if (Settings.LockTrackDuration && Track.Offset >= Canvas.TrackDuration)
+                    return;
+
                 StopHandTool();
                 if (!Track.Paused)
                     Track.TogglePause();
@@ -996,6 +1010,9 @@ namespace linerider
             });
             InputUtils.RegisterHotkey(Hotkey.PlaybackIterationNext, () => !Track.Playing, () =>
             {
+                if (Settings.LockTrackDuration && (Track.Offset >= Canvas.TrackDuration && Track.IterationsOffset == 6))
+                    return;
+
                 StopTools();
 
                 if (!Track.Paused)

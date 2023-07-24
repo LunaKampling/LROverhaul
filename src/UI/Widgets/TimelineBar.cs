@@ -178,6 +178,7 @@ namespace linerider.UI.Widgets
 
             _playheadFlag.IsHidden = !_editor.HasFlag;
             _timeSeparator.IsHidden = !_editor.HasFlag;
+            _playheadLimiter.IsHidden = Settings.LockTrackDuration;
 
             if (!_playheadFlag.IsHeld && _editor.HasFlag)
                 _playheadFlag.Value = _editor.Flag.FrameID;

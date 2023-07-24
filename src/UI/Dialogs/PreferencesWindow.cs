@@ -370,13 +370,21 @@ namespace linerider.UI
             smooth.Tooltip = "Interpolates frames from the base\nphysics rate of 40 frames/second\nup to 60 frames/second";
 
             Panel otherGroup = GwenHelper.CreateHeaderPanel(parent, "Other");
-
+            
             Checkbox colorplayback = GwenHelper.AddCheckbox(otherGroup, "Color Playback", Settings.ColorPlayback, (o, e) =>
             {
                 Settings.ColorPlayback = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
             colorplayback.Tooltip = "Show lines color during playback";
+            Checkbox lockduration = GwenHelper.AddCheckbox(otherGroup, "Lock Track Duration", Settings.LockTrackDuration, (o, e) =>
+            {
+                Settings.LockTrackDuration = ((Checkbox)o).IsChecked;
+                Settings.Save();
+            });
+            lockduration.Tooltip = "Unchecked: timeline auto extends on reaching its end. Flag is required to export videos.";
+            lockduration.Tooltip += "\nChecked: stop playback when timeline reaches end. Flag is not required to export videos.";
+            lockduration.Tooltip += "\n\nTrack duration can be changed by right clicking the timeline.";
             Spinner timelinelength = new Spinner(parent)
             {
                 Min = 1,

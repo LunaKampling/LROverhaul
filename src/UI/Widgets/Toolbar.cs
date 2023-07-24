@@ -12,6 +12,8 @@ namespace linerider.UI.Widgets
         private readonly GameCanvas _canvas;
         private readonly MainWindow _game;
         private readonly Editor _editor;
+        private WidgetButton _playpausebtn;
+        private bool _paused;
         private Menu _menu;
 
         public Toolbar(ControlBase parent, MainWindow game) : base(parent)
@@ -58,22 +60,22 @@ namespace linerider.UI.Widgets
                 HotkeyCondition = hotkeyCondition,
             };
 
-            WidgetButton playpausebtn = new WidgetButton(this)
+            _playpausebtn = new WidgetButton(this)
             {
                 Name = "Play",
                 Icon = GameResources.icon_play.Bitmap,
-                Action = (o, e) => TogglePlayback((WidgetButton)o, ((WidgetButton)o).Hotkey),
+                Action = (o, e) => TogglePlayback(((WidgetButton)o).Hotkey),
                 Hotkey = Hotkey.PlaybackTogglePause,
             };
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStart));
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStartSlowmo));
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () => TogglePlayback(playpausebtn, Hotkey.PlaybackStartIgnoreFlag));
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () => TogglePlayback(Hotkey.PlaybackStart));
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () => TogglePlayback(Hotkey.PlaybackStartSlowmo));
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () => TogglePlayback(Hotkey.PlaybackStartIgnoreFlag));
 
             _ = new WidgetButton(this)
             {
                 Name = "Stop",
                 Icon = GameResources.icon_stop.Bitmap,
-                Action = (o, e) => TogglePlayback(playpausebtn, Hotkey.PlaybackStop),
+                Action = (o, e) => TogglePlayback(Hotkey.PlaybackStop),
                 Hotkey = Hotkey.PlaybackStop,
             };
             _ = new WidgetButton(this)
@@ -105,7 +107,7 @@ namespace linerider.UI.Widgets
                 },
             };
         }
-        private void TogglePlayback(WidgetButton playpauseButton, Hotkey hotkey)
+        private void TogglePlayback(Hotkey hotkey)
         {
             _game.StopTools();
 
@@ -129,17 +131,6 @@ namespace linerider.UI.Widgets
                 case Hotkey.PlaybackStop:
                     _editor.Stop();
                     break;
-            }
-
-            if (_editor.Paused)
-            {
-                playpauseButton.Name = "Play";
-                playpauseButton.Icon = GameResources.icon_play.Bitmap;
-            }
-            else
-            {
-                playpauseButton.Name = "Pause";
-                playpauseButton.Icon = GameResources.icon_pause.Bitmap;
             }
         }
         private void MakeMenu()
@@ -220,6 +211,27 @@ namespace linerider.UI.Widgets
             Settings.LastSelectedTrack = "";
             Settings.Save();
             _editor.Invalidate();
+        }
+
+        public override void Think()
+        {
+            if (_paused != _editor.Paused)
+            {
+                _paused = _editor.Paused;
+
+                if (_paused)
+                {
+                    _playpausebtn.Name = "Play";
+                    _playpausebtn.Icon = GameResources.icon_play.Bitmap;
+                }
+                else
+                {
+                    _playpausebtn.Name = "Pause";
+                    _playpausebtn.Icon = GameResources.icon_pause.Bitmap;
+                }
+            }
+
+            base.Think();
         }
     }
 }

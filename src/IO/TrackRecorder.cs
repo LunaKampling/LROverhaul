@@ -145,10 +145,11 @@ namespace linerider.IO
         public static void RecordTrack(MainWindow game, bool smooth, bool music)
         {
             Game.RiderFrame flag = game.Track.Flag;
-            if (flag == null)
+            if (flag == null && !Settings.LockTrackDuration)
                 return;
             Size resolution = new Size(Settings.Recording.RecordingWidth, Settings.Recording.RecordingHeight);
             Size oldsize = game.RenderSize;
+            float oldZoom = game.Track.BaseZoom;
             float oldZoomMultiplier = Settings.ZoomMultiplier;
             bool oldHitTest = Settings.Editor.HitTest;
             bool invalid = false;
@@ -171,7 +172,7 @@ namespace linerider.IO
                 Constants.TriggerLineColorChange = Color.FromArgb(255, game.Track.StartingLineColorR, game.Track.StartingLineColorG, game.Track.StartingLineColorB);
 
                 Game.Rider state = game.Track.GetStart();
-                int frame = flag.FrameID;
+                int frame = Settings.LockTrackDuration ? game.Canvas.TrackDuration : flag.FrameID;
                 game.Canvas.SetCanvasSize(game.RenderSize.Width, game.RenderSize.Height);
                 game.Canvas.Layout();
 
@@ -184,13 +185,16 @@ namespace linerider.IO
                 {
                     state = trk.TickBasic(state);
                 }
-                for (int i = 0; i < state.Body.Length; i++)
+                if (flag != null)
                 {
-                    if (state.Body[i].Location != flag.State.Body[i].Location ||
-                        state.Body[i].Previous != flag.State.Body[i].Previous)
+                    for (int i = 0; i < state.Body.Length; i++)
                     {
-                        invalid = true;
-                        break;
+                        if (state.Body[i].Location != flag.State.Body[i].Location ||
+                            state.Body[i].Previous != flag.State.Body[i].Previous)
+                        {
+                            invalid = true;
+                            break;
+                        }
                     }
                 }
                 int frontbuffer = SafeFrameBuffer.GenFramebuffer();
@@ -418,10 +422,13 @@ namespace linerider.IO
                 Recording = false;
                 Settings.ZoomMultiplier = oldZoomMultiplier;
                 Settings.Editor.HitTest = oldHitTest;
+                game.Track.Zoom = oldZoom;
 
                 _ = game.Canvas.SetSize(game.RenderSize.Width, game.RenderSize.Height);
                 game.Canvas.Scale = 1.0f;
                 _screenshotbuffer = null;
+
+                game.Track.Stop();
             }
         }
     }
