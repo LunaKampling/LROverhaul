@@ -19,9 +19,11 @@
 using linerider.Utils;
 using OpenTK;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 
@@ -189,8 +191,24 @@ namespace linerider
                         {
                             string recentVersion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version").Trim();
 
-                            if (recentVersion != AssemblyInfo.Version && recentVersion.Length > 0)
-                                NewVersion = recentVersion;
+                            if (recentVersion.Length > 0)
+                            { 
+                                try
+                                {
+                                    // Try to check every number of N.N.N.N format
+                                    List<int> current = AssemblyInfo.Version.Split('.').Select(int.Parse).ToList();
+                                    List<int> recent = recentVersion.Split('.').Select(int.Parse).ToList();
+
+                                    if (recent[0] > current[0] || recent[1] > current[1] || recent[2] > current[2] || recent[3] > current[3])
+                                        NewVersion = recentVersion;
+                                }
+                                catch
+                                {
+                                    // Fallback to string comparison
+                                    if (recentVersion != AssemblyInfo.Version)
+                                        NewVersion = recentVersion;
+                                }
+                            }
                         }
                     }
                     catch
@@ -212,7 +230,7 @@ namespace linerider
         public static string Version => GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
         public static string FullVersion => GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
         public static string SubVersion => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().SubVersion;
-        public static System.Collections.Generic.List<string> ChangelogLines => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog;
+        public static List<string> ChangelogLines => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog;
 
         private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {
