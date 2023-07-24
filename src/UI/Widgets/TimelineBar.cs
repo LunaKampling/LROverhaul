@@ -20,6 +20,11 @@ namespace linerider.UI.Widgets
         private TrackLabel _timeSeparator;
         private TrackLabel _totalTime;
 
+        public int Duration
+        {
+            get => _slider.Max;
+            set => _slider.Max = value;
+        }
         public bool Scrubbing => _slider.Playhead.IsHeld;
 
         public TimelineBar(ControlBase parent, Editor editor) : base(parent)
@@ -61,6 +66,8 @@ namespace linerider.UI.Widgets
                 _editor.Scheduler.Reset();
                 Audio.AudioService.EnsureSync();
             };
+            _slider.RightClicked += (o, e) => _canvas.ShowTimelineEditorWindow();
+            _slider.Playhead.RightClicked += (o, e) => _canvas.ShowTimelineEditorWindow();
 
             _playheadLimiter = new Playhead(_slider)
             {
@@ -129,14 +136,14 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Left,
                 Alignment = Pos.Center,
-                TextRequest = (o, e) => GetTimeString(_slider.Value),
+                TextRequest = (o, e) => Utility.FrameToTime(_slider.Value),
             };
 
             _totalTime = new TrackLabel(textPanel)
             {
                 Dock = Dock.Right,
                 Alignment = Pos.Center,
-                TextRequest = (o, e) => GetTimeString(_playheadLimiter.IsHeld ? _playheadLimiter.Value : _slider.Max),
+                TextRequest = (o, e) => Utility.FrameToTime(_playheadLimiter.IsHeld ? _playheadLimiter.Value : _slider.Max),
             };
 
             _timeSeparator = new TrackLabel(textPanel)
@@ -150,17 +157,8 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Right,
                 Alignment = Pos.Center,
-                TextRequest = (o, e) => GetTimeString(_playheadFlag.Value),
+                TextRequest = (o, e) => Utility.FrameToTime(_playheadFlag.Value),
             };
-        }
-        private string GetTimeString(int frameid)
-        {
-            string format = "mm\\:ss";
-            string formatlong = "h\\:" + format;
-            TimeSpan currts = TimeSpan.FromSeconds((double)frameid / Constants.PhysicsRate);
-            string time = currts.ToString(currts.Hours > 0 ? formatlong : format);
-            string frame = (frameid % Constants.PhysicsRate).ToString("D2");
-            return time + ":" + frame;
         }
         public override void Think()
         {

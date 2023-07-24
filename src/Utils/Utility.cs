@@ -20,6 +20,8 @@ using linerider.Utils;
 using OpenTK;
 using System;
 using System.Drawing;
+using System.Linq;
+using System.Globalization;
 
 namespace linerider
 {
@@ -43,6 +45,35 @@ namespace linerider
                 (int)(color1.G * proportionFrom + color2.G * proportion),
                 (int)(color1.B * proportionFrom + color2.B * proportion)
             );
+        }
+        public static string FrameToTime(int frameid)
+        {
+            string format = @"mm\:ss";
+            string formatlong = @"h\:" + format;
+            TimeSpan currts = TimeSpan.FromSeconds((double)frameid / Constants.PhysicsRate);
+            string time = currts.ToString(currts.Hours > 0 ? formatlong : format);
+            string frame = (frameid % Constants.PhysicsRate).ToString("D2");
+            return time + ":" + frame;
+        }
+        public static int TimeToFrame(string time)
+        {
+            try
+            {
+                bool hasHours = time.Count(f => f == ':') == 3;
+                string format = hasHours ? @"h\:m\:s\:FF" : @"m\:s\:FF";
+                TimeSpan parsed = TimeSpan.ParseExact(time, format, CultureInfo.InvariantCulture);
+                int frames = parsed.Milliseconds / 10;
+                if (frames > Constants.PhysicsRate)
+                    return -1;
+
+                int totalSeconds = (int)Math.Round(parsed.TotalSeconds - (double)parsed.Milliseconds / 1000);
+                int frameid = totalSeconds * Constants.PhysicsRate + frames;
+                return frameid;
+            }
+            catch
+            {
+                return -1;
+            }
         }
         public static Vector2d SnapToDegrees(Vector2d start, Vector2d end)
         {

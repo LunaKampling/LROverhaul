@@ -38,6 +38,11 @@ namespace linerider.UI.Components
         public override event GwenEventHandler<ClickedEventArgs> Clicked;
 
         /// <summary>
+        /// Invoked when the control has been left-clicked.
+        /// </summary>
+        public override event GwenEventHandler<ClickedEventArgs> RightClicked;
+
+        /// <summary>
         /// Playhead bitmap.
         /// </summary>
         public Bitmap Bitmap
@@ -181,6 +186,21 @@ namespace linerider.UI.Components
 
                 if (releasedInsideBounds)
                     Clicked?.Invoke(this, new ClickedEventArgs(x, y, down));
+            }
+        }
+
+        protected override void OnMouseClickedRight(int x, int y, bool down)
+        {
+            base.OnMouseClickedRight(x, y, down);
+
+            // "Clicked" event
+            if (!down)
+            {
+                Point releasePos = CanvasPosToLocal(new Point(x, y));
+                bool releasedInsideBounds = releasePos.X > 0 && releasePos.Y > 0 && releasePos.X <= RenderBounds.Width && releasePos.Y <= RenderBounds.Height;
+
+                if (releasedInsideBounds)
+                    RightClicked?.Invoke(this, new ClickedEventArgs(x, y, down));
             }
         }
 

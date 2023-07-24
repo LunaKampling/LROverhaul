@@ -228,6 +228,7 @@
     <Compile Include="UI\Dialogs\GeneratorWindow.cs" />
     <Compile Include="UI\Dialogs\TriggerWindow.cs" />
     <Compile Include="UI\Dialogs\UserFolderTransferrerWindow.cs" />
+    <Compile Include="UI\Dialogs\TimelineEditorWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UI\Components\TrackLabel.cs" />

@@ -53,6 +53,12 @@ namespace linerider
         public bool IsModalOpen => Children.FirstOrDefault(x => x is Gwen.ControlInternal.Modal) != null;
         private Tooltip _usertooltip;
         public bool Scrubbing => _timelineBar.Scrubbing;
+        public int TrackDuration
+        {
+            get => _timelineBar.Duration;
+            set => _timelineBar.Duration = value;
+        }
+
         public readonly Fonts Fonts;
 
         public GameCanvas(
@@ -343,6 +349,7 @@ namespace linerider
         public void ShowPreferencesDialog() => ShowDialog(new PreferencesWindow(this, game.Track));
         public void ShowTrackPropertiesDialog() => ShowDialog(new TrackInfoWindow(this, game.Track));
         public void ShowTriggerWindow() => ShowDialog(new TriggerWindow(this, game.Track));
+        public void ShowTimelineEditorWindow() => ShowDialog(new TimelineEditorWindow(this, game.Track));
         public void ShowExportVideoWindow()
         {
             if (File.Exists(IO.ffmpeg.FFMPEG.ffmpeg_path))
