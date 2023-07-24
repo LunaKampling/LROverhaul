@@ -108,9 +108,12 @@ namespace linerider
             XmlNode viewBoxNode = rootNode.Attributes.GetNamedItem("viewBox");
             string[] boundings = viewBoxNode.InnerText.Split(' ');
 
+            double.TryParse(boundings[2], System.Globalization.NumberStyles.Any, Program.Culture.NumberFormat, out double rawW);
+            double.TryParse(boundings[3], System.Globalization.NumberStyles.Any, Program.Culture.NumberFormat, out double rawH);
+
             Size size = new Size(
-                (int)Math.Round(double.Parse(boundings[2])),
-                (int)Math.Round(double.Parse(boundings[3]))
+                (int)Math.Round(rawW),
+                (int)Math.Round(rawH)
             );
 
             VectorResource res = new VectorResource()

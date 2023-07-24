@@ -202,8 +202,8 @@ namespace linerider.UI
 
             string hotspotData = hotspotEl.Attributes.GetNamedItem("d").InnerText;
             string[] hotspotCoords = hotspotData.Replace("M", "").Split(',');
-            double rawX = double.Parse(hotspotCoords[0], System.Globalization.NumberStyles.Any);
-            double rawY = double.Parse(hotspotCoords[1], System.Globalization.NumberStyles.Any);
+            double.TryParse(hotspotCoords[0], System.Globalization.NumberStyles.Any, Program.Culture.NumberFormat, out double rawX);
+            double.TryParse(hotspotCoords[1], System.Globalization.NumberStyles.Any, Program.Culture.NumberFormat, out double rawY);
 
             hotspot = new Point()
             {

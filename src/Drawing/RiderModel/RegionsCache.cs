@@ -89,7 +89,7 @@ namespace linerider.Drawing.RiderModel
                     case ParseMode.BodyDeadRegions:
                     {
                         _ = new Rectangle();
-                        Rectangle region = (Rectangle)converter.ConvertFromString(cacheLine);
+                        Rectangle region = (Rectangle)converter.ConvertFrom(null, Program.Culture, cacheLine);
 
                         if (mode == ParseMode.BodyRegions)
                             RegionsBody.Add(region);
