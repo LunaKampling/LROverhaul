@@ -30,12 +30,12 @@ namespace linerider.UI
         {
             _ownerline = line;
             _linecopy = _ownerline.Clone();
-            Title = "Line Properties";
-            Padding = new Padding(0, 0, 0, 0);
+            Title = DefaultTitle;
+            Padding = Padding.Zero;
             AutoSizeToContents = true;
             _proptree = new PropertyTree(this)
             {
-                Width = 220,
+                Width = 250,
                 Height = 250,
                 Dock = Dock.Top
             };
@@ -103,6 +103,7 @@ namespace linerider.UI
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false,
+                Margin = new Margin(0, 5, 0, 0),
             };
             Button cancel = new Button(bottom)
             {

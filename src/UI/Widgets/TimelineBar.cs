@@ -8,7 +8,7 @@ namespace linerider.UI.Widgets
 {
     public class TimelineBar : Panel
     {
-        private const int _lengthMin = Constants.PhysicsRate;
+        private const int _lengthMin = Constants.MinFrames;
         private readonly int _lengthDefault = Constants.PhysicsRate * Settings.DefaultTimelineLength;
         private readonly Editor _editor;
         private readonly GameCanvas _canvas;

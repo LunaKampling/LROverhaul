@@ -14,7 +14,7 @@
         {
             _ = SetBounds(0, 0, 200, 22);
             Dock = Dock.Top;
-            m_Panel.Padding = new Padding(0, 0, 0, 0);
+            m_Panel.Padding = Padding.Zero;
         }
 
         /// <summary>

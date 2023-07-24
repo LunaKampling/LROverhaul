@@ -253,7 +253,7 @@ namespace Gwen.Controls
                 if (m_ScrollOffset != 0)
                 {
                     m_ScrollOffset = 0;
-                    TabStrip.Margin = new Margin(0, 0, 0, 0);
+                    TabStrip.Margin = Margin.Zero;
                     Invalidate();
                 }
                 return;

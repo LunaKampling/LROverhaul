@@ -161,7 +161,7 @@ namespace Gwen.Controls
         private void DismissedHandler(ControlBase control, EventArgs args) => Dismissed?.Invoke(this, Result);
         private void AddLine(string line) => _ = new Label(m_Panel)
         {
-            Margin = new Margin(0, 0, 0, 0),
+            Margin = Margin.Zero,
             Alignment = Pos.Left | Pos.Top,
             Dock = Dock.Top,
             AutoSizeToContents = true,

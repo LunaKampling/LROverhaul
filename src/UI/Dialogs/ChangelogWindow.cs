@@ -123,7 +123,7 @@ namespace linerider.UI
 
             ControlBase buttoncontainer = new ControlBase(bottomcontainer)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
                 Children =

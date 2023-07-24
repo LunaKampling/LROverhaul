@@ -128,7 +128,7 @@ namespace linerider.UI
 
             ControlBase panel = new ControlBase(this)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Fill,
                 AutoSizeToContents = true
             };
@@ -228,7 +228,7 @@ namespace linerider.UI
         {
             CircleGenOptions = new ControlBase(null)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Top,
                 AutoSizeToContents = true
             };
@@ -388,7 +388,7 @@ namespace linerider.UI
         {
             TenPCOptions = new ControlBase(null)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Top,
                 AutoSizeToContents = true
             };
@@ -436,7 +436,7 @@ namespace linerider.UI
         {
             LineGenOptions = new ControlBase(null)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Top,
                 AutoSizeToContents = true
             };
@@ -594,7 +594,7 @@ namespace linerider.UI
         {
             KramualGenOptions = new ControlBase(null)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Top,
                 AutoSizeToContents = true
             };

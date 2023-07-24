@@ -34,7 +34,7 @@ namespace linerider.UI
             };
             ControlBase bottomcontainer = new ControlBase(this)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true
             };
@@ -78,7 +78,7 @@ namespace linerider.UI
             {
                 Save();
             };
-            Padding = new Padding(0, 0, 0, 0);
+            Padding = Padding.Zero;
             AutoSizeToContents = true;
             MakeModal(true);
             Setup();

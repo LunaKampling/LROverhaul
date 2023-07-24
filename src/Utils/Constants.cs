@@ -62,6 +62,7 @@ namespace linerider.Utils
         public const double MinimumZoom = 0.1;
         public const float MaxZoom = 24;
         public const float MaxSuperZoom = 200;
+        public const int MinFrames = PhysicsRate;
         public const int MaxFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
         public const float KnobSize = 0.8f;
         public const float MaxLimitedKnobSize = MaxZoom;

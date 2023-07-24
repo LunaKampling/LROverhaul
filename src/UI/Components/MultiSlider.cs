@@ -178,6 +178,7 @@ namespace linerider.UI.Components
         {
             KeyboardInputEnabled = false;
             AutoSizeToContents = false;
+            MouseInputEnabled = true;
             IsTabable = false;
 
             SetupBackground();

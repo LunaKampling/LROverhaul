@@ -470,7 +470,7 @@ namespace linerider.UI
                 Settings.Save();
             });
             ComboBox scroll = GwenHelper.CreateLabeledCombobox(editorGroup, "Scroll Sensitivity:");
-            scroll.Margin = new Margin(0, 0, 0, 0);
+            scroll.Margin = Margin.Zero;
             scroll.Dock = Dock.Right;
             scroll.AddItem("0.25x").Name = "0.25";
             scroll.AddItem("0.5x").Name = "0.5";
@@ -1080,9 +1080,9 @@ namespace linerider.UI
 
             TextBox autosaveName = new TextBox(savesGroup)
             {
+                Text = Settings.AutosavePrefix,
                 Width = 100,
             };
-            autosaveName.Text = Settings.AutosavePrefix;
             autosaveName.TextChanged += (o, e) =>
             {
                 string name = ((TextBox)o).Text;

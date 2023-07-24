@@ -71,7 +71,7 @@ namespace linerider.UI.Widgets
             _fpslabel = new TrackLabel(this)
             {
                 Dock = Dock.Top,
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Alignment = Pos.Right | Pos.CenterV,
                 TextRequest = (o, currenttext) =>
                 {

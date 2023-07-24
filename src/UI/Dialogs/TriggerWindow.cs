@@ -38,12 +38,12 @@ namespace linerider.UI
         private bool _changemade = false;
         private bool _closing = false;
         private readonly bool _shouldrevertpreview = false;
-        public TriggerWindow(GameCanvas parent, Editor editor)
-        : base(parent, editor)
+
+        public TriggerWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
             Title = "Timeline Triggers";
             Size = new Size(400, 340);
-            Padding = new Padding(0, 0, 0, 0);
+            Padding = Padding.Zero;
             MakeModal(true);
             using (TrackWriter trk = editor.CreateTrackWriter())
             {
@@ -58,8 +58,8 @@ namespace linerider.UI
             DisableResizing();
             _shouldrevertpreview = !Settings.PreviewMode;
             Settings.PreviewMode = true;
-
         }
+
         protected override void CloseButtonPressed(
             ControlBase control,
             EventArgs args)
@@ -144,7 +144,7 @@ namespace linerider.UI
         {
             _zoomoptions = new ControlBase(null)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Fill
             };
             _zoomtarget = new Spinner(null)
@@ -173,7 +173,7 @@ namespace linerider.UI
         {
             _bgoptions = new ControlBase(null)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Fill
             };
 
@@ -200,7 +200,7 @@ namespace linerider.UI
         {
             _lineoptions = new ControlBase(null)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Fill
             };
 
@@ -227,13 +227,13 @@ namespace linerider.UI
         {
             ControlBase rightcontainer = new ControlBase(this)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Right,
                 AutoSizeToContents = true
             };
             ControlBase buttoncontainer = new ControlBase(rightcontainer)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
                 Children =
@@ -316,7 +316,7 @@ namespace linerider.UI
         {
             ControlBase leftcontainer = new ControlBase(this)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Left,
                 AutoSizeToContents = true,
             };
@@ -448,7 +448,7 @@ namespace linerider.UI
             };
             ControlBase spinnerContainer = new ControlBase(leftcontainer)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Padding = new Padding(0, 0, 50, 0),
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true
@@ -584,7 +584,7 @@ namespace linerider.UI
         {
             ControlBase bottomcontainer = new ControlBase(this)
             {
-                Margin = new Margin(0, 0, 0, 0),
+                Margin = Margin.Zero,
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true
             };
