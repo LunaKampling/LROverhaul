@@ -33,12 +33,12 @@ namespace linerider.IO.json
         public string creator { get; set; }
         public string description { get; set; }
         public float startZoom { get; set; }
-        public int bgR { get; set; } = (int)Math.Round(255f * Settings.Colors.ExportBg.R);
-        public int bgG { get; set; } = (int)Math.Round(255f * Settings.Colors.ExportBg.G);
-        public int bgB { get; set; } = (int)Math.Round(255f * Settings.Colors.ExportBg.B);
-        public int lineR { get; set; } = (int)Math.Round(255f * Settings.Colors.ExportLine.R);
-        public int lineG { get; set; } = (int)Math.Round(255f * Settings.Colors.ExportLine.G);
-        public int lineB { get; set; } = (int)Math.Round(255f * Settings.Colors.ExportLine.B);
+        public int bgR { get; set; } = Settings.Colors.ExportBg.R;
+        public int bgG { get; set; } = Settings.Colors.ExportBg.G;
+        public int bgB { get; set; } = Settings.Colors.ExportBg.B;
+        public int lineR { get; set; } = Settings.Colors.ExportLine.R;
+        public int lineG { get; set; } = Settings.Colors.ExportLine.G;
+        public int lineB { get; set; } = Settings.Colors.ExportLine.B;
         public bool zeroStart { get; set; }
         public float yGravity = 1; // Default gravity
         public float xGravity = 0; // Default gravity
