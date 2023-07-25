@@ -8,12 +8,10 @@ namespace linerider.UI.Widgets
 {
     public class TimelineBar : Panel
     {
-        private const int _lengthMin = Constants.MinFrames;
         private readonly int _lengthDefault = Constants.PhysicsRate * Settings.DefaultTimelineLength;
         private readonly Editor _editor;
         private readonly GameCanvas _canvas;
         private MultiSlider _slider;
-        private string _trackName;
         private Playhead _playheadFlag;
         private Playhead _playheadLimiter;
         private TrackLabel _flagTime;
@@ -31,7 +29,6 @@ namespace linerider.UI.Widgets
         {
             _canvas = (GameCanvas)GetCanvas();
             _editor = editor;
-            _trackName = editor.Name;
 
             ShouldDrawBackground = false;
             AutoSizeToContents = true;
@@ -82,7 +79,7 @@ namespace linerider.UI.Widgets
                     _editor.SetFrame(_playheadLimiter.Value, false);
                     _editor.UpdateCamera();
                 }
-                _slider.Max = Math.Max(_lengthMin, _playheadLimiter.Value);
+                _slider.Max = Math.Max(Constants.MinFrames, _playheadLimiter.Value);
                 _editor.Scheduler.Reset();
                 Audio.AudioService.EnsureSync();
             };
@@ -162,14 +159,16 @@ namespace linerider.UI.Widgets
         }
         public override void Think()
         {
-            if (_editor.Name != _trackName)
-            {
-                _trackName = _editor.Name;
-                _slider.Max = _lengthDefault;
-            }
-
             if (_editor.Playing)
                 _slider.Max = Math.Max(_slider.Max, _editor.Offset);
+
+            if (_editor.Offset > _slider.Max)
+            {
+                _editor.SetFrame(_slider.Max, false);
+                _editor.UpdateCamera();
+                _editor.Scheduler.Reset();
+                Audio.AudioService.EnsureSync();
+            }
 
             _slider.Value = _editor.Offset;
 

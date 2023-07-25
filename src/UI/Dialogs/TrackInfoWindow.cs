@@ -17,7 +17,7 @@ namespace linerider.UI
             Setup();
             MakeModal(true);
             DisableResizing();
-            _ = SetSize(350, 400);
+            _ = SetSize(350, 500);
         }
         private void ListSongs(ControlBase parent)
         {
@@ -27,9 +27,9 @@ namespace linerider.UI
             };
             Songs.RowSelected += (o, e) =>
              {
-                 string str = (string)e.SelectedItem.UserData;
+                 string newLocation = (string)e.SelectedItem.UserData;
                  Audio.Song song = _editor.Song;
-                 song.Location = str;
+                 song.Location = newLocation;
                  _editor.Song = song;
              };
             Songs.Dock = Dock.Fill;
@@ -63,9 +63,7 @@ namespace linerider.UI
                     ListBoxRow node = Songs.AddRow(nodename);
                     node.UserData = name;
                     if (name == _editor.Song.Location)
-                    {
                         Songs.SelectRow(node, true);
-                    }
                 }
             }
         }
@@ -74,13 +72,22 @@ namespace linerider.UI
             Panel currentpanel = GwenHelper.CreateHeaderPanel(parent, "Current Song");
             currentpanel.Dock = Dock.Fill;
             ListSongs(currentpanel);
-            Panel opts = GwenHelper.CreateHeaderPanel(parent, "Sync options");
-            Checkbox syncenabled = GwenHelper.AddCheckbox(opts, "Sync Song to Track", _editor.Song.Enabled, (o, e) =>
-               {
-                   Audio.Song song = _editor.Song;
-                   song.Enabled = ((Checkbox)o).IsChecked;
-                   _editor.Song = song;
-               });
+            Panel opts = GwenHelper.CreateHeaderPanel(parent, "Options");
+            Checkbox syncenabled = GwenHelper.AddCheckbox(opts, "(Track) Enable Audio", _editor.Song.Enabled, (o, e) =>
+            {
+                Audio.Song song = _editor.Song;
+                song.Enabled = ((Checkbox)o).IsChecked;
+                _editor.Song = song;
+            });
+            Checkbox limitedduration = GwenHelper.AddCheckbox(opts, "(Global) Lock Timeline", Settings.SyncTrackAndSongDuration && Settings.LockTrackDuration, (o, e) =>
+            {
+                bool enabled = ((Checkbox)o).IsChecked;
+                Settings.SyncTrackAndSongDuration = enabled;
+                Settings.LockTrackDuration = enabled;
+                Settings.Save();
+            });
+            limitedduration.Tooltip = "Lock timeline to song duration.\nAffects \"Sync Song And Track Duration\" and \"Lock Track Duration\" options.";
+
             Spinner offset = new Spinner(null)
             {
                 Min = -2000,
@@ -93,7 +100,7 @@ namespace linerider.UI
                 song.Offset = (float)offset.Value;
                 _editor.Song = song;
             };
-            CreateLabeledControl(opts, "Offset", offset);
+            CreateLabeledControl(opts, "Song Offset", offset);
             Button help = new Button(parent)
             {
                 Dock = Dock.Bottom,
@@ -132,6 +139,7 @@ namespace linerider.UI
                         Audio.Song song = _editor.Song;
                         song.Location = Path.GetFileName(songFilePath);
                         _editor.Song = song;
+                        _editor.UpdateTrackDuration(true);
 
                         _canvas.Loading = false;
                     }

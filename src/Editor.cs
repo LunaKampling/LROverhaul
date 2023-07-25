@@ -768,16 +768,22 @@ namespace linerider
                     Zoom = trk.StartZoom;
                     _loadingTrack = false;
                     if (CurrentTools.CurrentTool.Active)
-                    {
                         CurrentTools.CurrentTool.Stop();
-                    }
                     UndoManager = new UndoManager();
                     ResetTrackChangeCounter();
+                    UpdateTrackDuration();
                 }
             }
             Invalidate();
             GC.Collect(); // This is probably safest place to make the gc work
             MoveStartWarned = false;
+        }
+        public void UpdateTrackDuration(bool justSyncSong = false)
+        {
+            if (Settings.SyncTrackAndSongDuration && _track.Song.Enabled)
+                game.Canvas.TrackDuration = (int)((AudioService.SongDuration + _track.Song.Offset) * Constants.PhysicsRate);
+            else if (!justSyncSong)
+                game.Canvas.TrackDuration = Constants.MinFrames;
         }
         public void QuickSave()
         {

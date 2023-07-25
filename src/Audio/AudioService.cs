@@ -36,6 +36,8 @@ namespace linerider.Audio
 
         private static Dictionary<string, AudioSource> _sfx;
 
+        public static float SongDuration => _musicplayer == null ? 0 : _musicplayer.Duration;
+
         public static void EnsureInitialized()
         {
             if (_device == null)
