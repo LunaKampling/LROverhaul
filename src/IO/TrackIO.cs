@@ -190,7 +190,7 @@ namespace linerider.IO
             if (track.Name == Constants.InternalDefaultTrackName)
                 return false;
             string dir = GetTrackDirectory(track);
-            if (track.Filename != null)
+            if (!string.IsNullOrEmpty(track.Filename))
             {
                 // If we loaded this file from /Tracks and not 
                 // /Tracks/{trackname}/file.trk then it doesnt have a folder
