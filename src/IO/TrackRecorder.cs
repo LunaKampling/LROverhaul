@@ -117,12 +117,11 @@ namespace linerider.IO
                 string date = DateTime.UtcNow.ToString("yyyy-MM-dd hh.mm.ss");
                 string dirPath = Path.Combine(Settings.Local.UserDirPath, Constants.RendersFolderName);
                 string fileName = game.Track.Name == Constants.InternalDefaultTrackName ? $"${Constants.DefaultTrackName} {date}.png" : $"{game.Track.Name} {date}.png";
-                string filePath = dirPath + fileName;
                 bool recmodesave = Settings.Local.RecordingMode;
                 Settings.Local.RecordingMode = true;
                 game.Render();
                 byte[] screenshotframe = GrabScreenshot(game, frontbuffer, true);
-                SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, screenshotframe, filePath);
+                SaveScreenshot(game.RenderSize.Width, game.RenderSize.Height, screenshotframe, Path.Combine(dirPath, fileName));
 
                 SafeFrameBuffer.BindFramebuffer(FramebufferTarget.Framebuffer, 0); // Delete the FBOs
                 SafeFrameBuffer.DeleteFramebuffer(frontbuffer);
