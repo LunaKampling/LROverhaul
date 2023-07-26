@@ -8,7 +8,6 @@ namespace linerider.UI.Widgets
 {
     public class TimelineBar : Panel
     {
-        private readonly int _lengthDefault = Constants.PhysicsRate * Settings.DefaultTimelineLength;
         private readonly Editor _editor;
         private readonly GameCanvas _canvas;
         private MultiSlider _slider;
@@ -51,7 +50,7 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Bottom,
                 Padding = new Padding(4, 11, 4, 0),
-                Max = _lengthDefault,
+                Max = Constants.PhysicsRate * Settings.DefaultTimelineLength,
             };
             _slider.ValueChanged += (o, e) =>
             {

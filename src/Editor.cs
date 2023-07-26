@@ -783,7 +783,7 @@ namespace linerider
             if (Settings.SyncTrackAndSongDuration && _track.Song.Enabled)
                 game.Canvas.TrackDuration = (int)((AudioService.SongDuration + _track.Song.Offset) * Constants.PhysicsRate);
             else if (!justSyncSong)
-                game.Canvas.TrackDuration = Constants.MinFrames;
+                game.Canvas.TrackDuration = Settings.DefaultTimelineLength * Constants.PhysicsRate;
         }
         public void QuickSave()
         {
