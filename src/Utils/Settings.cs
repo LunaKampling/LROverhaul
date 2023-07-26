@@ -216,6 +216,7 @@ namespace linerider
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
             public static bool LockCamera => Local.RecordingMode ? false : Local.LockCamera;
             public static bool IsUserDirPortable => Local.UserDirPath != Program.UserDirectory;
+            public static int DefaultTimelineLength => Settings.DefaultTimelineLength * Constants.PhysicsRate;
         }
 
         static Settings()

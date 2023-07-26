@@ -50,7 +50,7 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Bottom,
                 Padding = new Padding(4, 11, 4, 0),
-                Max = Constants.PhysicsRate * Settings.DefaultTimelineLength,
+                Max = Settings.Computed.DefaultTimelineLength,
             };
             _slider.ValueChanged += (o, e) =>
             {
