@@ -385,12 +385,21 @@ namespace linerider.UI
             lockduration.Tooltip = "Unchecked: timeline auto extends on reaching its end. Flag is required to export videos.";
             lockduration.Tooltip += "\nChecked: stop playback when timeline reaches end. Flag is not required to export videos.";
             lockduration.Tooltip += "\n\nTrack duration can be changed by right clicking the timeline.";
+            lockduration.IsDisabled = Settings.SyncTrackAndSongDuration;
             Checkbox syncduration = GwenHelper.AddCheckbox(otherGroup, "Sync Track And Song Duration", Settings.SyncTrackAndSongDuration, (o, e) =>
             {
-                Settings.SyncTrackAndSongDuration = ((Checkbox)o).IsChecked;
+                bool enabled = ((Checkbox)o).IsChecked;
+
+                // Force enable "LockTrackDuration"
+                lockduration.IsChecked = enabled;
+                lockduration.IsDisabled = enabled;
+
+                Settings.SyncTrackAndSongDuration = enabled;
                 Settings.Save();
+                _editor.UpdateTrackDuration(true);
             });
-            syncduration.Tooltip = "Timeline automatically extends/shrinks to the song duration";
+            syncduration.Tooltip = "Timeline automatically extends/shrinks to the song duration.";
+            syncduration.Tooltip += "\nIf enabled, \"Lock Track Duration\" option will be automatically enabled too.";
             Spinner timelinelength = new Spinner(parent)
             {
                 Min = 1,
