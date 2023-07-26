@@ -85,8 +85,8 @@ namespace linerider
             _timelineBar.IsHidden = rec;
             _zoom.IsHidden = rec || !Settings.UIShowZoom;
             _loadingSprite.IsHidden = rec || !Loading;
-            _speedDecreaseWrapper.IsHidden = !Settings.UIShowSpeedButtons;
-            _speedIncreaseWrapper.IsHidden = !Settings.UIShowSpeedButtons;
+            _speedDecreaseWrapper.IsHidden = rec || !Settings.UIShowSpeedButtons;
+            _speedIncreaseWrapper.IsHidden = rec || !Settings.UIShowSpeedButtons;
 
             Tool selectedtool = CurrentTools.CurrentTool;
             _usertooltip.IsHidden = !(selectedtool.Active && selectedtool.Tooltip != "");
