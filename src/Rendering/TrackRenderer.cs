@@ -83,8 +83,8 @@ namespace linerider.Rendering
             {
                 UpdateBuffers();
                 GL.BlendFunc(
-                    BlendingFactorSrc.SrcAlpha,
-                    BlendingFactorDest.OneMinusSrcAlpha);
+                    BlendingFactor.SrcAlpha,
+                    BlendingFactor.OneMinusSrcAlpha);
                 GameDrawingMatrix.Enter();
                 _physvbo.Scale = options.Zoom;
                 _physvbo.KnobState = options.KnobState;

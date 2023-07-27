@@ -85,12 +85,12 @@ namespace linerider
                 Constants.WindowSize.Width,
                 Constants.WindowSize.Height,
                 new GraphicsMode(new ColorFormat(24), 0, 0, 0, ColorFormat.Empty),
-                   string.Empty,
-                   GameWindowFlags.Default,
-                   DisplayDevice.Default,
-                   2,
-                   0,
-                   GraphicsContextFlags.Default)
+                string.Empty,
+                GameWindowFlags.Default,
+                DisplayDevice.Default,
+                2,
+                0,
+                GraphicsContextFlags.Default)
         {
             SafeFrameBuffer.Initialize();
             Track = new Editor();
@@ -187,7 +187,7 @@ namespace linerider
                 }
 
                 MSAABuffer.Use(RenderSize.Width, RenderSize.Height);
-                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
                 GL.Enable(EnableCap.Blend);
 
