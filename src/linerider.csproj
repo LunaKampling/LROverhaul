@@ -120,11 +120,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>OpenTK.dll.config</Link>
     </None>
-    <None Include="..\lib\gwen-lra\Gwen\bin\net6.0\Gwen.pdb">
+    <None Include="..\lib\gwen-lra\Gwen\bin\net7.0\Gwen.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Gwen.pdb</Link>
     </None>
-    <None Include="..\lib\gwen-lra\Gwen.Renderer.OpenTK\bin\net6.0\Gwen.Renderer.OpenTK.pdb">
+    <None Include="..\lib\gwen-lra\Gwen.Renderer.OpenTK\bin\net7.0\Gwen.Renderer.OpenTK.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Gwen.Renderer.OpenTK.pdb</Link>
     </None>
