@@ -228,7 +228,7 @@ namespace linerider
     {
         public static string Title => GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title);
         public static string Version => "0.0.0.0"; // GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version); // TODO
-        public static string FullVersion => ".NET 6 ALPHA"; // GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
+        public static string FullVersion => ".NET 7 ALPHA"; // GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
         public static string SubVersion => "ALPHA"; //Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().SubVersion; // TODO
         public static List<string> ChangelogLines => new List<string> { "WIP", "", "WIP" }; //Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog; // TODO
 
