@@ -28,8 +28,7 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <PackageOutputPath>$(OutputPath)</PackageOutputPath>
-    <!-- <AssemblyTitle>Line Rider Overhaul</AssemblyTitle> -->
-    <!-- <InformationalVersion>0.0.0.0a</InformationalVersion> -->
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\beep.wav" />
@@ -136,15 +135,6 @@
     <ProjectReference Include="..\lib\gwen-lra\Gwen\Gwen.csproj" />
     <ProjectReference Include="..\lib\gwen-lra\Gwen.Renderer.OpenTK\Gwen.Renderer.OpenTK.csproj" />
   </ItemGroup>
-  <!-- ### Process LRO version and read latest changelog file ### -->
-  <Target Name="Build" Condition="'$(_InvalidConfigurationWarning)' != 'true'" DependsOnTargets="$(BuildDependsOn)" Returns="$(TargetPath)">
-    <!-- Run "CleanUp" even after build fail -->
-    <OnError ExecuteTargets="CleanUp" />
-  </Target>
-  <ItemGroup>
-    <VersionFile Include="..\version" />
-    <AssemblyGeneratedInfoFile Include="$(MSBuildProjectDirectory)\Properties\AssemblyGeneratedInfo.cs" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExCSS" Version="4.2.1" />
     <PackageReference Include="Fizzler" Version="1.3.0" />
@@ -153,13 +143,12 @@
     <PackageReference Include="Svg" Version="3.4.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
+  <!-- ### Process LRO version and read latest changelog file ### -->
   <ItemGroup>
-    <Compile Remove="UI\Components\PlayheadMarker.cs" />
-    <Compile Remove="UI\Widgets\Playhead.cs" />
-    <Compile Remove="UI\Widgets\TimelineWidget.cs" />
-    <Compile Remove="UI\Widgets\ZoomSlider.cs" />
+    <VersionFile Include="..\version" />
+    <AssemblyGeneratedInfoFile Include="$(MSBuildProjectDirectory)\Properties\AssemblyGeneratedInfo.cs" />
   </ItemGroup>
-  <Target Name="BeforeBuild">
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <!-- Read AssemblyInformationalVersion -->
     <PropertyGroup>
       <FilePath>$(MSBuildProjectDirectory)\Properties\AssemblyInfo.cs</FilePath>
@@ -191,7 +180,7 @@
       <Output TaskParameter="OutputFile" ItemName="FileWrites" />
     </WriteCodeFragment>
   </Target>
-  <Target Name="CleanUp" AfterTargets="AfterBuild">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <!-- Cleanup after build -->
     <Delete Files="@(AssemblyGeneratedInfoFile)" />
   </Target>

@@ -227,10 +227,10 @@ namespace linerider
     internal static class AssemblyInfo
     {
         public static string Title => GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title);
-        public static string Version => "0.0.0.0"; // GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version); // TODO
-        public static string FullVersion => ".NET 7 ALPHA"; // GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
-        public static string SubVersion => "ALPHA"; //Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().SubVersion; // TODO
-        public static List<string> ChangelogLines => new List<string> { "WIP", "", "WIP" }; //Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog; // TODO
+        public static string Version => GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version);
+        public static string FullVersion => GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
+        public static string SubVersion => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().SubVersion;
+        public static List<string> ChangelogLines => Assembly.GetExecutingAssembly().GetCustomAttribute<CustomAttributes>().Changelog;
 
         private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {
