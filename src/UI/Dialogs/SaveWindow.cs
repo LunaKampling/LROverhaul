@@ -131,7 +131,7 @@ namespace linerider.UI
                         {
                             filepath = TrackIO.SaveTrackToFile(trk.Track, filename);
                             Settings.LastSelectedTrack = filepath;
-                            Settings.Save();
+                            Settings.ForceSave();
                         }
                         break;
                         case ".sol":
@@ -147,7 +147,7 @@ namespace linerider.UI
                         {
                             filepath = TrackIO.SaveTrackToJsonFile(trk.Track, filename);
                             Settings.LastSelectedTrack = filepath;
-                            Settings.Save();
+                            Settings.ForceSave();
                         }
                         break;
                         default:
