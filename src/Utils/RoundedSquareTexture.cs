@@ -12,8 +12,10 @@ namespace linerider.Utils
         private Bitmap _bitmap;
         private Bordered _bordered;
         private int _size;
-        private int _flatAreaStart => Radius - 1;
-        private int _flatAreaEnd => Radius + 1;
+        private int _width => _stretchHorizontally ? _size + 1 : _size;
+        private int _height => _stretchVertically ? _size + 10 : _size;
+        private bool _stretchVertically { get; set; } = true;
+        private bool _stretchHorizontally { get; set; } = true;
 
         public int Radius
         {
@@ -27,47 +29,51 @@ namespace linerider.Utils
         public Bordered Bordered => _bordered;
         public Bitmap Bitmap => _bitmap;
 
-        public RoundedSquareTexture(int radius)
+        /// <summary>
+        /// <para>Generates a circle-like square with 1px solid area in the middle to use with <see cref="Gwen.Skin.Texturing.Bordered"/>.</para>
+        /// </summary>
+        /// <param name="radius">Corners roundness in pixels</param>
+        /// <param name="stretchVertically">Prevents texture distortion by extending it vertically by one pixel in the middle of the bitmap. Should be false if parent height is fixed.</param>
+        /// <param name="stretchHorizontally">Prevents texture distortion by extending it horizontally by one pixel in the middle of the bitmap. Should be false if parent width is fixed.</param>
+        public RoundedSquareTexture(int radius, bool stretchVertically = true, bool stretchHorizontally = true)
         {
+            _stretchVertically = stretchVertically;
+            _stretchHorizontally = stretchHorizontally;
             Radius = radius;
         }
         private void GenerateTexture()
         {
             _texture?.Dispose();
             _bitmap = GenerateBitmap();
+            int flatAreaStart = Radius - 1;
+            int flatAreaEnd = Radius + 1;
+
+            Margin bounds = new Margin(
+                _stretchHorizontally ? flatAreaStart : _width,
+                _stretchVertically ? flatAreaStart : _height,
+                _stretchHorizontally ? flatAreaEnd : 0,
+                _stretchVertically ? flatAreaEnd : 0
+            );
 
             Texture tx = new Texture(Gwen.Skin.SkinBase.DefaultSkin.Renderer);
-            Margin bounds = new Margin(_flatAreaStart, _flatAreaStart, _flatAreaEnd, _flatAreaEnd);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, _bitmap);
 
             _texture = tx;
-            _bordered = new Bordered(_texture, 0, 0, _size, _size, bounds);
+            _bordered = new Bordered(_texture, 0, 0, _width, _height, bounds);
         }
 
-        /// <summary>
-        ///  Generates a circle-like bitmap with 1px solid area in the middle to use with Bordered
-        /// </summary>
         private Bitmap GenerateBitmap()
         {
+            int radius = _stretchHorizontally || _stretchVertically ? Radius - 1 : Radius;
+
             string svg = string.Join("\n", new string[]
             {
-                $"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {_size} {_size}\">",
-
-                @"<path d=""",
-                $"  M 0 {_flatAreaStart}",
-                $"  Q 0 0 {_flatAreaStart} 0",
-                $"  L {_flatAreaEnd} 0",
-                $"  Q {_size} 0 {_size} {_flatAreaStart}",
-                $"  L {_size} {_flatAreaEnd}",
-                $"  Q {_size} {_size} {_flatAreaEnd} {_size}",
-                $"  L {_flatAreaStart} {_size}",
-                $"  Q 0 {_size} 0 {_flatAreaEnd}",
-                @""" fill=""#FFF""/>",
-
+                $"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {_width} {_height}\">",
+                $"<rect width=\"100%\" height=\"100%\" rx=\"{radius}\" fill=\"#FFF\"/>",
                 "</svg>"
             });
 
-            Bitmap bitmap = SvgDocument.FromSvg<SvgDocument>(svg).Draw(_size, _size);
+            Bitmap bitmap = SvgDocument.FromSvg<SvgDocument>(svg).Draw(_width, _height);
 
             return bitmap;
         }
