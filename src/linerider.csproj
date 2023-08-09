@@ -301,7 +301,6 @@
     <EmbeddedResource Include="Resources\ux\swatch_active.svg" />
     <EmbeddedResource Include="Resources\ux\tool_background.svg" />
     <EmbeddedResource Include="Resources\ux\multitool_indicator.svg" />
-    <EmbeddedResource Include="Resources\ux\slider_background.svg" />
     <EmbeddedResource Include="Resources\ux\playhead_main.svg" />
     <EmbeddedResource Include="Resources\ux\playhead_flag.svg" />
     <EmbeddedResource Include="Resources\ux\playhead_limiter.svg" />
