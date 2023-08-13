@@ -1054,6 +1054,24 @@ namespace linerider
             null,
             repeat: true);
             InputUtils.RegisterHotkey(Hotkey.PlaybackResetCamera, () => true, () => Track.ResetCamera());
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () =>
+            {
+                StopTools();
+                Track.StartFromFlag();
+                Track.ResetSpeedDefault();
+            });
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () =>
+            {
+                StopTools();
+                Track.StartFromFlag();
+                Track.Scheduler.UpdatesPerSecond = Settings.SlowmoSpeed;
+            });
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () =>
+            {
+                StopTools();
+                Track.StartIgnoreFlag();
+                Track.ResetSpeedDefault();
+            });
         }
         private void RegisterPopupHotkeys()
         {

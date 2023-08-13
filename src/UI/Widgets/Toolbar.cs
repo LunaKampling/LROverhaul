@@ -64,18 +64,23 @@ namespace linerider.UI.Widgets
             {
                 Name = "Play",
                 Icon = GameResources.icon_play.Bitmap,
-                Action = (o, e) => TogglePlayback(((WidgetButton)o).Hotkey),
+                Action = (o, e) =>
+                {
+                    _game.StopTools();
+                    _editor.TogglePause();
+                },
                 Hotkey = Hotkey.PlaybackTogglePause,
             };
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () => TogglePlayback(Hotkey.PlaybackStart));
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () => TogglePlayback(Hotkey.PlaybackStartSlowmo));
-            InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () => TogglePlayback(Hotkey.PlaybackStartIgnoreFlag));
 
             _ = new WidgetButton(this)
             {
                 Name = "Stop",
                 Icon = GameResources.icon_stop.Bitmap,
-                Action = (o, e) => TogglePlayback(Hotkey.PlaybackStop),
+                Action = (o, e) =>
+                {
+                    _game.StopTools();
+                    _editor.Stop();
+                },
                 Hotkey = Hotkey.PlaybackStop,
             };
             _ = new WidgetButton(this)
@@ -106,32 +111,6 @@ namespace linerider.UI.Widgets
                     _menu.Show();
                 },
             };
-        }
-        private void TogglePlayback(Hotkey hotkey)
-        {
-            _game.StopTools();
-
-            switch (hotkey)
-            {
-                case Hotkey.PlaybackTogglePause:
-                    _editor.TogglePause();
-                    break;
-                case Hotkey.PlaybackStart:
-                    _editor.StartFromFlag();
-                    _editor.ResetSpeedDefault();
-                    break;
-                case Hotkey.PlaybackStartSlowmo:
-                    _editor.StartFromFlag();
-                    _editor.Scheduler.UpdatesPerSecond = Settings.SlowmoSpeed;
-                    break;
-                case Hotkey.PlaybackStartIgnoreFlag:
-                    _editor.StartIgnoreFlag();
-                    _editor.ResetSpeedDefault();
-                    break;
-                case Hotkey.PlaybackStop:
-                    _editor.Stop();
-                    break;
-            }
         }
         private void MakeMenu()
         {
