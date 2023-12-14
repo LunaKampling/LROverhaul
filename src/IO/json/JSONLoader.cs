@@ -190,7 +190,7 @@ namespace linerider.IO
                         idx += 2; // Skip leftline, rightline
                         if (line.type == 1 && idx < sz)
                         {
-                            line.multiplier = Convert.ToInt32(lineobj[idx++]);
+                            line.multiplier = Convert.ToDouble(lineobj[idx++], Program.Culture);
                         }
                     }
                 }

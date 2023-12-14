@@ -172,7 +172,7 @@ namespace linerider.Tools
             bool snapstart,
             bool snapend,
             LineType type,
-            int multiplier = 1,
+            double multiplier = 1,
             float width = 1f)
         {
             GameLine added;

@@ -23,8 +23,8 @@ namespace linerider.Game
     {
         private Vector2d _acc;
         public const double ConstAcc = 0.1;
-        private int _multiplier = 1;
-        public int Multiplier
+        private double _multiplier = 1;
+        public double Multiplier
         {
             get => _multiplier;
             set
