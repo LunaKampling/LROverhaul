@@ -272,7 +272,7 @@ namespace linerider.Rendering
             Angle angle = Angle.FromLine(line.End, line.Start);
             Angle angle2 = Angle.FromRadians(angle.Radians - 1.5708f);
             Vector2d start = line.Position2;
-            for (int idx = 0; idx < shapecount; idx++)
+            for (int idx = 0; idx < Math.Min(shapecount, 3); idx++)
             {
                 Vector2d a = start;
                 Vector2d b = angle.MovePoint(start, line.inv ? -8 : 8);
