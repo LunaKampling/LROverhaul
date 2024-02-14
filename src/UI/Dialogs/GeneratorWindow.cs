@@ -882,6 +882,12 @@ namespace linerider.UI
             CoPBox.Dock = Dock.Bottom;
 
 
+
+
+
+
+
+
             MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
@@ -892,52 +898,52 @@ namespace linerider.UI
             {
                 SingCoP[1] = SingCoP[1] == true ? SingCoP[1] = false : SingCoP[1] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem SledBR = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem SledTR = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem BodyBu = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem BodySh = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem BodyHL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem BodyHR = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem BodyFL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
-            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            MenuItem BodyFR = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
             SledTL.CheckChanged += (o, e) =>
             {
                 SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
             };
 
-            CoPBox.ItemSelected += (o, e) =>
-            {
-                case SledTL:
-                var i = 0;
-            };
+           // CoPBox.ItemSelected += (o, e) =>
+            //{
+             //   case SledTL:
+             //   var i = 0;
+            //};
 
             GwenHelper.CreateHeaderPanel(HykGenOptions, "SAMPLE");
 

@@ -273,7 +273,6 @@ namespace linerider
                 }
                 firstGameUpdate = false;
             }
-
             // Check if scarf and rider model are actual
             RiderLoader.Validate();
 
