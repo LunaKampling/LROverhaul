@@ -137,7 +137,10 @@ namespace linerider
         {
             if (line.Type == LineType.Scenery)
             {
-                line.ID = Lines.Count > 0 ? LinesMin - 1 : -1;
+                if (line.ID == GameLine.UninitializedID) 
+                {
+                    line.ID = Lines.Count > 0 ? LinesMin - 1 : -1;
+                }
                 if (line.ID < LinesMin)
                 {
                     LinesMin = line.ID;
