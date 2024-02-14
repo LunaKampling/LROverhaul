@@ -32,9 +32,6 @@ namespace linerider.UI
         private Spinner TenPCX;
         private Spinner TenPCY;
         private Spinner TenPCRotation;
-        private ControlBase LeftColumn;
-        private ControlBase RightColumn;
-        private Checkbox[] TenPCPointSelect;
 
         private ControlBase LineGenOptions;
         private SpinnerG17 LineX1;
@@ -62,7 +59,9 @@ namespace linerider.UI
         private ControlBase HykGenOptions;
         private SpinnerG17 HykX;
         private SpinnerG17 HykY;
-        public bool[] SingCoP;
+        private ControlBase LeftColumn;
+        private ControlBase RightColumn;
+        private Checkbox[] PointSelect;
 
         private static CircleGenerator gen_Circle;
         private static TenPCGenerator gen_10pc;
@@ -454,44 +453,6 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(TenPCOptions, "X Speed", TenPCX);
             _ = GwenHelper.CreateLabeledControl(TenPCOptions, "Y Speed", TenPCY);
             _ = GwenHelper.CreateLabeledControl(TenPCOptions, "Rotation Amount", TenPCRotation);
-
-            _ = GwenHelper.CreateLabeledControl(TenPCOptions, "\nContact Point Selection", new ControlBase());
-
-            string[] labels = { "Tail", "Peg", "Nose", "String", "Butt", "Shoulder", "Left Hand", "Right Hand", "Left Foot", "Right Foot" };
-
-            LeftColumn = new ControlBase(TenPCOptions)
-            {
-                Dock = Dock.Left,
-                Margin = Margin.Zero,
-                AutoSizeToContents = true
-            };
-            RightColumn = new ControlBase(TenPCOptions)
-            {
-                Dock = Dock.Left,
-                Margin = new Margin(10, 0, 0, 0),
-                AutoSizeToContents = true
-            };
-            TenPCPointSelect = new Checkbox[10];
-
-            for (int i = 0; i < 5; i++)
-            {
-                int currentI = i;
-                TenPCPointSelect[i] = GwenHelper.AddCheckbox(LeftColumn, labels[i], gen_10pc.selected_points[i], (o, e) =>
-                {
-                    gen_10pc.selected_points[currentI] = ((Checkbox)o).IsChecked;
-                    gen_10pc.ReGenerate_Preview();
-                });
-            }
-
-            for (int i = 5; i < 10; i++)
-            {
-                int currentI = i;
-                TenPCPointSelect[i] = GwenHelper.AddCheckbox(RightColumn, labels[i], gen_10pc.selected_points[i], (o, e) =>
-                {
-                    gen_10pc.selected_points[currentI] = ((Checkbox)o).IsChecked;
-                    gen_10pc.ReGenerate_Preview();
-                });
-            }
         }
 
         private void PopulateLine()
@@ -918,6 +879,44 @@ namespace linerider.UI
                 HykX.Enable();
                 HykY.Disable();
             };
+
+            _ = GwenHelper.CreateLabeledControl(HykGenOptions, "\nContact Point Selection", new ControlBase());
+
+            string[] labels = { "Peg", "Tail", "Nose", "String", "Butt", "Shoulder", "Left Hand", "Right Hand", "Left Foot", "Right Foot" };
+
+            LeftColumn = new ControlBase(HykGenOptions)
+            {
+                Dock = Dock.Left,
+                Margin = Margin.Zero,
+                AutoSizeToContents = true
+            };
+            RightColumn = new ControlBase(HykGenOptions)
+            {
+                Dock = Dock.Left,
+                Margin = new Margin(10, 0, 0, 0),
+                AutoSizeToContents = true
+            };
+            PointSelect = new Checkbox[10];
+
+            for (int i = 0; i < 5; i++)
+            {
+                int i_ = i;
+                PointSelect[i] = GwenHelper.AddCheckbox(LeftColumn, labels[i_], gen_Hyk.selected_points[i_], (o, e) =>
+                {
+                    gen_Hyk.selected_points[i_] = ((Checkbox)o).IsChecked;
+                    gen_Hyk.ReGenerate_Preview();
+                });
+            }
+
+            for (int i = 5; i < 10; i++)
+            {
+                int i_ = i;
+                PointSelect[i] = GwenHelper.AddCheckbox(RightColumn, labels[i_], gen_Hyk.selected_points[i_], (o, e) =>
+                {
+                    gen_Hyk.selected_points[i_] = ((Checkbox)o).IsChecked;
+                    gen_Hyk.ReGenerate_Preview();
+                });
+            }
         }
 
         private void CategorySelected(object sender, ItemSelectedEventArgs e)

@@ -8,7 +8,6 @@ namespace linerider.Game.LineGenerator
     {
         public Vector2d speed;
         public double rotation;
-        public bool[] selected_points;
 
         public TenPCGenerator(string _name, Vector2d _speed, double _rotation)
         {
@@ -16,7 +15,6 @@ namespace linerider.Game.LineGenerator
             lines = new List<GameLine>();
             speed = _speed;
             rotation = _rotation;
-            selected_points = new bool[10];
         }
 
         private void GenerateSingleLine(TrackWriter trk, SimulationPoint PointCur, SimulationPoint PointNext, Vector2d PointTarget, double OffsetMult = 1.0) // Generates the line corresponding to a single contact-point, given its position on iteration 1, the next frame's momentum tick, and the intended final momentum tick

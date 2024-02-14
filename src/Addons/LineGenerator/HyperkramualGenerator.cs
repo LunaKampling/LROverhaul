@@ -12,6 +12,7 @@ namespace linerider.Game.LineGenerator
         public bool vert = false; //Vertical or horizontal?
         public LineType lineType;
         public int frame = 0;
+        public bool[] selected_points;
         // public int iteration = 0;
         // public bool overrideFrame = false;
         // public bool overrideIteration = false;
@@ -26,6 +27,7 @@ namespace linerider.Game.LineGenerator
             name = _name;
             position = _position;
             lines = new List<GameLine>();
+            selected_points = new bool[10];
         }
 
         private void DefineLocation(Rider rider)
