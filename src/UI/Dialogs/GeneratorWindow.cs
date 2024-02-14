@@ -32,6 +32,9 @@ namespace linerider.UI
         private Spinner TenPCX;
         private Spinner TenPCY;
         private Spinner TenPCRotation;
+        private ControlBase LeftColumn;
+        private ControlBase RightColumn;
+        private Checkbox[] TenPCPointSelect;
 
         private ControlBase LineGenOptions;
         private SpinnerG17 LineX1;
@@ -451,6 +454,44 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(TenPCOptions, "X Speed", TenPCX);
             _ = GwenHelper.CreateLabeledControl(TenPCOptions, "Y Speed", TenPCY);
             _ = GwenHelper.CreateLabeledControl(TenPCOptions, "Rotation Amount", TenPCRotation);
+
+            _ = GwenHelper.CreateLabeledControl(TenPCOptions, "\nContact Point Selection", new ControlBase());
+
+            string[] labels = { "Tail", "Peg", "Nose", "String", "Butt", "Shoulder", "Left Hand", "Right Hand", "Left Foot", "Right Foot" };
+
+            LeftColumn = new ControlBase(TenPCOptions)
+            {
+                Dock = Dock.Left,
+                Margin = Margin.Zero,
+                AutoSizeToContents = true
+            };
+            RightColumn = new ControlBase(TenPCOptions)
+            {
+                Dock = Dock.Left,
+                Margin = new Margin(10, 0, 0, 0),
+                AutoSizeToContents = true
+            };
+            TenPCPointSelect = new Checkbox[10];
+
+            for (int i = 0; i < 5; i++)
+            {
+                int currentI = i;
+                TenPCPointSelect[i] = GwenHelper.AddCheckbox(LeftColumn, labels[i], gen_10pc.selected_points[i], (o, e) =>
+                {
+                    gen_10pc.selected_points[currentI] = ((Checkbox)o).IsChecked;
+                    gen_10pc.ReGenerate_Preview();
+                });
+            }
+
+            for (int i = 5; i < 10; i++)
+            {
+                int currentI = i;
+                TenPCPointSelect[i] = GwenHelper.AddCheckbox(RightColumn, labels[i], gen_10pc.selected_points[i], (o, e) =>
+                {
+                    gen_10pc.selected_points[currentI] = ((Checkbox)o).IsChecked;
+                    gen_10pc.ReGenerate_Preview();
+                });
+            }
         }
 
         private void PopulateLine()
