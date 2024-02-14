@@ -5,6 +5,7 @@
         Circle = 0,
         TenPC = 1,
         Line = 2,
-        Kramual = 3
+        Kramual = 3,
+        Hyperkramual = 4
     }
 }

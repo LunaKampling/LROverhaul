@@ -3,6 +3,7 @@ using Gwen.Controls;
 using linerider.Game.LineGenerator;
 using OpenTK;
 using System;
+using static Gwen.Skin.SkinTextures._Tab;
 
 namespace linerider.UI
 {
@@ -54,10 +55,17 @@ namespace linerider.UI
         private Checkbox KramualPositionOverride;
         private Checkbox KramualReverse;
 
+        private ComboBox CoPBox;
+        private ControlBase HykGenOptions;
+        private SpinnerG17 HykX;
+        private SpinnerG17 HykY;
+        public bool[] SingCoP;
+
         private static CircleGenerator gen_Circle;
         private static TenPCGenerator gen_10pc;
         private static LineGenerator gen_Line;
         private static KramualGenerator gen_Kramual;
+        private static HyperkramualGenerator gen_Hyk;
 
         private GeneratorType CurrentGenerator
         {
@@ -92,6 +100,7 @@ namespace linerider.UI
                 gen_10pc = new TenPCGenerator("10PC Generator", new Vector2d(1.0, 1.0), 0.0);
                 gen_Line = new LineGenerator("Line Generator", new Vector2d(0, 0), new Vector2d(1, 1), LineType.Acceleration);
                 gen_Kramual = new KramualGenerator("Kramual Generator", new Vector2d(0, 0), LineType.Standard);
+                gen_Hyk = new HyperkramualGenerator("Hyperkramual Generator", new Vector2d(0, 0));
                 CurrentGenerator = GeneratorType.Circle;
             }
 
@@ -163,9 +172,17 @@ namespace linerider.UI
             Populate10pc();
             PopulateLine();
             PopulateKramual();
+            PopulateHyk();
 
             GeneratorTypeBox = GwenHelper.CreateLabeledCombobox(top, "Generator Type:");
             GeneratorTypeBox.Dock = Dock.Top;
+            MenuItem hyk = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            hyk.CheckChanged += (o, e) =>
+            {
+                GeneratorOptions.Children.Clear();
+                HykGenOptions.Parent = GeneratorOptions;
+                CurrentGenerator = GeneratorType.Hyperkramual;
+            };
             MenuItem kramual = GeneratorTypeBox.AddItem("Kramual", "", GeneratorType.Kramual);
             kramual.CheckChanged += (o, e) =>
             {
@@ -218,6 +235,10 @@ namespace linerider.UI
                 case GeneratorType.Kramual:
                     GeneratorTypeBox.SelectedItem = kramual;
                     KramualGenOptions.Parent = GeneratorOptions;
+                    break;
+                case GeneratorType.Hyperkramual:
+                    GeneratorTypeBox.SelectedItem = hyk;
+                    HykGenOptions.Parent = GeneratorOptions;
                     break;
             }
 
@@ -788,6 +809,140 @@ namespace linerider.UI
                 KramualReverse.Disable();
             }
         }
+        private void PopulateHyk()
+        {
+            HykGenOptions = new ControlBase(null)
+            {
+                Margin = Margin.Zero,
+                Dock = Dock.Top,
+                AutoSizeToContents = true
+            };
+
+            HykX = new SpinnerG17(null) //coordinates for override
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Hyk.position.X,
+                IsDisabled = !gen_Hyk.vert
+            };
+            HykX.ValueChanged += (o, e) =>
+            {
+                gen_Hyk.position.X = HykX.Value;
+                gen_Hyk.ReGenerate_Preview();
+            };
+            HykY = new SpinnerG17(null)
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Hyk.position.Y,
+                IsDisabled = gen_Hyk.vert
+            };
+            HykY.ValueChanged += (o, e) =>
+            {
+                gen_Hyk.position.Y = HykY.Value;
+                gen_Hyk.ReGenerate_Preview();
+            };
+            _ = GwenHelper.CreateLabeledControl(HykGenOptions, "X Singularity Position", HykX);
+            _ = GwenHelper.CreateLabeledControl(HykGenOptions, "Y Singularity Position", HykY);
+
+            RadioButtonGroup axisRadioGroup = new RadioButtonGroup(HykGenOptions) //horizontal or vertical kramual?
+            {
+                Dock = Dock.Top,
+                ShouldDrawBackground = false
+            };
+            RadioButton horizontal = axisRadioGroup.AddOption("Horizontal");
+            RadioButton vertical = axisRadioGroup.AddOption("Vertical");
+            switch (gen_Hyk.vert)
+            {
+                case false:
+                    horizontal.Select();
+                    break;
+                case true:
+                    vertical.Select();
+                    break;
+                default:
+                    break;
+            }
+            horizontal.CheckChanged += (o, e) =>
+            {
+                gen_Hyk.vert = false;
+                gen_Hyk.ReGenerate_Preview();
+                HykY.Enable();
+                HykX.Disable();
+            };
+            vertical.CheckChanged += (o, e) =>
+            {
+                gen_Hyk.vert = true;
+                gen_Hyk.ReGenerate_Preview();
+                HykX.Enable();
+                HykY.Disable();
+            };
+
+            CoPBox = GwenHelper.CreateLabeledCombobox(HykGenOptions, "Contact Points:");
+            CoPBox.Dock = Dock.Bottom;
+
+
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledBL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledBL.CheckChanged += (o, e) =>
+            {
+                SingCoP[1] = SingCoP[1] == true ? SingCoP[1] = false : SingCoP[1] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+            MenuItem SledTL = GeneratorTypeBox.AddItem("Hyperkramual", "", GeneratorType.Hyperkramual);
+            SledTL.CheckChanged += (o, e) =>
+            {
+                SingCoP[0] = SingCoP[0] == true ? SingCoP[0] = false : SingCoP[0] = true;
+            };
+
+            CoPBox.ItemSelected += (o, e) =>
+            {
+                case SledTL:
+                var i = 0;
+            };
+
+            GwenHelper.CreateHeaderPanel(HykGenOptions, "SAMPLE");
+
+        }
+
         private void CategorySelected(object sender, ItemSelectedEventArgs e)
         {
             if (_focus != e.SelectedItem.UserData)
@@ -847,6 +1002,9 @@ namespace linerider.UI
                 case GeneratorType.Kramual:
                     gen_Kramual.ReGenerate_Preview();
                     break;
+                case GeneratorType.Hyperkramual:
+                    gen_Hyk.ReGenerate_Preview();
+                    break;
             }
         }
         private void Render_Final() // Renders the generator's final lines (which are the ones actually added to the track)
@@ -875,6 +1033,11 @@ namespace linerider.UI
                     gen_Kramual.Generate();
                     gen_Kramual.Finalise();
                     break;
+                case GeneratorType.Hyperkramual:
+                    gen_Hyk.DeleteLines();
+                    gen_Hyk.Generate();
+                    gen_Hyk.Finalise();
+                    break;
             }
         }
         private void Render_Clear() // Clears all lines rendered by the current generator
@@ -894,6 +1057,9 @@ namespace linerider.UI
                     break;
                 case GeneratorType.Kramual:
                     gen_Kramual.DeleteLines();
+                    break;
+                case GeneratorType.Hyperkramual:
+                    gen_Hyk.DeleteLines();
                     break;
             }
         }
