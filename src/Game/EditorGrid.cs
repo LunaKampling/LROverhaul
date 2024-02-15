@@ -66,6 +66,7 @@ namespace linerider.Game
 
         private void Unregister(GameLine l, int x, int y)
         {
+            //Console.WriteLine("ID: " + l.ID.ToString() + " x: " + x.ToString() + " y: " + y.ToString());
             int pos = GetCellKey(x, y);
             if (!Cells.TryGetValue(pos, out EditorCell cell))
                 return;

@@ -140,7 +140,7 @@ namespace linerider
                 if (line.ID == GameLine.UninitializedID) 
                 {
                     line.ID = Lines.Count > 0 ? LinesMin - 1 : -1;
-                }
+                } //this bug took 2 years to fix :(
                 if (line.ID < LinesMin)
                 {
                     LinesMin = line.ID;
