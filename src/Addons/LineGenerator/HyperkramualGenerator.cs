@@ -20,6 +20,8 @@ namespace linerider.Game.LineGenerator
         private double lineWidth = 1E-05;
         private bool negative;
 
+        public Vector2d HykPos;
+
         private Vector2d cumulativeMomentum;
 
         public HyperkramualGenerator(string _name, Vector2d _position)
@@ -52,15 +54,35 @@ namespace linerider.Game.LineGenerator
             }
         }
 
-        private void GenerateSingleLine(TrackWriter trk, Vector2d ConPoint, Vector2d MVector)
+        private void GenerateHyperKramLines(TrackWriter trk)
+        {
+            bool horMomentumNeg = cumulativeMomentum.X < 0; //Is the momentum negative?
+            bool verMomentumNeg = cumulativeMomentum.Y < 0;
+
+            double xLeft = vert ? position.X : HykPos.X + (verMomentumNeg ? lineWidth : -lineWidth); //calculates line positions
+            double xRight = vert ? position.X : HykPos.X + (verMomentumNeg ? -lineWidth : lineWidth);
+            double yLeft = vert ? HykPos.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y;
+            double yRight = vert ? HykPos.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y;
+
+            Vector2d lineLeft = new Vector2d(xLeft, yLeft);
+            Vector2d lineRight = new Vector2d(xRight, yRight);
+
+            lines.Add(CreateLine(trk, lineLeft, lineRight, lineType, false));
+
+            double xLeft = vert ? position.X : HykPos.X + (verMomentumNeg ? lineWidth : -lineWidth); //calculates line positions
+            double xRight = vert ? position.X : HykPos.X + (verMomentumNeg ? -lineWidth : lineWidth);
+            double yLeft = vert ? HykPos.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y;
+            double yRight = vert ? HykPos.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y;
+        }
+        private void GenerateSingleLine(TrackWriter trk, Vector2d ConPoint, Vector2d MVector, int i)
         {
             bool horMomentumNeg = MVector.X < 0; //Is the momentum negative for this contact point?
             bool verMomentumNeg = MVector.Y < 0;
             
-            double xLeft = vert ? position.X : ConPoint.X + (verMomentumNeg ? lineWidth : -lineWidth); //calculates line positions
-            double xRight = vert ? position.X : ConPoint.X + (verMomentumNeg ? -lineWidth : lineWidth);
-            double yLeft = vert ? ConPoint.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y; 
-            double yRight = vert ? ConPoint.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y; 
+            double xLeft = vert ? position.X + (selected_points[i] ? negative ? -offset: offset : 0) : ConPoint.X + (verMomentumNeg ? lineWidth : -lineWidth); //calculates line positions
+            double xRight = vert ? position.X + (selected_points[i] ? negative ? -offset: offset : 0) : ConPoint.X + (verMomentumNeg ? -lineWidth : lineWidth);
+            double yLeft = vert ? ConPoint.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y + (selected_points[i] ? negative ? -offset : offset : 0); 
+            double yRight = vert ? ConPoint.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y + (selected_points[i] ? negative ? -offset : offset : 0); 
 
             Vector2d lineLeft = new Vector2d(xLeft, yLeft); 
             Vector2d lineRight = new Vector2d(xRight, yRight); 
@@ -89,7 +111,7 @@ namespace linerider.Game.LineGenerator
         {
             MainWindow game = GameRenderer.Game;
             int fr = game.Track.Offset;
-            int it = game.Track.IterationsOffset;
+            int it = 6;
             Rider rider = game.Track.Timeline.GetFrame(fr, it);
 
             DefineLocation(rider);
@@ -97,6 +119,7 @@ namespace linerider.Game.LineGenerator
             for (int i = 0; i < rider.Body.Length; i++)
             {
                 GenerateSingleLine(trk, rider.Body[i].Location, rider.Body[i].Momentum);
+                GenerateSingleLine(trk, rider.Body[i].Location, rider.Body[i].Momentum, i);
             }
             return;
         }

@@ -55,7 +55,6 @@ namespace linerider.UI
         private Checkbox KramualPositionOverride;
         private Checkbox KramualReverse;
 
-        private ComboBox CoPBox;
         private ControlBase HykGenOptions;
         private SpinnerG17 HykX;
         private SpinnerG17 HykY;
