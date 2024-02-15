@@ -118,7 +118,6 @@ namespace linerider.Game.LineGenerator
 
             for (int i = 0; i < rider.Body.Length; i++)
             {
-                GenerateSingleLine(trk, rider.Body[i].Location, rider.Body[i].Momentum);
                 GenerateSingleLine(trk, rider.Body[i].Location, rider.Body[i].Momentum, i);
             }
             return;
