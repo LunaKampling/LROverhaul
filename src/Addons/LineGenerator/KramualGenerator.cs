@@ -45,24 +45,22 @@ namespace linerider.Game.LineGenerator
 
             for (int i = 1; i < rider.Body.Length; i++) //depending on momentum and axis identifies the outmost contact point
             {
-                position =  negative ? vert ?
-                            rider.Body[i].Location.X > position.X ? new Vector2d(rider.Body[i].Location.X + offset, position.Y) : position :
-                            rider.Body[i].Location.Y > position.Y ? new Vector2d(position.X, rider.Body[i].Location.Y + offset) : position :
-                            vert ?
-                            rider.Body[i].Location.X < position.X ? new Vector2d(rider.Body[i].Location.X - offset, position.Y) : position :
-                            rider.Body[i].Location.Y < position.Y ? new Vector2d(position.X, rider.Body[i].Location.Y - offset) : position;
+                if (negative) position = new Vector2d(Math.Max(rider.Body[i].Location.X, position.X), Math.Max(rider.Body[i].Location.Y, position.Y));
+                else position = new Vector2d(Math.Min(rider.Body[i].Location.X, position.X), Math.Min(rider.Body[i].Location.Y, position.Y));
             }
+            var o = negative ? offset : -offset;
+            position += new Vector2d(o, o);
         }
 
         private void GenerateSingleLine(TrackWriter trk, Vector2d ConPoint, Vector2d MVector)
         {
-            bool horMomentumNeg = MVector.X < 0; //Is the momentum negative for this contact point?
-            bool verMomentumNeg = MVector.Y < 0;
-            
-            double xLeft = vert ? position.X : ConPoint.X + (verMomentumNeg ? lineWidth : -lineWidth); //calculates line positions
-            double xRight = vert ? position.X : ConPoint.X + (verMomentumNeg ? -lineWidth : lineWidth);
-            double yLeft = vert ? ConPoint.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y; 
-            double yRight = vert ? ConPoint.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y; 
+            double xWidth = MVector.X < 0 ? -lineWidth : lineWidth; //Is the momentum negative?
+            double yWidth = MVector.Y < 0 ? lineWidth : -lineWidth;
+
+            double xLeft = vert ? position.X : ConPoint.X + yWidth; //calculates line positions
+            double xRight = vert ? position.X : ConPoint.X - yWidth;
+            double yLeft = vert ? ConPoint.Y + xWidth : position.Y;
+            double yRight = vert ? ConPoint.Y - xWidth : position.Y;
 
             Vector2d lineLeft = new Vector2d(xLeft, yLeft); 
             Vector2d lineRight = new Vector2d(xRight, yRight); 
@@ -72,14 +70,15 @@ namespace linerider.Game.LineGenerator
             
             double distanceToConPoint = vert ? position.X - ConPoint.X : position.Y - ConPoint.Y; //calculates distance between kramual and contact point
 
-            if (distanceToConPoint > 10 | distanceToConPoint < -10) //is this distance more than 1 Gwell?
+            if (Math.Abs(distanceToConPoint) > 10) //is this distance more than 1 Gwell?
             {
-                double extensionOffset = negative ? -distanceToConPoint + 10 - offset : -distanceToConPoint - 10 + offset; //calculates how close the second line can be
+                double exOff = 10 - offset;
+                double extensionOffset = negative ? -distanceToConPoint + exOff : -distanceToConPoint - exOff; //calculates how close the second line can be
 
-                xLeft = vert ? position.X + extensionOffset : ConPoint.X + (verMomentumNeg ? lineWidth : -lineWidth); 
-                xRight = vert ? position.X + extensionOffset : ConPoint.X + (verMomentumNeg ? -lineWidth : lineWidth);
-                yLeft = vert ? ConPoint.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y + extensionOffset;
-                yRight = vert ? ConPoint.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y + extensionOffset;
+                xLeft = vert ? position.X + extensionOffset : ConPoint.X + yWidth; 
+                xRight = vert ? position.X + extensionOffset : ConPoint.X - yWidth;
+                yLeft = vert ? ConPoint.Y + xWidth : position.Y + extensionOffset;
+                yRight = vert ? ConPoint.Y - xWidth : position.Y + extensionOffset;
 
                 lineLeft = new Vector2d(xLeft, yLeft);
                 lineRight = new Vector2d(xRight, yRight);
