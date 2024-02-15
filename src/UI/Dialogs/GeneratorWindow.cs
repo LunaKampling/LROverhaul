@@ -56,8 +56,10 @@ namespace linerider.UI
         private Checkbox KramualReverse;
 
         private ControlBase HykGenOptions;
-        private SpinnerG17 HykX;
-        private SpinnerG17 HykY;
+        private Spinner HykX;
+        private Spinner HykY;
+        private Spinner HykMOffsetX;
+        private Spinner HykMOffsetY;
         private ControlBase LeftColumn;
         private ControlBase RightColumn;
         private Checkbox[] PointSelect;
@@ -819,32 +821,57 @@ namespace linerider.UI
                 AutoSizeToContents = true
             };
 
-            HykX = new SpinnerG17(null) //coordinates for override
+            HykX = new Spinner(null) //coordinates for override
             {
                 Min = -30000000000,
                 Max = 30000000000,
-                Value = gen_Hyk.position.X,
-                IsDisabled = !gen_Hyk.vert
+                Value = gen_Hyk.HykPos.X,
+                IsDisabled = gen_Hyk.vert
             };
             HykX.ValueChanged += (o, e) =>
             {
-                gen_Hyk.position.X = HykX.Value;
+                gen_Hyk.HykPos.X = HykX.Value;
                 gen_Hyk.ReGenerate_Preview();
             };
-            HykY = new SpinnerG17(null)
+            HykY = new Spinner(null)
             {
                 Min = -30000000000,
                 Max = 30000000000,
-                Value = gen_Hyk.position.Y,
-                IsDisabled = gen_Hyk.vert
+                Value = gen_Hyk.HykPos.Y,
+                IsDisabled = !gen_Hyk.vert
             };
             HykY.ValueChanged += (o, e) =>
             {
-                gen_Hyk.position.Y = HykY.Value;
+                gen_Hyk.HykPos.Y = HykY.Value;
                 gen_Hyk.ReGenerate_Preview();
             };
             _ = GwenHelper.CreateLabeledControl(HykGenOptions, "X Singularity Position", HykX);
             _ = GwenHelper.CreateLabeledControl(HykGenOptions, "Y Singularity Position", HykY);
+
+            HykMOffsetX = new Spinner(null) //coordinates for override
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Hyk.MTickOffset.X,
+            };
+            HykMOffsetX.ValueChanged += (o, e) =>
+            {
+                gen_Hyk.MTickOffset.X = HykMOffsetX.Value;
+                gen_Hyk.ReGenerate_Preview();
+            };
+            HykMOffsetY = new Spinner(null)
+            {
+                Min = -30000000000,
+                Max = 30000000000,
+                Value = gen_Hyk.MTickOffset.Y,
+            };
+            HykMOffsetY.ValueChanged += (o, e) =>
+            {
+                gen_Hyk.MTickOffset.Y = HykMOffsetY.Value;
+                gen_Hyk.ReGenerate_Preview();
+            };
+            _ = GwenHelper.CreateLabeledControl(HykGenOptions, "Momentum Tick Offset X", HykMOffsetX);
+            _ = GwenHelper.CreateLabeledControl(HykGenOptions, "Momentum Tick Offset Y", HykMOffsetY);
 
             RadioButtonGroup axisRadioGroup = new RadioButtonGroup(HykGenOptions) //horizontal or vertical kramual?
             {
@@ -868,15 +895,15 @@ namespace linerider.UI
             {
                 gen_Hyk.vert = false;
                 gen_Hyk.ReGenerate_Preview();
-                HykY.Enable();
-                HykX.Disable();
+                HykY.Disable();
+                HykX.Enable();
             };
             vertical.CheckChanged += (o, e) =>
             {
                 gen_Hyk.vert = true;
                 gen_Hyk.ReGenerate_Preview();
-                HykX.Enable();
-                HykY.Disable();
+                HykX.Disable();
+                HykY.Enable();
             };
 
             _ = GwenHelper.CreateLabeledControl(HykGenOptions, "\nContact Point Selection", new ControlBase());
