@@ -60,6 +60,53 @@ namespace linerider.Game.LineGenerator
             position += new Vector2d(3*o, 3*o);
         }
 
+        private void WrongSide(TrackWriter trk, Vector2d ConPoint, Vector2d MVector)
+        {
+            negativeHyk = vert ? cumulativeMomentum.Y < 0 : cumulativeMomentum.X < 0; //is the momentum negative?
+            bool wrongSide;
+
+                if (vert)
+                {
+                    wrongSide = (HykPos.Y > ConPoint.Y && MVector.Y > 0) | (HykPos.Y < ConPoint.Y && MVector.Y < 0); //is the contact point on the wrong side?
+
+                    if (wrongSide)
+                    {
+                        var n = negative ? 1 : -1;
+                        Vector2d m = MVector + new Vector2d(1e-05 * n, 0);
+                        m = negativeHyk ? m.PerpendicularLeft : m.PerpendicularRight;
+                        var diff = Math.Abs(HykPos.Y - ConPoint.Y) + 10 * offset;
+                        m *= diff / Math.Abs(m.Y); //how far do we need to move it?
+
+                        Vector2d lineLeft = ConPoint + m + 10 * offset * m.PerpendicularRight;
+                        Vector2d lineRight = ConPoint + m + 10 * offset * m.PerpendicularLeft;
+
+                        lines.Add(CreateLine(trk, lineLeft, lineRight, lineType, false));
+
+                        position.X = negative ? Math.Max(Math.Max(lineLeft.X, lineRight.X) + offset, position.X) : Math.Min(Math.Min(lineLeft.X, lineRight.X) - offset, position.X); //Did we move the contact point further than the original kramual position?
+                    }
+                }
+                else
+                {
+                    wrongSide = (HykPos.X > ConPoint.X && MVector.X > 0) | (HykPos.X < ConPoint.X && MVector.X < 0); //Is the contact point on the wrong side?
+
+                    if (wrongSide)
+                    {
+                        var n = negativeHyk ? 1 : -1;
+                        Vector2d m = MVector + new Vector2d(1e-05 * n, 0);
+                        m = negativeHyk ? m.PerpendicularLeft : m.PerpendicularRight;
+                        var diff = Math.Abs(HykPos.X - ConPoint.X) + 10 * offset;
+                        m *= diff / m.X; //How far do we need to move it?
+
+                        Vector2d lineLeft = ConPoint + m + 10 * offset * m.PerpendicularRight;
+                        Vector2d lineRight = ConPoint + m + 10 * offset * m.PerpendicularLeft;
+
+                        lines.Add(CreateLine(trk, lineLeft, lineRight, lineType, false));
+
+                        position.Y = negative ? Math.Max(Math.Max(lineLeft.Y, lineRight.Y) + offset, position.Y) : Math.Min(Math.Min(lineLeft.Y, lineRight.Y) - offset, position.Y); //Did we move the contact point further than the original kramual position?
+                    }
+                }
+        }
+
         private void GenerateHyperKramLines(TrackWriter trk, Rider rider)
         {
             double xWidth = cumulativeMomentum.X < 0 ? -lineWidth : lineWidth; //Is the momentum negative?
@@ -75,10 +122,10 @@ namespace linerider.Game.LineGenerator
 
             lines.Add(CreateLine(trk, lineLeft, lineRight, lineType, false));
 
-            xLeft = vert ? position.X + 2*xWidth + yWidth : HykPos.X; //calculates line position for line feeding into hyperkramual
-            xRight = vert ? position.X + 2*xWidth - yWidth : HykPos.X;
-            yLeft = vert ? HykPos.Y : position.Y + xWidth - 2*yWidth;
-            yRight = vert ? HykPos.Y : position.Y - xWidth - 2*yWidth;
+            xLeft = vert ? position.X + 2*xWidth + yWidth - 8 * o : HykPos.X; //calculates line position for line feeding into hyperkramual
+            xRight = vert ? position.X + 2*xWidth - yWidth - 8 * o : HykPos.X;
+            yLeft = vert ? HykPos.Y : position.Y + xWidth - 2*yWidth - 8 * o;
+            yRight = vert ? HykPos.Y : position.Y - xWidth - 2*yWidth - 8 * o;
 
             lineLeft = new Vector2d(xLeft, yLeft);
             lineRight = new Vector2d(xRight, yRight);
@@ -135,19 +182,20 @@ namespace linerider.Game.LineGenerator
                 lines.Add(CreateLine(trk, lineLeft, lineRight, lineType, false));
             }
         }
-        private void GenerateSingleLine(TrackWriter trk, Vector2d ConPoint, Vector2d MVector, int i)
+        private void GenerateSingleLine(TrackWriter trk, Vector2d ConPoint, Vector2d MVector, bool hykPoint)
         {
-            bool hykPoint = selected_points[i];
             double xWidth = MVector.X < 0 ? -lineWidth : lineWidth; //Is the momentum negative?
             double yWidth = MVector.Y < 0 ? lineWidth : -lineWidth;
 
-            double xLeft = vert ? position.X - (hykPoint ? 2 * o : 0) : ConPoint.X + yWidth; //calculates line positions
-            double xRight = vert ? position.X - (hykPoint ? 2 * o : 0) : ConPoint.X - yWidth;
-            double yLeft = vert ? ConPoint.Y + xWidth : position.Y - (hykPoint ? 2 * o : 0);
-            double yRight = vert ? ConPoint.Y - xWidth : position.Y - (hykPoint ? 2 * o : 0);
+            double xLeft = vert ? position.X - (hykPoint ? 10 * o : 0) : ConPoint.X + yWidth; //calculates line positions
+            double xRight = vert ? position.X - (hykPoint ? 10 * o : 0) : ConPoint.X - yWidth;
+            double yLeft = vert ? ConPoint.Y + xWidth : position.Y - (hykPoint ? 10 * o : 0);
+            double yRight = vert ? ConPoint.Y - xWidth : position.Y - (hykPoint ? 10 * o : 0);
 
             Vector2d lineLeft = new Vector2d(xLeft, yLeft); 
-            Vector2d lineRight = new Vector2d(xRight, yRight); 
+            Vector2d lineRight = new Vector2d(xRight, yRight);
+
+            //Console.WriteLine(ConPoint.ToString() + lineLeft.ToString() + lineRight.ToString());
 
             lines.Add(CreateLine(trk, lineLeft, lineRight, lineType, false));
             
@@ -170,6 +218,57 @@ namespace linerider.Game.LineGenerator
             }
         }
 
+        private void Generate10PCSingleLine(TrackWriter trk, SimulationPoint PointCur, SimulationPoint PointNext, Vector2d PointTarget, double OffsetMult = 1.0) // Generates the line corresponding to a single contact-point, given its position on iteration 1, the next frame's momentum tick, and the intended final momentum tick
+        {
+            const double vert_displacement = 1.0e-3; // How far to displace the contact-point along the line
+            const double width = 1.0e-5; // How wide the line is
+
+            bool inverse = false;
+            Vector2d TargetDirection = PointTarget - PointNext.Location; // Normalised direction to move the point
+            double speedRequired = TargetDirection.Length; // The speed required to get the momentum tick point to the correct location
+            TargetDirection /= TargetDirection.Length; // Normalised
+            Vector2d NormalDirection = TargetDirection.PerpendicularLeft; // Line normal (initially assumes not inverted)
+
+            if (Vector2d.Dot(PointCur.Momentum, NormalDirection) <= 0) // If the line's direction is wrong, it needs to be inverted
+            {
+                inverse = true;
+                NormalDirection = TargetDirection.PerpendicularRight;
+            }
+
+            double multiplierRequired = speedRequired / RedLine.ConstAcc; // These will be converted to ints later
+            int multilinesRequired = (int)Math.Ceiling(multiplierRequired / 255.0);
+            multiplierRequired /= multilinesRequired; // This now represents the multiplier per line
+
+            Vector2d lineCentre = PointCur.Location - vert_displacement * OffsetMult * NormalDirection;
+            Vector2d lineLeft = lineCentre - 0.5 * width * TargetDirection;
+            Vector2d lineRight = lineCentre + 0.5 * width * TargetDirection;
+
+            for (int i = 0; i < multilinesRequired; i++)
+            {
+                lines.Add(CreateLine(trk, lineLeft, lineRight, LineType.Acceleration, inverse, (int)multiplierRequired));
+                lineLeft += vert_displacement / 100.0 * NormalDirection;
+                lineRight += vert_displacement / 100.0 * NormalDirection;
+            }
+        }
+
+        private void HykGen(TrackWriter trk, Rider rider, int fr, int it)
+        {
+            DefineLocation(rider);
+            GenerateHyperKramLines(trk, rider);
+
+            for (var i = 0; i < rider.Body.Length; i++)
+            {
+                if (selected_points[i]) WrongSide(trk, rider.Body[i].Location, rider.Body[i].Momentum);
+            }
+
+            game.Track.NotifyTrackChanged();
+            rider = game.Track.Timeline.GetFrame(fr, it); //needs to be updated for kramual line generation to work properly
+
+            for (int i = 0; i < rider.Body.Length; i++)
+            {
+                GenerateSingleLine(trk, rider.Body[i].Location, rider.Body[i].Momentum, selected_points[i]);
+            }
+        }
         public override void Generate_Internal(TrackWriter trk) // Generates the line
         {
             MainWindow game = GameRenderer.Game;
@@ -177,14 +276,35 @@ namespace linerider.Game.LineGenerator
             int it = 6;
             Rider rider = game.Track.Timeline.GetFrame(fr, it);
 
-            DefineLocation(rider);
+            HykGen(trk, rider, fr, it);
 
-            GenerateHyperKramLines(trk, rider);
+            game.Track.NotifyTrackChanged(); //updating game so momentum tick of next frame is properly calculated (we're not doing that by hand, why would we?)
+            Rider curRiderIt1 = game.Track.Timeline.GetFrame(fr, 1);
+            Rider curRiderMTick = game.Track.Timeline.GetFrame(fr, 0);
+            Rider futureRider = game.Track.Timeline.GetFrame(fr + 1, 0); //laying down the inputs for 10pc gen
+
+            foreach (GameLine line in lines)
+            {
+                trk.RemoveLine(line);
+            }
+            lines.Clear(); //removing all the hyperkramual lines because of future 10pc
 
             for (int i = 0; i < rider.Body.Length; i++)
             {
-                GenerateSingleLine(trk, rider.Body[i].Location, rider.Body[i].Momentum, i);
-            }
+                Random rnd = new Random();
+                _ = rnd.NextDouble();
+
+                double offset = 1.0 + rnd.NextDouble();
+                Vector2d target = curRiderMTick.Body[i].Location + MTickOffset;
+
+                Generate10PCSingleLine(trk, curRiderIt1.Body[i], futureRider.Body[i], target, offset);
+            } //autostabilizing 10pc based on momentum tick
+
+            game.Track.NotifyTrackChanged();
+            rider = game.Track.Timeline.GetFrame(fr, it); //updating the game, again, for the hyperkramual
+
+            HykGen(trk, rider, fr, it); 
+
             return;
         }
         public override void Generate_Preview_Internal(TrackWriter trk)
