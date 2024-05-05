@@ -70,6 +70,7 @@ namespace linerider.IO
                     {
                         StandardLine l =
                             new StandardLine(
+                                ret._layers.currentLayer,
                                 new Vector2d(Convert.ToDouble(line[0].data, CultureInfo.InvariantCulture),
                                     Convert.ToDouble(line[1].data, CultureInfo.InvariantCulture)),
                                 new Vector2d(Convert.ToDouble(line[2].data, CultureInfo.InvariantCulture),
@@ -102,6 +103,7 @@ namespace linerider.IO
                     {
                         RedLine l =
                             new RedLine(
+                                ret._layers.currentLayer,
                                 new Vector2d(Convert.ToDouble(line[0].data, CultureInfo.InvariantCulture),
                                     Convert.ToDouble(line[1].data, CultureInfo.InvariantCulture)),
                                 new Vector2d(Convert.ToDouble(line[2].data, CultureInfo.InvariantCulture),
@@ -133,6 +135,7 @@ namespace linerider.IO
                     case 2:
                         lineslist.Add(
                             new SceneryLine(
+                                ret._layers.currentLayer,
                                 new Vector2d(Convert.ToDouble(line[0].data, CultureInfo.InvariantCulture),
                                     Convert.ToDouble(line[1].data, CultureInfo.InvariantCulture)),
                                 new Vector2d(Convert.ToDouble(line[2].data, CultureInfo.InvariantCulture),

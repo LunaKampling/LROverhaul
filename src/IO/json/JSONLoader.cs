@@ -204,6 +204,7 @@ namespace linerider.IO
                 case 0:
                 {
                     StandardLine add = new StandardLine(
+                            track._layers.currentLayer,
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2),
                             Convert.ToBoolean(line.flipped))
@@ -221,6 +222,7 @@ namespace linerider.IO
                 case 1:
                 {
                     RedLine add = new RedLine(
+                            track._layers.currentLayer,
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2),
                             Convert.ToBoolean(line.flipped))
@@ -242,6 +244,7 @@ namespace linerider.IO
                 case 2:
                 {
                     SceneryLine add = new SceneryLine(
+                            track._layers.currentLayer,
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2))
                     {

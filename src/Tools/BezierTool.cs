@@ -206,21 +206,21 @@ namespace linerider.Tools
             Snapped = false;
             base.OnMouseUp(pos);
         }
-        public override void Render()
+        public override void Render(Layer layer)
         {
-            base.Render();
+            base.Render(layer);
             if (Active)
             {
-                GeneratePreview();
+                GeneratePreview(layer);
             }
         }
-        private void GeneratePreview()
+        private void GeneratePreview(Layer layer)
         {
             DeleteLines();
             using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
                 trk.DisableUndo();
-                PlaceLines(trk, true);
+                PlaceLines(trk, true, layer);
             }
             switch (Settings.Bezier.Mode)
             {
@@ -269,13 +269,13 @@ namespace linerider.Tools
             DeleteLines();
             using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
-                PlaceLines(trk, false);
+                PlaceLines(trk, false, trk.Track._layers.currentLayer);
             }
             game.Invalidate();
             controlPoints.Clear();
             workingLines.Clear();
         }
-        private void PlaceLines(TrackWriter trk, bool preview)
+        private void PlaceLines(TrackWriter trk, bool preview, Layer layer)
         {
             if (controlPoints.Count > 1)
             {
@@ -289,7 +289,7 @@ namespace linerider.Tools
                     if ((_end - _start).Length >= MINIMUM_LINE)
                     {
                         GameLine added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
-                            Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
+                            Swatch.Selected, layer, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                         workingLines.Add(added);
                     }
                 }

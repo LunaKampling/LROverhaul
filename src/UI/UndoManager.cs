@@ -44,13 +44,13 @@ namespace linerider
                 // Add line
                 else if (beforeact == null)
                 {
-                    track.AddLine(afteract.Clone());
+                    track.AddLine(afteract.Clone(),afteract.layer);
                 }
                 // Replace line
                 else if (beforeact.Type != afteract.Type)
                 {
                     track.RemoveLine(beforeact);
-                    track.AddLine(afteract);
+                    track.AddLine(afteract,afteract.layer);
                 }
                 // Move action
                 else

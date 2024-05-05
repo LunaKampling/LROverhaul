@@ -331,7 +331,7 @@ namespace linerider.IO
                     switch (lt)
                     {
                         case LineType.Standard:
-                            StandardLine bl = new StandardLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            StandardLine bl = new StandardLine(ret._layers.currentLayer, new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
                             {
                                 ID = ID,
                                 Extension = (StandardLine.Ext)lim
@@ -340,7 +340,7 @@ namespace linerider.IO
                             break;
 
                         case LineType.Acceleration:
-                            RedLine rl = new RedLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            RedLine rl = new RedLine(ret._layers.currentLayer, new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
                             {
                                 ID = ID,
                                 Extension = (StandardLine.Ext)lim
@@ -353,7 +353,7 @@ namespace linerider.IO
                             break;
 
                         case LineType.Scenery:
-                            l = new SceneryLine(new Vector2d(x1, y1), new Vector2d(x2, y2)) { Width = linewidth };
+                            l = new SceneryLine(ret._layers.currentLayer, new Vector2d(x1, y1), new Vector2d(x2, y2)) { Width = linewidth };
 
                             break;
 

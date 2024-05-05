@@ -135,7 +135,7 @@ namespace linerider.Tools
                     {
                         game.Track.UndoManager.BeginAction();
                         GameLine added = CreateLine(trk, _start, _end, _addflip, Snapped, EnableSnap,
-                            Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
+                            Swatch.Selected, trk.Track._layers.currentLayer, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                         game.Track.UndoManager.EndAction();
                         if (added is StandardLine)
                         {
@@ -148,9 +148,9 @@ namespace linerider.Tools
             Snapped = false;
             base.OnMouseUp(pos);
         }
-        public override void Render()
+        public override void Render(Layer layer)
         {
-            base.Render();
+            base.Render(layer);
             if (Active)
             {
                 Vector2d diff = _end - _start;
@@ -170,13 +170,13 @@ namespace linerider.Tools
                     switch (Swatch.Selected)
                     {
                         case LineType.Standard:
-                            StandardLine sl = new StandardLine(_start, _end, _addflip);
+                            StandardLine sl = new StandardLine(layer, _start, _end, _addflip);
                             sl.CalculateConstants();
                             GameRenderer.DrawTrackLine(sl, c, Settings.Editor.RenderGravityWells, true);
                             break;
 
                         case LineType.Acceleration:
-                            RedLine rl = new RedLine(_start, _end, _addflip)
+                            RedLine rl = new RedLine(layer, _start, _end, _addflip)
                             {
                                 Multiplier = Swatch.RedMultiplier
                             };

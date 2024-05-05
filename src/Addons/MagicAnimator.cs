@@ -15,6 +15,7 @@ namespace linerider.Addons
 
         private static void MoveFrameRelative(List<LineSelection> selectedLines, int direction, bool isCompleteAction)
         {
+            Track track = window.Track.GetTrack();
             RiderFrame flag = window.Track.Flag;
             int currentFrame = window.Track.Offset;
             if (flag == null || currentFrame <= flag.FrameID)
@@ -76,22 +77,22 @@ namespace linerider.Addons
                     switch (selection.line.Type)
                     {
                         case LineType.Acceleration:
-                            newLine = new RedLine(nextP1, nextP2, ((RedLine)selectedLine).inv);
+                            newLine = new RedLine(track._layers.currentLayer, nextP1, nextP2, ((RedLine)selectedLine).inv);
                             break;
                         case LineType.Standard:
-                            newLine = new StandardLine(nextP1, nextP2, ((StandardLine)selectedLine).inv);
+                            newLine = new StandardLine(track._layers.currentLayer, nextP1, nextP2, ((StandardLine)selectedLine).inv);
                             break;
                         case LineType.Scenery:
-                            newLine = new SceneryLine(nextP1, nextP2);
+                            newLine = new SceneryLine(track._layers.currentLayer, nextP1, nextP2);
                             break;
                         default:
-                            newLine = new SceneryLine(nextP1, nextP2);
+                            newLine = new SceneryLine(track._layers.currentLayer, nextP1, nextP2);
                             break;
                     }
                 }
                 else
                 {
-                    newLine = new SceneryLine(nextP1, nextP2);
+                    newLine = new SceneryLine(track._layers.currentLayer, nextP1, nextP2);
                 }
                 newLines.Add(newLine);
             }
@@ -99,7 +100,7 @@ namespace linerider.Addons
             SelectSubtool selectTool = CurrentTools.SelectSubtool;
             foreach (GameLine newLine in newLines)
             {
-                trackWriter.AddLine(newLine);
+                trackWriter.AddLine(newLine,track._layers.currentLayer);
             }
             _ = selectTool.SelectLines(newLines);
 

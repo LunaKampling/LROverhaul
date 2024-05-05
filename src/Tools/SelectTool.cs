@@ -294,7 +294,7 @@ namespace linerider.Tools
             base.OnMouseRightDown(pos);
         }
         public override void OnChangingTool() => Stop();
-        public override void Render()
+        public override void Render(Layer layer)
         {
             if (_hoverline != null)
             {
@@ -312,7 +312,7 @@ namespace linerider.Tools
                     _selection.joint2,
                     true);
             }
-            base.Render();
+            base.Render(layer);
         }
         private void DrawHover(GameLine line,
             bool knob1, bool knob2, bool selected = false)

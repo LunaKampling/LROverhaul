@@ -27,6 +27,7 @@ using linerider.Rendering;
 using linerider.Tools;
 using linerider.UI;
 using linerider.Utils;
+using linerider.Game;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -320,6 +321,8 @@ namespace linerider
             {
                 CurrentTools.SmoothPencilTool.UpdateSmooth();
             }
+
+            
         }
 
         // Used to be static
@@ -604,6 +607,15 @@ namespace linerider
                 if (!e.IsRepeat)
                 {
                     InputUtils.KeyDown(e.Key);
+                }
+                if (e.Key == Key.B)
+                {
+                    Layer layer = new Layer();
+                    Random random = new Random();
+                    Track.GetTrack()._layers.currentLayer.SetColor(Color.FromArgb(random.Next(0, 255), random.Next(0, 255), random.Next(0, 255)));
+                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
+                    Track.GetTrack()._layers.AddLayer(layer);
+                    layer.SetColor(Color.FromArgb(255, (int)layer.ID * 4, (int)layer.ID * 2));
                 }
                 InputUtils.UpdateKeysDown(e.Keyboard, e.Modifiers);
                 if (TrackRecorder.Recording)

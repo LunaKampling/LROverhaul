@@ -28,6 +28,7 @@ namespace linerider.Game
         public int ID = UninitializedID;
         public float Width = 1;
         public SelectionState SelectionState = SelectionState.None;
+        public Layer layer = null;
         public abstract Color Color { get; }
         public abstract LineType Type { get; }
         /// <summary>

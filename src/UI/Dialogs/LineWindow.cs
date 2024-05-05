@@ -522,10 +522,10 @@ namespace linerider.UI
                     for (int i = 0; i < diff; i++)
                     {
                         StandardLine newLine = owner is RedLine line
-                            ? new RedLine(owner.Position1, owner.Position2, owner.inv) { Multiplier = line.Multiplier }
-                            : new StandardLine(owner.Position1, owner.Position2, owner.inv);
+                            ? new RedLine(owner.layer, owner.Position1, owner.Position2, owner.inv) { Multiplier = line.Multiplier }
+                            : new StandardLine(owner.layer, owner.Position1, owner.Position2, owner.inv);
                         newLine.CalculateConstants();
-                        trk.AddLine(newLine);
+                        trk.AddLine(newLine,owner.layer);
                     }
                 }
             }

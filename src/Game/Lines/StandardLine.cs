@@ -62,10 +62,12 @@ namespace linerider.Game
         protected StandardLine()
         {
         }
-        public StandardLine(Vector2d p1, Vector2d p2, bool inv = false)
+        public StandardLine(Layer ly, Vector2d p1, Vector2d p2, bool inv = false)
         {
             Position1 = p1;
             Position2 = p2;
+            layer = ly;
+            layer.lines.AddLast(this);
             this.inv = inv;
             CalculateConstants();
             Extension = Ext.None;
@@ -141,6 +143,7 @@ namespace linerider.Game
             }
             return new StandardLine()
             {
+                layer = layer,
                 ID = ID,
                 Difference = Difference,
                 DiffNormal = DiffNormal,
@@ -169,6 +172,7 @@ namespace linerider.Game
             }
             StandardLine newLine = new StandardLine()
             {
+                layer = standardLine.layer,
                 ID = standardLine.ID,
                 Extension = standardLine.Extension,
                 inv = standardLine.inv,

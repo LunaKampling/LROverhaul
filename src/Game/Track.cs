@@ -30,6 +30,7 @@ namespace linerider
     {
         public SimulationGrid Grid = new SimulationGrid();
         public LinkedList<int> Lines = new LinkedList<int>();
+        public LayerContainer<Layer> _layers = new LayerContainer<Layer>();
         private int LinesMin = -1;
         private int LinesMax = 0;
         public Dictionary<int, GameLine> LineLookup = new Dictionary<int, GameLine>();

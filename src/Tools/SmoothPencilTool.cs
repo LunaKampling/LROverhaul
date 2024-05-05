@@ -101,7 +101,7 @@ namespace linerider.Tools
                 {
                     _end = _start + _diff / Settings.SmoothPencil.smoothStabilizer;
                     GameLine added = CreateLine(trk, _start, _end, _addflip, Snapped, false,
-                        Swatch.Selected, Swatch.RedMultiplier, Swatch.GreenMultiplier);
+                        Swatch.Selected, trk.Track._layers.currentLayer, Swatch.RedMultiplier, Swatch.GreenMultiplier);
                     _start = _end;
                     if (added is StandardLine)
                     {
@@ -136,9 +136,9 @@ namespace linerider.Tools
             Active = false;
             base.OnMouseUp(pos);
         }
-        public override void Render()
+        public override void Render(Layer layer)
         {
-            base.Render();
+            base.Render(layer);
             if (_mouseshadow != Vector2d.Zero && !game.Track.Playing)
             {
                 GameRenderer.RenderRoundedLine(_mouseshadow, _mouseshadow, Settings.NightMode ? Color.FromArgb(100, 255, 255, 255) : Color.FromArgb(100, 0, 0, 0), SharedSwatches.DrawingToolsSwatch.Selected == LineType.Scenery ? 2f * Swatch.GreenMultiplier : 2f, false, false);

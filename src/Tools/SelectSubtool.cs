@@ -18,6 +18,7 @@ namespace linerider.Tools
     // Ideally, the node/square shuold be rotated
     public class SelectSubtool : Tool
     {
+        private Layer selectLayer = new Layer();
         public override Swatch Swatch => SharedSwatches.EraserAndSelectToolSwatch;
         public override bool ShowSwatch => true;
         public SelectSubtool() : base()
@@ -353,7 +354,7 @@ namespace linerider.Tools
                 corner.Height * game.Track.Zoom));
             GameRenderer.RenderRoundedRectangle(rect, Color.CornflowerBlue, 2, false);
         }
-        public override void Render()
+        public override void Render(Layer layer)
         {
             if (Active)
             {
@@ -378,7 +379,7 @@ namespace linerider.Tools
                     GameRenderer.DrawKnob(_hoverline.Position2, _snapknob2, false, _hoverline.Width, _snapknob2 && !_snapknob1 ? 1 : 0);
                 }
             }
-            base.Render();
+            base.Render(layer);
         }
         public bool CancelDrawBox()
         {
@@ -456,10 +457,11 @@ namespace linerider.Tools
                     add.ID = GameLine.UninitializedID;
                     add.Position1 += diff;
                     add.Position2 += diff;
+                    add.layer = trk.Track._layers.currentLayer;
                     if (add is StandardLine stl)
                         stl.CalculateConstants();
                     add.SelectionState = SelectionState.Selected;
-                    trk.AddLine(add);
+                    trk.AddLine(add, trk.Track._layers.currentLayer); //Adds lines on the current layer. .com does it the same way.
                     LineSelection selectinfo = new LineSelection(add, true, null);
                     _selection.Add(selectinfo);
                     _ = _selectedlines.Add(add.ID);
@@ -498,74 +500,74 @@ namespace linerider.Tools
         public void PasteValues()
         {
             string lineArray = Clipboard.GetText();
-            List<GameLine> lineList = ParseJson(lineArray);
+            List<GameLine> lineList = null; //ParseJson(lineArray);
 
             if (lineList is null)
                 return;
 
             PasteFromBuffer(lineList);
         }
-        private List<GameLine> ParseJson(string lineArray)
-        {
-            try
-            {
-                JArray parsedLineArray = JArray.Parse(lineArray);
+        //private List<GameLine> ParseJson(string lineArray)
+        //{
+        //    try
+        //    {
+        //        JArray parsedLineArray = JArray.Parse(lineArray);
 
-                List<GameLine> deserializedLines = new List<GameLine>();
+        //        List<GameLine> deserializedLines = new List<GameLine>();
 
-                foreach (JToken line in parsedLineArray)
-                {
-                    JObject inner = line.Value<JObject>();
+        //        foreach (JToken line in parsedLineArray)
+        //        {
+        //            JObject inner = line.Value<JObject>();
 
-                    GameLine newLine = null;
+        //            GameLine newLine = null;
 
-                    Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
-                    Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
-                    bool flipped = inner.ContainsKey("flipped") && (bool)inner["flipped"];
-                    bool left = inner.ContainsKey("leftExtended") && (bool)inner["leftExtended"];
-                    bool right = inner.ContainsKey("rightExtended") && (bool)inner["rightExtended"];
-                    StandardLine.Ext extension =
-                        left && right ? StandardLine.Ext.Both :
-                        left ? StandardLine.Ext.Left :
-                        right ? StandardLine.Ext.Right :
-                        StandardLine.Ext.None;
-                    switch ((int)inner["type"])
-                    {
-                        case 0:
-                        {
-                            newLine = new StandardLine(pos1, pos2, flipped)
-                            { Extension = extension };
-                            break;
-                        }
-                        case 1:
-                        {
-                            int multiplier = inner.ContainsKey("multiplier") ? (int)inner["multiplier"] : 1;
-                            newLine = new RedLine(pos1, pos2)
-                            { Multiplier = multiplier };
-                            break;
-                        }
-                        case 2:
-                        {
-                            float width = inner.ContainsKey("width") ? (float)inner["width"] : 1f;
-                            newLine = new SceneryLine(pos1, pos2)
-                            { Width = width };
-                            break;
-                        }
-                        default:
-                            throw new Exception("Unknown line type");
-                    }
+        //            Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
+        //            Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
+        //            bool flipped = inner.ContainsKey("flipped") && (bool)inner["flipped"];
+        //            bool left = inner.ContainsKey("leftExtended") && (bool)inner["leftExtended"];
+        //            bool right = inner.ContainsKey("rightExtended") && (bool)inner["rightExtended"];
+        //            StandardLine.Ext extension =
+        //                left && right ? StandardLine.Ext.Both :
+        //                left ? StandardLine.Ext.Left :
+        //                right ? StandardLine.Ext.Right :
+        //                StandardLine.Ext.None;
+        //            switch ((int)inner["type"])
+        //            {
+        //                case 0:
+        //                {
+        //                    newLine = new StandardLine(pos1, pos2, flipped)
+        //                    { Extension = extension };
+        //                    break;
+        //                }
+        //                case 1:
+        //                {
+        //                    int multiplier = inner.ContainsKey("multiplier") ? (int)inner["multiplier"] : 1;
+        //                    newLine = new RedLine(pos1, pos2)
+        //                    { Multiplier = multiplier };
+        //                    break;
+        //                }
+        //                case 2:
+        //                {
+        //                    float width = inner.ContainsKey("width") ? (float)inner["width"] : 1f;
+        //                    newLine = new SceneryLine(pos1, pos2)
+        //                    { Width = width };
+        //                    break;
+        //                }
+        //                default:
+        //                    throw new Exception("Unknown line type");
+        //            }
 
-                    deserializedLines.Add(newLine);
-                }
+        //            deserializedLines.Add(newLine);
+        //        }
 
-                return deserializedLines;
-            }
-            catch
-            {
-                game.Track.Notify("Failed to Paste");
-                return null;
-            }
-        }
+        //        return deserializedLines;
+        //    }
+        //    catch
+        //    {
+        //        game.Track.Notify("Failed to Paste");
+        //        return null;
+        //    }
+        //}
         public void SwitchLineType(LineType type)
         {
             if (!Active || _drawingbox || _selection.Count == 0)
@@ -583,7 +585,7 @@ namespace linerider.Tools
                     line.SelectionState = SelectionState.None;
                     trk.RemoveLine(line);
 
-                    buffer.Add(CreateLine(trk, line.Start, line.End, false, false, false, type));
+                    buffer.Add(CreateLine(trk, line.Start, line.End, false, false, false, type, line.layer));
                 }
 
                 _selection.Clear();
@@ -970,7 +972,8 @@ namespace linerider.Tools
                 game.Track.RedrawLine(line);
             }
             _selectionbox = GetBoxFromSelected(_selection);
-            Render();
+
+            Render(selectLayer);
 
             return _selection;
         }

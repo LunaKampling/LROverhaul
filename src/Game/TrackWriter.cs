@@ -91,12 +91,14 @@ namespace linerider
         /// Updates extensions
         /// Notifies the undo/buffer managers
         /// </summary>
-        public void AddLine(GameLine line)
+        public void AddLine(GameLine line, Layer layer)
         {
             if (line is StandardLine)
                 SaveCells(line.Position1, line.Position2);
 
             Track.AddLine(line);
+            layer.lines.AddLast(line);
+
             _editorcells.AddLine(line);
             _renderer.AddLine(line);
             RegisterUndoAction(null, line);
@@ -307,5 +309,9 @@ namespace linerider
         /// <param name="linestart">line.Position</param>
         /// <param name="lineend">line.Position2</param>
         private void SaveCells(Vector2d linestart, Vector2d lineend) => _timeline.SaveCells(linestart, lineend);
+
+        public void AddLayer()
+        {
+        }
     }
 }

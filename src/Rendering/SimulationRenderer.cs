@@ -97,7 +97,9 @@ namespace linerider.Rendering
             }
             _riderrenderer.Scale = options.Zoom;
             _riderrenderer.Draw();
-            CurrentTools.CurrentTool.Render();
+            Layer layerclone = new Layer();
+            layerclone.CloneLayer(track._layers.currentLayer);
+            CurrentTools.CurrentTool.Render(layerclone);
             _riderrenderer.DrawLines();
             _riderrenderer.Clear();
         }

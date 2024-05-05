@@ -38,7 +38,7 @@ namespace linerider.Game
         protected RedLine() : base()
         {
         }
-        public RedLine(Vector2d p1, Vector2d p2, bool inv = false) : base(p1, p2, inv) { }
+        public RedLine(Layer ly, Vector2d p1, Vector2d p2, bool inv = false) : base(ly, p1, p2, inv) { }
         public override string ToString() => "{" +
                 "\"type\":1," +
                 $"\"x1\":{Position1.X}," +
@@ -79,6 +79,7 @@ namespace linerider.Game
             }
             return new RedLine()
             {
+                layer = layer,
                 ID = ID,
                 Difference = Difference,
                 DiffNormal = DiffNormal,
@@ -108,6 +109,7 @@ namespace linerider.Game
             }
             RedLine newLine = new RedLine()
             {
+                layer = standardLine.layer,
                 ID = standardLine.ID,
                 Extension = standardLine.Extension,
                 inv = standardLine.inv,

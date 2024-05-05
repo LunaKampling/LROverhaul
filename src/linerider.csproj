@@ -41,6 +41,8 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Game\Lines\Layer.cs" />
+    <Compile Include="Game\Physics\LayerContainer.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="GameCanvas.cs" />
     <Compile Include="Editor.cs" />

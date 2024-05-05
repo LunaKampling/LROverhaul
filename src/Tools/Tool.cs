@@ -86,7 +86,7 @@ namespace linerider.Tools
 
         public virtual bool OnKeyUp(OpenTK.Input.Key k) => false;
 
-        public virtual void Render()
+        public virtual void Render(Layer layer)
         {
         }
 
@@ -172,6 +172,7 @@ namespace linerider.Tools
             bool snapstart,
             bool snapend,
             LineType type,
+            Layer layer,
             double multiplier = 1,
             float width = 1f)
         {
@@ -179,28 +180,28 @@ namespace linerider.Tools
             switch (type)
             {
                 case LineType.Standard:
-                    added = new StandardLine(start, end, inv);
+                    added = new StandardLine(layer, start, end, inv);
                     break;
 
                 case LineType.Acceleration:
-                    RedLine red = new RedLine(start, end, inv)
+                    RedLine red = new RedLine(layer, start, end, inv)
                     { Multiplier = multiplier };
                     red.CalculateConstants(); // Multiplier needs to be recalculated
                     added = red;
                     break;
 
                 case LineType.Scenery:
-                    added = new SceneryLine(start, end)
+                    added = new SceneryLine(layer, start, end)
                     { Width = width };
                     break;
 
                 default: // In case no swatch is chosen select blue and make a blue line
-                    added = new StandardLine(start, end, inv);
+                    added = new StandardLine(layer, start, end, inv);
                     Swatch.Selected = LineType.Standard;
                     type = LineType.Standard;
                     break;
             }
-            trk.AddLine(added);
+            trk.AddLine(added, trk.Track._layers.currentLayer); //Adds line on current layer
             if (type != LineType.Scenery)
             {
                 if (snapstart)

@@ -76,22 +76,22 @@ namespace linerider.Game.LineGenerator
             switch (type)
             {
                 case LineType.Standard:
-                    added = new StandardLine(start, end, inv);
+                    added = new StandardLine(trk.Track._layers.currentLayer, start, end, inv);
                     break;
 
                 case LineType.Acceleration:
-                    RedLine red = new RedLine(start, end, inv)
+                    RedLine red = new RedLine(trk.Track._layers.currentLayer, start, end, inv)
                     { Multiplier = multiplier };
                     red.CalculateConstants(); // Multiplier needs to be recalculated
                     added = red;
                     break;
 
                 case LineType.Scenery:
-                    added = new SceneryLine(start, end)
+                    added = new SceneryLine(trk.Track._layers.currentLayer, start, end)
                     { Width = width };
                     break;
             }
-            trk.AddLine(added);
+            trk.AddLine(added,trk.Track._layers.currentLayer);
             game.Track.Invalidate();
             return added;
         }

@@ -27,8 +27,10 @@ namespace linerider.Game
         protected SceneryLine()
         {
         }
-        public SceneryLine(Vector2d p1, Vector2d p2)
+        public SceneryLine(Layer ly, Vector2d p1, Vector2d p2)
         {
+            layer = ly;
+            layer.lines.AddLast(this);
             Position1 = p1;
             Position2 = p2;
         }
@@ -40,8 +42,9 @@ namespace linerider.Game
                 $"\"y2\":{Position2.Y}," +
                 $"\"width\":{Width}" +
                 "}";
-        public override GameLine Clone() => new SceneryLine(Position1, Position2)
+        public override GameLine Clone() => new SceneryLine(layer, Position1, Position2)
         {
+            layer = layer,
             ID = ID,
             Width = Width
         };

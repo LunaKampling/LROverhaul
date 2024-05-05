@@ -53,6 +53,8 @@ namespace linerider.Rendering
         /// </remarks>
         private Dictionary<int, int> _scenerylines;
 
+        private static LayerContainer<Layer> _layers;
+
         /// <summary>
         /// We use an action queue system instead of instantly adding to the renderer
         /// for the sake of multithreading safety
@@ -137,6 +139,7 @@ namespace linerider.Rendering
                 _lineactions.Clear();
                 _physvbo.Clear();
                 _sceneryvbo.Clear();
+                _layers = track._layers;
                 _decorator.Clear();
                 _physlines.Clear();
                 _scenerylines.Clear();
@@ -283,8 +286,7 @@ namespace linerider.Rendering
                             }
                             else
                             {
-                                bool hit = Settings.Editor.HitTest
-&& game.Track.Timeline.IsLineHit(line.ID);
+                                bool hit = Settings.Editor.HitTest && game.Track.Timeline.IsLineHit(line.ID);
                                 LineChanged(
                                     line,
                                     _physvbo,
@@ -303,6 +305,10 @@ namespace linerider.Rendering
             LineRenderer renderer,
             Dictionary<int, int> lookup)
         {
+            if (line.layer == null)
+            {
+                line.layer = _layers.currentLayer;
+            }
             if (lookup.ContainsKey(line.ID))
             {
                 LineChanged(line, renderer, lookup, false);
@@ -332,19 +338,20 @@ namespace linerider.Rendering
         }
         private static LineVertex[] GenerateLine(GameLine line, bool hit)
         {
-            int color = 0;
+            Layer layer = line.layer;
+            int color = Utility.ColorToRGBA_LE(layer.GetColor());
             if (line is StandardLine stl)
             {
                 if (hit)
                 {
                     color = Utility.ColorToRGBA_LE(line.Color);
                 }
-                else if (stl.Trigger != null)
-                {
-                    int trigger = Utility.ColorToRGBA_LE(
-                        Constants.TriggerLineColor);
-                    color = Utility.ChangeAlpha(trigger, 254);
-                }
+                //else if (stl.Trigger != null)
+                //{
+                //    int trigger = Utility.ColorToRGBA_LE(
+                //        Constants.TriggerLineColor);
+                //    color = Utility.ChangeAlpha(trigger, 254);
+                //}
             }
             LineVertex[] lineverts = LineRenderer.CreateTrackLine(
                 line.Position1,
