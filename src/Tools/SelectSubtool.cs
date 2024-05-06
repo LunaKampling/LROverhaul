@@ -497,77 +497,77 @@ namespace linerider.Tools
 
             game.Track.Notify("Copied!");
         }
-        public void PasteValues()
+        public void PasteValues(Layer layer)
         {
             string lineArray = Clipboard.GetText();
-            List<GameLine> lineList = null; //ParseJson(lineArray);
+            List<GameLine> lineList = ParseJson(lineArray, layer);
 
             if (lineList is null)
                 return;
 
             PasteFromBuffer(lineList);
         }
-        //private List<GameLine> ParseJson(string lineArray)
-        //{
-        //    try
-        //    {
-        //        JArray parsedLineArray = JArray.Parse(lineArray);
+        private List<GameLine> ParseJson(string lineArray, Layer layer)
+        {
+            try
+            {
+                JArray parsedLineArray = JArray.Parse(lineArray);
 
-        //        List<GameLine> deserializedLines = new List<GameLine>();
+                List<GameLine> deserializedLines = new List<GameLine>();
 
-        //        foreach (JToken line in parsedLineArray)
-        //        {
-        //            JObject inner = line.Value<JObject>();
+                foreach (JToken line in parsedLineArray)
+                {
+                    JObject inner = line.Value<JObject>();
 
-        //            GameLine newLine = null;
+                    GameLine newLine = null;
 
-        //            Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
-        //            Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
-        //            bool flipped = inner.ContainsKey("flipped") && (bool)inner["flipped"];
-        //            bool left = inner.ContainsKey("leftExtended") && (bool)inner["leftExtended"];
-        //            bool right = inner.ContainsKey("rightExtended") && (bool)inner["rightExtended"];
-        //            StandardLine.Ext extension =
-        //                left && right ? StandardLine.Ext.Both :
-        //                left ? StandardLine.Ext.Left :
-        //                right ? StandardLine.Ext.Right :
-        //                StandardLine.Ext.None;
-        //            switch ((int)inner["type"])
-        //            {
-        //                case 0:
-        //                {
-        //                    newLine = new StandardLine(pos1, pos2, flipped)
-        //                    { Extension = extension };
-        //                    break;
-        //                }
-        //                case 1:
-        //                {
-        //                    int multiplier = inner.ContainsKey("multiplier") ? (int)inner["multiplier"] : 1;
-        //                    newLine = new RedLine(pos1, pos2)
-        //                    { Multiplier = multiplier };
-        //                    break;
-        //                }
-        //                case 2:
-        //                {
-        //                    float width = inner.ContainsKey("width") ? (float)inner["width"] : 1f;
-        //                    newLine = new SceneryLine(pos1, pos2)
-        //                    { Width = width };
-        //                    break;
-        //                }
-        //                default:
-        //                    throw new Exception("Unknown line type");
-        //            }
+                    Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
+                    Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
+                    bool flipped = inner.ContainsKey("flipped") && (bool)inner["flipped"];
+                    bool left = inner.ContainsKey("leftExtended") && (bool)inner["leftExtended"];
+                    bool right = inner.ContainsKey("rightExtended") && (bool)inner["rightExtended"];
+                    StandardLine.Ext extension =
+                        left && right ? StandardLine.Ext.Both :
+                        left ? StandardLine.Ext.Left :
+                        right ? StandardLine.Ext.Right :
+                        StandardLine.Ext.None;
+                    switch ((int)inner["type"])
+                    {
+                        case 0:
+                        {
+                            newLine = new StandardLine(layer, pos1, pos2, flipped)
+                            { Extension = extension };
+                            break;
+                        }
+                        case 1:
+                        {
+                            int multiplier = inner.ContainsKey("multiplier") ? (int)inner["multiplier"] : 1;
+                            newLine = new RedLine(layer, pos1, pos2)
+                            { Multiplier = multiplier };
+                            break;
+                        }
+                        case 2:
+                        {
+                            float width = inner.ContainsKey("width") ? (float)inner["width"] : 1f;
+                            newLine = new SceneryLine(layer, pos1, pos2)
+                            { Width = width };
+                            break;
+                        }
+                        default:
+                            throw new Exception("Unknown line type");
+                    }
 
-        //            deserializedLines.Add(newLine);
-        //        }
+                    deserializedLines.Add(newLine);
+                }
 
-        //        return deserializedLines;
-        //    }
-        //    catch
-        //    {
-        //        game.Track.Notify("Failed to Paste");
-        //        return null;
-        //    }
-        //}
+                return deserializedLines;
+            }
+            catch
+            {
+                game.Track.Notify("Failed to Paste");
+                return null;
+            }
+        }
         public void SwitchLineType(LineType type)
         {
             if (!Active || _drawingbox || _selection.Count == 0)

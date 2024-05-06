@@ -1310,7 +1310,7 @@ namespace linerider
             (CurrentTools.CurrentTool == CurrentTools.SelectSubtool ||
             CurrentTools.CurrentTool == CurrentTools.SelectTool), () =>
             {
-                CurrentTools.SelectSubtool.PasteValues();
+                CurrentTools.SelectSubtool.PasteValues(Track.GetTrack()._layers.currentLayer);
                 Invalidate();
             },
             null,

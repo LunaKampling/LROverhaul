@@ -96,8 +96,7 @@ namespace linerider
             if (line is StandardLine)
                 SaveCells(line.Position1, line.Position2);
 
-            Track.AddLine(line);
-            layer.lines.AddLast(line);
+            Track.AddLine(line, layer);
 
             _editorcells.AddLine(line);
             _renderer.AddLine(line);
@@ -200,6 +199,7 @@ namespace linerider
             }
             RegisterUndoAction(line, null);
             Track.RemoveLine(line);
+            line.layer.lines.Remove(line.ID);
             _editorcells.RemoveLine(line);
             _renderer.RemoveLine(line);
         }

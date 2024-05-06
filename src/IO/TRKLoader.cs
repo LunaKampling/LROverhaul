@@ -263,6 +263,7 @@ namespace linerider.IO
                 }
                 ret.StartOffset = new Vector2d(br.ReadDouble(), br.ReadDouble());
                 int lines = br.ReadInt32();
+                Layer layer = ret._layers.currentLayer;
                 List<LineTrigger> linetriggers = new List<LineTrigger>();
                 for (int i = 0; i < lines; i++)
                 {
@@ -331,7 +332,7 @@ namespace linerider.IO
                     switch (lt)
                     {
                         case LineType.Standard:
-                            StandardLine bl = new StandardLine(ret._layers.currentLayer, new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            StandardLine bl = new StandardLine(layer, new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
                             {
                                 ID = ID,
                                 Extension = (StandardLine.Ext)lim
@@ -340,7 +341,7 @@ namespace linerider.IO
                             break;
 
                         case LineType.Acceleration:
-                            RedLine rl = new RedLine(ret._layers.currentLayer, new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            RedLine rl = new RedLine(layer, new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
                             {
                                 ID = ID,
                                 Extension = (StandardLine.Ext)lim
@@ -353,7 +354,7 @@ namespace linerider.IO
                             break;
 
                         case LineType.Scenery:
-                            l = new SceneryLine(ret._layers.currentLayer, new Vector2d(x1, y1), new Vector2d(x2, y2)) { Width = linewidth };
+                            l = new SceneryLine(layer, new Vector2d(x1, y1), new Vector2d(x2, y2)) { Width = linewidth };
 
                             break;
 
@@ -365,12 +366,12 @@ namespace linerider.IO
                         if (!addedlines.ContainsKey(l.ID))
                         {
                             addedlines[ID] = line;
-                            ret.AddLine(l);
+                            ret.AddLine(l, layer);
                         }
                     }
                     else
                     {
-                        ret.AddLine(l);
+                        ret.AddLine(l, layer);
                     }
                 }
                 ret.Triggers = TriggerConverter.ConvertTriggers(linetriggers, ret);

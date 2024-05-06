@@ -23,6 +23,7 @@ using OpenTK;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System;
 
 namespace linerider
 {
@@ -134,7 +135,7 @@ namespace linerider
             }
             Bones = bones;
         }
-        public void AddLine(GameLine line)
+        public void AddLine(GameLine line, Layer layer)
         {
             if (line.Type == LineType.Scenery)
             {
@@ -158,6 +159,13 @@ namespace linerider
                     LinesMax = line.ID;
                 }
             }
+
+            if (line.layer == null)
+            {
+                throw new Exception("No Layer found for line with ID" + line.ID);
+            }
+            else layer.lines.Add(line.ID, line);
+
             switch (line.Type)
             {
                 case LineType.Standard:

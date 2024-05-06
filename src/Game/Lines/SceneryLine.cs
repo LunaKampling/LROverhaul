@@ -30,7 +30,6 @@ namespace linerider.Game
         public SceneryLine(Layer ly, Vector2d p1, Vector2d p2)
         {
             layer = ly;
-            layer.lines.AddLast(this);
             Position1 = p1;
             Position2 = p2;
         }

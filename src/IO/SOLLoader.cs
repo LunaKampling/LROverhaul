@@ -174,7 +174,7 @@ namespace linerider.IO
                 Convert.ToDouble(startline[1].data, CultureInfo.InvariantCulture));
             foreach (GameLine line in lineslist)
             {
-                ret.AddLine(line);
+                ret.AddLine(line, ret._layers.currentLayer);
             }
             return ret;
         }

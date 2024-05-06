@@ -308,6 +308,8 @@ namespace linerider.Rendering
             if (line.layer == null)
             {
                 line.layer = _layers.currentLayer;
+                _layers.currentLayer.lines.Add(line.ID, line);
+                Debug.WriteLine("line added to layer");
             }
             if (lookup.ContainsKey(line.ID))
             {

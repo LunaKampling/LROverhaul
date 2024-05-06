@@ -72,15 +72,16 @@ namespace linerider.IO
                 trackobj.linesArray = JsonSerializer.Deserialize<object[][]>(json2);
                 trackobj.linesArrayCompressed = null;
             }
+            Layer layer = ret._layers.currentLayer;
             if (trackobj.linesArray?.Length > 0)
             {
-                ReadLinesArray(ret, trackobj.linesArray);
+                ReadLinesArray(ret, trackobj.linesArray, layer);
             }
             else if (trackobj.lines != null)
             {
                 foreach (line_json line in trackobj.lines)
                 {
-                    AddLine(ret, line);
+                    AddLine(ret, line, layer);
                 }
             }
             if (trackobj.triggers != null)
@@ -166,7 +167,7 @@ namespace linerider.IO
             }
             return ret;
         }
-        private static void ReadLinesArray(Track track, object[][] parser)
+        private static void ReadLinesArray(Track track, object[][] parser, Layer layer)
         {
             // ['type', 'id', 'x1', 'y1', 'x2', 'y2', 'extended', 'flipped', 'leftLine', 'rightLine', 'multiplier']
             // Ignore leftLine, rightLine
@@ -194,10 +195,10 @@ namespace linerider.IO
                         }
                     }
                 }
-                AddLine(track, line);
+                AddLine(track, line, layer);
             }
         }
-        private static void AddLine(Track track, line_json line)
+        private static void AddLine(Track track, line_json line, Layer layer)
         {
             switch (line.type)
             {
@@ -216,7 +217,7 @@ namespace linerider.IO
                         add.Extension |= StandardLine.Ext.Left;
                     if (Convert.ToBoolean(line.rightExtended))
                         add.Extension |= StandardLine.Ext.Right;
-                    track.AddLine(add);
+                    track.AddLine(add, layer);
                     break;
                 }
                 case 1:
@@ -238,7 +239,7 @@ namespace linerider.IO
                     {
                         add.Multiplier = line.multiplier;
                     }
-                    track.AddLine(add);
+                    track.AddLine(add, layer);
                     break;
                 }
                 case 2:
@@ -250,7 +251,7 @@ namespace linerider.IO
                     {
                         ID = line.id
                     };
-                    track.AddLine(add);
+                    track.AddLine(add, layer);
                     break;
                 }
                 default:

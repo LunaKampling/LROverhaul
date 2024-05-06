@@ -12,7 +12,8 @@ namespace linerider.Game
     {
         public int? parentID = null;
         public int? ID = null;
-        public LinkedList<GameLine> lines = new LinkedList<GameLine>();
+        public bool Invisible = false;
+        public Dictionary<int, GameLine> lines = new Dictionary<int, GameLine>();
         public string name = "Base Layer";
         private static string colorhex = "ffffaa";
         private static int hex = int.Parse("ff" + colorhex, System.Globalization.NumberStyles.HexNumber);
@@ -24,11 +25,9 @@ namespace linerider.Game
 
         public void Rerender(Editor Track)
         {
-            LinkedListNode<GameLine> node = lines.First;
-            while (node != null)
+            foreach(GameLine line in lines.Values)
             {
-                Track.RedrawLine(node.Value);
-                node = node.Next;
+                Track.RedrawLine(line);
             }
         }
         public Color GetColor()

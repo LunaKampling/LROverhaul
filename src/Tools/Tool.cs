@@ -201,7 +201,7 @@ namespace linerider.Tools
                     type = LineType.Standard;
                     break;
             }
-            trk.AddLine(added, trk.Track._layers.currentLayer); //Adds line on current layer
+            trk.AddLine(added, layer); //Adds line on current layer
             if (type != LineType.Scenery)
             {
                 if (snapstart)

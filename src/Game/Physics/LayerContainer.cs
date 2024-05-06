@@ -76,7 +76,6 @@ namespace linerider
             LinkedListNode<T> node = _list.First;
             if (node != null)
             {
-                Debug.WriteLine("AddLayer called");
                 if (layer.ID == null)
                 {
                     layer.ID = _list.Last.Value.ID + 1;

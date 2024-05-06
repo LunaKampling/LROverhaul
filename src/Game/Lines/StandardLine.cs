@@ -67,7 +67,6 @@ namespace linerider.Game
             Position1 = p1;
             Position2 = p2;
             layer = ly;
-            layer.lines.AddLast(this);
             this.inv = inv;
             CalculateConstants();
             Extension = Ext.None;

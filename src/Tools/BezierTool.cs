@@ -24,11 +24,13 @@ using OpenTK.Input;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Diagnostics;
 
 namespace linerider.Tools
 {
     public class BezierTool : Tool
     {
+        private bool _invalidated;
         public override string Name => "Bezier Tool";
         public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
         public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Line];
@@ -173,6 +175,7 @@ namespace linerider.Tools
                     }
                 }
                 game.Invalidate();
+                _invalidated = true;
             }
             base.OnMouseMoved(pos);
         }
@@ -202,6 +205,7 @@ namespace linerider.Tools
                         }
                     }
                 }
+                _invalidated = true;
             }
             Snapped = false;
             base.OnMouseUp(pos);
@@ -216,11 +220,15 @@ namespace linerider.Tools
         }
         private void GeneratePreview(Layer layer)
         {
-            DeleteLines();
-            using (TrackWriter trk = game.Track.CreateTrackWriter())
+            if (_invalidated)
             {
-                trk.DisableUndo();
-                PlaceLines(trk, true, layer);
+                DeleteLines();
+                using (TrackWriter trk = game.Track.CreateTrackWriter())
+                {
+                    trk.DisableUndo();
+                    PlaceLines(trk, true, layer);
+                }
+                _invalidated = false;
             }
             switch (Settings.Bezier.Mode)
             {
