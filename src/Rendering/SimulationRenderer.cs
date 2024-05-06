@@ -99,7 +99,7 @@ namespace linerider.Rendering
             _riderrenderer.Draw();
             Layer layerclone = new Layer();
             layerclone.CloneLayer(track._layers.currentLayer);
-            CurrentTools.CurrentTool.Render(layerclone);
+            CurrentTools.CurrentTool.Render(layerclone); //uses a clone of the currentlayer to render the preview on
             _riderrenderer.DrawLines();
             _riderrenderer.Clear();
         }

@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace linerider.Tools
 {
@@ -212,10 +213,10 @@ namespace linerider.Tools
         {
             Vector2d size = gamepos - _drawbox.Vector;
             _drawbox.Size = size;
-            UnselectBox();
             using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
                 IEnumerable<GameLine> lines = trk.GetLinesInRect(_drawbox.MakeLRTB(), true);
+                UnselectOnUpdate(lines);
                 foreach (GameLine line in lines)
                 {
                     if (!_selectedlines.Contains(line.ID))
@@ -223,11 +224,12 @@ namespace linerider.Tools
                         if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(line.ID)) continue;
 
                         LineSelection selection = new LineSelection(line, true, null);
-                        if (line.Type == Swatch.Selected || Swatch.Selected == LineType.All)
+                        if ((line.Type == Swatch.Selected || Swatch.Selected == LineType.All) && line.SelectionState == SelectionState.None)
                         {
                             line.SelectionState = SelectionState.Selected;
                             _boxselection.Add(selection);
                             game.Track.RedrawLine(line);
+
                         }
                     }
                 }
@@ -625,7 +627,7 @@ namespace linerider.Tools
                         line.SelectionState = SelectionState.Selected;
                     }
                     _selectionbox = GetBoxFromSelected(_selection);
-                    game.Track.RedrawLine(line);
+                    //game.Track.RedrawLine(line);
                     return true;
                 }
             }
@@ -916,15 +918,54 @@ namespace linerider.Tools
                     {
                         if (!_selectedlines.Contains(sel.line.ID))
                         {
-                            if (sel.line.SelectionState != 0)
+                            if (sel.line.SelectionState != SelectionState.None)
                             {
-                                sel.line.SelectionState = 0;
+                                sel.line.SelectionState = SelectionState.None;
                                 game.Track.RedrawLine(sel.line);
                             }
                         }
                     }
                 }
                 _boxselection.Clear();
+            }
+        }
+        /// <summary>
+        /// Unselects every line that isn't in the current selection
+        /// Only gets called when the drawing box is updated
+        /// </summary>
+        /// <param name="lines">list of lines in the current selection</param>
+        public void UnselectOnUpdate(IEnumerable<GameLine> lines)
+        {
+            if (_boxselection.Count != 0)
+            {
+                using (TrackWriter trk = game.Track.CreateTrackWriter())
+                {
+                    HashSet<int> newSelection = new HashSet<int>();
+                    foreach (GameLine line in lines) 
+                    {
+                        newSelection.Add(line.ID);
+                    }
+                    HashSet<LineSelection> unselected = new HashSet<LineSelection>();
+                    foreach (LineSelection sel in _boxselection)
+                    {
+                        if (!newSelection.Contains(sel.line.ID))
+                        {
+                            if (!_selectedlines.Contains(sel.line.ID))
+                            {
+                                if (sel.line.SelectionState != SelectionState.None)
+                                {
+                                    sel.line.SelectionState = SelectionState.None;
+                                    game.Track.RedrawLine(sel.line);
+                                    unselected.Add(sel);
+                                }
+                            }
+                        }
+                    }
+                    foreach (LineSelection sel in unselected)
+                    {
+                        _boxselection.Remove(sel);
+                    }
+                }
             }
         }
         public void Unselect()
@@ -942,7 +983,7 @@ namespace linerider.Tools
                         {
                             if (line.SelectionState != SelectionState.None)
                             {
-                                line.SelectionState = SelectionState.None;
+                                line.SelectionState = SelectionState.None; 
                                 game.Track.RedrawLine(line);
                             }
                         }
@@ -969,7 +1010,7 @@ namespace linerider.Tools
                 _boxselection.Add(selection);
 
                 line.SelectionState = SelectionState.Selected;
-                game.Track.RedrawLine(line);
+                //game.Track.RedrawLine(line);
             }
             _selectionbox = GetBoxFromSelected(_selection);
 

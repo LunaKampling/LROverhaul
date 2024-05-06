@@ -25,7 +25,7 @@ namespace linerider.Tools
         /// </summary>
         public bool BothJoints => joint1 == joint2;
         /// <summary>
-        /// Optional list of lines that are snapped this selection
+        /// Optional list of lines that are snapped to by this selection
         /// </summary>
         public List<LineSelection> snapped;
         public LineSelection()

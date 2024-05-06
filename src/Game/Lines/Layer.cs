@@ -10,10 +10,10 @@ namespace linerider.Game
 {
     public class Layer
     {
-        public int? parentID = null;
-        public int? ID = null;
-        public bool Invisible = false;
-        public Dictionary<int, GameLine> lines = new Dictionary<int, GameLine>();
+        public int? parentID = null; //folder id
+        public int? ID = null; //layer id
+        public bool Invisible = false; //whether lines in the layer should be rendered
+        public Dictionary<int, GameLine> lines = new Dictionary<int, GameLine>(); //lines objects contained in layer
         public string name = "Base Layer";
         private static string colorhex = "ffffaa";
         private static int hex = int.Parse("ff" + colorhex, System.Globalization.NumberStyles.HexNumber);
@@ -22,7 +22,10 @@ namespace linerider.Game
         public Layer()
         {
         }
-
+        /// <summary>
+        /// Rerenders every line in the layer
+        /// </summary>
+        /// <param name="Track">Editor object (contains track)</param>
         public void Rerender(Editor Track)
         {
             foreach(GameLine line in lines.Values)
@@ -38,7 +41,10 @@ namespace linerider.Game
         {
             _color = color;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="layer">Layer to clone from</param>
         public void CloneLayer(Layer layer)
         {
             _color = layer.GetColor();
