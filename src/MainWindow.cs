@@ -136,7 +136,7 @@ namespace linerider
             }
 
             bool shouldrender = _invalidated ||
-             Canvas.NeedsRedraw ||
+            Canvas.NeedsRedraw ||
             Track.Playing ||
             Canvas.Loading ||
             Track.NeedsDraw ||

@@ -934,14 +934,14 @@ namespace linerider.Tools
         /// Only gets called when the drawing box is updated
         /// </summary>
         /// <param name="lines">list of lines in the current selection</param>
-        public void UnselectOnUpdate(IEnumerable<GameLine> lines)
+        public void UnselectOnUpdate(IEnumerable<GameLine> selection)
         {
             if (_boxselection.Count != 0)
             {
                 using (TrackWriter trk = game.Track.CreateTrackWriter())
                 {
                     HashSet<int> newSelection = new HashSet<int>();
-                    foreach (GameLine line in lines) 
+                    foreach (GameLine line in selection) 
                     {
                         newSelection.Add(line.ID);
                     }

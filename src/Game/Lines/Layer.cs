@@ -12,7 +12,7 @@ namespace linerider.Game
     {
         public int? parentID = null; //folder id
         public int? ID = null; //layer id
-        public bool Invisible = false; //whether lines in the layer should be rendered
+        public bool _visible = true; //visibility of lines in layer
         public Dictionary<int, GameLine> lines = new Dictionary<int, GameLine>(); //lines objects contained in layer
         public string name = "Base Layer";
         private static string colorhex = "ffffaa";
@@ -41,8 +41,16 @@ namespace linerider.Game
         {
             _color = color;
         }
+        public bool GetVisibility()
+        {
+            return _visible;
+        }
+        public void SetVisibility(bool visible)
+        {
+            _visible = visible;
+        }
         /// <summary>
-        /// 
+        /// Clones attritubes from another layer
         /// </summary>
         /// <param name="layer">Layer to clone from</param>
         public void CloneLayer(Layer layer)
