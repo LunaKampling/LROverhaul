@@ -245,7 +245,7 @@ namespace linerider.IO
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2))
                     {
-                        ID = line.id
+                        ID = GameLine.UninitializedID
                     };
                     track.AddLine(add);
                     break;
