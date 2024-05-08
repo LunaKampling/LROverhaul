@@ -627,7 +627,7 @@ namespace linerider.Tools
                         line.SelectionState = SelectionState.Selected;
                     }
                     _selectionbox = GetBoxFromSelected(_selection);
-                    //game.Track.RedrawLine(line);
+                    game.Track.RedrawLine(line);
                     return true;
                 }
             }
@@ -1010,7 +1010,7 @@ namespace linerider.Tools
                 _boxselection.Add(selection);
 
                 line.SelectionState = SelectionState.Selected;
-                //game.Track.RedrawLine(line);
+                game.Track.RedrawLine(line);
             }
             _selectionbox = GetBoxFromSelected(_selection);
 
