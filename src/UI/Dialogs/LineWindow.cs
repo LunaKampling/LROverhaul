@@ -194,7 +194,10 @@ namespace linerider.UI
             {
                 if (accelinverse.IsChecked)
                 {
-                    multiplier.NumberValue = -Math.Abs(multiplier.NumberValue);
+                    if (multiplier.NumberValue > 0)
+                    {
+                        multiplier.NumberValue = -multiplier.NumberValue;
+                    }
                 }
                 else
                 {
