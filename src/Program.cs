@@ -142,7 +142,7 @@ namespace linerider
         public static void Run(string[] givenArgs)
         {
             if (Debugger.IsAttached)
-                Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
+                System.Diagnostics.Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
             else
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
