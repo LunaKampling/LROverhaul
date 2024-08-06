@@ -29,10 +29,14 @@ namespace linerider.Rendering
             _ = System.Threading.Tasks.Parallel.For(0, lines.Count, (idx) =>
             {
                 StandardLine line = (StandardLine)lines[idx];
-                LineVertex[] lineverts = CreateDecorationLine(line, line.Color);
-                for (int i = 0; i < lineverts.Length; i++)
+                var visible = line.layer.GetVisibility();
+                if (visible) 
                 {
-                    vertices[idx * 6 + i] = lineverts[i];
+                    LineVertex[] lineverts = CreateDecorationLine(line, line.Color);
+                    for (int i = 0; i < lineverts.Length; i++)
+                    {
+                        vertices[idx * 6 + i] = lineverts[i];
+                    }
                 }
             });
             Dictionary<int, int> dict = _linebuffer.AddLines(lines, vertices);
@@ -57,7 +61,7 @@ namespace linerider.Rendering
             }
             Color color = line.GetColor();
             LineVertex[] lineverts = CreateDecorationLine(line, color);
-            int start = _linebuffer.AddLine(lineverts);
+            int start = _linebuffer.AddLine(lineverts, line.layer.GetVisibility());
             _lines.Add(line.ID, start);
         }
         public void LineChanged(StandardLine line, bool hit)
@@ -65,7 +69,7 @@ namespace linerider.Rendering
             int colorindex = _lines[line.ID];
             Color color = line.GetColor();
             LineVertex[] lineverts = hit ? new LineVertex[6] : CreateDecorationLine(line, color);
-            _linebuffer.ChangeLine(colorindex, lineverts);
+            _linebuffer.ChangeLine(colorindex, lineverts, line.layer.GetVisibility());
         }
         public void RemoveLine(StandardLine line)
         {

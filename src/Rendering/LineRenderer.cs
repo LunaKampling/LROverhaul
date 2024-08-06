@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace linerider.Rendering
 {
@@ -89,7 +90,7 @@ namespace linerider.Rendering
         /// Adds the specified 6 vertex line
         /// </summary>
         /// <returns>the first index in the ibo used</returns>
-        public int AddLine(LineVertex[] line)
+        public int AddLine(LineVertex[] line, bool visible = true)
         {
             if (line.Length != linesize)
                 throw new Exception(
@@ -104,11 +105,16 @@ namespace linerider.Rendering
                 _indices.Add(vertbase + i);
             }
             EnsureIBOSize(_indices.Count);
-            _ibo.SetData(
-                _indices.unsafe_array,
-                _indices.Count - linesize,
-                _indices.Count - linesize,
-                linesize);
+
+            if (visible)
+            {
+                _ibo.SetData(
+                    _indices.unsafe_array,
+                    _indices.Count - linesize,
+                    _indices.Count - linesize,
+                    linesize);
+            }
+
             _vbo.Unbind();
             _ibo.Unbind();
             return ret;
@@ -131,7 +137,7 @@ namespace linerider.Rendering
             _ibo.Unbind();
             freevertices.Enqueue(vertstart);
         }
-        public void ChangeLine(int ibo_index, LineVertex[] line)
+        public void ChangeLine(int ibo_index, LineVertex[] line, bool visible = true)
         {
             if (line.Length != linesize)
                 throw new Exception(
@@ -145,21 +151,25 @@ namespace linerider.Rendering
                 wasremoved = true;
             }
             _vbo.SetData(line, 0, vertbase, linesize);
+            _vbo.Unbind();
             if (wasremoved)
             {
                 for (int i = 0; i < linesize; i++)
                 {
                     _indices.unsafe_array[ibo_index + i] = vertbase + i;
                 }
-                _ibo.Bind();
-                _ibo.SetData(
+                if (visible)
+                {
+                    _ibo.Bind();
+                    _ibo.SetData(
                     _indices.unsafe_array,
                     ibo_index,
                     ibo_index,
                     linesize);
-                _ibo.Unbind();
+                    _ibo.Unbind();
+                }
             }
-            _vbo.Unbind();
+            else if (!visible) { RemoveLine(ibo_index); }
         }
         protected void BeginDraw()
         {
@@ -205,11 +215,12 @@ namespace linerider.Rendering
             if (_indices.Count == 0)
                 return;
             BeginDraw();
+            //Debug.WriteLine(_indices.Count.ToString());
             _ibo.Bind();
             using (new GLEnableCap(EnableCap.Blend))
             {
                 GL.DrawElements(PrimitiveType.Triangles, _indices.Count, DrawElementsType.UnsignedInt, 0);
-            }
+            } 
             _ibo.Unbind();
             EndDraw();
         }
@@ -250,7 +261,7 @@ namespace linerider.Rendering
             }
             return true;
         }
-        public static LineVertex[] CreateTrackLine(Vector2d lnstart, Vector2d lnend, float size, int color = 0, byte selectflags = 0)
+        public static LineVertex[] CreateTrackLine(Vector2d lnstart, Vector2d lnend, float size, int color = 0, byte selectflags = 0, bool visible = true)
         {
             Vector2d d = lnend - lnstart;
             Angle rad = Angle.FromVector(d);
@@ -259,31 +270,32 @@ namespace linerider.Rendering
             lnstart += c * (-1 * (size / 2));
             lnend += c * (1 * (size / 2));
 
-            return CreateLine(lnstart, lnend, size, rad, color, selectflags);
+            return CreateLine(lnstart, lnend, size, rad, color, selectflags, visible);
         }
-        public static LineVertex[] CreateLine(Vector2d lnstart, Vector2d lnend, float size, int color = 0, byte selectflags = 0)
+        public static LineVertex[] CreateLine(Vector2d lnstart, Vector2d lnend, float size, int color = 0, byte selectflags = 0, bool visible = true)
         {
             Vector2d d = lnend - lnstart;
             Angle rad = Angle.FromVector(d);
 
-            return CreateLine(lnstart, lnend, size, rad, color, selectflags);
+            return CreateLine(lnstart, lnend, size, rad, color, selectflags, visible);
         }
-        public static LineVertex[] CreateLine(Vector2d lnstart, Vector2d lnend, float size, Angle angle, int color = 0, byte selectflags = 0)
+        public static LineVertex[] CreateLine(Vector2d lnstart, Vector2d lnend, float size, Angle angle, int color = 0, byte selectflags = 0, bool visible = true)
         {
             LineVertex[] ret = new LineVertex[6];
             Vector2 start = (Vector2)lnstart;
             Vector2 end = (Vector2)lnend;
             float len = (end - start).Length;
+            byte vis = (byte)(visible ? 1 : 0);
 
             Vector2[] l = Utility.GetThickLine(start, end, angle, size);
             float scale = size / 2;
-            ret[0] = new LineVertex() { Position = l[0], u = 0, v = 0, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
-            ret[1] = new LineVertex() { Position = l[1], u = 0, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
-            ret[2] = new LineVertex() { Position = l[2], u = 1, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
+            ret[0] = new LineVertex() { Position = l[0], u = 0, v = 0, ratio = size / len, color = color, scale = scale, selectionflags = selectflags, visibility = vis };
+            ret[1] = new LineVertex() { Position = l[1], u = 0, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags, visibility = vis };
+            ret[2] = new LineVertex() { Position = l[2], u = 1, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags, visibility = vis };
 
-            ret[3] = new LineVertex() { Position = l[2], u = 1, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
-            ret[4] = new LineVertex() { Position = l[3], u = 1, v = 0, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
-            ret[5] = new LineVertex() { Position = l[0], u = 0, v = 0, ratio = size / len, color = color, scale = scale, selectionflags = selectflags };
+            ret[3] = new LineVertex() { Position = l[2], u = 1, v = 1, ratio = size / len, color = color, scale = scale, selectionflags = selectflags, visibility = vis };
+            ret[4] = new LineVertex() { Position = l[3], u = 1, v = 0, ratio = size / len, color = color, scale = scale, selectionflags = selectflags, visibility = vis };
+            ret[5] = new LineVertex() { Position = l[0], u = 0, v = 0, ratio = size / len, color = color, scale = scale, selectionflags = selectflags, visibility = vis };
             return ret;
         }
     }

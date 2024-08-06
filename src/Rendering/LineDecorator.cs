@@ -57,8 +57,9 @@ namespace linerider.Rendering
         {
             if (!hit)
             {
+                var visible = !line.layer.GetVisibility();
                 if (line is RedLine red)
-                    _lineaccelrenderer.LineChanged(red, false);
+                    _lineaccelrenderer.LineChanged(red, visible);
                 _linecolorrenderer.LineChanged(line, false);
             }
             else

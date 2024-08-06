@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using linerider.Game;
 using linerider.Rendering;
 using linerider.Utils;
+using System.Diagnostics;
 
 namespace linerider.Game
 {
@@ -13,6 +14,7 @@ namespace linerider.Game
         public int? parentID = null; //folder id
         public int? ID = null; //layer id
         public bool _visible = true; //visibility of lines in layer
+        public bool _locked = false;
         public Dictionary<int, GameLine> lines = new Dictionary<int, GameLine>(); //lines objects contained in layer
         public string name = "Base Layer";
         private static string colorhex = "ffffaa";
@@ -48,6 +50,7 @@ namespace linerider.Game
         public void SetVisibility(bool visible)
         {
             _visible = visible;
+            Debug.WriteLine(_visible);
         }
         /// <summary>
         /// Clones attritubes from another layer

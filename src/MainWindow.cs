@@ -608,6 +608,16 @@ namespace linerider
                 {
                     InputUtils.KeyDown(e.Key);
                 }
+                if (e.Key == Key.H)
+                {
+                    Track.GetTrack()._layers.currentLayer.SetVisibility(false);
+                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
+                }
+                if (e.Key == Key.J)
+                {
+                    Track.GetTrack()._layers.currentLayer.SetVisibility(true);
+                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
+                }
                 if (e.Key == Key.B)
                 {
                     Layer layer = new Layer();

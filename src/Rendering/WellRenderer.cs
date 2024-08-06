@@ -50,22 +50,22 @@ namespace linerider.Rendering
             ResourceSync initsync = new ResourceSync();
             GenericVertex[] vertices = new GenericVertex[lines.Count * wellsize];
             _ = System.Threading.Tasks.Parallel.For(0, lines.Count, (idx) =>
-              {
-                  StandardLine line = (StandardLine)lines[idx];
-                  GenericVertex[] well = GetWell(line);
-                  for (int i = 0; i < wellsize; i++)
-                  {
-                      vertices[idx * wellsize + i] = well[i];
-                  }
-                  try
-                  {
-                      initsync.UnsafeEnterWrite();
-                      _lines.Add(line.ID, idx * wellsize);
-                  }
-                  finally
-                  {
-                      initsync.UnsafeExitWrite();
-                  }
+             {
+                StandardLine line = (StandardLine)lines[idx];
+                GenericVertex[] well = GetWell(line);
+                for (int i = 0; i < wellsize; i++)
+                {
+                    vertices[idx * wellsize + i] = well[i];
+                }
+                try
+                {
+                    initsync.UnsafeEnterWrite();
+                    _lines.Add(line.ID, idx * wellsize);
+                }
+                finally
+                {
+                    initsync.UnsafeExitWrite();
+                }
               });
             _vertexcounter = vertices.Length;
             _vbo.Bind();
@@ -121,11 +121,13 @@ namespace linerider.Rendering
 
         public static GenericVertex[] GetWell(StandardLine line)
         {
+            int alpha;
+            if (!line.layer.GetVisibility()) { alpha = 0; } else alpha = 80;
             Angle angle = Angle.FromLine(line);
 
             angle.Radians += line.inv ? -1.5708 : 1.5708; //90 degrees
             Vector2d offset = angle.MovePoint(Vector2d.Zero, StandardLine.Zone);
-            Color wellcolor = Color.FromArgb(80, 80, 80, 80);
+            Color wellcolor = Color.FromArgb(alpha, 80, 80, 80);
             GenericVertex tl = new GenericVertex((Vector2)line.Start, wellcolor);
             GenericVertex tr = new GenericVertex((Vector2)line.End, wellcolor);
             GenericVertex bl = new GenericVertex((Vector2)(line.End + offset), wellcolor);

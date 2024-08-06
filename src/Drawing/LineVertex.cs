@@ -40,7 +40,7 @@ namespace linerider.Drawing
         /// </summary>
         public byte v;
         public byte selectionflags;
-        public byte reserved;
+        public byte visibility;
         public float ratio;
         public float scale;
     }

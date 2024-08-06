@@ -47,9 +47,14 @@ namespace linerider.Rendering
             _ = System.Threading.Tasks.Parallel.For(0, lines.Count,
             (idx) =>
             {
-                GenericVertex[] acc = GetAccelDecor(lines[idx]);
-                redshapes[idx] = acc;
-                _ = System.Threading.Interlocked.Add(ref vertcount, acc.Length);
+                StandardLine line = lines[idx];
+                var visible = !line.layer.GetVisibility();
+                if (visible)
+                {
+                    GenericVertex[] acc = GetAccelDecor(lines[idx]);
+                    redshapes[idx] = acc;
+                    _ = System.Threading.Interlocked.Add(ref vertcount, acc.Length);
+                }
             });
             GenericVertex[] verts = new GenericVertex[vertcount];
             _indices.EnsureCapacity(vertcount);
@@ -109,9 +114,10 @@ namespace linerider.Rendering
         }
         public void AddLine(RedLine line)
         {
+            var visible = !line.layer.GetVisibility();
             if (_lookup.ContainsKey(line.ID))
             {
-                LineChanged(line, false);
+                LineChanged(line, visible);
                 return;
             }
             _lookup.Add(
@@ -121,8 +127,7 @@ namespace linerider.Rendering
                     start = _indices.Count,
                     shapes = 0
                 });
-            DrawAccel(line, false);
-
+            DrawAccel(line, visible);
         }
         public void LineChanged(RedLine line, bool hit) => DrawAccel(line, hit);
         public void RemoveLine(RedLine line)

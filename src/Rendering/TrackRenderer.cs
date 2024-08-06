@@ -317,7 +317,7 @@ namespace linerider.Rendering
                 return;
             }
             LineVertex[] lineverts = GenerateLine(line, false);
-            int start = renderer.AddLine(lineverts);
+            int start = renderer.AddLine(lineverts, line.layer.GetVisibility());
             lookup.Add(line.ID, start);
         }
         private void LineChanged(
@@ -327,7 +327,7 @@ namespace linerider.Rendering
             bool hit)
         {
             LineVertex[] lineverts = GenerateLine(line, hit);
-            renderer.ChangeLine(lookup[line.ID], lineverts);
+            renderer.ChangeLine(lookup[line.ID], lineverts, line.layer.GetVisibility());
         }
         private void RemoveLine(
             GameLine line,
@@ -342,6 +342,7 @@ namespace linerider.Rendering
         {
             Layer layer = line.layer;
             int color = Utility.ColorToRGBA_LE(layer.GetColor());
+            bool visible = line.layer.GetVisibility();
             if (line is StandardLine stl)
             {
                 if (hit)
@@ -360,7 +361,8 @@ namespace linerider.Rendering
                 line.Position2,
                 2 * line.Width,
                 color,
-                (byte)line.SelectionState);
+                (byte)line.SelectionState,
+                visible);
             return lineverts;
         }
     }
