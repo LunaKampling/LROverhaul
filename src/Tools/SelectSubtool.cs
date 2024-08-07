@@ -187,12 +187,15 @@ namespace linerider.Tools
                 }
                 else
                 {
+                    TrackWriter trk = game.Track.CreateTrackWriter();
                     foreach (LineSelection v in _boxselection)
                     {
                         if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(v.line.ID)) continue;
                         
                         LineType linetypeSelected = v.GetLineType();
-                        if (linetypeSelected == Swatch.Selected || Swatch.Selected == LineType.All)
+                        if (v.line.layer.GetVisibility() && !v.line.layer.GetLock() &&
+                            (v.line.Type == Swatch.Selected || Swatch.Selected == LineType.All ||
+                            (Swatch.Selected == LineType.Layer && v.line.layer == trk.Track._layers.currentLayer)))
                         {
                             _ = _selectedlines.Add(v.line.ID);
                             _selection.Add(v);
@@ -224,7 +227,9 @@ namespace linerider.Tools
                         if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(line.ID)) continue;
 
                         LineSelection selection = new LineSelection(line, true, null);
-                        if ((line.Type == Swatch.Selected || Swatch.Selected == LineType.All) && line.SelectionState == SelectionState.None)
+                        if (line.layer.GetVisibility() && !line.layer.GetLock() &&
+                            (line.Type == Swatch.Selected || Swatch.Selected == LineType.All || 
+                            (Swatch.Selected == LineType.Layer && line.layer == trk.Track._layers.currentLayer)) && line.SelectionState == SelectionState.None)
                         {
                             line.SelectionState = SelectionState.Selected;
                             _boxselection.Add(selection);

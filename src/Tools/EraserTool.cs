@@ -20,6 +20,7 @@ using linerider.UI;
 using linerider.Utils;
 using OpenTK;
 using System.Drawing;
+using linerider.Game;
 
 namespace linerider.Tools
 {
@@ -98,9 +99,12 @@ namespace linerider.Tools
                 if (lines.Length != 0)
                 {
                     LineType linefilter = Swatch.Selected;
+                    Layer current = trk.Track._layers.currentLayer;
                     for (int i = 0; i < lines.Length; i++)
                     {
-                        if (linefilter == LineType.All || lines[i].Type == linefilter)
+                        if (!lines[i].layer.GetLock() && lines[i].layer.GetVisibility() && 
+                            (linefilter == LineType.All || lines[i].Type == linefilter || 
+                            linefilter == LineType.Layer && lines[i].layer == current))
                         {
                             _actionmade = true;
                             trk.RemoveLine(lines[i]);

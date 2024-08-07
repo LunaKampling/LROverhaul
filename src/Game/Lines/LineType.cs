@@ -24,5 +24,6 @@ namespace linerider
         Acceleration = 2,
         Scenery = 0,
         All = 3,
+        Layer = 4,
     }
 }

@@ -381,6 +381,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.EditorToolColor2, new Keybinding(Key.Number2));
             SetupDefaultKeybind(Hotkey.EditorToolColor3, new Keybinding(Key.Number3));
             SetupDefaultKeybind(Hotkey.EditorToolColor4, new Keybinding(Key.Number4));
+            SetupDefaultKeybind(Hotkey.EditorToolColor5, new Keybinding(Key.Number5));
 
             SetupDefaultKeybind(Hotkey.EditorCycleToolSetting, new Keybinding(Key.Tab));
             SetupDefaultKeybind(Hotkey.EditorMoveStart, new Keybinding(Key.D));

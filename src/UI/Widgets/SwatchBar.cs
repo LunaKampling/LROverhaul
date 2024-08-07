@@ -16,6 +16,7 @@ namespace linerider.UI.Widgets
         private readonly WidgetButton _accelerationBtn;
         private readonly WidgetButton _sceneryBtn;
         private readonly WidgetButton _allBtn;
+        private readonly WidgetButton _layerBtn;
 
         public SwatchBar(ControlBase parent, Editor editor) : base(parent)
         {
@@ -59,6 +60,15 @@ namespace linerider.UI.Widgets
                 Hotkey = Hotkey.EditorToolColor4,
                 HotkeyCondition = () => !_editor.Playing,
             };
+            _layerBtn = new WidgetButton(this)
+            {
+                Name = "Current Layer",
+                Font = canvas.Fonts.DefaultBold,
+                TextRequest = (o, e) => TextRequest(LineType.Layer),
+                Action = (o, e) => SwatchSelect(LineType.Layer),
+                Hotkey = Hotkey.EditorToolColor5,
+                HotkeyCondition = () => !_editor.Playing,
+            };
 
             _accelerationBtn.RightClicked += (o, e) => IncrementMultiplier(LineType.Acceleration);
             _sceneryBtn.RightClicked += (o, e) => IncrementMultiplier(LineType.Scenery);
@@ -67,7 +77,8 @@ namespace linerider.UI.Widgets
         {
             base.Think();
 
-            bool colorsChanged = _allBtn.Color != Settings.Computed.LineColor
+            bool colorsChanged = _layerBtn.Color != Settings.Computed.LineColor ||
+                _allBtn.Color != Settings.Computed.LineColor
                 || _standardBtn.Color != Settings.Colors.StandardLine
                 || _accelerationBtn.Color != Settings.Colors.AccelerationLine
                 || _sceneryBtn.Color != Settings.Colors.SceneryLine;
@@ -77,10 +88,12 @@ namespace linerider.UI.Widgets
                 _accelerationBtn.Color = Settings.Colors.AccelerationLine;
                 _sceneryBtn.Color = Settings.Colors.SceneryLine;
                 _allBtn.Color = Settings.Computed.LineColor;
+                _layerBtn.Color = Settings.Computed.LineColor;
 
                 _accelerationBtn.TextColor = Utility.IsColorDark(Settings.Colors.AccelerationLine) ? Color.White : Color.Black;
                 _sceneryBtn.TextColor = Utility.IsColorDark(Settings.Colors.SceneryLine) ? Color.White : Color.Black;
                 _allBtn.TextColor = Utility.IsColorDark(Settings.Computed.LineColor) ? Color.White : Color.Black;
+                _layerBtn.TextColor = Utility.IsColorDark(Settings.Computed.LineColor) ? Color.White : Color.Black;
             }
 
             LineType currSwatch = CurrentTools.CurrentTool.Swatch.Selected;
@@ -88,10 +101,12 @@ namespace linerider.UI.Widgets
             _accelerationBtn.Icon = currSwatch == LineType.Acceleration ? _activeTexture : _normalTexture;
             _sceneryBtn.Icon = currSwatch == LineType.Scenery ? _activeTexture : _normalTexture;
             _allBtn.Icon = currSwatch == LineType.All ? _activeTexture : _normalTexture;
+            _layerBtn.Icon = currSwatch == LineType.Layer ? _activeTexture : _normalTexture;
 
             Tool tool = CurrentTools.CurrentTool;
-            bool showAllButton = tool == CurrentTools.EraserTool || tool == CurrentTools.SelectTool || tool == CurrentTools.SelectSubtool;
-            _allBtn.IsHidden = !showAllButton;
+            bool showExtraButtons = tool == CurrentTools.EraserTool || tool == CurrentTools.SelectTool || tool == CurrentTools.SelectSubtool;
+            _allBtn.IsHidden = !showExtraButtons;
+            _layerBtn.IsHidden = !showExtraButtons;
         }
         private string TextRequest(LineType linetype)
         {
@@ -106,13 +121,16 @@ namespace linerider.UI.Widgets
             switch (linetype)
             {
                 case LineType.Acceleration:
-                    label = "\u00A0" + swatch.RedMultiplier.ToString(Program.Culture) + "\u00D7";
+                    label = tool != CurrentTools.EraserTool && tool != CurrentTools.SelectTool && tool != CurrentTools.SelectSubtool ? "\u00A0" + swatch.RedMultiplier.ToString(Program.Culture) + "\u00D7": "";
                     break;
                 case LineType.Scenery:
-                    label = "\u00A0" + swatch.GreenMultiplier.ToString(Program.Culture) + "\u00D7";
+                    label = tool != CurrentTools.EraserTool && tool != CurrentTools.SelectTool && tool != CurrentTools.SelectSubtool ? "\u00A0" + swatch.GreenMultiplier.ToString(Program.Culture) + "\u00D7" : "";
                     break;
                 case LineType.All:
                     label = "All";
+                    break;
+                case LineType.Layer:
+                    label = "Layer";
                     break;
             }
 
@@ -122,7 +140,9 @@ namespace linerider.UI.Widgets
         {
             Tool tool = CurrentTools.CurrentTool;
             Swatch swatch = tool.Swatch;
-            bool canSwitch = type != LineType.All || (type == LineType.All && (tool == CurrentTools.EraserTool || tool == CurrentTools.SelectTool || tool == CurrentTools.SelectSubtool));
+            bool canSwitch = type != LineType.All || type != LineType.Layer || 
+                (type == LineType.All && (tool == CurrentTools.EraserTool || tool == CurrentTools.SelectTool || tool == CurrentTools.SelectSubtool)) ||
+                (type == LineType.Layer && (tool == CurrentTools.EraserTool || tool == CurrentTools.SelectTool || tool == CurrentTools.SelectSubtool));
             if (!canSwitch)
                 return;
 
