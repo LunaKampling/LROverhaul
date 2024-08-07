@@ -245,16 +245,16 @@ namespace linerider.Tools
             }
         }
 
-        public override void OnMouseDown(Vector2d mousepos)
+        public override void OnMouseDown(Vector2d mousepos, bool nodraw)
         {
-            base.OnMouseDown(mousepos);
+            base.OnMouseDown(mousepos, nodraw);
             Vector2d gamepos = ScreenToGameCoords(mousepos);
 
             Stop(); // Double check
             if (!SelectLine(gamepos))
             {
                 CurrentTools.SetTool(CurrentTools.SelectSubtool);
-                CurrentTools.SelectSubtool.OnMouseDown(mousepos);
+                CurrentTools.SelectSubtool.OnMouseDown(mousepos, nodraw);
                 IsLeftMouseDown = false;
                 _hoverline = null;
             }

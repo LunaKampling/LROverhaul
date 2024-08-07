@@ -74,7 +74,7 @@ namespace linerider.Tools
         {
         }
 
-        public virtual void OnMouseDown(Vector2d pos) => IsLeftMouseDown = true;
+        public virtual void OnMouseDown(Vector2d pos, bool nodraw) => IsLeftMouseDown = true;
 
         public virtual void OnMouseRightDown(Vector2d pos) => IsRightMouseDown = true;
 

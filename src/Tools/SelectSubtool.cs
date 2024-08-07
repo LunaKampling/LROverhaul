@@ -115,7 +115,7 @@ namespace linerider.Tools
             }
             base.OnMouseRightUp(pos);
         }
-        public override void OnMouseDown(Vector2d pos)
+        public override void OnMouseDown(Vector2d pos, bool nodraw)
         {
             Vector2d gamepos = ScreenToGameCoords(pos);
             if (Active && _selection.Count != 0)
@@ -151,7 +151,7 @@ namespace linerider.Tools
             Active = true;
             _drawingbox = true;
             _movingselection = false;
-            base.OnMouseDown(pos);
+            base.OnMouseDown(pos, nodraw);
         }
         public override void OnMouseMoved(Vector2d pos)
         {

@@ -45,37 +45,40 @@ namespace linerider.Tools
         }
 
         public override void OnChangingTool() => Stop();
-        public override void OnMouseDown(Vector2d pos)
+        public override void OnMouseDown(Vector2d pos, bool nodraw)
         {
-            Active = true;
-            Vector2d gamepos = ScreenToGameCoords(pos);
-            if (EnableSnap)
+            if (!nodraw)
             {
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                Active = true;
+                Vector2d gamepos = ScreenToGameCoords(pos);
+                if (EnableSnap)
                 {
-                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
-                    if (success)
+                    using (TrackReader trk = game.Track.CreateTrackReader())
                     {
-                        _start = snap;
-                        Snapped = true;
-                    }
-                    else
-                    {
-                        _start = gamepos;
-                        Snapped = false;
+                        Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
+                        if (success)
+                        {
+                            _start = snap;
+                            Snapped = true;
+                        }
+                        else
+                        {
+                            _start = gamepos;
+                            Snapped = false;
+                        }
                     }
                 }
-            }
-            else
-            {
-                _start = gamepos;
-                Snapped = false;
-            }
+                else
+                {
+                    _start = gamepos;
+                    Snapped = false;
+                }
 
-            _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
-            _end = _start;
-            game.Invalidate();
-            base.OnMouseDown(pos);
+                _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
+                _end = _start;
+                game.Invalidate();
+            }
+            base.OnMouseDown(pos, nodraw);
         }
 
         public override void OnMouseMoved(Vector2d pos)

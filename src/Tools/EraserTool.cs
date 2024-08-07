@@ -41,14 +41,17 @@ namespace linerider.Tools
             Swatch.Selected = LineType.All;
         }
 
-        public override void OnMouseDown(Vector2d pos)
+        public override void OnMouseDown(Vector2d pos, bool nodraw)
         {
             Stop();
-            Active = true;
-            Vector2d p = ScreenToGameCoords(pos);
-            game.Track.UndoManager.BeginAction();
-            Erase(p);
-            base.OnMouseDown(pos);
+            if (!nodraw)
+            {
+                Active = true;
+                Vector2d p = ScreenToGameCoords(pos);
+                game.Track.UndoManager.BeginAction();
+                Erase(p);
+            }
+            base.OnMouseDown(pos, nodraw);
         }
 
         public override void OnMouseMoved(Vector2d pos)

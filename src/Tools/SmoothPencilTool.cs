@@ -53,39 +53,42 @@ namespace linerider.Tools
         {
             Swatch.Selected = LineType.Standard;
         }
-        public override void OnMouseDown(Vector2d pos)
+        public override void OnMouseDown(Vector2d pos, bool nodraw)
         {
             Stop();
-            Active = true;
-
-            if (EnableSnap)
+            if (!nodraw)
             {
-                Vector2d gamepos = ScreenToGameCoords(pos);
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                Active = true;
+
+                if (EnableSnap)
                 {
-                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool snapped);
-                    if (snapped)
+                    Vector2d gamepos = ScreenToGameCoords(pos);
+                    using (TrackReader trk = game.Track.CreateTrackReader())
                     {
-                        _start = snap;
-                        Snapped = true;
-                    }
-                    else
-                    {
-                        _start = gamepos;
-                        Snapped = false;
+                        Vector2d snap = TrySnapPoint(trk, gamepos, out bool snapped);
+                        if (snapped)
+                        {
+                            _start = snap;
+                            Snapped = true;
+                        }
+                        else
+                        {
+                            _start = gamepos;
+                            Snapped = false;
+                        }
                     }
                 }
+                else
+                {
+                    _start = ScreenToGameCoords(pos);
+                    Snapped = false;
+                }
+                _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
+                _end = _start;
+                game.Invalidate();
+                game.Track.UndoManager.BeginAction();
             }
-            else
-            {
-                _start = ScreenToGameCoords(pos);
-                Snapped = false;
-            }
-            _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
-            _end = _start;
-            game.Invalidate();
-            game.Track.UndoManager.BeginAction();
-            base.OnMouseDown(pos);
+            base.OnMouseDown(pos, nodraw);
         }
         public override void OnChangingTool()
         {

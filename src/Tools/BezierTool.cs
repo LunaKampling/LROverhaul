@@ -55,65 +55,68 @@ namespace linerider.Tools
         }
 
         public override void OnChangingTool() => Stop();
-        public override void OnMouseDown(Vector2d pos)
+        public override void OnMouseDown(Vector2d pos, bool nodraw)
         {
-            Active = true;
-            Vector2d gamepos = ScreenToGameCoords(pos);
-            if (EnableSnap)
+            if (!nodraw)
             {
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                Active = true;
+                Vector2d gamepos = ScreenToGameCoords(pos);
+                if (EnableSnap)
                 {
-                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
-                    if (success)
+                    using (TrackReader trk = game.Track.CreateTrackReader())
                     {
-                        _start = snap;
-                        Snapped = true;
+                        Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
+                        if (success)
+                        {
+                            _start = snap;
+                            Snapped = true;
+                        }
+                        else
+                        {
+                            _start = gamepos;
+                            Snapped = false;
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    _start = gamepos;
+                    Snapped = false;
+                }
+
+                _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
+                _end = _start;
+
+                int closestIndex = -1;
+                double closestDist = 100000;
+                for (int i = 0; i < controlPoints.Count; i++)
+                {
+                    double dist = GameRenderer.Distance(ScreenToGameCoords(pos), controlPoints[i]);
+                    if (dist < closestDist)
                     {
-                        _start = gamepos;
-                        Snapped = false;
+                        closestDist = dist;
+                        closestIndex = i;
                     }
                 }
-            }
-            else
-            {
-                _start = gamepos;
-                Snapped = false;
-            }
 
-            _addflip = InputUtils.Check(Hotkey.LineToolFlipLine);
-            _end = _start;
-
-            int closestIndex = -1;
-            double closestDist = 100000;
-            for (int i = 0; i < controlPoints.Count; i++)
-            {
-                double dist = GameRenderer.Distance(ScreenToGameCoords(pos), controlPoints[i]);
-                if (dist < closestDist)
+                if (closestIndex >= 0 && closestDist < NodeSize)
                 {
-                    closestDist = dist;
-                    closestIndex = i;
+                    moving = true;
+                    pointToMove = closestIndex;
                 }
-            }
-
-            if (closestIndex >= 0 && closestDist < NodeSize)
-            {
-                moving = true;
-                pointToMove = closestIndex;
-            }
-            else
-            {
-                moving = false;
-                pointToMove = -1;
-                if (controlPoints.Count < 20)
+                else
                 {
-                    controlPoints.Add(_end);
+                    moving = false;
+                    pointToMove = -1;
+                    if (controlPoints.Count < 20)
+                    {
+                        controlPoints.Add(_end);
+                    }
                 }
-            }
 
-            game.Invalidate();
-            base.OnMouseDown(pos);
+                game.Invalidate();
+            }
+            base.OnMouseDown(pos, nodraw);
         }
 
         public override void OnMouseRightDown(Vector2d pos)

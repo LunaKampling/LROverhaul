@@ -62,7 +62,7 @@ namespace linerider.Tools
             game.UpdateCursor();
             base.OnMouseRightDown(pos);
         }
-        public override void OnMouseDown(Vector2d pos)
+        public override void OnMouseDown(Vector2d pos, bool nodraw)
         {
             zoom = false;
             Active = true;
@@ -70,7 +70,7 @@ namespace linerider.Tools
             CameraStart = game.Track.Camera.GetCenter();
             ZoomStart = game.Track.Zoom;
             game.Invalidate();
-            base.OnMouseDown(pos);
+            base.OnMouseDown(pos, nodraw);
         }
 
         public override void OnMouseMoved(Vector2d pos)

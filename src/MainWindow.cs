@@ -454,7 +454,7 @@ namespace linerider
                         {
                             if (e.Button == MouseButton.Left)
                             {
-                                CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y));
+                                CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y), Track.GetTrack()._layers.currentLayer.GetLock());
                             }
                             else if (e.Button == MouseButton.Right)
                             {
@@ -466,7 +466,7 @@ namespace linerider
                     {
                         if (e.Button == MouseButton.Left)
                         {
-                            CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y));
+                            CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y), Track.GetTrack()._layers.currentLayer.GetLock());
                         }
                     }
                 }
@@ -607,6 +607,11 @@ namespace linerider
                 if (!e.IsRepeat)
                 {
                     InputUtils.KeyDown(e.Key);
+                }
+                if (e.Key == Key.L)
+                {
+                    Track.GetTrack()._layers.currentLayer.SetLock(true);
+                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
                 }
                 if (e.Key == Key.H)
                 {
@@ -1155,7 +1160,7 @@ namespace linerider
             {
                 Vector2d mouse = InputUtils.GetMouse();
                 CurrentTools.QuickPan = true;
-                CurrentTools.PanTool.OnMouseDown(new Vector2d(mouse.X, mouse.Y));
+                CurrentTools.PanTool.OnMouseDown(new Vector2d(mouse.X, mouse.Y), false);
             },
             () =>
             {

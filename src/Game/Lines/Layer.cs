@@ -30,7 +30,7 @@ namespace linerider.Game
         /// <param name="Track">Editor object (contains track)</param>
         public void Rerender(Editor Track)
         {
-            foreach(GameLine line in lines.Values)
+            foreach (GameLine line in lines.Values)
             {
                 Track.RedrawLine(line);
             }
@@ -50,7 +50,16 @@ namespace linerider.Game
         public void SetVisibility(bool visible)
         {
             _visible = visible;
-            Debug.WriteLine(_visible);
+            //Debug.WriteLine(_visible);
+        }
+
+        public bool GetLock()
+        {
+            return _locked;
+        }
+        public void SetLock(bool locked) 
+        {
+            _locked = locked;
         }
         /// <summary>
         /// Clones attritubes from another layer
