@@ -457,18 +457,23 @@ namespace linerider.Tools
             }
             using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
+                if (trk.Track._layers.currentLayer.GetLock() || !trk.Track._layers.currentLayer.GetVisibility()) { return; }
                 game.Track.UndoManager.BeginAction();
                 foreach (GameLine line in buffer)
                 {
                     GameLine add = line.Clone();
+                    if (Swatch.Selected == LineType.Layer && (!add.layer.GetVisibility() || add.layer.GetLock())) { continue; }
                     add.ID = GameLine.UninitializedID;
                     add.Position1 += diff;
                     add.Position2 += diff;
-                    add.layer = trk.Track._layers.currentLayer;
+                    if (Swatch.Selected != LineType.Layer) { add.layer = trk.Track._layers.currentLayer; } 
+                    //If swatch is set to layer, selection will paste to their original layer. 
+                    //Requires selection to be made and swatch to be activated afterwards. 
+                    //More elegant solution always appreciated
                     if (add is StandardLine stl)
                         stl.CalculateConstants();
                     add.SelectionState = SelectionState.Selected;
-                    trk.AddLine(add, trk.Track._layers.currentLayer); //Adds lines on the current layer. .com does it the same way.
+                    trk.AddLine(add, add.layer);
                     LineSelection selectinfo = new LineSelection(add, true, null);
                     _selection.Add(selectinfo);
                     _ = _selectedlines.Add(add.ID);
