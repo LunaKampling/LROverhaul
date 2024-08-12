@@ -196,7 +196,7 @@ namespace linerider.Rendering
             counter += 2;
             GL.VertexAttribPointer(in_linesize, 2, VertexAttribPointerType.Float, false, LineVertex.Size, counter);
             Color global = OverrideColor;
-            float relativeKnobSize = Settings.LimitLineKnobsSize ? Math.Min(
+            double relativeKnobSize = Settings.LimitLineKnobsSize ? Math.Min(
                 Constants.KnobSize,
                 Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxLimitedKnobSize / Scale
             ) : Constants.KnobSize;

@@ -191,7 +191,7 @@ namespace linerider.Tools
                     foreach (LineSelection v in _boxselection)
                     {
                         if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(v.line.ID)) continue;
-                        
+
                         LineType linetypeSelected = v.GetLineType();
                         if (v.line.layer.GetVisibility() && !v.line.layer.GetLock() &&
                             (v.line.Type == Swatch.Selected || Swatch.Selected == LineType.All ||
@@ -951,7 +951,7 @@ namespace linerider.Tools
                 using (TrackWriter trk = game.Track.CreateTrackWriter())
                 {
                     HashSet<int> newSelection = new HashSet<int>();
-                    foreach (GameLine line in selection) 
+                    foreach (GameLine line in selection)
                     {
                         newSelection.Add(line.ID);
                     }
