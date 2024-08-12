@@ -244,6 +244,7 @@
     <Compile Include="UI\Components\ToolButton.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Widgets\LayersPanel.cs" />
     <Compile Include="UI\Widgets\Preferences\HotkeysEditor.cs" />
     <Compile Include="UI\Widgets\InfoBarCoords.cs" />
     <Compile Include="UI\Widgets\LoadingSprite.cs" />

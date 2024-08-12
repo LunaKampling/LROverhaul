@@ -49,6 +49,7 @@ namespace linerider
         private ZoomBar _zoom;
         private SwatchBar _swatchBar;
         private Toolbar _toolbar;
+        private LayersPanel _layersPanel;
         private LoadingSprite _loadingSprite;
         private readonly MainWindow game;
         public PlatformImpl Platform;
@@ -84,6 +85,7 @@ namespace linerider
             // Process recording junk
             bool rec = Settings.Local.RecordingMode;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
+            _layersPanel.IsHidden = rec && !Settings.Recording.ShowTools;
             _swatchBar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
             _infoBarCoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timelineBar.IsHidden = rec;
@@ -211,6 +213,15 @@ namespace linerider
             _ = new InfoBarRight(_rightArea, game.Track)
             {
                 Dock = Dock.Top,
+            };
+
+            _layersPanel = new LayersPanel(this, game.Track)
+            {
+                AutoSizeToContents = true,
+                Positioner = (o) => new Point(
+                    Width - o.Width - WidgetContainer.WidgetMargin,
+                    (Height - _bottomArea.Height) / 2 - o.Height / 2
+                ),
             };
 
             _loadingSprite = new LoadingSprite(this)

@@ -1,11 +1,5 @@
 ﻿using System.Drawing;
-using OpenTK;
-using System;
 using System.Collections.Generic;
-using linerider.Game;
-using linerider.Rendering;
-using linerider.Utils;
-using System.Diagnostics;
 
 namespace linerider.Game
 {
@@ -16,7 +10,7 @@ namespace linerider.Game
         public bool _visible = true; //visibility of lines in layer
         public bool _locked = false;
         public Dictionary<int, GameLine> lines = new Dictionary<int, GameLine>(); //lines objects contained in layer
-        public string name = "Base Layer";
+        public string name = "Layer";
         private static string colorhex = "660066";
         private static int hex = int.Parse("00" + colorhex, System.Globalization.NumberStyles.HexNumber);
         private Color _color = Color.FromArgb(hex);

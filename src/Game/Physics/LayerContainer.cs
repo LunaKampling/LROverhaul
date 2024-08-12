@@ -22,7 +22,7 @@ namespace linerider
         public Layer currentLayer;
         public LayerContainer()
         {
-            _layer.name = "Base layer";
+            _layer.name = "Base Layer";
             AddLayer((T)_layer);
             defaultLayer = _layer;
             currentLayer = _layer;
