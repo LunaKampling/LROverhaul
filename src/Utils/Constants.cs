@@ -68,8 +68,16 @@ namespace linerider.Utils
         public const float MaxLimitedKnobSize = MaxZoom;
 
         public static readonly Size ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-        public static readonly Size WindowSize = new Size(Math.Max(1280, (int)Math.Round(ScreenSize.Width / 1.5)), Math.Max(720, (int)Math.Round(ScreenSize.Height / 1.5)));
-        public static readonly float ScreenScale = Math.Max(1, (ScreenSize.Width / 1600 < ScreenSize.Height / 1080) ? (ScreenSize.Width / 1600) : (ScreenSize.Height / 1080));
+        public static readonly double ScreenScale = Math.Max(1,
+            Math.Round(((double)ScreenSize.Width / 1600 < (double)ScreenSize.Height / 1080)
+                ? ((double)ScreenSize.Width / 1600)
+                : ((double)ScreenSize.Height / 1080),
+            2)
+        );
+        public static readonly Size WindowSize = new Size(
+            Math.Max(1280, (int)Math.Round(ScreenSize.Width / 1.5)),
+            Math.Max(720, (int)Math.Round(ScreenSize.Height / 1.5))
+        );
 
         public static readonly string GithubPageHeader = "https://github.com/LunaKampling/LROverhaul";
         public static readonly string GithubRawHeader = "https://raw.githubusercontent.com/LunaKampling/LROverhaul";
