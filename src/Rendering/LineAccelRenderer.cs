@@ -156,7 +156,7 @@ namespace linerider.Rendering
         private void DrawAccel(RedLine line, bool hide)
         {
             accelentry entry = _lookup[line.ID];
-            GenericVertex[] newdecor = hide ? new GenericVertex[ShapeSize * line.Multiplier] : GetAccelDecor(line);
+            GenericVertex[] newdecor = hide ? new GenericVertex[(int)Math.Round(ShapeSize * line.Multiplier)] : GetAccelDecor(line);
             int shapes = newdecor.Length / ShapeSize;
 
             for (int ix = 0; ix < entry.shapes; ix++)
@@ -264,15 +264,15 @@ namespace linerider.Rendering
         public static GenericVertex[] GetAccelDecor(RedLine line)
         {
             Color linecolor = Settings.Colors.AccelerationLine;
-            int multiplier = line.Multiplier;
-            int shapecount = Math.Min(multiplier, 3);
+            double multiplier = line.Multiplier;
+            int shapecount = (int)Math.Round(multiplier, 3);
             if (multiplier > 3)
                 shapecount += 4;
             GenericVertex[] ret = new GenericVertex[3 * shapecount];
             Angle angle = Angle.FromLine(line.End, line.Start);
             Angle angle2 = Angle.FromRadians(angle.Radians - 1.5708f);
             Vector2d start = line.Position2;
-            for (int idx = 0; idx < Math.Min(multiplier, 3); idx++)
+            for (int idx = 0; idx < Math.Min(shapecount, 3); idx++)
             {
                 Vector2d a = start;
                 Vector2d b = angle.MovePoint(start, line.inv ? -8 : 8);

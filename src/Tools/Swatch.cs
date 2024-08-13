@@ -22,14 +22,9 @@ namespace linerider.Tools
 {
     public class Swatch : GameService
     {
-        private float _redmultiplier = 1;
         public float GreenMultiplier { get; set; } = 1;
+        public double RedMultiplier { get; set; } = 1;
 
-        public int RedMultiplier
-        {
-            get => (int)Math.Round(_redmultiplier);
-            set => _redmultiplier = value;
-        }
         public const int MaxRedMultiplier = 3;
         public const int MinRedMultiplier = 1;
         public const int MaxGreenMultiplier = 3;
@@ -47,7 +42,7 @@ namespace linerider.Tools
                 {
                     case LineType.Acceleration:
                     {
-                        int mul = sw.RedMultiplier;
+                        double mul = sw.RedMultiplier;
                         mul++;
                         if (mul > MaxRedMultiplier)
                             mul = MinRedMultiplier;

@@ -82,8 +82,7 @@ namespace linerider
         private Rectangle _previouswindowpos;
         public MainWindow()
             : base(
-                Constants.WindowSize.Width,
-                Constants.WindowSize.Height,
+                1337, 1337, // These size values don't matter, they're overridden below
                 new GraphicsMode(new ColorFormat(24), 0, 0, 0, ColorFormat.Empty),
                 string.Empty,
                 GameWindowFlags.Default,
@@ -92,6 +91,12 @@ namespace linerider
                 0,
                 GraphicsContextFlags.Default)
         {
+            // Manually setting window size/position as OpenTK 2 messes them up at high DPI
+            Size = new Size(Constants.WindowSize.Width, Constants.WindowSize.Height);
+            Location = new Point(
+                (int)Math.Round((double)Constants.ScreenSize.Width / 2 - Size.Width / 2),
+                (int)Math.Round((double)Constants.ScreenSize.Height / 2 - Size.Height / 2)
+            );
             SafeFrameBuffer.Initialize();
             Track = new Editor();
             VSync = VSyncMode.On;
@@ -1054,6 +1059,24 @@ namespace linerider
             null,
             repeat: true);
             InputUtils.RegisterHotkey(Hotkey.PlaybackResetCamera, () => true, () => Track.ResetCamera());
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () =>
+            {
+                StopTools();
+                Track.StartFromFlag();
+                Track.ResetSpeedDefault();
+            });
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStartSlowmo, () => true, () =>
+            {
+                StopTools();
+                Track.StartFromFlag();
+                Track.Scheduler.UpdatesPerSecond = Settings.SlowmoSpeed;
+            });
+            InputUtils.RegisterHotkey(Hotkey.PlaybackStartIgnoreFlag, () => true, () =>
+            {
+                StopTools();
+                Track.StartIgnoreFlag();
+                Track.ResetSpeedDefault();
+            });
         }
         private void RegisterPopupHotkeys()
         {

@@ -211,7 +211,7 @@ namespace linerider
         public static class Computed
         {
             public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
-            public static float UIScale => Settings.UIScale > 0 ? Settings.UIScale : Constants.ScreenScale;
+            public static double UIScale => Settings.UIScale > 0 ? Settings.UIScale : (float)Constants.ScreenScale;
             public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
             public static bool LockCamera => Local.RecordingMode ? false : Local.LockCamera;

@@ -193,7 +193,7 @@ namespace linerider.IO
                         idx += 2; // Skip leftline, rightline
                         if (line.type == 1 && idx < sz)
                         {
-                            line.multiplier = Convert.ToInt32(lineobj[idx++]);
+                            line.multiplier = Convert.ToDouble(lineobj[idx++], Program.Culture);
                         }
                     }
                 }
@@ -248,7 +248,7 @@ namespace linerider.IO
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2))
                     {
-                        ID = line.id
+                        ID = GameLine.UninitializedID
                     };
                     track.AddLine(add);
                     break;

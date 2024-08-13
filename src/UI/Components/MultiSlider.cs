@@ -187,14 +187,10 @@ namespace linerider.UI.Components
 
         private void SetupBackground()
         {
-            Bitmap bmp = GameResources.ux_slider_background.Bitmap;
-
-            Texture tx = new Texture(Gwen.Skin.SkinBase.DefaultSkin.Renderer);
-            Margin bounds = new Margin(bmp.Width / 2, bmp.Height / 2, bmp.Width / 2, bmp.Height / 2);
-            Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
-
-            _background = new Bordered(tx, 0, 0, bmp.Width, bmp.Height, bounds);
-            _bitmap = bmp;
+            int height = Utility.NumberToCurrentScale(3);
+            Utils.RoundedSquareTexture rst = new Utils.RoundedSquareTexture(height, stretchVertically: false);
+            _background = rst.Bordered;
+            _bitmap = rst.Bitmap;
         }
 
         private void SetupDefaultPlayhead()

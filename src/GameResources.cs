@@ -209,7 +209,6 @@ namespace linerider
         internal static VectorResource ux_swatch => GetVectorImage("ux.swatch.svg");
         internal static VectorResource ux_swatch_active => GetVectorImage("ux.swatch_active.svg");
         internal static VectorResource ux_multitool_indicator => GetVectorImage("ux.multitool_indicator.svg");
-        internal static VectorResource ux_slider_background => GetVectorImage("ux.slider_background.svg");
         internal static VectorResource ux_playhead_main => GetVectorImage("ux.playhead_main.svg");
         internal static VectorResource ux_playhead_flag => GetVectorImage("ux.playhead_flag.svg");
         internal static VectorResource ux_playhead_limiter => GetVectorImage("ux.playhead_limiter.svg");

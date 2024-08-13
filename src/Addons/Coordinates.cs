@@ -29,7 +29,7 @@ namespace linerider.Addons
 
         public static double[] CoordsX = new double[] { SledTLX, SledBLX, SledBRX, SledTRX, BodyBuX, BodyShX, BodyHLX, BodyHRX, BodyFLX, BodyFRX };
         public static double[] CoordsY = new double[] { SledTLY, SledBLY, SledBRY, SledTRY, BodyBuY, BodyShY, BodyHLY, BodyHRY, BodyFLY, BodyFRY };
-        public static string[] ConPName = new string[] { "SledTL", "SledBR", "SledBR", "SledTR", "BodyBu", "BodySh", "BodyHL", "BodyHR", "BodyFL", "BodyFR" };
+        public static string[] ConPName = new string[] { "SledTL", "SledBL", "SledBR", "SledTR", "BodyBu", "BodySh", "BodyHL", "BodyHR", "BodyFL", "BodyFR" };
         public static string[] CoordsData = new string[] { "", "", "", "", "", "", "", "", "", "" };
 
         public static int frame;

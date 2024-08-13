@@ -749,7 +749,8 @@ namespace linerider.UI
             Panel uiGroup = GwenHelper.CreateHeaderPanel(parent, "UI");
             ComboBox uiScale = GwenHelper.CreateLabeledCombobox(uiGroup, "Scale *");
 
-            _ = uiScale.AddItem("Auto", "", 0f);
+            double autoScale = Constants.ScreenScale * 100;
+            _ = uiScale.AddItem($"Auto ({autoScale}%)", "", 0f);
             _ = uiScale.AddItem("100%", "", 1f);
             _ = uiScale.AddItem("125%", "", 1.25f);
             _ = uiScale.AddItem("150%", "", 1.5f);

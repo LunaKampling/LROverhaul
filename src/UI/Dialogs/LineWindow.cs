@@ -147,7 +147,7 @@ namespace linerider.UI
 
         private void SetupBlueAndRedOptions(PropertyTree tree)
         {
-            int currentMultiplier = 0;
+            double currentMultiplier = 0;
             bool inv = false;
             StandardLine.Ext lineEXT = ((StandardLine)_ownerline).Extension;
             bool leftEXT = ((StandardLine)_ownerline).Extension == StandardLine.Ext.Both || ((StandardLine)_ownerline).Extension == StandardLine.Ext.Left;
@@ -165,12 +165,11 @@ namespace linerider.UI
                 Min = -255,
                 Max = 255,
                 NumberValue = inv ? -currentMultiplier : currentMultiplier,
-                OnlyWholeNumbers = true,
             };
             multiplier.ValueChanged += (o, e) =>
             {
                 accelinverse.IsChecked = multiplier.NumberValue < 0;
-                ChangeMultiplier((int)Math.Abs(multiplier.NumberValue));
+                ChangeMultiplier(Math.Abs(multiplier.NumberValue));
             };
             _ = table.Add("Multiplier", multiplier);
             multilines = new NumberProperty(table)
@@ -403,7 +402,7 @@ namespace linerider.UI
                 UpdateOwnerLine(trk, cpy);
             }
         }
-        private void ChangeMultiplier(int mul)
+        private void ChangeMultiplier(double mul)
         {
             SimulationCell lines = GetMultiLines(false);
             using (TrackWriter trk = _editor.CreateTrackWriter())

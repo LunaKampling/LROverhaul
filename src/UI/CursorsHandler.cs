@@ -184,7 +184,7 @@ namespace linerider.UI
         {
             // For some reason doc.GetElementById("...") doesn't work.
             XmlNodeList allNodes = doc.GetElementsByTagName("path");
-            float scale = Settings.Computed.UIScale;
+            double scale = Settings.Computed.UIScale;
             XmlNode hotspotEl = null;
             Point hotspot;
 
