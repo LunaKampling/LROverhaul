@@ -2,7 +2,7 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace linerider.Utils
 {
@@ -67,7 +67,9 @@ namespace linerider.Utils
         public const float KnobSize = 0.8f;
         public const float MaxLimitedKnobSize = MaxZoom;
 
-        public static readonly Size ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+        // PLACEHOLDER
+        public static readonly Size ScreenSize = new Size(1920, 1080);
+        // TODO replace with opentk monitorinfo API: public static readonly Size ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         public static readonly double ScreenScale = Math.Max(1,
             Math.Round(((double)ScreenSize.Width / 1600 < (double)ScreenSize.Height / 1080)
                 ? ((double)ScreenSize.Width / 1600)

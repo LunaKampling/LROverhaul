@@ -1,6 +1,7 @@
 using linerider.Game;
 using linerider.Rendering;
-using System.Windows.Forms;
+using System;
+//using System.Windows.Forms;
 
 namespace linerider.Addons
 {
@@ -61,10 +62,14 @@ namespace linerider.Addons
             iteration = game.Track.IterationsOffset;
             Rider rider = game.Track.Timeline.GetFrame(frame, iteration);
 
-            if (xClipboard)
-                Clipboard.SetText(rider.Body[integerClipboard].Location.X.ToString("G17"));
-            if (yClipboard)
-                Clipboard.SetText(rider.Body[integerClipboard].Location.Y.ToString("G17"));
+            if (OperatingSystem.IsWindows()) {
+                /* TODO replace, maybe glfw clipboard api
+                if (xClipboard)
+                    Clipboard.SetText(rider.Body[integerClipboard].Location.X.ToString("G17"));
+                if (yClipboard)
+                    Clipboard.SetText(rider.Body[integerClipboard].Location.Y.ToString("G17"));
+                */
+            }
         }
     };
 }

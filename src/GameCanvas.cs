@@ -277,20 +277,24 @@ namespace linerider
         public static bool ShowLoadCrashBackup(string name)
         {
             bool ret = false;
-            string text = "" +
-                "Hey, it looks like you are trying to load a Crash Backup.\n" +
-                "(" + name + ")\n" +
-                "Some issues with the save may cause the file to always crash this program.\n" +
-                "Are you sure you want to load it?";
-            string title = "So about that crash backup...";
 
-            if (System.Windows.Forms.MessageBox.Show(text, title,
-                System.Windows.Forms.MessageBoxButtons.YesNo)
-                 == System.Windows.Forms.DialogResult.Yes)
-            {
-                ret = true;
-                Settings.LastSelectedTrack = "";
-                Settings.Save();
+            if (System.OperatingSystem.IsWindows()) {
+                /* TODO MessageBox from user32.dll instead of winforms
+                string text = "" +
+                    "Hey, it looks like you are trying to load a Crash Backup.\n" +
+                    "(" + name + ")\n" +
+                    "Some issues with the save may cause the file to always crash this program.\n" +
+                    "Are you sure you want to load it?";
+                string title = "So about that crash backup...";
+                
+                if (System.Windows.MessageBox.Show(text, title,
+                    System.Windows.Forms.MessageBoxButtons.YesNo)
+                    == System.Windows.Forms.DialogResult.Yes)
+                {
+                    ret = true;
+                    Settings.LastSelectedTrack = "";
+                    Settings.Save();
+                }*/
             }
             return ret;
         }

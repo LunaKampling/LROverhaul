@@ -19,7 +19,7 @@
 using OpenTK;
 using System;
 using System.Threading;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace linerider.UI
 {
@@ -39,7 +39,11 @@ namespace linerider.UI
                 {
                     try
                     {
-                        Clipboard.SetText(text);
+                        if (OperatingSystem.IsWindows()) {
+                            /* TODO replace, maybe glfw clipboard api   
+                            Clipboard.SetText(text);
+                            */
+                        }
                         ret = true;
                     }
                     catch (Exception)
@@ -47,7 +51,7 @@ namespace linerider.UI
                         return;
                     }
                 });
-            staThread.SetApartmentState(ApartmentState.STA);
+            if (OperatingSystem.IsWindows()) staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             staThread.Join();
             // At this point either you have clipboard data or an exception
@@ -62,16 +66,20 @@ namespace linerider.UI
                 {
                     try
                     {
-                        if (!Clipboard.ContainsText())
-                            return;
-                        ret = Clipboard.GetText();
+                        if (OperatingSystem.IsWindows()) {
+                            /* TODO replace, maybe glfw clipboard api   
+                            if (!Clipboard.ContainsText())
+                                return;
+                            ret = Clipboard.GetText();
+                            */
+                        }
                     }
                     catch (Exception)
                     {
                         return;
                     }
                 });
-            staThread.SetApartmentState(ApartmentState.STA);
+            if (OperatingSystem.IsWindows()) staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             staThread.Join();
             // At this point either you have clipboard data or an exception

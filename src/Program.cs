@@ -114,31 +114,39 @@ namespace linerider
             string title = "Game crashed!";
             string msg = $"Unhandled Exception: {e.Message}{msgBoxSpearator}{e.StackTrace}{msgBoxSpearator}{msgBoxSpearator}Would you like to export the crash data to a log file?{msgBoxSpearator}Log file path: {logFilePath}";
 
-            System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
+            if (OperatingSystem.IsWindows()) {
+                /* TODO MessageBox from user32.dll instead of winforms
+                System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
 
-            if (btn == System.Windows.Forms.DialogResult.Yes)
-            {
-                string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
-                string headerSeparator = new string('-', 3);
-                string header = $"{headerSeparator} {AssemblyInfo.FullVersion} {headerSeparator} {now} {headerSeparator}";
-                string newLine = "\r\n";
+                if (btn == System.Windows.Forms.DialogResult.Yes)
+                {
+                    string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
+                    string headerSeparator = new string('-', 3);
+                    string header = $"{headerSeparator} {AssemblyInfo.FullVersion} {headerSeparator} {now} {headerSeparator}";
+                    string newLine = "\r\n";
 
-                if (!File.Exists(logFilePath))
-                    File.Create(logFilePath).Dispose();
+                    if (!File.Exists(logFilePath))
+                        File.Create(logFilePath).Dispose();
 
-                string oldRecords = File.ReadAllText(logFilePath, System.Text.Encoding.UTF8);
-                string newRecord = header + newLine + newLine + e.ToString() + newLine;
-                if (!string.IsNullOrEmpty(oldRecords))
-                    newRecord = newLine + newRecord;
+                    string oldRecords = File.ReadAllText(logFilePath, System.Text.Encoding.UTF8);
+                    string newRecord = header + newLine + newLine + e.ToString() + newLine;
+                    if (!string.IsNullOrEmpty(oldRecords))
+                        newRecord = newLine + newRecord;
 
-                File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
+                    File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
+                }*/
             }
 
             if (!nothrow)
                 throw e;
         }
 
-        public static void NonFatalError(string err) => System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
+        public static void NonFatalError(string err) { 
+            if (OperatingSystem.IsWindows()) {
+                /* TODO MessageBox from user32.dll instead of winforms
+                System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
+            */}
+        }
         public static void Run(string[] givenArgs)
         {
             if (Debugger.IsAttached)
