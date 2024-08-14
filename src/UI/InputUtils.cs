@@ -35,11 +35,11 @@ namespace linerider.UI
             public Action keyuphandler = null;
         }
         private static GameWindow _window;
-        private static KeyboardState _kbstate;
-        private static KeyboardState _prev_kbstate;
+        //private static KeyboardState _kbstate = default(KeyboardState);
+        private static KeyboardState _prev_kbstate = default(KeyboardState);
         private static readonly List<MouseButton> _mousebuttonsdown = new List<MouseButton>();
-        private static MouseState _mousestate;
-        private static MouseState _prev_mousestate;
+        //private static MouseState _mousestate = default(MouseState);
+        private static MouseState _prev_mousestate = default(MouseState);
         private static bool _hasmoved = false;
         private static readonly ResourceSync _lock = new ResourceSync();
         private static KeyModifiers _modifiersdown;
@@ -72,7 +72,7 @@ namespace linerider.UI
         public static Keybinding ReadHotkey()
         {
             Key key = RepeatKey;
-            if (!_kbstate[key])
+            if (!_window.KeyboardState[key])
                 key = (Key)(-1);
             if (_mousebuttonsdown.Count == 1 && key == (Key)(-1))
             {
@@ -92,8 +92,8 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                _prev_kbstate = _kbstate;
-                _kbstate = ks;
+                _prev_kbstate = _window.KeyboardState;
+                //_kbstate = ks;
                 _modifiersdown = modifiers;
             }
         }
@@ -148,8 +148,8 @@ namespace linerider.UI
                     {
                         bool waspressed = CheckPressed(
                             bind,
-                            ref _prev_kbstate,
-                            ref _prev_mousestate);
+                            _prev_kbstate,
+                            _prev_mousestate);
                         if (waspressed)
                         {
                             continue;
@@ -184,8 +184,8 @@ namespace linerider.UI
                     {
                         bool waspressed = CheckPressed(
                             bind,
-                            ref _prev_kbstate,
-                            ref _prev_mousestate);
+                            _prev_kbstate,
+                            _prev_mousestate);
                         if (waspressed && !handler.repeat)
                         {
                             continue;
@@ -201,8 +201,8 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                x = (int)_mousestate.X;
-                y = (int)_mousestate.Y;
+                x = (int)_window.MouseState.X;
+                y = (int)_window.MouseState.Y;
                 if (_hasmoved)
                 {
                     _hasmoved = false;
@@ -215,21 +215,21 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                if (_mousestate.X != ms.X || _mousestate.Y != ms.Y)
+                if (_window.MouseState.X != ms.X || _window.MouseState.Y != ms.Y)
                 {
                     _hasmoved = true;
                 }
-                _prev_mousestate = _mousestate;
-                _mousestate = ms;
+                _prev_mousestate = _window.MouseState;
+                //_mousestate = ms;
                 _mousebuttonsdown.Clear();
                 for (MouseButton btn = 0; btn < MouseButton.Last; btn++)
                 {
-                    if (_mousestate[btn])
+                    if (_window.MouseState[btn])
                         _mousebuttonsdown.Add(btn);
                 }
             }
         }
-        public static Vector2d GetMouse() => new Vector2d(_mousestate.X, _mousestate.Y);
+        public static Vector2d GetMouse() => new Vector2d(_window.MouseState.X, _window.MouseState.Y);
         public static bool Check(Hotkey hotkey) => CheckInternal(hotkey, true) != null;
         public static bool CheckPressed(Hotkey hotkey)
         {
@@ -243,7 +243,7 @@ namespace linerider.UI
                         {
                             continue;
                         }
-                        if (CheckPressed(bind, ref _kbstate, ref _mousestate))
+                        if (CheckPressed(bind, _window.KeyboardState, _window.MouseState))
                             return true;
                     }
                 }
@@ -268,9 +268,9 @@ namespace linerider.UI
             {
                 // We can conflict with left/right, not others
                 int buttonsdown = _mousebuttonsdown.Count;
-                if (_mousestate[MouseButton.Left])
+                if (_window.MouseState[MouseButton.Left])
                     buttonsdown--;
-                if (_mousestate[MouseButton.Right])
+                if (_window.MouseState[MouseButton.Right])
                     buttonsdown--;
                 if (buttonsdown > 1)
                     return false;
@@ -291,14 +291,14 @@ namespace linerider.UI
                         {
                             continue;
                         }
-                        if (CheckPressed(bind, ref _kbstate, ref _mousestate))
+                        if (CheckPressed(bind, _window.KeyboardState, _window.MouseState))
                             return bind;
                     }
                 }
             }
             return null;
         }
-        private static bool CheckPressed(Keybinding bind, ref KeyboardState state, ref MouseState mousestate)
+        private static bool CheckPressed(Keybinding bind, KeyboardState state, MouseState mousestate)
         {
             if (_window != null && !_window.IsFocused)
                 return false;

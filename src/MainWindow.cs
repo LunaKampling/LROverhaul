@@ -42,6 +42,7 @@ using System.Drawing;
 using System.Threading;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 using MessageBox = Gwen.Controls.MessageBox;
+using System.Runtime.InteropServices;
 
 namespace linerider
 {
@@ -85,7 +86,7 @@ namespace linerider
         private bool _invalidated;
         private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
         private Rectangle _previouswindowpos;
-        public MainWindow() : base(GameWindowSettings.Default, NativeWindowSettings.Default) {
+        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Debug }) {
             /*
             : base(
                 1337, 1337, // These size values don't matter, they're overridden below
@@ -116,6 +117,22 @@ namespace linerider
             RegisterHotkeys();
             if (Settings.startWindowMaximized)
                 WindowState = WindowState.Maximized;
+            GL.DebugMessageCallback(DebugMessageDelegate, IntPtr.Zero);
+        }
+
+        private static DebugProc DebugMessageDelegate = OnGLDebugMessage;
+        private static void OnGLDebugMessage(
+            DebugSource source,
+            DebugType type,
+            int id,
+            DebugSeverity severity,
+            int length,
+            IntPtr pMessage,
+            IntPtr pUserParam)
+        {
+            string message = Marshal.PtrToStringAnsi(pMessage, length);
+
+            Console.WriteLine("[{0} source={1} type={2} id={3}] {4}", severity, source, type, id, message);
         }
 
         public override void Dispose()
@@ -288,6 +305,10 @@ namespace linerider
             // Check if scarf and rider model are actual
             RiderLoader.Validate();
 
+            string err = "";
+            _ = GLFW.GetError(out err);
+            Console.WriteLine(err);
+
             // Regular code starts here
             GameUpdateHandleInput();
             int updates = Track.Scheduler.UnqueueUpdates();
@@ -355,7 +376,7 @@ namespace linerider
                 Cursor = cursor;
             }
         }
-        /*protected override*/void OnLoad(EventArgs e)
+        protected override void OnLoad()
         {
             Shaders.Load();
             MSAABuffer = new MsaaFbo();
@@ -389,6 +410,8 @@ namespace linerider
         protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
+            if (Track == null) return;
+            if (Canvas == null) return;
             Track.Camera.OnResize();
             try
             {

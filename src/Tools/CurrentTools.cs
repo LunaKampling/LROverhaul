@@ -1,4 +1,5 @@
-﻿namespace linerider.Tools
+﻿using OpenTK.Mathematics;
+namespace linerider.Tools
 {
     public static class CurrentTools
     {

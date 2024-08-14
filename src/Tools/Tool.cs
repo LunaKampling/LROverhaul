@@ -22,6 +22,7 @@ using linerider.Utils;
 using OpenTK;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
