@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Diagnostics;
 
 namespace linerider.Tools
@@ -493,19 +493,27 @@ namespace linerider.Tools
                 }
             }
 
-            Clipboard.SetText(lineArray.ToString() + "]");
+            if (OperatingSystem.IsWindows()) {
+                /* TODO replace, maybe glfw clipboard api           
+                Clipboard.SetText(lineArray.ToString() + "]");
+                */
+            }
 
             game.Track.Notify("Copied!");
         }
         public void PasteValues()
         {
-            string lineArray = Clipboard.GetText();
-            List<GameLine> lineList = ParseJson(lineArray);
+            if (OperatingSystem.IsWindows()) {
+                /* TODO replace, maybe glfw clipboard api
+                string lineArray = Clipboard.GetText();
+                List<GameLine> lineList = ParseJson(lineArray);
 
-            if (lineList is null)
-                return;
+                if (lineList is null)
+                    return;
 
-            PasteFromBuffer(lineList);
+                PasteFromBuffer(lineList);
+                */
+            }
         }
         private List<GameLine> ParseJson(string lineArray)
         {
