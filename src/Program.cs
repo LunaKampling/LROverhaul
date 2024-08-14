@@ -160,22 +160,23 @@ namespace linerider
             Random = new Random();
             GameResources.Init();
 
-            using (Toolkit.Init(new ToolkitOptions { EnableHighResolution = true, Backend = PlatformBackend.Default }))
-            {
+            //using (Toolkit.Init(new ToolkitOptions { EnableHighResolution = true, Backend = PlatformBackend.Default }))
+            //{
                 using (glGame = new MainWindow())
                 {
                     UI.InputUtils.SetWindow(glGame);
-                    glGame.RenderSize = new System.Drawing.Size(glGame.Width, glGame.Height);
+                    glGame.RenderSize = new System.Drawing.Size(glGame.Size.X, glGame.Size.Y);
                     Rendering.GameRenderer.Game = glGame;
                     MemoryStream ms = new MemoryStream(GameResources.icon);
-                    glGame.Icon = new System.Drawing.Icon(ms);
+                    //glGame.Icon = new System.Drawing.Icon(ms);
 
                     ms.Dispose();
                     glGame.Title = WindowTitle;
-                    glGame.Run(Constants.FrameRate, 0); // TODO: Maybe not limit this
+                    glGame.Run();
+                    //glGame.Run(Constants.FrameRate, 0); // TODO: Maybe not limit this
                 }
                 Audio.AudioService.CloseDevice();
-            }
+            //}
         }
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -228,8 +229,8 @@ namespace linerider
                 }.Start();
             }
         }
-        public static int GetWindowWidth() => glGame.Width;
-        public static int GetWindowHeight() => glGame.Height;
+        public static int GetWindowWidth() => glGame.Size.X;
+        public static int GetWindowHeight() => glGame.Size.Y;
     }
 
     internal static class AssemblyInfo

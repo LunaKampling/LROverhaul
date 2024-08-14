@@ -17,6 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using OpenTK;
+using OpenTK.Mathematics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 namespace linerider.Drawing

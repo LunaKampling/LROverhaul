@@ -19,6 +19,7 @@
 using linerider.Rendering;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Drawing;

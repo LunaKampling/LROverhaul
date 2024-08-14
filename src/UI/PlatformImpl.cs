@@ -17,6 +17,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using OpenTK;
+using OpenTK.Windowing.Common.Input;
 using System;
 using System.Threading;
 //using System.Windows.Forms;

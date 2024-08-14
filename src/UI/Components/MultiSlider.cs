@@ -5,6 +5,7 @@ using Gwen.Skin.Texturing;
 using System;
 using Gwen.Input;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace linerider.UI.Components
 {

@@ -19,11 +19,11 @@ namespace linerider.UI
         {
             get
             {
-                if (OpenTK.Configuration.RunningOnMacOS)
+                if (OperatingSystem.IsMacOS())
                     return $"{Constants.FfmpegHelperHeader}-mac.zip";
-                else if (OpenTK.Configuration.RunningOnWindows)
+                else if (OperatingSystem.IsWindows())
                     return $"{Constants.FfmpegHelperHeader}-win.zip";
-                else if (OpenTK.Configuration.RunningOnUnix)
+                else if (OperatingSystem.IsLinux())
                     return $"{Constants.FfmpegHelperHeader}-linux.zip";
                 return null;
             }

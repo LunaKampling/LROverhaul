@@ -2,6 +2,7 @@ using Gwen;
 using Gwen.Controls;
 using linerider.Game.LineGenerator;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 
 namespace linerider.UI

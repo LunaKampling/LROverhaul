@@ -25,6 +25,7 @@ using linerider.UI.Components;
 using linerider.UI.Widgets;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -245,16 +246,16 @@ namespace linerider
             catch
             {
                 // Hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (Configuration.RunningOnWindows)
+                if (OperatingSystem.IsWindows())
                 {
                     url = url.Replace("&", "^&");
                     _ = Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
                 }
-                else if (Configuration.RunningOnMacOS)
+                else if (OperatingSystem.IsMacOS())
                 {
                     _ = Process.Start("open", url);
                 }
-                else if (Configuration.RunningOnLinux)
+                else if (OperatingSystem.IsLinux())
                 {
                     _ = Process.Start("xdg-open", url);
                 }

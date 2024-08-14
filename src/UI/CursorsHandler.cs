@@ -1,10 +1,12 @@
 ﻿using linerider.Utils;
 using OpenTK;
+using OpenTK.Windowing.Common.Input;
 using Svg;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -246,7 +248,9 @@ namespace linerider.UI
                 ImageLockMode.ReadOnly,
                 PixelFormat.Format32bppPArgb);
 
-            List[name] = new MouseCursor(hotx, hoty, image.Width, image.Height, data.Scan0);
+            byte[] buf = new byte[image.Width * image.Height * 4];
+            Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+            List[name] = new MouseCursor(hotx, hoty, image.Width, image.Height, buf);
 
             image.UnlockBits(data);
         }

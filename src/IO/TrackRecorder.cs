@@ -30,7 +30,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using Key = OpenTK.Input.Key;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace linerider.IO

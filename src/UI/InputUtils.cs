@@ -1,8 +1,13 @@
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider.UI
 {
@@ -196,8 +201,8 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                x = _mousestate.X;
-                y = _mousestate.Y;
+                x = (int)_mousestate.X;
+                y = (int)_mousestate.Y;
                 if (_hasmoved)
                 {
                     _hasmoved = false;
@@ -217,7 +222,7 @@ namespace linerider.UI
                 _prev_mousestate = _mousestate;
                 _mousestate = ms;
                 _mousebuttonsdown.Clear();
-                for (MouseButton btn = 0; btn < MouseButton.LastButton; btn++)
+                for (MouseButton btn = 0; btn < MouseButton.Last; btn++)
                 {
                     if (_mousestate[btn])
                         _mousebuttonsdown.Add(btn);
@@ -295,7 +300,7 @@ namespace linerider.UI
         }
         private static bool CheckPressed(Keybinding bind, ref KeyboardState state, ref MouseState mousestate)
         {
-            if (_window != null && !_window.Focused)
+            if (_window != null && !_window.IsFocused)
                 return false;
             if (bind.Key != (Key)(-1))
             {
@@ -309,12 +314,12 @@ namespace linerider.UI
                         // issue.
                         switch (bind.Key)
                         {
-                            case Key.ControlLeft:
-                                if (!state.IsKeyDown(Key.WinLeft))
+                            case Key.LeftControl:
+                                if (!state.IsKeyDown(Key.LeftSuper))
                                     return false;
                                 break;
-                            case Key.ControlRight:
-                                if (!state.IsKeyDown(Key.WinRight))
+                            case Key.RightControl:
+                                if (!state.IsKeyDown(Key.RightSuper))
                                     return false;
                                 break;
                             default:
@@ -335,21 +340,21 @@ namespace linerider.UI
             if (bind.Modifiers != 0)
             {
                 bool alt =
-                state.IsKeyDown(Key.AltLeft) ||
-                state.IsKeyDown(Key.AltRight);
+                state.IsKeyDown(Key.LeftAlt) ||
+                state.IsKeyDown(Key.RightAlt);
                 bool ctrl =
-                state.IsKeyDown(Key.ControlLeft) ||
-                state.IsKeyDown(Key.ControlRight);
+                state.IsKeyDown(Key.LeftControl) ||
+                state.IsKeyDown(Key.RightControl);
                 if (_macOS)
                 {
                     // Remap the command key to ctrl.
                     ctrl |=
-                    state.IsKeyDown(Key.WinLeft) ||
-                    state.IsKeyDown(Key.WinRight);
+                    state.IsKeyDown(Key.LeftSuper) ||
+                    state.IsKeyDown(Key.RightSuper);
                 }
                 bool shift =
-                state.IsKeyDown(Key.ShiftLeft) ||
-                state.IsKeyDown(Key.ShiftRight);
+                state.IsKeyDown(Key.LeftShift) ||
+                state.IsKeyDown(Key.RightShift);
 
                 if ((bind.Modifiers.HasFlag(KeyModifiers.Alt) && !alt) ||
                 (bind.Modifiers.HasFlag(KeyModifiers.Shift) && !shift) ||
@@ -362,14 +367,14 @@ namespace linerider.UI
         {
             switch (key)
             {
-                case Key.AltLeft:
-                case Key.AltRight:
-                case Key.ShiftLeft:
-                case Key.ShiftRight:
-                case Key.ControlLeft:
-                case Key.ControlRight:
-                case Key.WinLeft:
-                case Key.WinRight:
+                case Key.LeftAlt:
+                case Key.RightAlt:
+                case Key.LeftShift:
+                case Key.RightShift:
+                case Key.LeftControl:
+                case Key.RightControl:
+                case Key.LeftSuper:
+                case Key.RightSuper:
                     return true;
             }
             return false;
@@ -377,7 +382,7 @@ namespace linerider.UI
         public static void SetWindow(GameWindow window)
         {
             _window = window ?? throw new NullReferenceException("InputUtils SetWindow cannot be null");
-            _macOS = Configuration.RunningOnMacOS;
+            _macOS = OperatingSystem.IsMacOS();
         }
     }
 }

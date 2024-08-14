@@ -20,10 +20,13 @@ using linerider.Game;
 using linerider.UI;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Windowing.Common.Input;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider.Tools
 {
@@ -82,9 +85,9 @@ namespace linerider.Tools
 
         public virtual void OnMouseRightUp(Vector2d pos) => IsRightMouseDown = false;
 
-        public virtual bool OnKeyDown(OpenTK.Input.Key k) => false;
+        public virtual bool OnKeyDown(Key k) => false;
 
-        public virtual bool OnKeyUp(OpenTK.Input.Key k) => false;
+        public virtual bool OnKeyUp(Key k) => false;
 
         public virtual void Render()
         {
