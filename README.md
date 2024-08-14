@@ -1,12 +1,10 @@
-# About `Experimental-NET-7` branch
-This is a branch that's aimed at making LR cross-platform by porting it to .NET 7. 
+# About `Experimental-NET-8` branch
+This is a branch that's aimed at making LR cross-platform by porting it to .NET 8. 
 
 ## Known problems:
 * Broken sound engine (most likely requires updating OpenTK to v4)
 * Some code parts still work only on Windows.
 
----
----
 ---
 
 ![logo](./LRO-Logo.svg)
