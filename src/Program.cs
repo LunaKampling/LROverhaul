@@ -115,6 +115,8 @@ namespace linerider
             string title = "Game crashed!";
             string msg = $"Unhandled Exception: {e.Message}{msgBoxSpearator}{e.StackTrace}{msgBoxSpearator}{msgBoxSpearator}Would you like to export the crash data to a log file?{msgBoxSpearator}Log file path: {logFilePath}";
 
+            Console.WriteLine(msg);
+
             if (OperatingSystem.IsWindows()) {
                 /* TODO MessageBox from user32.dll instead of winforms
                 System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
