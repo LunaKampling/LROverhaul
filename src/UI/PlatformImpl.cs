@@ -40,11 +40,7 @@ namespace linerider.UI
                 {
                     try
                     {
-                        if (OperatingSystem.IsWindows()) {
-                            /* TODO replace, maybe glfw clipboard api   
-                            Clipboard.SetText(text);
-                            */
-                        }
+                        game.Clipboard = text;
                         ret = true;
                     }
                     catch (Exception)
@@ -67,13 +63,7 @@ namespace linerider.UI
                 {
                     try
                     {
-                        if (OperatingSystem.IsWindows()) {
-                            /* TODO replace, maybe glfw clipboard api   
-                            if (!Clipboard.ContainsText())
-                                return;
-                            ret = Clipboard.GetText();
-                            */
-                        }
+                        ret = game.Clipboard;
                     }
                     catch (Exception)
                     {

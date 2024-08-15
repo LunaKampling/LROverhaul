@@ -72,6 +72,18 @@ namespace linerider
             }
             set => ClientSize = new Vector2i(value.Width, value.Height);
         }
+        public string Clipboard {
+            get {
+                unsafe {
+                    return GLFW.GetClipboardString(WindowPtr);
+                }
+            }
+            set { 
+                unsafe { 
+                    GLFW.SetClipboardString(WindowPtr, value);
+                }
+            }
+        }
         public Vector2d ScreenTranslation => -ScreenPosition;
         public Vector2d ScreenPosition
             => Track.Camera.GetViewport(
