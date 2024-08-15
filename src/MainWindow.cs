@@ -86,7 +86,7 @@ namespace linerider
         private bool _invalidated;
         private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
         private Rectangle _previouswindowpos;
-        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Debug }) {
+        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Debug, Profile = ContextProfile.Any, APIVersion = new Version(1,0) }) {
             /*
             : base(
                 1337, 1337, // These size values don't matter, they're overridden below
@@ -240,7 +240,7 @@ namespace linerider
                 {
                     GameRenderer.DbgDrawCamera();
                 }
-
+                
                 Canvas.RenderCanvas();
                 MSAABuffer.End();
 
@@ -304,10 +304,6 @@ namespace linerider
 
             // Check if scarf and rider model are actual
             RiderLoader.Validate();
-
-            string err = "";
-            _ = GLFW.GetError(out err);
-            Console.WriteLine(err);
 
             // Regular code starts here
             GameUpdateHandleInput();
