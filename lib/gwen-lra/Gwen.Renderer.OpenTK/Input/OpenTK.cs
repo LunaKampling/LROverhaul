@@ -5,6 +5,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
+using System.Linq;
 
 namespace Gwen.Input
 {
@@ -24,7 +25,7 @@ namespace Gwen.Input
 
         public OpenTK(NativeWindow window)
         {
-            window.KeyDown += KeyPress;
+            window.TextInput += TextInput;
         }
 
         #endregion Constructors
@@ -33,8 +34,7 @@ namespace Gwen.Input
 
         public void Initialize(Canvas c) => m_Canvas = c;
 
-        public void KeyPress(KeyboardKeyEventArgs args) => m_Canvas.Input_Character(TranslateChar(args.Key));
-        //public void KeyPress(object sender, KeyPressEventArgs e) => m_Canvas.Input_Character(e.KeyChar);
+        public void TextInput(TextInputEventArgs args) => m_Canvas.Input_Character(args.AsString.First());
 
         public bool ProcessKeyDown(KeyboardKeyEventArgs args)
         {
@@ -43,12 +43,7 @@ namespace Gwen.Input
 
             if (InputHandler.DoSpecialKeys(m_Canvas, ch))
                 return false;
-            /*
-            if (ch != ' ')
-            {
-                m_Canvas.Input_Character(ch);
-            }
-            */
+
             Key iKey = TranslateKeyCode(ev.Key);
 
             return m_Canvas.Input_Key(iKey, true);
