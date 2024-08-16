@@ -33,13 +33,27 @@ namespace linerider.UI.Components
         public static readonly int WidgetItemSpacing = Utility.NumberToCurrentScale(5);
         private readonly int BorderRadius = Utility.NumberToCurrentScale(10);
 
+        public bool SubtleBackground = false;
+
         private Bordered _image;
         private Color _bgcolor
         {
             get
             {
                 bool recording = Settings.PreviewMode || TrackRecorder.Recording;
-                return recording ? Constants.BgExportColor : Settings.Computed.BGColor;
+
+                if (SubtleBackground)
+                {
+                    return Utility.MixColors(Settings.Computed.BGColor, Settings.Computed.LineColor, 0.05f);
+                }
+                else if (recording)
+                {
+                    return Constants.BgExportColor;
+                }
+                else
+                {
+                    return Settings.Computed.BGColor;
+                }
             }
         }
         public WidgetContainer(ControlBase parent) : base(parent)
