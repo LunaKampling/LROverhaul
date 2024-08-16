@@ -89,6 +89,7 @@ namespace linerider.UI.Widgets
             AddBinding(editorTable, "Toggle Preview Mode", Hotkey.TogglePreviewMode);
             AddBinding(editorTable, "Toggle Camera Lock", Hotkey.ToggleCameraLock,
                 "Prevent camera from following rider. Can be useful during editing.");
+            AddBinding(editorTable, "Toggle Layers Panel", Hotkey.ToggleLayersPanel);
 
             AddBinding(editorTable, "Remove Newest Line", Hotkey.EditorRemoveLatestLine);
             AddBinding(editorTable, "Undo Last Action", Hotkey.EditorUndo);

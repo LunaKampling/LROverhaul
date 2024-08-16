@@ -85,7 +85,7 @@ namespace linerider
             // Process recording junk
             bool rec = Settings.Local.RecordingMode;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
-            _layersPanelWrapper.IsHidden = rec && !Settings.Recording.ShowTools;
+            _layersPanelWrapper.IsHidden = rec || !Settings.Editor.ShowLayersPanel;
             _swatchBar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
             _infoBarCoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timelineBar.IsHidden = rec;

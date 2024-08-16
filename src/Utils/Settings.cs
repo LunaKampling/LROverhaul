@@ -66,6 +66,7 @@ namespace linerider
         public static class Editor
         {
             public static bool ShowCoordinateMenu = false;
+            public static bool ShowLayersPanel = false;
             public static bool HitTest;
             public static bool SnapNewLines;
             public static bool SnapMoveLine;
@@ -464,6 +465,7 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.PreferenceOnionSkinning, new Keybinding(Key.O, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.TogglePreviewMode, new Keybinding(Key.U, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.ToggleCameraLock, new Keybinding(Key.L, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.ToggleLayersPanel, new Keybinding(Key.L));
             SetupDefaultKeybind(Hotkey.LoadWindow, new Keybinding(Key.O));
             SetupDefaultKeybind(Hotkey.Quicksave, new Keybinding(Key.S, KeyModifiers.Control));
 
@@ -725,6 +727,7 @@ namespace linerider
             LoadInt(GetSetting(lines, nameof(DefaultTriggerLength)), ref DefaultTriggerLength);
 
             LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
+            LoadBool(GetSetting(lines, nameof(Editor.ShowLayersPanel)), ref Editor.ShowLayersPanel);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
             LoadBool(GetSetting(lines, nameof(LimitLineKnobsSize)), ref LimitLineKnobsSize);
@@ -867,6 +870,7 @@ namespace linerider
 
                 MakeSetting(nameof(ScrollSensitivity), ScrollSensitivity.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.ShowLayersPanel), Editor.ShowLayersPanel.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoOrange), Editor.LifeLockNoOrange.ToString(Program.Culture)),
                 MakeSetting(nameof(LimitLineKnobsSize), LimitLineKnobsSize.ToString(Program.Culture)),

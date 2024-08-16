@@ -298,6 +298,7 @@
     <EmbeddedResource Include="Resources\icons\reset_camera.svg" />
     <EmbeddedResource Include="Resources\icons\slowdown.svg" />
     <EmbeddedResource Include="Resources\icons\speedup.svg" />
+    <EmbeddedResource Include="Resources\icons\layers.svg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ux\loading.svg" />

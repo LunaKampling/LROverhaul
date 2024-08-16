@@ -197,6 +197,7 @@ namespace linerider
         internal static VectorResource icon_stop => GetVectorImage("icons.stop.svg");
         internal static VectorResource icon_flag => GetVectorImage("icons.flag.svg");
         internal static VectorResource icon_generators => GetVectorImage("icons.generators.svg");
+        internal static VectorResource icon_layers => GetVectorImage("icons.layers.svg");
         internal static VectorResource icon_menu => GetVectorImage("icons.menu.svg");
         internal static VectorResource icon_reset_camera => GetVectorImage("icons.reset_camera.svg");
         internal static VectorResource icon_speedup => GetVectorImage("icons.speedup.svg");

@@ -92,6 +92,17 @@ namespace linerider.UI.Widgets
             };
             _ = new WidgetButton(this)
             {
+                Name = "Toggle Layers Panel",
+                Icon = GameResources.icon_layers.Bitmap,
+                Action = (o, e) =>
+                {
+                    Settings.Editor.ShowLayersPanel = !Settings.Editor.ShowLayersPanel;
+                    Settings.Save();
+                },
+                Hotkey = Hotkey.ToggleLayersPanel,
+            };
+            _ = new WidgetButton(this)
+            {
                 Name = "Generators",
                 Icon = GameResources.icon_generators.Bitmap,
                 Action = (o, e) => _canvas.ShowGeneratorWindow(OpenTK.Vector2d.Zero),
