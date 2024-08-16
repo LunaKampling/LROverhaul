@@ -60,6 +60,8 @@ namespace linerider.UI.Widgets
                 HotkeyCondition = hotkeyCondition,
             };
 
+            _ = new Separator(this, true);
+
             _playpausebtn = new WidgetButton(this)
             {
                 Name = "Play",
@@ -83,6 +85,7 @@ namespace linerider.UI.Widgets
                 },
                 Hotkey = Hotkey.PlaybackStop,
             };
+
             _ = new WidgetButton(this)
             {
                 Name = "Flag",
@@ -90,6 +93,9 @@ namespace linerider.UI.Widgets
                 Action = (o, e) => _editor.SetFlagFrame(_editor.Offset),
                 Hotkey = Hotkey.PlaybackFlag,
             };
+
+            _ = new Separator(this, true);
+
             _ = new WidgetButton(this)
             {
                 Name = "Toggle Layers Panel",
@@ -109,6 +115,9 @@ namespace linerider.UI.Widgets
                 Hotkey = Hotkey.LineGeneratorWindow,
                 HotkeyCondition = hotkeyCondition,
             };
+
+            _ = new Separator(this, true);
+
             _ = new WidgetButton(this)
             {
                 Name = "Menu",
