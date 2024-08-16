@@ -13,9 +13,9 @@ namespace linerider.UI.Widgets
         private MultiSlider _slider;
         private Playhead _playheadFlag;
         private Playhead _playheadLimiter;
-        private TrackLabel _flagTime;
-        private TrackLabel _timeSeparator;
-        private TrackLabel _totalTime;
+        private WidgetLabel _flagTime;
+        private WidgetLabel _timeSeparator;
+        private WidgetLabel _totalTime;
 
         public int Duration
         {
@@ -110,7 +110,7 @@ namespace linerider.UI.Widgets
                     0
                 ),
             };
-            _ = new TrackLabel(textPanel)
+            _ = new WidgetLabel(textPanel)
             {
                 Dock = Dock.Fill,
                 Alignment = Pos.Center,
@@ -128,28 +128,28 @@ namespace linerider.UI.Widgets
                     return label;
                 },
             };
-            _ = new TrackLabel(textPanel)
+            _ = new WidgetLabel(textPanel)
             {
                 Dock = Dock.Left,
                 Alignment = Pos.Center,
                 TextRequest = (o, e) => Utility.FrameToTime(_slider.Value),
             };
 
-            _totalTime = new TrackLabel(textPanel)
+            _totalTime = new WidgetLabel(textPanel)
             {
                 Dock = Dock.Right,
                 Alignment = Pos.Center,
                 TextRequest = (o, e) => Utility.FrameToTime(_playheadLimiter.IsHeld ? _playheadLimiter.Value : _slider.Max),
             };
 
-            _timeSeparator = new TrackLabel(textPanel)
+            _timeSeparator = new WidgetLabel(textPanel)
             {
                 Dock = Dock.Right,
                 Alignment = Pos.Center,
                 Text = " / ",
             };
 
-            _flagTime = new TrackLabel(textPanel)
+            _flagTime = new WidgetLabel(textPanel)
             {
                 Dock = Dock.Right,
                 Alignment = Pos.Center,

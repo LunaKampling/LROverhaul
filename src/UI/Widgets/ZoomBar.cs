@@ -101,7 +101,7 @@ namespace linerider.UI.Widgets
                 ),
             };
 
-            _ = new TrackLabel(textPanel)
+            _ = new WidgetLabel(textPanel)
             {
                 Dock = Dock.Fill,
                 Alignment = Pos.Center,

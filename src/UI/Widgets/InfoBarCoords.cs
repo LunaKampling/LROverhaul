@@ -25,14 +25,14 @@ namespace linerider.UI.Widgets
     public class InfoBarCoords : WidgetContainer
     {
         private readonly GameCanvas _canvas;
-        private TrackLabel _ridercoordlabel;
+        private WidgetLabel _ridercoordlabel;
 
         public InfoBarCoords(ControlBase parent) : base(parent)
         {
             _canvas = (GameCanvas)parent.GetCanvas();
             Setup();
         }
-        private void Setup() => _ridercoordlabel = new TrackLabel(this)
+        private void Setup() => _ridercoordlabel = new WidgetLabel(this)
         {
             Dock = Dock.Top,
             TextRequest = (o, e) =>

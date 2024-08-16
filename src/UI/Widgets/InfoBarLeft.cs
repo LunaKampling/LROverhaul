@@ -29,11 +29,11 @@ namespace linerider.UI.Widgets
     {
         private readonly Editor _editor;
 
-        private TrackLabel _title;
-        private TrackLabel _autosavelabel;
-        private TrackLabel _changedlines;
-        private TrackLabel _linecount;
-        private TrackLabel _selectioncount;
+        private WidgetLabel _title;
+        private WidgetLabel _autosavelabel;
+        private WidgetLabel _changedlines;
+        private WidgetLabel _linecount;
+        private WidgetLabel _selectioncount;
 
         public InfoBarLeft(ControlBase parent, Editor editor) : base(parent)
         {
@@ -57,7 +57,7 @@ namespace linerider.UI.Widgets
         }
         private void Setup()
         {
-            _title = new TrackLabel(this)
+            _title = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 TextRequest = (o, current) =>
@@ -68,7 +68,7 @@ namespace linerider.UI.Widgets
                 },
             };
 
-            _autosavelabel = new TrackLabel(this)
+            _autosavelabel = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
@@ -76,7 +76,7 @@ namespace linerider.UI.Widgets
                 Text = "Autosave enabled!",
             };
 
-            _changedlines = new TrackLabel(this)
+            _changedlines = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
@@ -91,7 +91,7 @@ namespace linerider.UI.Widgets
                 UserData = 0,
             };
 
-            _linecount = new TrackLabel(this)
+            _linecount = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
@@ -110,7 +110,7 @@ namespace linerider.UI.Widgets
                 Text = "Lines: 0",
             };
 
-            _selectioncount = new TrackLabel(this)
+            _selectioncount = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),

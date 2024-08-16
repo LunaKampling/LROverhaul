@@ -30,12 +30,12 @@ namespace linerider.UI.Widgets
         private readonly Editor _editor;
         private readonly Stopwatch _fpswatch = new Stopwatch();
 
-        private TrackLabel _fpslabel;
-        private TrackLabel _riderspeedlabel;
-        private TrackLabel _zoomlabel;
-        private TrackLabel _playbackratelabel;
-        private TrackLabel _lockedcameralabel;
-        private TrackLabel _notifylabel;
+        private WidgetLabel _fpslabel;
+        private WidgetLabel _riderspeedlabel;
+        private WidgetLabel _zoomlabel;
+        private WidgetLabel _playbackratelabel;
+        private WidgetLabel _lockedcameralabel;
+        private WidgetLabel _notifylabel;
         private Panel _resetcamerawrapper;
 
         private double ZoomRounded
@@ -68,7 +68,7 @@ namespace linerider.UI.Widgets
         }
         private void Setup()
         {
-            _fpslabel = new TrackLabel(this)
+            _fpslabel = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Margin = Margin.Zero,
@@ -89,7 +89,7 @@ namespace linerider.UI.Widgets
                 },
             };
 
-            _riderspeedlabel = new TrackLabel(this)
+            _riderspeedlabel = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Margin = new Margin(0, WidgetItemSpacing, 0, 0),
@@ -110,7 +110,7 @@ namespace linerider.UI.Widgets
                 UserData = 0.0,
             };
 
-            _zoomlabel = new TrackLabel(this)
+            _zoomlabel = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
@@ -122,7 +122,7 @@ namespace linerider.UI.Widgets
                 },
             };
 
-            _playbackratelabel = new TrackLabel(this)
+            _playbackratelabel = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
@@ -130,7 +130,7 @@ namespace linerider.UI.Widgets
                 TextRequest = (o, e) => $"Sim Speed: {_editor.Scheduler.Rate}x",
             };
 
-            _lockedcameralabel = new TrackLabel(this)
+            _lockedcameralabel = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,
@@ -138,7 +138,7 @@ namespace linerider.UI.Widgets
                 Text = "Camera is locked",
             };
 
-            _notifylabel = new TrackLabel(this)
+            _notifylabel = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
                 Alignment = Pos.Right | Pos.CenterV,

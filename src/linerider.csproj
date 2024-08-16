@@ -233,7 +233,7 @@
     <Compile Include="UI\Dialogs\TimelineEditorWindow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\Components\TrackLabel.cs" />
+    <Compile Include="UI\Components\WidgetLabel.cs" />
     <Compile Include="UI\Components\Sprite.cs" />
     <Compile Include="UI\Components\ImageButton.cs" />
     <Compile Include="UI\Components\WidgetContainer.cs" />
