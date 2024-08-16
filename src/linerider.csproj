@@ -204,6 +204,7 @@
     <Compile Include="Addons\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Components\Separator.cs" />
     <Compile Include="UI\CursorsHandler.cs" />
     <Compile Include="UI\PlatformImpl.cs" />
     <Compile Include="UI\Hotkey.cs" />
