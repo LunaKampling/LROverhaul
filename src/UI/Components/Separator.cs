@@ -9,23 +9,21 @@ namespace linerider.UI.Components
 {
     public class Separator : Panel
     {
-        public bool Vertical = false;
         private Color _color => Utility.MixColors(Settings.Computed.BGColor, Settings.Computed.LineColor, 0.25f);
-        public Separator(ControlBase parent) : base(parent)
+        public Separator(ControlBase parent, bool vertical = false) : base(parent)
         {
-            Margin = new Margin(WidgetContainer.WidgetItemSpacing * 2, WidgetContainer.WidgetItemSpacing, WidgetContainer.WidgetItemSpacing * 2, WidgetContainer.WidgetItemSpacing);
             MouseInputEnabled = false;
-            Dock = Dock.Top;
-            Height = 1;
 
-            if (Vertical)
+            if (vertical)
             {
                 Margin = new Margin(WidgetContainer.WidgetItemSpacing, WidgetContainer.WidgetItemSpacing * 2, WidgetContainer.WidgetItemSpacing, WidgetContainer.WidgetItemSpacing * 2);
+                Dock = Dock.Left;
                 Width = 1;
             }
             else
             {
                 Margin = new Margin(WidgetContainer.WidgetItemSpacing * 2, WidgetContainer.WidgetItemSpacing, WidgetContainer.WidgetItemSpacing * 2, WidgetContainer.WidgetItemSpacing);
+                Dock = Dock.Top;
                 Height = 1;
             }
         }
