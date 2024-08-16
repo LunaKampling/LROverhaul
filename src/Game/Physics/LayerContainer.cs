@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 
 namespace linerider
 {
@@ -14,6 +13,8 @@ namespace linerider
     public class LayerContainer<T> : IEnumerable<T>, ICollection<T>
     where T : Layer
     {
+        public event EventHandler<Layer> OnAdd;
+        public event EventHandler<Layer> OnRemove;
         private readonly LinkedList<T> _list = new LinkedList<T>();
         public int Count => _list.Count;
         bool ICollection<T>.IsReadOnly => false;
@@ -82,17 +83,22 @@ namespace linerider
                     _ = _list.AddLast(layer);
                     currentLayer = layer;
                     Debug.WriteLine(layer.ID);
+                    OnAdd?.Invoke(this, layer);
                     return;
                 }    
                 else node = FindNodeAfter(node, layer);
                 if (node == null)
                 {
                     _ = _list.AddLast(layer);
+                    OnAdd?.Invoke(this, layer);
                 }
                 else
                 {
                     if (node.Value.ID != layer.ID)
+                    {
                         _ = _list.AddBefore(node, layer);
+                        OnAdd?.Invoke(this, layer);
+                    }
                     else
                         Debug.WriteLine("Layer ID collision in layer container");
                 }
@@ -111,6 +117,7 @@ namespace linerider
                 if (node.Value.ID == layerid)
                 {
                     _list.Remove(node);
+                    OnRemove?.Invoke(this, node.Value);
                     return;
                 }
                 node = node.Next;
