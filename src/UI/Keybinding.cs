@@ -1,5 +1,7 @@
 using OpenTK.Input;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Globalization;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 namespace linerider.UI
 {
     public class Keybinding
@@ -13,18 +15,18 @@ namespace linerider.UI
             {
                 switch (value)
                 {
-                    case Key.AltLeft:
-                    case Key.AltRight:
+                    case Key.LeftAlt:
+                    case Key.RightAlt:
                         _key = (Key)(-1);
                         Modifiers |= KeyModifiers.Alt;
                         return;
-                    case Key.ShiftLeft:
-                    case Key.ShiftRight:
+                    case Key.LeftShift:
+                    case Key.RightShift:
                         _key = (Key)(-1);
                         Modifiers |= KeyModifiers.Shift;
                         return;
-                    case Key.ControlLeft:
-                    case Key.ControlRight:
+                    case Key.LeftControl:
+                    case Key.RightControl:
                         _key = (Key)(-1);
                         Modifiers |= KeyModifiers.Control;
                         return;
@@ -139,7 +141,7 @@ namespace linerider.UI
                 case MouseButton.Middle:
                     return "<Middle MButton>";
             }
-            if (button >= MouseButton.Button1 && button <= MouseButton.Button9)
+            if (button >= MouseButton.Button1 && button <= MouseButton.Button8)
             {
                 int num = 4 + ((int)button - (int)MouseButton.Button1);
                 return $"<Mouse Button #{num}>";
@@ -166,38 +168,38 @@ namespace linerider.UI
                 case Key.PageUp:
                 case Key.Insert:
                     return key.ToString();
-                case Key.BackSpace:
+                case Key.Backspace:
                     return "Backspace";
-                case Key.RControl:
-                case Key.LControl:
+                case Key.RightControl:
+                case Key.LeftControl:
                     return "Control";
-                case Key.RAlt:
-                case Key.LAlt:
+                case Key.RightAlt:
+                case Key.LeftAlt:
                     return "Alt";
-                case Key.RShift:
-                case Key.LShift:
+                case Key.RightShift:
+                case Key.LeftShift:
                     return "Shift";
-                case Key.BracketLeft:
+                case Key.LeftBracket:
                     return "[";
-                case Key.BracketRight:
+                case Key.RightBracket:
                     return "]";
                 case Key.Semicolon:
                     return ";";
-                case Key.Quote:
+                case Key.Apostrophe:
                     return "\"";
                 case Key.Period:
                     return ".";
                 case Key.Comma:
                     return ",";
-                case Key.Grave:
+                case Key.GraveAccent:
                     return "`";
                 case Key.Minus:
                     return "-";
-                case Key.Plus:
+                case Key.Equal:
                     return "+";
                 case Key.Slash:
                     return "/";
-                case Key.BackSlash:
+                case Key.Backslash:
                     return "\\";
                 default:
                     char trans = TranslateChar(key);
@@ -208,8 +210,8 @@ namespace linerider.UI
         }
         private static char TranslateChar(Key key) => key >= Key.A && key <= Key.Z
                 ? (char)('A' + ((int)key - (int)Key.A))
-                : key >= Key.Number0 && key <= Key.Number9
-                ? (char)('0' + ((int)key - (int)Key.Number0))
-                : key >= Key.Keypad0 && key <= Key.Keypad9 ? (char)('0' + ((int)key - (int)Key.Keypad0)) : ' ';
+                : key >= Key.D0 && key <= Key.D9
+                ? (char)('0' + ((int)key - (int)Key.D0))
+                : key >= Key.D0 && key <= Key.D9 ? (char)('0' + ((int)key - (int)Key.D0)) : ' ';
     }
 }

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider.Audio
 {
@@ -50,7 +51,7 @@ namespace linerider.Audio
                 };
             }
         }
-        private static void PlayClip(AudioSource audio)
+        private static unsafe void PlayClip(AudioSource audio)
         {
             int alsource = AL.GenSource();
             audio.Position = 0;
@@ -65,7 +66,9 @@ namespace linerider.Audio
                         int bufferid = AL.GenBuffer();
                         AudioDevice.Check();
                         bufs.Add(bufferid);
-                        AL.BufferData(bufferid, audio.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, audio.Buffer, len * sizeof(short), audio.SampleRate);
+                        fixed (short* buf = audio.Buffer) {
+                            AL.BufferData(bufferid, audio.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, buf, len * sizeof(short), audio.SampleRate);
+                        }
                         AL.SourceQueueBuffer(alsource, bufferid);
                         AudioDevice.Check();
                     }
@@ -82,7 +85,7 @@ namespace linerider.Audio
             {
                 new Thread(() =>
                 {
-                    while (AL.GetSourceState(alsource) == ALSourceState.Playing)
+                    while (AL.GetSource(alsource, ALGetSourcei.SourceState) == (int)ALSourceState.Playing)
                         Thread.Sleep(1);
                     AL.DeleteSource(alsource);
                     if (bufs.Count != 0)
@@ -167,7 +170,7 @@ namespace linerider.Audio
                     game.Title = Program.WindowTitle + string.Format(" [Converting song | {0:P}% | Hold ESC to cancel]", ts.TotalSeconds / duration.TotalSeconds);// "[" + (ts.TotalSeconds / duration.TotalSeconds) + "% converting song]";
                 }
 
-                if (Keyboard.GetState()[Key.Escape])
+                if (game.KeyboardState[Key.Escape])
                 {
                     hardexit = true;
                     return false;

@@ -3,6 +3,7 @@ using linerider.Game;
 using linerider.IO;
 using linerider.Tools;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 
 namespace linerider.Rendering

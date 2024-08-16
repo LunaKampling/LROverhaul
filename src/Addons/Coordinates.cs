@@ -63,12 +63,10 @@ namespace linerider.Addons
             Rider rider = game.Track.Timeline.GetFrame(frame, iteration);
 
             if (OperatingSystem.IsWindows()) {
-                /* TODO replace, maybe glfw clipboard api
                 if (xClipboard)
-                    Clipboard.SetText(rider.Body[integerClipboard].Location.X.ToString("G17"));
+                    game.Clipboard = rider.Body[integerClipboard].Location.X.ToString("G17");
                 if (yClipboard)
-                    Clipboard.SetText(rider.Body[integerClipboard].Location.Y.ToString("G17"));
-                */
+                    game.Clipboard = rider.Body[integerClipboard].Location.Y.ToString("G17");
             }
         }
     };

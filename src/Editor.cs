@@ -24,6 +24,7 @@ using linerider.Rendering;
 using linerider.Tools;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -456,8 +457,8 @@ namespace linerider
 
             Vector2d pos = Camera.GetCenter();
 
-            pos.X += (centerPos.X * 2 - game.Width) * percent / (Zoom * 2);
-            pos.Y += (centerPos.Y * 2 - game.Height) * percent / (Zoom * 2);
+            pos.X += (centerPos.X * 2 - game.Size.X) * percent / (Zoom * 2);
+            pos.Y += (centerPos.Y * 2 - game.Size.Y) * percent / (Zoom * 2);
             Camera.SetFrameCenter(pos);
         }
         /// <summary>

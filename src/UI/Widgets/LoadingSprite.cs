@@ -19,6 +19,7 @@
 using Gwen.Controls;
 using linerider.UI.Components;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using Svg;
 using System;

@@ -3,6 +3,7 @@ using Gwen.Controls;
 using linerider.UI.Components;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 
 namespace linerider.UI.Widgets

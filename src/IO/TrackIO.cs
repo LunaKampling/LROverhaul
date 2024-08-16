@@ -258,7 +258,7 @@ namespace linerider.IO
                         x = point.Location.X,
                         y = point.Location.Y
                     });
-                    OpenTK.Vector2d camframe = camera.GetFrameCamera(idx);
+                    OpenTK.Mathematics.Vector2d camframe = camera.GetFrameCamera(idx);
                     framedata.CameraCenter = new track_json.point_json()
                     {
                         x = camframe.X,

@@ -20,10 +20,14 @@ using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
 using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Input;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider.Tools
 {
@@ -140,7 +144,7 @@ namespace linerider.Tools
             switch (k)
             {
                 case Key.Space:
-                case Key.KeypadEnter:
+                case Key.KeyPadEnter:
                 case Key.Enter:
                     FinalizePlacement();
                     break;

@@ -4,6 +4,8 @@ using linerider.UI;
 using linerider.Utils;
 using Newtonsoft.Json.Linq;
 using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
