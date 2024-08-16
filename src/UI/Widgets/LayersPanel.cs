@@ -2,7 +2,7 @@
 using Gwen.Controls;
 using linerider.UI.Components;
 using linerider.Game;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace linerider.UI.Widgets
 {
@@ -10,33 +10,62 @@ namespace linerider.UI.Widgets
     {
         private readonly Editor _editor;
         private LayerContainer<Layer> _layers => _editor.GetTrack()._layers;
+        private ScrollControl _scrollBox;
+        private List<Panel> _layersRenderedList;
 
         public LayersPanel(ControlBase parent, Editor editor) : base(parent)
         {
             _editor = editor;
+
+            _layersRenderedList = new List<Panel>();
 
             Setup();
         }
 
         private void Setup()
         {
-
-            _ = new TrackLabel(this)
+            _ = new WidgetLabel(this)
             {
                 Dock = Dock.Top,
-                TextRequest = (o, e) => $"Count: {_layers.Count}",
+                Alignment = Pos.Center,
+                Text = "Layers",
             };
 
-            _ = new TrackLabel(this)
+            new Separator(this);
+
+            _scrollBox = new ScrollControl(this)
             {
                 Dock = Dock.Top,
-                TextRequest = (o, e) =>
-                {
-                    var strings = from i in _layers
-                                  select i.name;
+                Height = 250,
+                Width = 150,
+            };
 
-                    return $"Layers:\n{string.Join("\n", strings)}";
-                }
+            foreach(Layer layer in _layers)
+            {
+                AddLayer(layer);
+            }
+
+            _layers.OnAdd += (o, layer) => AddLayer(layer);
+        }
+
+        private void AddLayer(Layer layer)
+        {
+            Panel container = new Panel(_scrollBox)
+            {
+                Margin = new Margin(0, WidgetItemSpacing, 0, WidgetItemSpacing),
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
+                Dock = Dock.Top,
+                UserData = layer.ID,
+            };
+
+            _layersRenderedList.Add(container);
+
+            new WidgetLabel(container)
+            {
+                Dock = Dock.Left,
+                Text = layer.name,
             };
         }
     }

@@ -49,7 +49,7 @@ namespace linerider
         private ZoomBar _zoom;
         private SwatchBar _swatchBar;
         private Toolbar _toolbar;
-        private LayersPanel _layersPanel;
+        private Panel _layersPanelWrapper;
         private LoadingSprite _loadingSprite;
         private readonly MainWindow game;
         public PlatformImpl Platform;
@@ -85,7 +85,7 @@ namespace linerider
             // Process recording junk
             bool rec = Settings.Local.RecordingMode;
             _toolbar.IsHidden = rec && !Settings.Recording.ShowTools;
-            _layersPanel.IsHidden = rec && !Settings.Recording.ShowTools;
+            _layersPanelWrapper.IsHidden = rec && !Settings.Recording.ShowTools;
             _swatchBar.IsHidden = rec || !CurrentTools.CurrentTool.ShowSwatch;
             _infoBarCoords.IsHidden = rec || !Settings.Editor.ShowCoordinateMenu;
             _timelineBar.IsHidden = rec;
@@ -210,18 +210,35 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Right,
             };
-            _ = new InfoBarRight(_rightArea, game.Track)
+
+            Panel infoBarRightWrapper = new Panel(_rightArea)
             {
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
+                AutoSizeToContents = true,
                 Dock = Dock.Top,
             };
-
-            _layersPanel = new LayersPanel(this, game.Track)
+            _ = new InfoBarRight(infoBarRightWrapper, game.Track)
             {
+                Dock = Dock.Right,
+            };
+
+            _layersPanelWrapper = new Panel(this)
+            {
+                ShouldDrawBackground = false,
+                MouseInputEnabled = false,
                 AutoSizeToContents = true,
                 Positioner = (o) => new Point(
-                    Width - o.Width - WidgetContainer.WidgetMargin,
-                    (Height - _bottomArea.Height) / 2 - o.Height / 2
+                    Width - o.Width - WidgetContainer.WidgetMargin * 5,
+                    (int)Math.Round((double)(Height - _bottomArea.Height) / 2 - o.Height / 1.5)
                 ),
+            };
+            _ = new LayersPanel(_layersPanelWrapper, game.Track)
+            {
+                SubtleBackground = true,
+                AutoSizeToContents = true,
+                MouseInputEnabled = true,
+                Dock = Dock.Right,
             };
 
             _loadingSprite = new LoadingSprite(this)
