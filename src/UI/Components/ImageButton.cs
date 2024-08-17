@@ -18,7 +18,7 @@
 
 using Gwen;
 using Gwen.Controls;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.UI.Components
 {
@@ -38,7 +38,7 @@ namespace linerider.UI.Components
             _overridetex?.Dispose();
             base.Dispose();
         }
-        public void SetImage(Bitmap bmp)
+        public void SetImage(SKBitmap bmp)
         {
             m_texture?.Dispose();
             Texture tx = new Texture(Skin.Renderer);
@@ -49,7 +49,7 @@ namespace linerider.UI.Components
         }
         public void DisableImageOverride() => _override = false;
         public void EnableImageOverride() => _override = true;
-        public void SetOverride(Bitmap bitmap)
+        public void SetOverride(SKBitmap bitmap)
         {
             _overridetex?.Dispose();
             Texture tx = new Texture(Skin.Renderer);

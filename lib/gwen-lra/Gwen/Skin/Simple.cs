@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Gwen.Skin
+﻿namespace Gwen.Skin
 {
     /// <summary>
     /// Simple skin (non-textured). Deprecated and incomplete, do not use.

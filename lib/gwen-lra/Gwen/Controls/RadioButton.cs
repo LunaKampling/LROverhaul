@@ -1,7 +1,6 @@
 ﻿using Gwen.ControlInternal;
 using Gwen.Input;
 using System;
-using System.Drawing;
 
 namespace Gwen.Controls
 {

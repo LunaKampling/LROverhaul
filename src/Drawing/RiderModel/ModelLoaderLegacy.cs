@@ -1,5 +1,4 @@
 ﻿using linerider.Utils;
-using System.Drawing;
 
 namespace linerider.Drawing.RiderModel
 {

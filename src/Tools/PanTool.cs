@@ -20,7 +20,7 @@ using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
 using System;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.Tools
 {
@@ -34,7 +34,7 @@ namespace linerider.Tools
         private bool zoom = false;
 
         public override string Name => "Hand Tool";
-        public override Bitmap Icon => GameResources.icon_tool_pan.Bitmap;
+        public override SKBitmap Icon => GameResources.icon_tool_pan.Bitmap;
         public override MouseCursor Cursor => Active
                     ? zoom ? game.Cursors.List[CursorsHandler.Type.Zoom] : game.Cursors.List[CursorsHandler.Type.DragActive]
                     : game.Cursors.List[CursorsHandler.Type.DragInactive];

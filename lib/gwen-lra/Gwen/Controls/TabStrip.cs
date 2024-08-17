@@ -1,7 +1,6 @@
 ﻿using Gwen.ControlInternal;
 using Gwen.DragDrop;
 using System;
-using System.Drawing;
 
 namespace Gwen.Controls
 {

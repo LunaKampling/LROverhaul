@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -70,25 +70,37 @@ namespace linerider.Drawing.RiderModel
         }
         private void ApplyRegions()
         {
-            for (int i = 0; i < Model.RegionsBody.Count; i++)
-            {
-                Rectangle region = Model.RegionsBody[i];
-                Color color = Color.FromArgb(ScarfColors.GetColorList()[i % ScarfColors.Count()]);
-                color = Color.FromArgb(255, color); // Add 255 alpha
+            SKBitmap newModelBody = new SKBitmap(Model.Body.Info);
+            using (var surface = new SKCanvas(newModelBody)){
+                surface.DrawBitmap(Model.Body, 0, 0);
+                for (int i = 0; i < Model.RegionsBody.Count; i++)
+                {
+                    Rectangle region = Model.RegionsBody[i];
+                    Color color = Color.FromArgb(ScarfColors.GetColorList()[i % ScarfColors.Count()]);
+                    color = Color.FromArgb(255, color); // Add 255 alpha
 
-                SolidBrush brush = new SolidBrush(color);
-                using (Graphics g = Graphics.FromImage(Model.Body))
-                    g.FillRectangle(brush, region);
+                    SKPaint paint = new SKPaint {
+                        Color = color,
+                    };
+
+                    surface.DrawRect(region, paint);
+                }
             }
-            for (int i = 0; i < Model.RegionsBodyDead.Count; i++)
-            {
-                Rectangle region = Model.RegionsBodyDead[i];
-                Color color = Color.FromArgb(ScarfColors.GetColorList()[i % ScarfColors.Count()]);
-                color = Color.FromArgb(255, color); // Add 255 alpha
+            Model.Body = newModelBody;
+            SKBitmap newModelBodyDead = new SKBitmap(Model.BodyDead.Info);
+            using (var surface = new SKCanvas(newModelBody)){
+                for (int i = 0; i < Model.RegionsBodyDead.Count; i++)
+                {
+                    Rectangle region = Model.RegionsBodyDead[i];
+                    Color color = Color.FromArgb(ScarfColors.GetColorList()[i % ScarfColors.Count()]);
+                    color = Color.FromArgb(255, color); // Add 255 alpha
+                    
+                    SKPaint paint = new SKPaint {
+                        Color = color,
+                    };
 
-                SolidBrush brush = new SolidBrush(color);
-                using (Graphics g = Graphics.FromImage(Model.BodyDead))
-                    g.FillRectangle(brush, region);
+                    surface.DrawRect(region, paint);
+                }
             }
 
             ScarfColors.Shift(ScarfColors.Count() * Model.RegionsBody.Count - Model.RegionsBody.Count);

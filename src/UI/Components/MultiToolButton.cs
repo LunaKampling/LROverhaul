@@ -2,7 +2,6 @@
 using Gwen.Controls;
 using linerider.Tools;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace linerider.UI.Components
 {

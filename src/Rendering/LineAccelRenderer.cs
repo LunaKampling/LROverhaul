@@ -6,7 +6,6 @@ using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 namespace linerider.Rendering
 {
     public class LineAccelRenderer : IDisposable

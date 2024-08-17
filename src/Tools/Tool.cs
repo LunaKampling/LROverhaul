@@ -25,7 +25,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SkiaSharp;
 using System.Linq;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
@@ -34,7 +34,7 @@ namespace linerider.Tools
     public abstract class Tool : GameService
     {
         private static readonly Swatch Default = new Swatch();
-        public virtual Bitmap Icon => new Bitmap(1, 1);
+        public virtual SKBitmap Icon => new SKBitmap(1, 1);
         public virtual Hotkey Hotkey => Hotkey.None;
         public virtual string Name => "";
         public virtual Swatch Swatch => Default;

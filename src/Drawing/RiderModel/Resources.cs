@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -10,15 +10,15 @@ namespace linerider.Drawing.RiderModel
         protected Filenames Filenames = new Filenames();
 
         public List<string> RegionsCacheLines;
-        public Bitmap Body { get; set; }
-        public Bitmap BodyDead { get; set; }
-        public Bitmap Sled { get; set; }
-        public Bitmap SledBroken { get; set; }
-        public Bitmap Arm { get; set; }
-        public Bitmap Leg { get; set; }
-        public Bitmap Rope { get; set; }
-        public Bitmap Palette { get; set; }
-        public Bitmap Regions { get; set; }
+        public SKBitmap Body { get; set; }
+        public SKBitmap BodyDead { get; set; }
+        public SKBitmap Sled { get; set; }
+        public SKBitmap SledBroken { get; set; }
+        public SKBitmap Arm { get; set; }
+        public SKBitmap Leg { get; set; }
+        public SKBitmap Rope { get; set; }
+        public SKBitmap Palette { get; set; }
+        public SKBitmap Regions { get; set; }
         public bool Legacy { get; protected set; }
         protected RegionsCache Cache { get; }
 

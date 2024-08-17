@@ -8,7 +8,7 @@ namespace Gwen.ControlInternal
     public class PropertyRowLabel : Label
     {
         private readonly PropertyRow m_PropertyRow;
-        protected override System.Drawing.Color CurrentColor => IsDisabled
+        protected override Color CurrentColor => IsDisabled
                     ? Skin.Colors.Text.Disabled
                     : m_PropertyRow != null && m_PropertyRow.IsEditing
                         ? Skin.Colors.Text.Highlight

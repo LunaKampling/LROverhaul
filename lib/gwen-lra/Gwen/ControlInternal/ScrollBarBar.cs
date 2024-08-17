@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Gwen.ControlInternal
+﻿namespace Gwen.ControlInternal
 {
     /// <summary>
     /// Scrollbar bar.

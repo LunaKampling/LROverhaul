@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Gwen.Controls
+﻿namespace Gwen.Controls
 {
     /// <summary>
     /// List box row (selectable).

@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Gwen.Controls;
+﻿using Gwen.Controls;
 using Gwen;
 using linerider.Utils;
 

@@ -4,7 +4,6 @@ using linerider.IO.ffmpeg;
 using linerider.Utils;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Net;

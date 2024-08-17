@@ -58,7 +58,7 @@ namespace linerider.Game
         /// </summary>
         public override Vector2d End => inv ? Position1 : Position2;
         public override LineType Type => LineType.Standard;
-        public override System.Drawing.Color Color => Settings.Colors.StandardLine;
+        public override Color Color => Settings.Colors.StandardLine;
 
         protected StandardLine()
         {

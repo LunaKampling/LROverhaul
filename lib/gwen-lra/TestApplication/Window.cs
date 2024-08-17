@@ -4,13 +4,12 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Graphics;
 using Gwen;
 using Gwen.Controls;
-using System.Drawing;
 using TestApplication.Tests;
-using System.Drawing.Imaging;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Threading;
+
 namespace TestApplication
 {
     public class Window : GameWindow

@@ -93,10 +93,11 @@ namespace linerider.Game
         /// <returns>
         /// A <see cref="System.Drawing.Point"/> instance equivalent to point.
         /// </returns>
+        /*
         public static implicit operator System.Drawing.Point(GridPoint point)
         {
             return new System.Drawing.Point(point.X, point.Y);
-        }
+        }*/
 
         /// <summary>
         /// Converts a System.Drawing.Point instance to an OpenTK.Point.
@@ -107,10 +108,11 @@ namespace linerider.Game
         /// <returns>
         /// A <see cref="GridPoint"/> instance equivalent to point.
         /// </returns>
+        /*
         public static implicit operator GridPoint(System.Drawing.Point point)
         {
             return new GridPoint(point.X, point.Y);
-        }
+        }*/
 
         /// <summary>
         /// Converts an OpenTK.Point instance to a System.Drawing.PointF.
@@ -121,10 +123,11 @@ namespace linerider.Game
         /// <returns>
         /// A <see cref="System.Drawing.PointF"/> instance equivalent to point.
         /// </returns>
+        /*
         public static implicit operator System.Drawing.PointF(GridPoint point)
         {
             return new System.Drawing.PointF(point.X, point.Y);
-        }
+        }*/
 
         /// <summary>
         /// Indicates whether this instance is equal to the specified object.
