@@ -148,7 +148,7 @@ namespace Gwen.Controls
         #endregion Constructors
 
         #region Methods
-        protected override void ProcessLayout(System.Drawing.Size size)
+        protected override void ProcessLayout(Size size)
         {
             int ctrlsize = size.Height - m_BtnContainer.Margin.Height;
             _ = m_Up.SetSize(ctrlsize / 2 + ctrlsize / 4, ctrlsize / 2);

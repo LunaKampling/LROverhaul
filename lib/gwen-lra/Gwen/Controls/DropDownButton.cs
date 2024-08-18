@@ -1,6 +1,5 @@
 using Gwen.ControlInternal;
 using System;
-using System.Drawing;
 namespace Gwen.Controls
 {
     public class DropDownButton : Button

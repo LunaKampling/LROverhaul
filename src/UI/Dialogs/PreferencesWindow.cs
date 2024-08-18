@@ -966,7 +966,7 @@ namespace linerider.UI
             Panel currPathGroup = GwenHelper.CreateHeaderPanel(parent, "Current User Folder Location");
             Label currPathLabel = new Label(currPathGroup)
             {
-                TextColor = System.Drawing.Color.Gray,
+                TextColor = Color.Gray,
                 Dock = Dock.Top,
                 Text = Settings.Local.UserDirPath,
             };
@@ -987,7 +987,7 @@ namespace linerider.UI
             };
             Label portableStatus = new Label(null)
             {
-                TextColor = isPortable ? System.Drawing.Color.Green : System.Drawing.Color.Gray,
+                TextColor = isPortable ? Color.Green : Color.Gray,
                 Dock = Dock.Left,
                 Text = isPortable.ToString(),
                 Margin = new Margin(5, 0, 0, 0),

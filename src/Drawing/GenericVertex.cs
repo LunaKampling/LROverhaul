@@ -18,7 +18,6 @@
 
 using OpenTK;
 using OpenTK.Mathematics;
-using System.Drawing;
 using System.Runtime.InteropServices;
 namespace linerider.Drawing
 {

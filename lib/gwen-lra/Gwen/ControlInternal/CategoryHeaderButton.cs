@@ -7,7 +7,7 @@ namespace Gwen.ControlInternal
     /// </summary>
     public class CategoryHeaderButton : Button
     {
-        protected override System.Drawing.Color CurrentColor => IsDepressed || ToggleState ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Highlight;
+        protected override Color CurrentColor => IsDepressed || ToggleState ? Skin.Colors.Text.Highlight : Skin.Colors.Text.Highlight;
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoryHeaderButton"/> class.
         /// </summary>

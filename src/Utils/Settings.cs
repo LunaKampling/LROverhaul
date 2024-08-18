@@ -25,7 +25,6 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;

@@ -18,7 +18,7 @@
 
 using Gwen;
 using Gwen.Controls;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.UI.Components
 {
@@ -34,14 +34,14 @@ namespace linerider.UI.Components
             MouseInputEnabled = false;
         }
 
-        public void SetImage(Bitmap bmp)
+        public void SetImage(SKBitmap bmp)
         {
             m_texture?.Dispose();
 
             Texture tx = new Texture(Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
             m_texture = tx;
-            Size = bmp.Size;
+            Size = new Size(bmp.Width, bmp.Height);
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
         {

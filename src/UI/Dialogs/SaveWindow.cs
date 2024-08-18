@@ -4,7 +4,6 @@ using linerider.IO;
 using linerider.Utils;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 
 namespace linerider.UI

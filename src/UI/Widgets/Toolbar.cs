@@ -3,7 +3,6 @@ using Gwen.Controls;
 using linerider.Tools;
 using linerider.UI.Components;
 using System;
-using System.Drawing;
 
 namespace linerider.UI.Widgets
 {

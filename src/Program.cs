@@ -168,7 +168,7 @@ namespace linerider
                 using (glGame = new MainWindow())
                 {
                     UI.InputUtils.SetWindow(glGame);
-                    glGame.RenderSize = new System.Drawing.Size(glGame.Size.X, glGame.Size.Y);
+                    glGame.RenderSize = new Size(glGame.Size.X, glGame.Size.Y);
                     Rendering.GameRenderer.Game = glGame;
                     MemoryStream ms = new MemoryStream(GameResources.icon);
                     //glGame.Icon = new System.Drawing.Icon(ms);

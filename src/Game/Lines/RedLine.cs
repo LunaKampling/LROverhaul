@@ -35,7 +35,7 @@ namespace linerider.Game
             }
         }
         public override LineType Type => LineType.Acceleration;
-        public override System.Drawing.Color Color => Settings.Colors.AccelerationLine;
+        public override Color Color => Settings.Colors.AccelerationLine;
         protected RedLine() : base()
         {
         }

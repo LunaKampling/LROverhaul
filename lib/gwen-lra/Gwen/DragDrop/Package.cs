@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Gwen.DragDrop
+﻿namespace Gwen.DragDrop
 {
     public class Package
     {

@@ -1,7 +1,6 @@
 ﻿using Gwen;
 using Gwen.Controls;
 using linerider.Tools;
-using System.Drawing;
 
 namespace linerider.UI.Components
 {

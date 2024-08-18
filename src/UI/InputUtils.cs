@@ -100,6 +100,12 @@ namespace linerider.UI
                 }
                 _prev_kbstate = _kbstate;
                 _kbstate = ks.GetSnapshot();
+
+                // HACK: wayland (or at least labwc) always reports numlock down, ignore it on *any* linux
+                if (OperatingSystem.IsLinux()) {
+                    modifiers &= ~KeyModifiers.NumLock;
+                }
+
                 _modifiersdown = modifiers;
             }
         }
@@ -278,7 +284,7 @@ namespace linerider.UI
             if (bind.UsesKeys)
             {
                 if (_modifiersdown != bind.Modifiers ||
-                bind.Key != RepeatKey) // Someone overrode us
+                bind.Key != RepeatKey) // Someone overrode us 
                     return false;
             }
             if (bind.UsesMouse)

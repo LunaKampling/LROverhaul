@@ -23,8 +23,7 @@ using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using Color = System.Drawing.Color;
+using SkiaSharp;
 
 namespace linerider.Rendering
 {
@@ -147,18 +146,18 @@ namespace linerider.Rendering
             ret[ret.Length - 1] = ret[0];
             return ret;
         }
-        public static int LoadTexture(Bitmap bmp)
+        public static int LoadTexture(SKBitmap bmp)
         {
-            System.Drawing.Imaging.PixelFormat lock_format;
-            switch (bmp.PixelFormat)
+            SKColorType lock_format;
+            switch (bmp.ColorType)
             {
-                case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
-                    lock_format = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
+                case SKColorType.Bgra8888:
+                    lock_format = SKColorType.Bgra8888;
                     break;
 
-                case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
+                /*case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
                     lock_format = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-                    break;
+                    break;*/
 
                 default:
                     throw new Exception("Failed to load texture");
@@ -173,12 +172,12 @@ namespace linerider.Rendering
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)All.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)All.ClampToBorder);
-            System.Drawing.Imaging.BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, lock_format);
+            //System.Drawing.Imaging.BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, lock_format);
 
             switch (lock_format)
             {
-                case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
-                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                case SKColorType.Bgra8888:
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bmp.GetPixels());
                     break;
 
                 default:
@@ -186,7 +185,7 @@ namespace linerider.Rendering
                     break;
             }
 
-            bmp.UnlockBits(data);
+            //bmp.UnlockBits(data);
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             GL.BindTexture(TextureTarget.Texture2D, 0);
             return glTex;
@@ -225,7 +224,7 @@ namespace linerider.Rendering
         {
             GL.Enable(EnableCap.Blend);
             GL.Begin(PrimitiveType.Quads);
-            GL.Color4(color);
+            GL.Color4(color.R, color.G, color.B, color.A);
             GL.Vertex2(new Vector2(rect.Left, rect.Top));
             GL.Vertex2(new Vector2(rect.Left + rect.Width, rect.Top));
             GL.Vertex2(new Vector2(rect.Left + rect.Width, rect.Top + rect.Height));

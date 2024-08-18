@@ -1,10 +1,9 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using SkiaSharp;
+using PixelFormat = SkiaSharp.SKColorType;
 
 namespace Gwen.Renderer
 {
@@ -41,7 +40,7 @@ namespace Gwen.Renderer
         private float m_PrevAlphaRef;
         private int m_PrevBlendSrc, m_PrevBlendDst, m_PrevAlphaFunc;
         private readonly bool m_RestoreRenderState;
-        private readonly StringFormat m_StringFormat;
+        //private readonly StringFormat m_StringFormat;
         private bool m_TextureEnabled;
         private bool m_WasBlendEnabled, m_WasTexture2DEnabled, m_WasDepthTestEnabled;
 
@@ -53,8 +52,8 @@ namespace Gwen.Renderer
         {
             m_Vertices = new Vertex[MaxVerts];
             m_VertexSize = Marshal.SizeOf(m_Vertices[0]);
-            m_StringFormat = new StringFormat(StringFormat.GenericTypographic);
-            m_StringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+            //m_StringFormat = new StringFormat(StringFormat.GenericTypographic);
+            //m_StringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
             m_RestoreRenderState = restoreRenderState;
         }
 
@@ -62,19 +61,19 @@ namespace Gwen.Renderer
 
         #region Methods
 
-        public static void LoadTextureInternal(Texture t, Bitmap bmp)
+        public static void LoadTextureInternal(Texture t, SKBitmap bmp)
         {
             // TODO: convert to proper format
             PixelFormat lock_format;
-            switch (bmp.PixelFormat)
+            switch (bmp.ColorType)
             {
-                case PixelFormat.Format32bppArgb:
-                    lock_format = PixelFormat.Format32bppArgb;
+                case PixelFormat.Bgra8888:
+                    lock_format = PixelFormat.Bgra8888;
                     break;
 
-                case PixelFormat.Format24bppRgb:
+                /*case PixelFormat.Format24bppRgb:
                     lock_format = PixelFormat.Format32bppArgb;
-                    break;
+                    break;*/
 
                 default:
                     t.Failed = true;
@@ -96,12 +95,12 @@ namespace Gwen.Renderer
             t.Width = bmp.Width;
             t.Height = bmp.Height;
 
-            BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, lock_format);
+            //BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, lock_format);
 
             switch (lock_format)
             {
-                case PixelFormat.Format32bppArgb:
-                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                case PixelFormat.Bgra8888:
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmp.GetPixels());
                     break;
 
                 default:
@@ -109,7 +108,7 @@ namespace Gwen.Renderer
                     break;
             }
 
-            bmp.UnlockBits(data);
+            //bmp.UnlockBits(data);
             GL.BindTexture(TextureTarget.Texture2D, prevtex);
         }
 
@@ -289,7 +288,7 @@ namespace Gwen.Renderer
                 if (font.RendererData == null)
                     return;
                 Debug.WriteLine(string.Format("FreeFont {0} - system font", font.FaceName));
-                if (!(font.RendererData is System.Drawing.Font sysFont))
+                if (!(font.RendererData is SKFont sysFont))
                     Debug.WriteLine("Freeing empty font");
                 else
                     sysFont.Dispose();
@@ -317,7 +316,7 @@ namespace Gwen.Renderer
         /// <summary>
         /// Create a texture from the specified bitmap.
         /// </summary>
-        public override Texture CreateTexture(Bitmap bmp)
+        public override Texture CreateTexture(SKBitmap bmp)
         {
             Texture t = new Texture(this);
             LoadTextureInternal(t, bmp);
@@ -325,10 +324,10 @@ namespace Gwen.Renderer
         }
         public override void LoadTexture(Texture t)
         {
-            Bitmap bmp;
+            SKBitmap bmp;
             try
             {
-                bmp = new Bitmap(t.Name);
+                bmp = SKBitmap.Decode(t.Name);
             }
             catch (Exception)
             {
@@ -342,13 +341,15 @@ namespace Gwen.Renderer
 
         public override void LoadTextureRaw(Texture t, byte[] pixelData)
         {
-            Bitmap bmp;
+            SKBitmap bmp;
             try
             {
                 unsafe
                 {
-                    fixed (byte* ptr = &pixelData[0])
-                        bmp = new Bitmap(t.Width, t.Height, 4 * t.Width, PixelFormat.Format32bppArgb, (IntPtr)ptr);
+                    fixed (byte* ptr = &pixelData[0]){
+                        bmp = new SKBitmap(t.Width, t.Height);
+                        bmp.SetPixels((IntPtr)ptr);
+                    }
                 }
             }
             catch (Exception)
@@ -368,12 +369,12 @@ namespace Gwen.Renderer
             // Sort out our GWEN texture
             t.RendererData = glTex;
 
-            BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
-                PixelFormat.Format32bppArgb);
+            //BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
+            //    PixelFormat.Format32bppArgb);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, data.Scan0);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, t.Width, t.Height, 0, global::OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, bmp.GetPixels());
 
-            bmp.UnlockBits(data);
+            //bmp.UnlockBits(data);
             bmp.Dispose();
 
             GL.BindTexture(TextureTarget.Texture2D, prevtex);
@@ -381,10 +382,10 @@ namespace Gwen.Renderer
 
         public override void LoadTextureStream(Texture t, System.IO.Stream data)
         {
-            Bitmap bmp;
+            SKBitmap bmp;
             try
             {
-                bmp = new Bitmap(data);
+                bmp = SKBitmap.Decode(data);//new Bitmap(data);
             }
             catch (Exception)
             {

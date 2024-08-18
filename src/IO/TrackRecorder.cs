@@ -29,12 +29,11 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using SkiaSharp;
+using PixelFormat = SkiaSharp.SKColorType;
 
 namespace linerider.IO
 {
@@ -67,17 +66,20 @@ namespace linerider.IO
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.Framebuffer, backbuffer);
             return _screenshotbuffer;
         }
-        public static void SaveScreenshot(int width, int height, byte[] arr, string name)
+        public static unsafe void SaveScreenshot(int width, int height, byte[] arr, string name)
         {
-            Bitmap output = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            SKBitmap output = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Opaque);
             Rectangle rect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = output.LockBits(rect,
-                ImageLockMode.ReadWrite, output.PixelFormat);
-            IntPtr ptr = bmpData.Scan0;
-            Marshal.Copy(arr, 0, ptr, arr.Length);
+            //BitmapData bmpData = output.LockBits(rect,
+            //    ImageLockMode.ReadWrite, output.PixelFormat);
+            //IntPtr ptr = bmpData.Scan0;
+            //Marshal.Copy(arr, 0, ptr, arr.Length);
+            fixed (byte* data = arr)
+                output.InstallPixels(output.Info, (IntPtr)data);
 
-            output.UnlockBits(bmpData);
-            output.Save(name, ImageFormat.Png);
+            //output.UnlockBits(bmpData);
+            //output.Save(name, ImageFormat.Png);
+            output.Encode(new FileStream(name, FileMode.Create), SKEncodedImageFormat.Png, 100);
             output.Dispose();
         }
 

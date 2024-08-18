@@ -38,7 +38,6 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Input;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Threading;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 using MessageBox = Gwen.Controls.MessageBox;
@@ -109,7 +108,7 @@ namespace linerider
                 2,
                 0,
                 GraphicsContextFlags.Default)*/
-            
+
             // Manually setting window size/position as OpenTK 2 messes them up at high DPI
             Size = new Vector2i(Constants.WindowSize.Width, Constants.WindowSize.Height);
             Location = new Vector2i(
@@ -222,7 +221,7 @@ namespace linerider
                 }
                 else
                 {
-                    GL.ClearColor(Settings.Computed.BGColor);
+                    GL.ClearColor(Settings.Computed.BGColor.R, Settings.Computed.BGColor.G, Settings.Computed.BGColor.B, Settings.Computed.BGColor.A);
                     Constants.TriggerLineColorChange = Settings.Computed.LineColor;
                 }
 
@@ -748,7 +747,8 @@ namespace linerider
         {
             if (RenderSize.Height > 0 && RenderSize.Width > 0)
             {
-                GL.Viewport(new Rectangle(0, 0, RenderSize.Width, RenderSize.Height));
+                //GL.Viewport(new Rectangle(0, 0, RenderSize.Width, RenderSize.Height));
+                GL.Viewport(0, 0, RenderSize.Width, RenderSize.Height);
                 GL.MatrixMode(MatrixMode.Projection);
                 GL.LoadIdentity();
                 GL.Ortho(0, RenderSize.Width, RenderSize.Height, 0, 0, 1);

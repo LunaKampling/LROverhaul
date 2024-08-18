@@ -6,7 +6,6 @@ using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace linerider.Rendering
 {
@@ -198,7 +197,7 @@ namespace linerider.Rendering
             GL.Uniform1(_shader.GetUniform("u_alphachannel"), 0);
             GL.Uniform1(_shader.GetUniform("u_overlay"), Overlay ? 1 : 0);
             GL.Uniform1(_shader.GetUniform("u_knobstate"), (int)KnobState);
-            GL.Uniform4(_shader.GetUniform("u_knobcolor"), Settings.Computed.BGColor);
+            GL.Uniform4(_shader.GetUniform("u_knobcolor"), Settings.Computed.BGColor.R, Settings.Computed.BGColor.G, Settings.Computed.BGColor.B, Settings.Computed.BGColor.A);
             GL.Uniform1(_shader.GetUniform("u_knobsize"), (float)relativeKnobSize);
         }
         public void Draw()

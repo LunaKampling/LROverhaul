@@ -24,7 +24,6 @@ using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace linerider.Rendering
 {
@@ -222,7 +221,7 @@ namespace linerider.Rendering
             Vector2 center = (Vector2)point;
             Vector2d[] circ = StaticRenderer.GenerateCircle(center.X, center.Y, size, 360);
             GL.Begin(PrimitiveType.LineStrip);
-            GL.Color3(color);
+            GL.Color3(color.R, color.G, color.B);
             for (int i = 0; i < circ.Length; i++)
             {
                 GL.Vertex2((Vector2)circ[i]);
@@ -238,7 +237,7 @@ namespace linerider.Rendering
             {
                 GameDrawingMatrix.Enter();
                 GL.Begin(PrimitiveType.LineStrip);
-                GL.Color3(color);
+                GL.Color3(color.R, color.G, color.B);
                 for (int i = 0; i < curvePoints.Length; i++)
                 {
                     GL.Vertex2(curvePoints[i]);
@@ -270,7 +269,7 @@ namespace linerider.Rendering
             for (int i = 0; i < points.Count; i++)
             {
                 Color col = (i < 1 || i == points.Count - 1) ? color : Color.FromArgb(255, 200, 0);
-                GL.Color3(col);
+                GL.Color3(col.R, col.G, col.B);
                 GL.Vertex2(points[i]);
             }
             GL.End();
@@ -306,7 +305,7 @@ namespace linerider.Rendering
                 Vector2 curvePoint = curve.CalculatePoint((float)lengthsPerPoint[i] / (float)lineLength);
                 GameDrawingMatrix.Enter();
                 GL.Begin(PrimitiveType.LineStrip);
-                GL.Color3(color);
+                GL.Color3(color.R, color.B, color.G);
                 GL.Vertex2(points[i]);
                 GL.Vertex2(curvePoint);
                 GL.End();
@@ -452,9 +451,9 @@ namespace linerider.Rendering
                         if (Game.Track.GridCheck(yv.X, yv.Y))
                         {
                             if (Game.Track.RenderRider.PhysicsBounds.ContainsPoint(gridpos))
-                                GL.Color3(Color.LightSlateGray);
+                                GL.Color3(Color.LightSlateGray.R, Color.LightSlateGray.G, Color.LightSlateGray.B);
                             else
-                                GL.Color3(Color.Yellow);
+                                GL.Color3(Color.Yellow.R, Color.Yellow.G, Color.Yellow.B);
                             GL.Vertex2(yv);
                             yv.Y += sqsize;
                             GL.Vertex2(yv);
@@ -467,7 +466,7 @@ namespace linerider.Rendering
                         {
                             if (Game.Track.RenderRider.PhysicsBounds.ContainsPoint(gridpos))
                             {
-                                GL.Color3(Color.LightGray);
+                                GL.Color3(Color.LightGray.R, Color.LightGray.G, Color.LightGray.B);
                                 GL.Vertex2(yv);
                                 yv.Y += sqsize;
                                 GL.Vertex2(yv);
@@ -480,7 +479,7 @@ namespace linerider.Rendering
                     }
                     else if (Game.Track.FastGridCheck(yv.X, yv.Y))
                     {
-                        GL.Color3(Color.Yellow);
+                        GL.Color3(Color.Yellow.R, Color.Yellow.G, Color.Yellow.B);
                         GL.Vertex2(yv);
                         yv.Y += sqsize;
                         GL.Vertex2(yv);
@@ -497,7 +496,7 @@ namespace linerider.Rendering
             if (!useshadergrid)
             {
                 GL.Begin(PrimitiveType.Lines);
-                GL.Color3(Color.Red);
+                GL.Color3(Color.Red.R, Color.Red.G, Color.Red.B);
                 for (int x = -sqsize; x < (Game.RenderSize.Width / Game.Track.Zoom); x += sqsize)
                 {
                     Vector2d yv = new Vector2d(x + (Game.ScreenPosition.X - Game.ScreenPosition.X % sqsize), Game.ScreenPosition.Y);

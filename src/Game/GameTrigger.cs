@@ -19,7 +19,6 @@
 using OpenTK.Graphics;
 using OpenTK.Mathematics;
 using System;
-using System.Drawing;
 
 namespace linerider.Game
 {

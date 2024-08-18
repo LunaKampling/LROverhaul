@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Gwen.Skin
+﻿namespace Gwen.Skin
 {
     /// <summary>
     /// UI colors used by skins.
