@@ -62,25 +62,20 @@ namespace linerider.IO
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.ReadFramebuffer, frontbuffer);
 
             GL.ReadPixels(0, 0, game.RenderSize.Width, game.RenderSize.Height,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, _screenshotbuffer);
+                OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, _screenshotbuffer);
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.Framebuffer, backbuffer);
             return _screenshotbuffer;
         }
         public static unsafe void SaveScreenshot(int width, int height, byte[] arr, string name)
         {
-            SKBitmap output = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Opaque);
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            //BitmapData bmpData = output.LockBits(rect,
-            //    ImageLockMode.ReadWrite, output.PixelFormat);
-            //IntPtr ptr = bmpData.Scan0;
-            //Marshal.Copy(arr, 0, ptr, arr.Length);
+            SKBitmap output = new SKBitmap(width, height, SKColorType.Rgba8888, SKAlphaType.Opaque);
             fixed (byte* data = arr)
                 output.InstallPixels(output.Info, (IntPtr)data);
 
-            //output.UnlockBits(bmpData);
-            //output.Save(name, ImageFormat.Png);
-            output.Encode(new FileStream(name, FileMode.Create), SKEncodedImageFormat.Png, 100);
+            var stream = new FileStream(name, FileMode.Create);
+            output.Encode(stream, SKEncodedImageFormat.Png, 100);
             output.Dispose();
+            stream.Dispose();
         }
 
         public static bool Recording;
@@ -110,12 +105,12 @@ namespace linerider.IO
 
                 int rbo2 = SafeFrameBuffer.GenRenderbuffer();
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo2);
-                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgb8, resolution.Width, resolution.Height);
+                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, resolution.Width, resolution.Height);
                 SafeFrameBuffer.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, RenderbufferTarget.Renderbuffer, rbo2);
 
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
-                _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 3];// 3 bytes per pixel
+                _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 4];// 4 bytes per pixel
                 game.Title = Program.WindowTitle + " [Capturing Screenshot]";
                 game.ProcessEvents(0.0);
 
@@ -206,13 +201,13 @@ namespace linerider.IO
 
                 int rbo2 = SafeFrameBuffer.GenRenderbuffer();
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo2);
-                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgb8, resolution.Width, resolution.Height);
+                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, resolution.Width, resolution.Height);
                 SafeFrameBuffer.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, RenderbufferTarget.Renderbuffer, rbo2);
 
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
                 if (!invalid)
                 {
-                    _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 3];// 3 bytes per pixel
+                    _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 4];// 4 bytes per pixel
                     string errormessage = "An unknown error occured during recording.";
                     game.Title = Program.WindowTitle + " [Recording | Hold ESC to cancel]";
                     game.ProcessEvents(0.0);
