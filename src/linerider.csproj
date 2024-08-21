@@ -204,6 +204,8 @@
     <Compile Include="Addons\Coordinates.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Components\IPanelBoxItem.cs" />
+    <Compile Include="UI\Components\PanelBox.cs" />
     <Compile Include="UI\Components\Separator.cs" />
     <Compile Include="UI\CursorsHandler.cs" />
     <Compile Include="UI\PlatformImpl.cs" />
@@ -443,6 +445,15 @@
   <ItemGroup>
     <VersionFile Include="..\version" />
     <AssemblyGeneratedInfoFile Include="$(MSBuildProjectDirectory)\Properties\AssemblyGeneratedInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\icons\layer_bar_add.svg" />
+    <EmbeddedResource Include="Resources\icons\layer_bar_delete.svg" />
+    <EmbeddedResource Include="Resources\icons\layer_bar_edit.svg" />
+    <EmbeddedResource Include="Resources\icons\layer_inline_hidden.svg" />
+    <EmbeddedResource Include="Resources\icons\layer_inline_locked.svg" />
+    <EmbeddedResource Include="Resources\icons\layer_inline_unlocked.svg" />
+    <EmbeddedResource Include="Resources\icons\layer_inline_visible.svg" />
   </ItemGroup>
   <Target Name="BeforeBuild">
     <!-- Read AssemblyInformationalVersion -->

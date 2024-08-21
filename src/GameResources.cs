@@ -202,6 +202,13 @@ namespace linerider
         internal static VectorResource icon_reset_camera => GetVectorImage("icons.reset_camera.svg");
         internal static VectorResource icon_speedup => GetVectorImage("icons.speedup.svg");
         internal static VectorResource icon_slowdown => GetVectorImage("icons.slowdown.svg");
+        internal static VectorResource icon_layer_bar_add => GetVectorImage("icons.layer_bar_add.svg");
+        internal static VectorResource icon_layer_bar_delete => GetVectorImage("icons.layer_bar_delete.svg");
+        internal static VectorResource icon_layer_bar_edit => GetVectorImage("icons.layer_bar_edit.svg");
+        internal static VectorResource icon_layer_inline_visible => GetVectorImage("icons.layer_inline_visible.svg");
+        internal static VectorResource icon_layer_inline_hidden => GetVectorImage("icons.layer_inline_hidden.svg");
+        internal static VectorResource icon_layer_inline_unlocked => GetVectorImage("icons.layer_inline_unlocked.svg");
+        internal static VectorResource icon_layer_inline_locked => GetVectorImage("icons.layer_inline_locked.svg");
         #endregion
         #region Resources: UX
         internal static VectorResource ux_loading => GetVectorImage("ux.loading.svg");

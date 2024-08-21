@@ -223,15 +223,21 @@ namespace linerider
                 Dock = Dock.Right,
             };
 
+            int layersPanelMarginRight = WidgetContainer.WidgetMargin * 5;
+            double layersPanelCenterShift = 0.75;
             _layersPanelWrapper = new Panel(this)
             {
                 ShouldDrawBackground = false,
                 MouseInputEnabled = false,
                 AutoSizeToContents = true,
-                Positioner = (o) => new Point(
-                    Width - o.Width - WidgetContainer.WidgetMargin * 5,
-                    (int)Math.Round((double)(Height - _bottomArea.Height) / 2 - o.Height / 1.5)
-                ),
+                Positioner = (o) =>
+                {
+                    int X = Width - o.Width - layersPanelMarginRight;
+                    int Ymin = _topArea.Y + _topArea.Height + WidgetContainer.WidgetMargin * 3;
+                    int Y = (int)Math.Round(((Height - _bottomArea.Height) / 2 - o.Height / 2) * layersPanelCenterShift);
+
+                    return new Point(X, Math.Max(Ymin, Y));
+                },
             };
             _ = new LayersPanel(_layersPanelWrapper, game.Track)
             {
