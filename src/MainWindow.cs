@@ -613,30 +613,6 @@ namespace linerider
                 {
                     InputUtils.KeyDown(e.Key);
                 }
-                if (e.Key == Key.L)
-                {
-                    Track.GetTrack()._layers.currentLayer.SetLock(true);
-                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
-                }
-                if (e.Key == Key.H)
-                {
-                    Track.GetTrack()._layers.currentLayer.SetVisibility(false);
-                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
-                }
-                if (e.Key == Key.J)
-                {
-                    Track.GetTrack()._layers.currentLayer.SetVisibility(true);
-                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
-                }
-                if (e.Key == Key.B)
-                {
-                    Layer layer = new Layer();
-                    Random random = new Random();
-                    Track.GetTrack()._layers.currentLayer.SetColor(Color.FromArgb(random.Next(0, 255), random.Next(0, 255), random.Next(0, 255)));
-                    Track.GetTrack()._layers.currentLayer.Rerender(Track);
-                    Track.GetTrack()._layers.AddLayer(layer);
-                    layer.SetColor(Color.FromArgb(255, (int)layer.ID * 4, (int)layer.ID * 2));
-                }
                 InputUtils.UpdateKeysDown(e.Keyboard, e.Modifiers);
                 if (TrackRecorder.Recording)
                     return;
