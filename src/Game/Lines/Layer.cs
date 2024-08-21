@@ -11,7 +11,7 @@ namespace linerider.Game
         public bool _locked = false;
         public Dictionary<int, GameLine> lines = new Dictionary<int, GameLine>(); //lines objects contained in layer
         public string name = "Layer";
-        private static string colorhex = "660066";
+        private static string colorhex = "000";
         private static int hex = int.Parse("00" + colorhex, System.Globalization.NumberStyles.HexNumber);
         private Color _color = Color.FromArgb(hex);
 

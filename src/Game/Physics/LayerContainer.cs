@@ -18,12 +18,14 @@ namespace linerider
         private readonly LinkedList<T> _list = new LinkedList<T>();
         public int Count => _list.Count;
         bool ICollection<T>.IsReadOnly => false;
-        private Layer _layer = new Layer();
+        private Layer _layer;
         public Layer defaultLayer;
         public Layer currentLayer;
         public LayerContainer()
         {
+            _layer = new Layer();
             _layer.name = "Base Layer";
+            _layer.SetColor(Settings.Computed.LineColor);
             AddLayer((T)_layer);
             defaultLayer = _layer;
             currentLayer = _layer;

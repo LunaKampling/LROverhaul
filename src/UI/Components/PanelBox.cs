@@ -10,6 +10,16 @@ namespace linerider.UI.Components
     {
         private IEnumerable<TListItem> ListItems;
         private List<TPanelItem> PanelBoxItems = new List<TPanelItem>();
+        private int _selectedIdx;
+        public int SelectedIdx
+        {
+            get => _selectedIdx;
+            set
+            {
+                _selectedIdx = value;
+                Update();
+            }
+        }
         public bool ReverseOrder;
 
         public PanelBox(ControlBase parent, IEnumerable<TListItem> list) : base(parent)
@@ -21,6 +31,7 @@ namespace linerider.UI.Components
         {
             SuspendLayout();
 
+            // Add missing panels
             if (PanelBoxItems.Count() < ListItems.Count())
             {
                 for (int i = PanelBoxItems.Count(); i < ListItems.Count(); i++)
@@ -34,11 +45,20 @@ namespace linerider.UI.Components
                         Dock = Dock.Top,
                     };
 
+                    panel.Clicked += (o, e) =>
+                    {
+                        int itemIdx = ReverseOrder ? ListItems.Count() - i : i - 1;
+                        ((IPanelBoxItem<TListItem>)PanelBoxItems.Last()).OnSelect(ListItems.ElementAt(itemIdx), UserData);
+                        SelectedIdx = i - 1;
+                    };
+
                     TPanelItem panelItem = Activator.CreateInstance<TPanelItem>();
                     PanelBoxItems.Add(panelItem);
                     ((IPanelBoxItem<TListItem>)PanelBoxItems.Last()).Build(panel);
                 }
             }
+
+            // Remove redundant panels
             else if (PanelBoxItems.Count() > ListItems.Count())
             {
                 for (int i = PanelBoxItems.Count(); i >= ListItems.Count(); i--)
@@ -47,12 +67,15 @@ namespace linerider.UI.Components
                 }
             }
 
+            // Update remaining panels
             for (int i = 0; i < PanelBoxItems.Count(); i++)
             {
                 int panelIdx = ReverseOrder ? PanelBoxItems.Count() - i - 1 : i;
                 TPanelItem panel = PanelBoxItems[panelIdx];
 
                 ((IPanelBoxItem<TListItem>)PanelBoxItems[panelIdx]).Populate(ListItems.ElementAt(i), UserData, Update);
+
+                Children[i].ShouldDrawBackground = SelectedIdx == i; ;
             }
 
             ResumeLayout(true);
