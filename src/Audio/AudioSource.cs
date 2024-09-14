@@ -33,8 +33,8 @@ namespace linerider.Audio
         public int SampleRate => _stream.SampleRate;
         public float Position
         {
-            get => (float)_stream.TimePosition.TotalSeconds;
-            set => _stream.TimePosition = TimeSpan.FromSeconds(value);
+            get => (float)_stream.DecodedTime.TotalSeconds;
+            set => _stream.DecodedTime = TimeSpan.FromSeconds(value);
         }
 
         public float Duration => (float)_duration;
@@ -63,8 +63,8 @@ namespace linerider.Audio
         }
         public int ReadBufferReversed()
         {
-            int len = (int)Math.Min(_stream.SamplePosition, _stream_buffer.Length / _stream.Channels);
-            _stream.SamplePosition -= len;
+            int len = (int)Math.Min(_stream.DecodedPosition, _stream_buffer.Length / _stream.Channels);
+            _stream.DecodedPosition -= len;
             ReadSamples = _stream.ReadSamples(_stream_buffer, 0, len * _stream.Channels);
             for (int i = 0; i < ReadSamples; i++)
             {
@@ -75,7 +75,7 @@ namespace linerider.Audio
                     temp = short.MinValue;
                 Buffer[ReadSamples - 1 - i] = (short)temp;
             }
-            _stream.SamplePosition -= len;
+            _stream.DecodedPosition -= len;
             return ReadSamples;
         }
 
