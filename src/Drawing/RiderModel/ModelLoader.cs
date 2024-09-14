@@ -88,7 +88,8 @@ namespace linerider.Drawing.RiderModel
             }
             Model.Body = newModelBody;
             SKBitmap newModelBodyDead = new SKBitmap(Model.BodyDead.Info);
-            using (var surface = new SKCanvas(newModelBody)){
+            using (var surface = new SKCanvas(newModelBodyDead)){
+                surface.DrawBitmap(Model.BodyDead, 0, 0);
                 for (int i = 0; i < Model.RegionsBodyDead.Count; i++)
                 {
                     Rectangle region = Model.RegionsBodyDead[i];
@@ -102,6 +103,7 @@ namespace linerider.Drawing.RiderModel
                     surface.DrawRect(region, paint);
                 }
             }
+            Model.BodyDead = newModelBodyDead;
 
             ScarfColors.Shift(ScarfColors.Count() * Model.RegionsBody.Count - Model.RegionsBody.Count);
 
