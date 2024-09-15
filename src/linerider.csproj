@@ -1,15 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0;net8.0-windows</TargetFrameworks>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
-    <OutputType>Exe</OutputType>
+    <OutputType Condition="'$(TargetFramework)' == 'net8.0'">Exe</OutputType>
+	<OutputType Condition="'$(TargetFramework)' == 'net8.0-windows'">WinExe</OutputType>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
     <AllowedReferenceRelatedFileExtensions>
       *.pdb;
     </AllowedReferenceRelatedFileExtensions>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <!--<UseWindowsForms>true</UseWindowsForms>-->
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT' AND '$(TargetFramework)' == 'net8.0-windows'">
+	<DefineConstants>WINDOWS</DefineConstants>
+	<TargetFramework>net8.0-windows</TargetFramework>
+	<UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+	<TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\build</OutputPath>
@@ -184,7 +193,8 @@
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <!-- Cleanup after build -->
-    <Delete Files="@(AssemblyGeneratedInfoFile)" />
+	<!-- i think this deletes the file before the second target builds -->
+    <!-- <Delete Files="@(AssemblyGeneratedInfoFile)" /> -->
   </Target>
   <!-- ### Process LRO version and read latest changelog file ### -->
 </Project>
