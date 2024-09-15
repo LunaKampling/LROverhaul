@@ -117,9 +117,8 @@ namespace linerider
 
             Console.WriteLine(msg);
 
-            if (OperatingSystem.IsWindows()) {
-                /* TODO MessageBox from user32.dll instead of winforms
-                System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
+#if WINDOWS
+            System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
 
                 if (btn == System.Windows.Forms.DialogResult.Yes)
                 {
@@ -137,18 +136,17 @@ namespace linerider
                         newRecord = newLine + newRecord;
 
                     File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
-                }*/
-            }
+                }
+#endif
 
             if (!nothrow)
                 throw e;
         }
 
-        public static void NonFatalError(string err) { 
-            if (OperatingSystem.IsWindows()) {
-                /* TODO MessageBox from user32.dll instead of winforms
-                System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
-            */}
+        public static void NonFatalError(string err) {
+#if WINDOWS
+            System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
+#endif
         }
         public static void Run(string[] givenArgs)
         {
