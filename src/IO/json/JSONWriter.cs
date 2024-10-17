@@ -142,9 +142,12 @@ namespace linerider.IO
             {
                 ret.Add(line.extended);
                 ret.Add(line.flipped);
-                ret.Add(-1);
-                ret.Add(-1);
-                ret.Add(line.multiplier);
+                if (line.multiplier > 1)
+                {
+                    ret.Add(-1);
+                    ret.Add(-1);
+                    ret.Add(line.multiplier);
+                }
             }
             return ret.ToArray();
         }

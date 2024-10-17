@@ -220,11 +220,10 @@ namespace linerider.IO
                 }
                 case 1:
                 {
-                    bool pos = line.multiplier >= 0;
                     RedLine add = new RedLine(
-                            pos ? new Vector2d(line.x1, line.y1) : new Vector2d(line.x2, line.y2),
-                            pos ? new Vector2d(line.x2, line.y2) : new Vector2d(line.x1, line.y1),
-                            pos == Convert.ToBoolean(line.flipped))
+                            new Vector2d(line.x1, line.y1),
+                            new Vector2d(line.x2, line.y2),
+                            Convert.ToBoolean(line.flipped))
                     {
                         ID = line.id,
                         Extension = (StandardLine.Ext)line.extended
@@ -233,13 +232,9 @@ namespace linerider.IO
                         add.Extension |= StandardLine.Ext.Left;
                     if (Convert.ToBoolean(line.rightExtended))
                         add.Extension |= StandardLine.Ext.Right;
-                    if (line.multiplier > 0)
+                    if (line.multiplier > 1)
                     {
                         add.Multiplier = line.multiplier;
-                    }
-                    if (line.multiplier < 0)
-                    {
-                        add.Multiplier = -line.multiplier;
                     }
                     track.AddLine(add);
                     break;
