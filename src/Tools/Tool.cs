@@ -121,11 +121,11 @@ namespace linerider.Tools
         {
             knob = false;
 
-            float relativeKnobSize = Settings.LimitLineKnobsSize ? Math.Min(
+            double relativeKnobSize = Settings.LimitLineKnobsSize ? Math.Min(
                 Constants.KnobSize,
                 Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxLimitedKnobSize / game.Track.Zoom
             ) : Constants.KnobSize;
-            GameLine[] ends = LineEndsInRadius(trk, position, relativeKnobSize - 1f);
+            GameLine[] ends = LineEndsInRadius(trk, position, (float)relativeKnobSize - 1);
 
             if (ends.Length > 0)
             {

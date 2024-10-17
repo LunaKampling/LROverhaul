@@ -93,7 +93,7 @@ namespace linerider.Rendering
             Color color = Settings.Computed.BGColor;
             float size = Settings.LimitLineKnobsSize ? Math.Min(
                 Constants.KnobSize,
-                Constants.KnobSize * Settings.Computed.UIScale * Constants.MaxLimitedKnobSize / Game.Track.Zoom
+                Constants.KnobSize * (float)Settings.Computed.UIScale * Constants.MaxLimitedKnobSize / Game.Track.Zoom
             ) : Constants.KnobSize;
 
             if (highlight)
