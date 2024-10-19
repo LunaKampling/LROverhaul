@@ -349,10 +349,10 @@ namespace linerider
             autosaveMinutes = 5;
             AutosavePrefix = "Autosave";
             startWindowMaximized = false;
-            DefaultSaveFormat = ".trk";
-            DefaultAutosaveFormat = ".trk";
-            DefaultQuicksaveFormat = ".trk";
-            DefaultCrashBackupFormat = ".trk";
+            DefaultSaveFormat = ".json";
+            DefaultAutosaveFormat = ".json";
+            DefaultQuicksaveFormat = ".json";
+            DefaultCrashBackupFormat = ".json";
             DrawCollisionGrid = false;
             DrawAGWs = false;
             DrawFloatGrid = false;
@@ -651,16 +651,16 @@ namespace linerider
         public static void PostprocessValues()
         {
             if (DefaultSaveFormat == null)
-                DefaultSaveFormat = ".trk";
+                DefaultSaveFormat = ".json";
 
             if (DefaultQuicksaveFormat == null)
-                DefaultQuicksaveFormat = ".trk";
+                DefaultQuicksaveFormat = ".json";
 
             if (DefaultAutosaveFormat == null)
-                DefaultAutosaveFormat = ".trk";
+                DefaultAutosaveFormat = ".json";
 
             if (DefaultCrashBackupFormat == null)
-                DefaultCrashBackupFormat = ".trk";
+                DefaultCrashBackupFormat = ".json";
 
             if (AutosavePrefix == null)
                 AutosavePrefix = "Autosave";

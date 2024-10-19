@@ -57,12 +57,12 @@ namespace linerider.UI
             _savebutton.DropDownClicked += (o, e) =>
               {
                   Menu pop = new Menu(_canvas);
-                  pop.AddItem(".trk (recommended)").Clicked += (o2, e2) =>
-                  {
-                      _savebutton.Text = "Save (.trk)";
-                      _savebutton.UserData = ".trk";
-                  };
-                  pop.AddItem(".track.json (for .com / regular LRA / other LRA mod support)").Clicked += (o2, e2) =>
+                  //pop.AddItem(".trk (recommended)").Clicked += (o2, e2) =>
+                  //{
+                  //    _savebutton.Text = "Save (.trk)";
+                  //    _savebutton.UserData = ".trk";
+                  //};
+                  pop.AddItem(".track.json").Clicked += (o2, e2) =>
                   {
                       _savebutton.Text = "Save (.json)";
                       _savebutton.UserData = ".json";
