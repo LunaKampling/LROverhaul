@@ -142,7 +142,7 @@ namespace linerider.IO
             {
                 ret.Add(line.extended);
                 ret.Add(line.flipped);
-                if (line.multiplier > 1)
+                if (line.multiplier != 0)
                 {
                     ret.Add(-1);
                     ret.Add(-1);

@@ -232,7 +232,7 @@ namespace linerider.IO
                         add.Extension |= StandardLine.Ext.Left;
                     if (Convert.ToBoolean(line.rightExtended))
                         add.Extension |= StandardLine.Ext.Right;
-                    if (line.multiplier > 1)
+                    if (line.multiplier != 0)
                     {
                         add.Multiplier = line.multiplier;
                     }
