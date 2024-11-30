@@ -69,7 +69,7 @@ namespace linerider.UI
                   };
                   pop.AddItem(".trk (outdated)").Clicked += (o2, e2) =>
                   {
-                      _savebutton.Text = "Save (.sol)";
+                      _savebutton.Text = "Save (.trk)";
                       _savebutton.UserData = ".trk";
                   };
                   pop.Open(Pos.Center);
