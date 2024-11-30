@@ -57,11 +57,6 @@ namespace linerider.UI
             _savebutton.DropDownClicked += (o, e) =>
               {
                   Menu pop = new Menu(_canvas);
-                  //pop.AddItem(".trk (recommended)").Clicked += (o2, e2) =>
-                  //{
-                  //    _savebutton.Text = "Save (.trk)";
-                  //    _savebutton.UserData = ".trk";
-                  //};
                   pop.AddItem(".track.json").Clicked += (o2, e2) =>
                   {
                       _savebutton.Text = "Save (.json)";
@@ -71,6 +66,11 @@ namespace linerider.UI
                   {
                       _savebutton.Text = "Save (.sol)";
                       _savebutton.UserData = ".sol";
+                  };
+                  pop.AddItem(".trk (outdated)").Clicked += (o2, e2) =>
+                  {
+                      _savebutton.Text = "Save (.sol)";
+                      _savebutton.UserData = ".trk";
                   };
                   pop.Open(Pos.Center);
               };
