@@ -194,6 +194,7 @@ namespace linerider.IO
                         }
                     }
                 }
+                line.width = 1;
                 AddLine(track, line);
             }
         }
@@ -245,7 +246,8 @@ namespace linerider.IO
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2))
                     {
-                        ID = GameLine.UninitializedID
+                        ID = GameLine.UninitializedID,
+                        Width = line.width
                     };
                     track.AddLine(add);
                     break;
