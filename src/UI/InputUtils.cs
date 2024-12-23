@@ -92,19 +92,12 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                if (_kbstate == null) {
-                    _kbstate = ks.GetSnapshot();
-                }
-                if (_prev_kbstate == null) {
-                    _prev_kbstate = ks.GetSnapshot();
-                }
                 _prev_kbstate = _kbstate;
                 _kbstate = ks.GetSnapshot();
 
-                // HACK: wayland (or at least labwc) always reports numlock down, ignore it on *any* linux
-                if (OperatingSystem.IsLinux()) {
-                    modifiers &= ~KeyModifiers.NumLock;
-                }
+                // HACK: dont consider numlock and capslock as modifiers, because they invalidate all hotkeys while they are active
+                modifiers &= ~KeyModifiers.NumLock;
+                modifiers &= ~KeyModifiers.CapsLock;
 
                 _modifiersdown = modifiers;
             }
