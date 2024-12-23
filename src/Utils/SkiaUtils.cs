@@ -23,10 +23,9 @@ namespace linerider {
                 width = (int)svg.Picture.CullRect.Width;
             if (height == -1)
                 height = (int)svg.Picture.CullRect.Height;
-
-            SKBitmap toBitmap = new SKBitmap(
-                (int)svg.Picture.CullRect.Width,
-                (int)svg.Picture.CullRect.Height);
+            
+            var imageInfo = new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
+            SKBitmap toBitmap = new SKBitmap(imageInfo);
 
             using (SKCanvas canvas = new SKCanvas(toBitmap))
             {
