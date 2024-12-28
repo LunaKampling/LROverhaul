@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace linerider.UI.Components
 {
+    // This class is such a mess. I've created a monster ;_;
     public class PanelBox<TPanelItem, TListItem> : ScrollControl
     {
         private IEnumerable<TListItem> ListItems;
@@ -16,6 +17,9 @@ namespace linerider.UI.Components
             get => _selectedIdx;
             set
             {
+                int itemIdx = ReverseOrder ? ListItems.Count() - value - 1 : value;
+                ((IPanelBoxItem<TListItem>)PanelBoxItems.ElementAt(itemIdx)).OnSelect(ListItems.ElementAt(itemIdx), UserData);
+
                 _selectedIdx = value;
                 Update();
             }
@@ -52,8 +56,8 @@ namespace linerider.UI.Components
                         SelectedIdx = i - 1;
                     };
 
-                    TPanelItem panelItem = Activator.CreateInstance<TPanelItem>();
-                    PanelBoxItems.Add(panelItem);
+                    PanelBoxItems.Add(Activator.CreateInstance<TPanelItem>());
+                    ((IPanelBoxItem<TListItem>)PanelBoxItems.Last()).Panel = panel;
                     ((IPanelBoxItem<TListItem>)PanelBoxItems.Last()).Build(panel);
                 }
             }
@@ -61,9 +65,13 @@ namespace linerider.UI.Components
             // Remove redundant panels
             else if (PanelBoxItems.Count() > ListItems.Count())
             {
-                for (int i = PanelBoxItems.Count(); i >= ListItems.Count(); i--)
+                int panelsCountToRemove = PanelBoxItems.Count() - ListItems.Count();
+                for (int i = 0; i < panelsCountToRemove; i++)
                 {
-                    Parent.RemoveChild(((IPanelBoxItem<TListItem>)PanelBoxItems.ElementAt(i + 1)).Panel, true);
+                    int lastItemIdx = PanelBoxItems.Count() - 1;
+                    Parent.RemoveChild(((IPanelBoxItem<TListItem>)PanelBoxItems.ElementAt(lastItemIdx)).Panel, true);
+                    //((IPanelBoxItem<TListItem>)PanelBoxItems.ElementAt(lastItemIdx)).OnDispose(ListItems.ElementAt(lastItemIdx), UserData);
+                    PanelBoxItems.RemoveAt(lastItemIdx);
                 }
             }
 
@@ -71,11 +79,9 @@ namespace linerider.UI.Components
             for (int i = 0; i < PanelBoxItems.Count(); i++)
             {
                 int panelIdx = ReverseOrder ? PanelBoxItems.Count() - i - 1 : i;
-                TPanelItem panel = PanelBoxItems[panelIdx];
+                Children[i].ShouldDrawBackground = SelectedIdx == i;
 
                 ((IPanelBoxItem<TListItem>)PanelBoxItems[panelIdx]).Populate(ListItems.ElementAt(i), UserData, Update);
-
-                Children[i].ShouldDrawBackground = SelectedIdx == i; ;
             }
 
             ResumeLayout(true);

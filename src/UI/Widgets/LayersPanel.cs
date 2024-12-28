@@ -14,6 +14,8 @@ namespace linerider.UI.Widgets
         private LayerContainer<Layer> _layers => _editor.GetTrack()._layers;
         private PanelBox<LayerItem, Layer> _layersBox;
         private Random random = new Random();
+        private WidgetButton AddLayerBtn;
+        private WidgetButton RemoveLayerBtn;
 
         public LayersPanel(ControlBase parent, Editor editor) : base(parent)
         {
@@ -56,7 +58,7 @@ namespace linerider.UI.Widgets
                 Margin = new Margin(WidgetPadding, 0, WidgetPadding, 0),
             };
 
-            _ = new WidgetButton(buttonsBar)
+            AddLayerBtn = new WidgetButton(buttonsBar)
             {
                 Name = "Add new layer",
                 Icon = GameResources.icon_layer_bar_add.Bitmap,
@@ -67,38 +69,36 @@ namespace linerider.UI.Widgets
                     layer.name = $"Layer {_layers.Count + 1}";
                     layer.SetColor(Color.FromArgb(random.Next(255), random.Next(255), random.Next(255)));
                     _layers.AddLayer(layer);
-                    _layersBox.SelectedIdx = 0;
+                    //_layersBox.SelectedIdx = 0;
                 },
             };
 
-            //_ = new WidgetButton(buttonsBar)
-            //{
-            //    Name = "Delete selected layer",
-            //    Icon = GameResources.icon_layer_bar_delete.Bitmap,
-            //    Dock = Dock.Right,
-            //    IsDisabled = true,
-            //    Action = (o, e) =>
-            //    {
-            //        // TODO
-            //        //int? layerId = _layers.currentLayer.ID;
-            //        //if (layerId != null)
-            //        //{
-            //        //    _layers.RemoveLayer((int)layerId);
-            //        //}
-            //    },
-            //};
+            RemoveLayerBtn = new WidgetButton(buttonsBar)
+            {
+                Name = "Delete selected layer",
+                Icon = GameResources.icon_layer_bar_delete.Bitmap,
+                Dock = Dock.Right,
+                Action = (o, e) =>
+                {
+                    if (_layers.Count > 1 && !_layers.currentLayer._locked)
+                    {
+                        _layers.RemoveLayer((int)_layers.currentLayer.ID);
+                        _layersBox.SelectedIdx = Math.Min(_layersBox.SelectedIdx, _layers.Count - 1);
+                    }
+                },
+            };
 
-            //_ = new WidgetButton(buttonsBar)
-            //{
-            //    Name = "Selected layer properties",
-            //    Icon = GameResources.icon_layer_bar_edit.Bitmap,
-            //    Dock = Dock.Right,
-            //    IsDisabled = true,
-            //    Action = (o, e) =>
-            //    {
-            //        // TODO
-            //    },
-            //};
+            _ = new WidgetButton(buttonsBar)
+            {
+                IsDisabled = true, // Temporary
+                Name = "Selected layer properties",
+                Icon = GameResources.icon_layer_bar_edit.Bitmap,
+                Dock = Dock.Right,
+                Action = (o, e) =>
+                {
+                    // TODO
+                },
+            };
         }
     }
     internal class LayerItem : IPanelBoxItem<Layer>
@@ -175,5 +175,10 @@ namespace linerider.UI.Widgets
 
             editor.GetTrack()._layers.currentLayer = layer;
         }
+
+        //public void OnDispose(Layer layer, object data)
+        //{
+        //    //
+        //}
     }
 }
