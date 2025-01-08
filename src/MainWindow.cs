@@ -97,7 +97,7 @@ namespace linerider
         private bool _invalidated;
         private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
         private Rectangle _previouswindowpos;
-        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Default, Profile = ContextProfile.Any, APIVersion = new Version(1,0) }) {
+        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Default, Profile = ContextProfile.Compatability, APIVersion = new Version(3,2) }) {
             /*
             : base(
                 1337, 1337, // These size values don't matter, they're overridden below
