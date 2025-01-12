@@ -19,6 +19,7 @@
 using Gwen;
 using Gwen.Controls;
 using Gwen.Skin;
+using linerider.Game;
 using linerider.Tools;
 using linerider.UI;
 using linerider.UI.Components;
@@ -431,5 +432,6 @@ namespace linerider
             wnd.SetPosition(x - wnd.Width / 2, y - wnd.Height / 2);
         }
         public void ShowGeneratorWindow(Vector2d pos) => ShowDialog(new GeneratorWindow(this, pos));
+        public void ShowLayerPropertiesWindow(Layer layer, GwenEventHandler<EventArgs> apply) => ShowDialog(new LayerPropertiesWindow(this, game.Track, layer, apply));
     }
 }

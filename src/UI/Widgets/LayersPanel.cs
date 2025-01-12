@@ -5,21 +5,22 @@ using linerider.Game;
 using static linerider.UI.GwenHelper;
 using System;
 using System.Drawing;
+using static linerider.Settings;
 
 namespace linerider.UI.Widgets
 {
     public class LayersPanel : WidgetContainer
     {
         private readonly Editor _editor;
+        private readonly GameCanvas _canvas;
         private LayerContainer<Layer> _layers => _editor.GetTrack()._layers;
         private PanelBox<LayerItem, Layer> _layersBox;
         private Random random = new Random();
-        private WidgetButton AddLayerBtn;
-        private WidgetButton RemoveLayerBtn;
 
         public LayersPanel(ControlBase parent, Editor editor) : base(parent)
         {
             _editor = editor;
+            _canvas = (GameCanvas)parent.GetCanvas();
 
             Setup();
         }
@@ -58,7 +59,7 @@ namespace linerider.UI.Widgets
                 Margin = new Margin(WidgetPadding, 0, WidgetPadding, 0),
             };
 
-            AddLayerBtn = new WidgetButton(buttonsBar)
+            _ = new WidgetButton(buttonsBar)
             {
                 Name = "Add new layer",
                 Icon = GameResources.icon_layer_bar_add.Bitmap,
@@ -69,11 +70,10 @@ namespace linerider.UI.Widgets
                     layer.name = $"Layer {_layers.Count + 1}";
                     layer.SetColor(Color.FromArgb(random.Next(255), random.Next(255), random.Next(255)));
                     _layers.AddLayer(layer);
-                    //_layersBox.SelectedIdx = 0;
                 },
             };
 
-            RemoveLayerBtn = new WidgetButton(buttonsBar)
+            _ = new WidgetButton(buttonsBar)
             {
                 Name = "Delete selected layer",
                 Icon = GameResources.icon_layer_bar_delete.Bitmap,
@@ -90,14 +90,12 @@ namespace linerider.UI.Widgets
 
             _ = new WidgetButton(buttonsBar)
             {
-                IsDisabled = true, // Temporary
                 Name = "Selected layer properties",
                 Icon = GameResources.icon_layer_bar_edit.Bitmap,
                 Dock = Dock.Right,
-                Action = (o, e) =>
-                {
-                    // TODO
-                },
+                Action = (o, e) => _canvas.ShowLayerPropertiesWindow(_layers.currentLayer, (o2, e2) => {
+                    _layersBox.Update();
+                }),
             };
         }
     }
