@@ -6,3 +6,4 @@
 **/packages
 build
 deploy
+src/Properties/AssemblyGeneratedInfo.cs
