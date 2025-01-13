@@ -7,7 +7,7 @@ namespace Gwen.ControlInternal
     /// </summary>
     public class TreeNodeLabel : Button
     {
-        protected override System.Drawing.Color CurrentColor
+        protected override Color CurrentColor
         {
             get
             {

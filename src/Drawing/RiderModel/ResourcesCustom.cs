@@ -1,8 +1,8 @@
 ﻿using linerider.Utils;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
+using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -30,23 +30,23 @@ namespace linerider.Drawing.RiderModel
             string regionsPngPath = Path.Combine(SkinPath, Filenames.Regions);
             string palettePngPath = Path.Combine(SkinPath, Filenames.Palette);
 
-            Body = new Bitmap(Path.Combine(SkinPath, Filenames.Body));
-            BodyDead = new Bitmap(Path.Combine(SkinPath, Filenames.BodyDead));
+            Body = SKBitmap.Decode(Path.Combine(SkinPath, Filenames.Body));
+            BodyDead = SKBitmap.Decode(Path.Combine(SkinPath, Filenames.BodyDead));
 
-            Sled = new Bitmap(Path.Combine(SkinPath, Filenames.Sled));
-            SledBroken = new Bitmap(Path.Combine(SkinPath, Filenames.SledBroken));
+            Sled = SKBitmap.Decode(Path.Combine(SkinPath, Filenames.Sled));
+            SledBroken = SKBitmap.Decode(Path.Combine(SkinPath, Filenames.SledBroken));
 
-            Arm = new Bitmap(Path.Combine(SkinPath, Filenames.Arm));
-            Leg = new Bitmap(Path.Combine(SkinPath, Filenames.Leg));
+            Arm = SKBitmap.Decode(Path.Combine(SkinPath, Filenames.Arm));
+            Leg = SKBitmap.Decode(Path.Combine(SkinPath, Filenames.Leg));
 
             if (File.Exists(ropePath))
-                Rope = new Bitmap(ropePath);
+                Rope = SKBitmap.Decode(ropePath);
 
             if (File.Exists(palettePngPath))
-                Palette = new Bitmap(palettePngPath);
+                Palette = SKBitmap.Decode(palettePngPath);
 
             if (File.Exists(regionsPngPath))
-                Regions = new Bitmap(regionsPngPath);
+                Regions = SKBitmap.Decode(regionsPngPath);
 
             if (File.Exists(regionsPath) && File.ReadLines(regionsPath).First() == RegionsCache.HeaderMain)
                 RegionsCacheLines = File.ReadAllLines(regionsPath).ToList();

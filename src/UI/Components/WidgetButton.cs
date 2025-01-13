@@ -1,7 +1,7 @@
 ﻿using Gwen;
 using Gwen.Controls;
 using System;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.UI.Components
 {
@@ -17,7 +17,7 @@ namespace linerider.UI.Components
                 Clicked += _action;
             }
         }
-        public Bitmap Icon
+        public SKBitmap Icon
         {
             get => _icon;
             set
@@ -64,7 +64,7 @@ namespace linerider.UI.Components
         private GwenEventHandler<EventArgs> _action;
         private Hotkey _tooltiphotkey = Hotkey.None;
         private Hotkey _hotkey = Hotkey.None;
-        private Bitmap _icon;
+        private SKBitmap _icon;
         private Color _color = Color.Empty;
 
         public WidgetButton(ControlBase parent) : base(parent)

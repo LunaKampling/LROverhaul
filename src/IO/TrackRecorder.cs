@@ -24,24 +24,26 @@ using linerider.Utils;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using Key = OpenTK.Input.Key;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
+using SkiaSharp;
+using PixelFormat = SkiaSharp.SKColorType;
 
 namespace linerider.IO
 {
     internal static class TrackRecorder
     {
         private static byte[] _screenshotbuffer;
-        public static byte[] GrabScreenshot(MainWindow game, int frontbuffer, bool yflip = false)
+        public static unsafe byte[] GrabScreenshot(MainWindow game, int frontbuffer, bool yflip = false)
         {
-            if (GraphicsContext.CurrentContext == null)
-                throw new GraphicsContextMissingException();
+            if (new GLFWGraphicsContext(game.WindowPtr) == null)
+                throw new Exception("missing graphics context");
             int backbuffer = game.MSAABuffer.Framebuffer;
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.ReadFramebuffer, backbuffer);
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.DrawFramebuffer, frontbuffer);
@@ -60,22 +62,20 @@ namespace linerider.IO
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.ReadFramebuffer, frontbuffer);
 
             GL.ReadPixels(0, 0, game.RenderSize.Width, game.RenderSize.Height,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, _screenshotbuffer);
+                OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, _screenshotbuffer);
             SafeFrameBuffer.BindFramebuffer(FramebufferTarget.Framebuffer, backbuffer);
             return _screenshotbuffer;
         }
-        public static void SaveScreenshot(int width, int height, byte[] arr, string name)
+        public static unsafe void SaveScreenshot(int width, int height, byte[] arr, string name)
         {
-            Bitmap output = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = output.LockBits(rect,
-                ImageLockMode.ReadWrite, output.PixelFormat);
-            IntPtr ptr = bmpData.Scan0;
-            Marshal.Copy(arr, 0, ptr, arr.Length);
+            SKBitmap output = new SKBitmap(width, height, SKColorType.Rgba8888, SKAlphaType.Opaque);
+            fixed (byte* data = arr)
+                output.InstallPixels(output.Info, (IntPtr)data);
 
-            output.UnlockBits(bmpData);
-            output.Save(name, ImageFormat.Png);
+            var stream = new FileStream(name, FileMode.Create);
+            output.Encode(stream, SKEncodedImageFormat.Png, 100);
             output.Dispose();
+            stream.Dispose();
         }
 
         public static bool Recording;
@@ -89,7 +89,7 @@ namespace linerider.IO
             bool oldHitTest = Settings.Editor.HitTest;
 
             if (Settings.Recording.ResIndZoom)
-                Settings.ZoomMultiplier *= game.ClientSize.Width > game.ClientSize.Height * 16 / 9 ? Settings.ScreenshotWidth / (float)game.ClientSize.Width : Settings.ScreenshotHeight / (float)game.ClientSize.Height;
+                Settings.ZoomMultiplier *= game.ClientSize.X > game.ClientSize.Y * 16 / 9 ? Settings.ScreenshotWidth / (float)game.ClientSize.X : Settings.ScreenshotHeight / (float)game.ClientSize.Y;
             Settings.Editor.HitTest = Settings.Recording.ShowHitTest;
             game.Canvas.Scale = Settings.ZoomMultiplier / oldZoomMultiplier; // Divide just in case anyone modifies the zoom multiplier to not be 1
 
@@ -105,14 +105,14 @@ namespace linerider.IO
 
                 int rbo2 = SafeFrameBuffer.GenRenderbuffer();
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo2);
-                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgb8, resolution.Width, resolution.Height);
+                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, resolution.Width, resolution.Height);
                 SafeFrameBuffer.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, RenderbufferTarget.Renderbuffer, rbo2);
 
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
-                _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 3];// 3 bytes per pixel
+                _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 4];// 4 bytes per pixel
                 game.Title = Program.WindowTitle + " [Capturing Screenshot]";
-                game.ProcessEvents();
+                game.ProcessEvents(0.0);
 
                 string date = DateTime.UtcNow.ToString("yyyy-MM-dd hh.mm.ss");
                 string dirPath = Path.Combine(Settings.Local.UserDirPath, Constants.RendersFolderName);
@@ -154,7 +154,7 @@ namespace linerider.IO
             bool invalid = false;
 
             if (Settings.Recording.ResIndZoom)
-                Settings.ZoomMultiplier *= game.ClientSize.Width > game.ClientSize.Height * 16 / 9 ? Settings.Recording.RecordingWidth / (float)game.ClientSize.Width : Settings.Recording.RecordingHeight / (float)game.ClientSize.Height;
+                Settings.ZoomMultiplier *= game.ClientSize.X > game.ClientSize.Y * 16 / 9 ? Settings.Recording.RecordingWidth / (float)game.ClientSize.X : Settings.Recording.RecordingHeight / (float)game.ClientSize.Y;
 
             Settings.Editor.HitTest = Settings.Recording.ShowHitTest;
             game.Canvas.Scale = Settings.ZoomMultiplier / oldZoomMultiplier; // Divide just in case anyone modifies the zoom multiplier to not be 1
@@ -178,7 +178,7 @@ namespace linerider.IO
                 if (frame > 400) // Many frames, will likely lag the game. Update the window as a fallback.
                 {
                     game.Title = Program.WindowTitle + " [Validating flag]";
-                    game.ProcessEvents();
+                    game.ProcessEvents(0.0);
                 }
                 for (int i = 0; i < frame; i++)
                 {
@@ -201,16 +201,16 @@ namespace linerider.IO
 
                 int rbo2 = SafeFrameBuffer.GenRenderbuffer();
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, rbo2);
-                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgb8, resolution.Width, resolution.Height);
+                SafeFrameBuffer.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, resolution.Width, resolution.Height);
                 SafeFrameBuffer.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, RenderbufferTarget.Renderbuffer, rbo2);
 
                 SafeFrameBuffer.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
                 if (!invalid)
                 {
-                    _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 3];// 3 bytes per pixel
+                    _screenshotbuffer = new byte[game.RenderSize.Width * game.RenderSize.Height * 4];// 4 bytes per pixel
                     string errormessage = "An unknown error occured during recording.";
                     game.Title = Program.WindowTitle + " [Recording | Hold ESC to cancel]";
-                    game.ProcessEvents();
+                    game.ProcessEvents(0.0);
                     string filename = Path.Combine(Settings.Local.UserDirPath, Constants.RendersFolderName, $"{game.Track.Name}.mp4");
                     Game.RiderFrame flagbackup = flag;
                     bool hardexit = false;
@@ -268,7 +268,7 @@ namespace linerider.IO
                             errormessage = "An error occured when saving the frame.\n(Perhaps the resolution chosen is too large?)";
                         }
 
-                        if (Keyboard.GetState()[Key.Escape] && game.Focused)
+                        if (game.KeyboardState[Key.Escape] && game.IsFocused)
                         {
                             hardexit = true;
                             errormessage = "The user manually cancelled recording.";
@@ -276,10 +276,10 @@ namespace linerider.IO
                         if (sw.ElapsedMilliseconds > 500)
                         {
                             game.Title = string.Format("{0} [Recording {1:P} | Hold ESC to cancel]", Program.WindowTitle, i / (double)framecount);
-                            game.ProcessEvents();
+                            game.ProcessEvents(0.0);
                         }
                     }
-                    game.ProcessEvents();
+                    game.ProcessEvents(0.0);
 
                     if (!hardexit)
                     {
@@ -331,7 +331,7 @@ namespace linerider.IO
                         if (!failed)
                         {
                             game.Title = Program.WindowTitle + " [Encoding Video | 0%]";
-                            game.ProcessEvents();
+                            game.ProcessEvents(0.0);
                             try
                             {
                                 FFMPEG.Execute(parameters, (string s) =>
@@ -353,8 +353,8 @@ namespace linerider.IO
                                             if (int.TryParse(sub, out parsedint))
                                             {
                                                 game.Title = Program.WindowTitle + string.Format(" [Encoding Video | {0:P} | Hold ESC to cancel]", parsedint / (double)framecount);
-                                                game.ProcessEvents();
-                                                if (Keyboard.GetState()[Key.Escape] && game.Focused)
+                                                game.ProcessEvents(0.0);
+                                                if (game.KeyboardState[Key.Escape] && game.IsFocused)
                                                 {
                                                     hardexit = true;
                                                     errormessage = "The user manually cancelled recording.";
@@ -398,7 +398,7 @@ namespace linerider.IO
                     Settings.Local.RecordingMode = recmodesave;
                     game.Title = Program.WindowTitle;
                     game.Track.Stop();
-                    game.ProcessEvents();
+                    game.ProcessEvents(0.0);
                     System.Collections.Generic.List<ControlBase> openwindows = game.Canvas.GetOpenWindows();
                     foreach (ControlBase window in openwindows)
                     {

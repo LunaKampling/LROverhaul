@@ -9,7 +9,7 @@ namespace Gwen.ControlInternal
     {
         internal bool m_Alt; // For alternate coloring
 
-        protected override System.Drawing.Color CurrentColor => m_Alt
+        protected override Color CurrentColor => m_Alt
                     ? IsDepressed || ToggleState ? Skin.Colors.Text.Contrast : IsHovered ? Skin.Colors.Text.Foreground : Skin.Colors.Text.Foreground
                     : IsDepressed || ToggleState ? Skin.Colors.Text.Contrast : IsHovered ? Skin.Colors.Text.Foreground : Skin.Colors.Text.Foreground;
         /// <summary>

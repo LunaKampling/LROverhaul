@@ -2,8 +2,9 @@ using Gwen;
 using Gwen.ControlInternal;
 using Gwen.Controls;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.UI.Components
 {
@@ -14,7 +15,7 @@ namespace linerider.UI.Components
     {
         private readonly MultiSlider _parent;
         private Texture _texture;
-        private Bitmap _bitmap;
+        private SKBitmap _bitmap;
         private int _value;
         private int _y;
 
@@ -45,15 +46,15 @@ namespace linerider.UI.Components
         /// <summary>
         /// Playhead bitmap.
         /// </summary>
-        public Bitmap Bitmap
+        public SKBitmap Bitmap
         {
-            get => _bitmap ?? new Bitmap(1, 1);
+            get => _bitmap ?? new SKBitmap(1, 1);
             set
             {
                 _texture?.Dispose();
                 Texture tx = new Texture(Skin.Renderer);
                 Gwen.Renderer.OpenTK.LoadTextureInternal(tx, value);
-                Size = value.Size;
+                Size = new Size(value.Width, value.Height);
                 _texture = tx;
                 _bitmap = value;
                 Y = _y;

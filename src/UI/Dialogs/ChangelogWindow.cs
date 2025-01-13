@@ -2,7 +2,6 @@ using Gwen;
 using Gwen.Controls;
 using linerider.Utils;
 using System;
-using System.Drawing;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;

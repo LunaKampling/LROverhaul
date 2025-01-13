@@ -1,15 +1,15 @@
 using System;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.Utils
 {
     public class GaussianBlur
     {
-        public Bitmap Apply(Bitmap image, double sigma, int size)
+        public SKBitmap Apply(SKBitmap image, double sigma, int size)
         {
             double[,] kernel = GetGaussianKernel(size, sigma);
 
-            Bitmap copy = (Bitmap)image.Clone();
+            SKBitmap copy = image.Copy();
 
             int offset = size / 2;
             int xLimit = image.Width - offset;
@@ -27,7 +27,7 @@ namespace linerider.Utils
             return copy;
         }
 
-        private Color ApplyKernel(Bitmap image, double[,] kernel, int x, int y, int offset)
+        private Color ApplyKernel(SKBitmap image, double[,] kernel, int x, int y, int offset)
         {
             double alpha = 0.0, red = 0.0, green = 0.0, blue = 0.0;
 

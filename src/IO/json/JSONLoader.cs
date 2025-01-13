@@ -1,10 +1,12 @@
 using linerider.Game;
 using linerider.IO.json;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Utf8Json;
+using Newtonsoft.Json;
+
 namespace linerider.IO
 {
     public static class JSONLoader
@@ -16,11 +18,13 @@ namespace linerider.IO
                 Filename = trackfile
             };
             track_json trackobj;
-            using (FileStream file = File.OpenRead(trackfile))
+
+            using (StreamReader reader = new StreamReader(trackfile))
             {
                 try
                 {
-                    trackobj = JsonSerializer.Deserialize<track_json>(file);
+                    var json = reader.ReadToEnd();
+                    trackobj = JsonConvert.DeserializeObject<track_json>(json);
                 }
                 catch (Exception ex)
                 {
@@ -69,7 +73,7 @@ namespace linerider.IO
             if (!string.IsNullOrEmpty(trackobj.linesArrayCompressed))
             {
                 string json2 = LZString.DecompressBase64(trackobj.linesArrayCompressed);
-                trackobj.linesArray = JsonSerializer.Deserialize<object[][]>(json2);
+                trackobj.linesArray = JsonConvert.DeserializeObject<object[][]>(json2);
                 trackobj.linesArrayCompressed = null;
             }
             if (trackobj.linesArray?.Length > 0)

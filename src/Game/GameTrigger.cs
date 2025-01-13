@@ -17,8 +17,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using OpenTK.Graphics;
+using OpenTK.Mathematics;
 using System;
-using System.Drawing;
 
 namespace linerider.Game
 {

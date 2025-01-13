@@ -1,7 +1,6 @@
 ﻿using Gwen.Input;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 namespace Gwen.Controls
 {
     public partial class ControlBase

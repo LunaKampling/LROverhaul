@@ -2,6 +2,7 @@
 
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 namespace linerider.Game
 {

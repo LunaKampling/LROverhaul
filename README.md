@@ -8,7 +8,7 @@
 **Line Rider Overhaul** (or LRO) is a restoration project of LRA:CE. It has updated graphics, lots of bug fixes and new features to make Line Rider more user friendly.
 
 # Downloads
-You can download the latest version from [here](https://github.com/LunaKampling/LROverhaul/releases/tag/Latest).
+You can download the latest version from [here](https://github.com/LunaKampling/LROverhaul/releases/tag/Latest) (note this is not the same as the main branch).
 * **Windows**: Windows older than Win10 19H1 (May 2019 update) may require [.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) to be installed manually.
 * **Mac/Linux**: You will need the [mono framework](http://www.mono-project.com/download/stable/) installed in order to run the executable file.
 
@@ -22,9 +22,9 @@ You can download the latest version from [here](https://github.com/LunaKampling/
 * New Bosh sprite and [user skin and scarf handlers](/Examples)
 
 # Build
-Clone the repository and build `src/linerider.sln` with msbuild or Visual Studio.
+Clone the repository and either build `src/linerider.sln` with Visual Studio or run `dotnet build` from the `src` folder.
 
-This project requires .NET Framework 4.8 and C# 7 support.
+This project requires .NET 8
 
 # Issues
 We are tracking the development, bug reports and feature requests on [Trello](https://trello.com/invite/b/qu4SvIr6/ATTI0ac1327b122a1cf4d1084b9d7b8acb0dB9177B71/lrl-cleanup-update). If whatever you wish to report isn't present there, just add it :>

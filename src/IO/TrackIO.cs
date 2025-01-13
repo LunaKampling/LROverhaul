@@ -19,11 +19,11 @@
 using linerider.Game;
 using linerider.IO.json;
 using linerider.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Utf8Json;
 
 namespace linerider.IO
 {
@@ -258,7 +258,7 @@ namespace linerider.IO
                         x = point.Location.X,
                         y = point.Location.Y
                     });
-                    OpenTK.Vector2d camframe = camera.GetFrameCamera(idx);
+                    OpenTK.Mathematics.Vector2d camframe = camera.GetFrameCamera(idx);
                     framedata.CameraCenter = new track_json.point_json()
                     {
                         x = camframe.X,
@@ -268,10 +268,10 @@ namespace linerider.IO
                 data.Add(framedata);
             }
 
-            using (FileStream file = File.Create(fn))
+            using (StreamWriter writer = new StreamWriter(fn))
             {
-                byte[] bytes = JsonSerializer.Serialize(data);
-                file.Write(bytes, 0, bytes.Length);
+                string json = JsonConvert.SerializeObject(data);
+                writer.WriteLine(json);
             }
         }
         public static string SaveTrackToFile(Track track, string savename)

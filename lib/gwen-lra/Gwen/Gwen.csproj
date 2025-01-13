@@ -1,182 +1,38 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{ADDA2F43-96C0-497F-8216-29C67ABC9806}</ProjectGuid>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <RootNamespace>Gwen</RootNamespace>
-    <AssemblyName>Gwen</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Align.cs" />
-    <Compile Include="Cursor.cs" />
-    <Compile Include="Cursors.cs" />
-    <Compile Include="DialogResult.cs" />
-    <Compile Include="Events.cs" />
-    <Compile Include="Anim\Animation.cs" />
-    <Compile Include="Anim\Size\Height.cs" />
-    <Compile Include="Anim\Size\Width.cs" />
-    <Compile Include="Anim\TimedAnimation.cs" />
-    <Compile Include="ControlInternal\CategoryButton.cs" />
-    <Compile Include="ControlInternal\CategoryHeaderButton.cs" />
-    <!-- <Compile Include="ControlInternal\ColorButton.cs" /> -->
-    <!-- <Compile Include="ControlInternal\ColorDisplay.cs" /> -->
-    <Compile Include="ControlInternal\DropDownArrow.cs" />
-    <Compile Include="ControlInternal\ComboBoxArrow.cs" />
-    <Compile Include="ControlInternal\MenuDivider.cs" />
-    <Compile Include="ControlInternal\Modal.cs" />
-    <Compile Include="ControlInternal\Resizer.cs" />
-    <Compile Include="ControlInternal\RightArrow.cs" />
-    <Compile Include="ControlInternal\SliderBar.cs" />
-    <Compile Include="ControlInternal\SplitterBar.cs" />
-    <Compile Include="ControlInternal\TreeNodeLabel.cs" />
-    <Compile Include="ControlInternal\TreeToggleButton.cs" />
-    <Compile Include="ControlInternal\UpDownButton_Down.cs" />
-    <Compile Include="ControlInternal\UpDownButton_Up.cs" />
-    <Compile Include="ControlInternal\CloseButton.cs" />
-    <Compile Include="Controls\CollapsibleCategory.cs" />
-    <Compile Include="Controls\CollapsibleList.cs" />
-    <!-- <Compile Include="Controls\DockBase.cs" /> -->
-    <!-- <Compile Include="Controls\DockedTabControl.cs" /> -->
-    <!-- <Compile Include="Controls\EnumRadioButtonGroup.cs" /> -->
-    <Compile Include="Controls\EventArguments\ClickedEventArgs.cs" />
-    <Compile Include="Controls\EventArguments\ItemSelectedEventArgs.cs" />
-    <Compile Include="Controls\MultilineTextBox.cs" />
-    <Compile Include="Controls\Property\NumberProperty.cs" />
-    <Compile Include="Controls\Property\LabelProperty.cs" />
-    <Compile Include="Controls\Property\ComboBoxProperty.cs" />
-    <Compile Include="Controls\MessageBox.cs" />
-    <!-- <Compile Include="Controls\ProgressBar.cs" /> -->
-    <Compile Include="Controls\PropertyTable.cs" />
-    <Compile Include="Controls\PropertyRow.cs" />
-    <Compile Include="Controls\RichLabel.cs" />
-    <Compile Include="ControlInternal\PropertyRowLabel.cs" />
-    <Compile Include="Controls\PropertyTree.cs" />
-    <Compile Include="ControlInternal\PropertyTreeNode.cs" />
-    <Compile Include="Controls\Property\PropertyBase.cs" />
-    <Compile Include="Controls\Property\CheckProperty.cs" />
-    <Compile Include="Controls\Property\TextProperty.cs" />
-    <Compile Include="Controls\ResizableControl.cs" />
-    <!-- <Compile Include="Controls\RichLabel.cs" /> -->
-    <Compile Include="Controls\StatusBar.cs" />
-    <Compile Include="Controls\TabStrip.cs" />
-    <Compile Include="Controls\TabButton.cs" />
-    <Compile Include="Controls\Tooltip.cs" />
-    <!-- <Compile Include="Controls\ColorPicker.cs" /> -->
-    <Compile Include="ControlInternal\Dragger.cs" />
-    <Compile Include="ControlInternal\CheckBoxButton.cs" />
-    <Compile Include="ControlInternal\Highlight.cs" />
-    <Compile Include="ControlInternal\ScrollBarBar.cs" />
-    <Compile Include="ControlInternal\ScrollBarButton.cs" />
-    <Compile Include="ControlInternal\Text.cs" />
-    <Compile Include="Controls\ScrollBar.cs" />
-    <Compile Include="Controls\DropDownButton.cs" />
-    <Compile Include="Controls\Notification.cs" />
-    <Compile Include="Controls\Button.cs" />
-    <Compile Include="Controls\ProgressBar.cs" />
-    <Compile Include="Controls\Canvas.cs" />
-    <!-- <Compile Include="Controls\ColorSlider.cs" /> -->
-    <Compile Include="Controls\GroupBox.cs" />
-    <!-- <Compile Include="Controls\IColorPicker.cs" /> -->
-    <Compile Include="Controls\CheckBox.cs" />
-    <Compile Include="Controls\ComboBox.cs" />
-    <Compile Include="Controls\HorizontalScrollBar.cs" />
-    <Compile Include="Controls\ImagePanel.cs" />
-    <Compile Include="Controls\Panel.cs" />
-    <Compile Include="Controls\Label.cs" />
-    <Compile Include="Controls\RadioButton.cs" />
-    <Compile Include="Controls\Layout\FlowLayout.cs" />
-    <Compile Include="Controls\Layout\TableLayout.cs" />
-    <Compile Include="Controls\Layout\TableRow.cs" />
-    <Compile Include="Controls\ListBox.cs" />
-    <Compile Include="Controls\ListBoxRow.cs" />
-    <Compile Include="Controls\Menu.cs" />
-    <Compile Include="Controls\MenuItem.cs" />
-    <Compile Include="Controls\MenuStrip.cs" />
-    <Compile Include="Controls\Spinner.cs" />
-    <Compile Include="Controls\SpinnerG17.cs" />
-
-    <Compile Include="ControlInternal\RadioButtonButton.cs" />
-    <Compile Include="Controls\RadioButtonGroup.cs" />
-    <Compile Include="Controls\ScrollControl.cs" />
-    <Compile Include="Controls\Slider.cs" />
-    <Compile Include="Controls\VerticalSlider.cs" />
-    <Compile Include="Controls\HorizontalSlider.cs" />
-    <Compile Include="Controls\TabControl.cs" />
-    <!-- <Compile Include="Controls\TabTitleBar.cs" /> -->
-    <Compile Include="Controls\TextBox.cs" />
-    <Compile Include="Controls\TextBoxNumeric.cs" />
-    <Compile Include="Controls\TextBoxNumericG17.cs" />
-    <Compile Include="Controls\TextBoxPassword.cs" />
-    <Compile Include="Controls\TreeControl.cs" />
-    <Compile Include="Controls\TreeNode.cs" />
-    <Compile Include="Controls\VerticalScrollBar.cs" />
-    <Compile Include="Controls\WindowControl.cs" />
-    <Compile Include="Font.cs" />
-    <Compile Include="HSV.cs" />
-    <Compile Include="Input\InputHandler.cs" />
-    <Compile Include="Input\KeyData.cs" />
-    <Compile Include="Margin.cs" />
-    <Compile Include="Padding.cs" />
-    <Compile Include="Key.cs" />
-    <Compile Include="Platform\Windows.cs" />
-    <Compile Include="Pos.cs" />
-    <Compile Include="Dock.cs" />
-    <Compile Include="Platform\Neutral.cs" />
-    <Compile Include="Skin\Simple.cs" />
-    <Compile Include="Skin\SkinColors.cs" />
-    <Compile Include="Skin\TexturedBase.cs" />
-    <Compile Include="Skin\Texturing\Bordered.cs" />
-    <Compile Include="Skin\Texturing\Single.cs" />
-    <Compile Include="Texture.cs" />
-    <Compile Include="DragDrop\DragAndDrop.cs" />
-    <Compile Include="DragDrop\Package.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderer\RendererBase.cs" />
-    <Compile Include="Renderer\ICacheToTexture.cs" />
-    <Compile Include="Skin\SkinBase.cs" />
-    <Compile Include="Util.cs" />
-    <Compile Include="Controls\ControlBase\ControlBase.Layout.cs" />
-    <Compile Include="Controls\ControlBase\ControlBase.Input.cs" />
-    <Compile Include="Controls\ControlBase\ControlBase.Render.cs" />
-    <Compile Include="Controls\ControlBase\ControlBase.ControlCollection.cs" />
-    <Compile Include="Controls\Container.cs" />
-    <Compile Include="Controls\TabPage.cs" />
-    <Compile Include="Controls\ControlBase\ControlBase.cs" />
-  </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="readme.txt" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Remove="Unimplemented\ColorButton.cs" />
+    <Compile Remove="Unimplemented\ColorDisplay.cs" />
+    <Compile Remove="Unimplemented\ColorPicker.cs" />
+    <Compile Remove="Unimplemented\ColorSlider.cs" />
+    <Compile Remove="Unimplemented\DockBase.cs" />
+    <Compile Remove="Unimplemented\DockedTabControl.cs" />
+    <Compile Remove="Unimplemented\EnumRadioButtonGroup.cs" />
+    <Compile Remove="Unimplemented\IColorPicker.cs" />
+    <Compile Remove="Unimplemented\RichLabel.cs" />
+    <Compile Remove="Unimplemented\TabTitleBar.cs" />
+  </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <AssemblyTitle>Gwen.Net</AssemblyTitle>
+    <Description>Gwen.Net</Description>
+    <Product>Gwen.Net</Product>
+    <Copyright>Copyleft © 2011 Omega Red</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <!--<PackageReference Include="System.Drawing.Common" Version="8.0.6" />-->
+    <PackageReference Include="SkiaSharp" Version="2.88.8" />
+    <PackageReference Include="OpenTK" Version="4.8.2" />
+  </ItemGroup>
 </Project>

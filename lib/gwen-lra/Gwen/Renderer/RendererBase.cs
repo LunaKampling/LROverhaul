@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
+using SkiaSharp;
 using System.IO;
 
 namespace Gwen.Renderer
@@ -118,7 +118,7 @@ namespace Gwen.Renderer
         /// <summary>
         /// Create a texture from the specified bitmap.
         /// </summary>
-        public virtual Texture CreateTexture(Bitmap bmp) => null;
+        public virtual Texture CreateTexture(SKBitmap bmp) => null;
 
         /// <summary>
         /// Initializes texture from raw pixel data.

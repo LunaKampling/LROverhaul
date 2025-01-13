@@ -2,7 +2,7 @@
 using Gwen.Controls;
 using linerider.Tools;
 using linerider.UI.Components;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.UI.Widgets
 {
@@ -10,8 +10,8 @@ namespace linerider.UI.Widgets
     {
         private readonly Editor _editor;
 
-        private readonly Bitmap _normalTexture = GameResources.ux_swatch.Bitmap;
-        private readonly Bitmap _activeTexture = GameResources.ux_swatch_active.Bitmap;
+        private readonly SKBitmap _normalTexture = GameResources.ux_swatch.Bitmap;
+        private readonly SKBitmap _activeTexture = GameResources.ux_swatch_active.Bitmap;
         private readonly WidgetButton _standardBtn;
         private readonly WidgetButton _accelerationBtn;
         private readonly WidgetButton _sceneryBtn;

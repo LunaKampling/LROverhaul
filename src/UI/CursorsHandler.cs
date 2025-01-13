@@ -1,12 +1,12 @@
 ﻿using linerider.Utils;
 using OpenTK;
-using Svg;
+using OpenTK.Windowing.Common.Input;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
+using SkiaSharp;
 
 namespace linerider.UI
 {
@@ -71,8 +71,8 @@ namespace linerider.UI
 
             PruneSvgDoc(doc);
 
-            SvgDocument svg = SvgDocument.Open(doc);
-            Bitmap bitmap = svg.Draw(size.Width, size.Height);
+            //SvgDocument svg = SvgDocument.Open(doc);
+            SKBitmap bitmap = SkiaUtils.LoadSVG(doc.OuterXml, size.Width, size.Height);//svg.Draw(size.Width, size.Height);
 
             int shadowX = (int)Math.Round(2 * Settings.Computed.UIScale);
             int shadowY = (int)Math.Round(1 * Settings.Computed.UIScale);
@@ -82,33 +82,32 @@ namespace linerider.UI
 
             RegisterCursor(name, bitmap, hotspot.X, hotspot.Y);
         }
-        private Bitmap AddShadow(Bitmap bitmap, int shiftX, int shiftY, float shadowOpacity, bool applyBlur)
+        private SKBitmap AddShadow(SKBitmap bitmap, int shiftX, int shiftY, float shadowOpacity, bool applyBlur)
         {
             GaussianBlur blur = new GaussianBlur();
-            Bitmap bitmapWithShadow = new Bitmap(bitmap.Width, bitmap.Height);
+            SKBitmap bitmapWithShadow = new SKBitmap(bitmap.Info);
 
-            Bitmap shadow = new Bitmap(bitmap.Width, bitmap.Height);
-            using (Graphics g = Graphics.FromImage(shadow))
+            SKBitmap shadow = new SKBitmap(bitmap.Info);
+            using (var surface = new SKCanvas(shadow))
             {
-                ColorMatrix colorMatrix = new ColorMatrix
-                {
-                    Matrix00 = 0f,
-                    Matrix11 = 0f,
-                    Matrix22 = 0f,
-                    Matrix33 = shadowOpacity
+                SKPaint paint = new SKPaint {
+                    ColorFilter = SKColorFilter.CreateColorMatrix(new float[] {
+                        0,0,0,shadowOpacity,0,
+                        0,0,0,shadowOpacity,0,
+                        0,0,0,shadowOpacity,0,
+                        0,0,0,shadowOpacity,0
+                    })
                 };
-                ImageAttributes imageAttributes = new ImageAttributes();
-                imageAttributes.SetColorMatrix(colorMatrix);
 
-                g.DrawImage(bitmap, new Rectangle(shiftX, shiftY, shadow.Width, shadow.Height), 0, 0, shadow.Width, shadow.Height, GraphicsUnit.Pixel, imageAttributes);
+                surface.DrawBitmap(bitmap, 0, 0, paint);
             }
             if (applyBlur)
                 shadow = blur.Apply(shadow, 2.0, 5);
 
-            using (Graphics g = Graphics.FromImage(bitmapWithShadow))
+            using (var surface = new SKCanvas(bitmapWithShadow))
             {
-                g.DrawImage(shadow, new Point(0, 0));
-                g.DrawImage(bitmap, new Point(0, 0));
+                surface.DrawBitmap(shadow, 0, 0);
+                surface.DrawBitmap(bitmap, 0, 0);
             }
 
             return bitmapWithShadow;
@@ -239,16 +238,9 @@ namespace linerider.UI
             return id;
         }
 
-        private void RegisterCursor(Type name, Bitmap image, int hotx, int hoty)
+        private void RegisterCursor(Type name, SKBitmap image, int hotx, int hoty)
         {
-            BitmapData data = image.LockBits(
-                new Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadOnly,
-                PixelFormat.Format32bppPArgb);
-
-            List[name] = new MouseCursor(hotx, hoty, image.Width, image.Height, data.Scan0);
-
-            image.UnlockBits(data);
+            List[name] = new MouseCursor(hotx, hoty, image.Width, image.Height, image.Bytes);
         }
     }
 }

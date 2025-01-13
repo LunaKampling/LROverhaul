@@ -24,8 +24,8 @@ namespace linerider.Audio
 {
     internal class AudioDevice : IDisposable
     {
-        private readonly IntPtr _hDevice;
-        private ContextHandle _hContext;
+        private readonly ALDevice _hDevice;
+        private ALContext _hContext;
         private bool disposed = false;
         private static int devicecount = 0;
 
@@ -33,13 +33,13 @@ namespace linerider.Audio
         {
             try
             {
-                _hDevice = Alc.OpenDevice(null);
-                if (_hDevice != IntPtr.Zero)
+                _hDevice = ALC.OpenDevice(null);
+                if (_hDevice != null)
                 {
-                    _hContext = Alc.CreateContext(_hDevice, (int[])null);
-                    if (_hContext.Handle != IntPtr.Zero)
+                    _hContext = ALC.CreateContext(_hDevice, (int[])null);
+                    if (_hContext.Handle != null)
                     {
-                        _ = Alc.MakeContextCurrent(_hContext);
+                        _ = ALC.MakeContextCurrent(_hContext);
                         devicecount++;
                         Check();
                     }
@@ -60,18 +60,19 @@ namespace linerider.Audio
                 GC.SuppressFinalize(this);
                 try
                 {
-                    _ = Alc.MakeContextCurrent(new ContextHandle(IntPtr.Zero));
+                    ALC.DestroyContext(_hContext);
+                    //_ = Alc.MakeContextCurrent(new ContextHandle(IntPtr.Zero));
                 }
                 catch
                 {
                 }
                 if (_hContext.Handle != IntPtr.Zero)
                 {
-                    Alc.DestroyContext(_hContext);
+                    ALC.DestroyContext(_hContext);
                 }
                 if (_hDevice != IntPtr.Zero)
                 {
-                    _ = Alc.CloseDevice(_hDevice);
+                    _ = ALC.CloseDevice(_hDevice);
                 }
             }
         }
@@ -81,12 +82,12 @@ namespace linerider.Audio
             if (devicecount != 0)
             {
                 ALError error = AL.GetError();
-                if (error != ALError.NoError)
-                    throw new OpenTK.Audio.AudioException("OpenAL error " + AL.GetErrorString(error));
+                /*if (error != ALError.NoError)
+                    throw new OpenTK.Audio.AudioException("OpenAL error " + AL.GetErrorString(error));*/
             }
             else
             {
-                throw new OpenTK.Audio.AudioDeviceException("Audio device was disposed");
+                /*throw new OpenTK.Audio.AudioDeviceException("Audio device was disposed");*/
             }
         }
     }

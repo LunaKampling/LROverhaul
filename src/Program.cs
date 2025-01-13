@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace linerider
 {
@@ -114,35 +115,43 @@ namespace linerider
             string title = "Game crashed!";
             string msg = $"Unhandled Exception: {e.Message}{msgBoxSpearator}{e.StackTrace}{msgBoxSpearator}{msgBoxSpearator}Would you like to export the crash data to a log file?{msgBoxSpearator}Log file path: {logFilePath}";
 
+            Console.WriteLine(msg);
+
+#if WINDOWS
             System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
 
-            if (btn == System.Windows.Forms.DialogResult.Yes)
-            {
-                string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
-                string headerSeparator = new string('-', 3);
-                string header = $"{headerSeparator} {AssemblyInfo.FullVersion} {headerSeparator} {now} {headerSeparator}";
-                string newLine = "\r\n";
+                if (btn == System.Windows.Forms.DialogResult.Yes)
+                {
+                    string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
+                    string headerSeparator = new string('-', 3);
+                    string header = $"{headerSeparator} {AssemblyInfo.FullVersion} {headerSeparator} {now} {headerSeparator}";
+                    string newLine = "\r\n";
 
-                if (!File.Exists(logFilePath))
-                    File.Create(logFilePath).Dispose();
+                    if (!File.Exists(logFilePath))
+                        File.Create(logFilePath).Dispose();
 
-                string oldRecords = File.ReadAllText(logFilePath, System.Text.Encoding.UTF8);
-                string newRecord = header + newLine + newLine + e.ToString() + newLine;
-                if (!string.IsNullOrEmpty(oldRecords))
-                    newRecord = newLine + newRecord;
+                    string oldRecords = File.ReadAllText(logFilePath, System.Text.Encoding.UTF8);
+                    string newRecord = header + newLine + newLine + e.ToString() + newLine;
+                    if (!string.IsNullOrEmpty(oldRecords))
+                        newRecord = newLine + newRecord;
 
-                File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
-            }
+                    File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
+                }
+#endif
 
             if (!nothrow)
                 throw e;
         }
 
-        public static void NonFatalError(string err) => System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
+        public static void NonFatalError(string err) {
+#if WINDOWS
+            System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
+#endif
+        }
         public static void Run(string[] givenArgs)
         {
             if (Debugger.IsAttached)
-                Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
+                System.Diagnostics.Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
             else
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -152,22 +161,23 @@ namespace linerider
             Random = new Random();
             GameResources.Init();
 
-            using (Toolkit.Init(new ToolkitOptions { EnableHighResolution = true, Backend = PlatformBackend.Default }))
-            {
+            //using (Toolkit.Init(new ToolkitOptions { EnableHighResolution = true, Backend = PlatformBackend.Default }))
+            //{
                 using (glGame = new MainWindow())
                 {
                     UI.InputUtils.SetWindow(glGame);
-                    glGame.RenderSize = new System.Drawing.Size(glGame.Width, glGame.Height);
+                    glGame.RenderSize = new Size(glGame.Size.X, glGame.Size.Y);
                     Rendering.GameRenderer.Game = glGame;
                     MemoryStream ms = new MemoryStream(GameResources.icon);
-                    glGame.Icon = new System.Drawing.Icon(ms);
+                    //glGame.Icon = new System.Drawing.Icon(ms);
 
                     ms.Dispose();
                     glGame.Title = WindowTitle;
-                    glGame.Run(Constants.FrameRate, 0); // TODO: Maybe not limit this
+                    glGame.Run();
+                    //glGame.Run(Constants.FrameRate, 0); // TODO: Maybe not limit this
                 }
                 Audio.AudioService.CloseDevice();
-            }
+            //}
         }
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -220,8 +230,8 @@ namespace linerider
                 }.Start();
             }
         }
-        public static int GetWindowWidth() => glGame.Width;
-        public static int GetWindowHeight() => glGame.Height;
+        public static int GetWindowWidth() => glGame.Size.X;
+        public static int GetWindowHeight() => glGame.Size.Y;
     }
 
     internal static class AssemblyInfo

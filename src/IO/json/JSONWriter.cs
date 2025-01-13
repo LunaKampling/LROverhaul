@@ -1,10 +1,10 @@
 using linerider.Game;
 using linerider.IO.json;
 using linerider.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Utf8Json;
 
 namespace linerider.IO
 {
@@ -126,10 +126,11 @@ namespace linerider.IO
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
             string filename = Path.Combine(dir, savename + ".track.json");
-            using (FileStream file = File.Create(filename))
+
+            using (StreamWriter writer = new StreamWriter(filename))
             {
-                byte[] bytes = JsonSerializer.Serialize(trackobj);
-                file.Write(bytes, 0, bytes.Length);
+                string json = JsonConvert.SerializeObject(trackobj);
+                writer.WriteLine(json);
             }
             return filename;
         }

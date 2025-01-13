@@ -17,9 +17,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using OpenTK;
+using OpenTK.Windowing.Common.Input;
 using System;
 using System.Threading;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace linerider.UI
 {
@@ -39,7 +40,7 @@ namespace linerider.UI
                 {
                     try
                     {
-                        Clipboard.SetText(text);
+                        game.Clipboard = text;
                         ret = true;
                     }
                     catch (Exception)
@@ -47,7 +48,7 @@ namespace linerider.UI
                         return;
                     }
                 });
-            staThread.SetApartmentState(ApartmentState.STA);
+            if (OperatingSystem.IsWindows()) staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             staThread.Join();
             // At this point either you have clipboard data or an exception
@@ -62,16 +63,14 @@ namespace linerider.UI
                 {
                     try
                     {
-                        if (!Clipboard.ContainsText())
-                            return;
-                        ret = Clipboard.GetText();
+                        ret = game.Clipboard;
                     }
                     catch (Exception)
                     {
                         return;
                     }
                 });
-            staThread.SetApartmentState(ApartmentState.STA);
+            if (OperatingSystem.IsWindows()) staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             staThread.Join();
             // At this point either you have clipboard data or an exception

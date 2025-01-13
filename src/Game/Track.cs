@@ -20,9 +20,9 @@ using linerider.Audio;
 using linerider.Game;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 
 namespace linerider
 {

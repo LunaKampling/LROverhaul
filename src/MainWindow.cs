@@ -29,14 +29,19 @@ using linerider.UI;
 using linerider.Utils;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
+using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Input;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Threading;
-using Key = OpenTK.Input.Key;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 using MessageBox = Gwen.Controls.MessageBox;
+using System.Runtime.InteropServices;
 
 namespace linerider
 {
@@ -62,9 +67,21 @@ namespace linerider
                 {
                     return new Size(Settings.ScreenshotWidth, Settings.ScreenshotHeight);
                 }
-                return ClientSize;
+                return (Size)ClientSize;
             }
-            set => ClientSize = value;
+            set => ClientSize = new Vector2i(value.Width, value.Height);
+        }
+        public string Clipboard {
+            get {
+                unsafe {
+                    return GLFW.GetClipboardString(WindowPtr);
+                }
+            }
+            set { 
+                unsafe { 
+                    GLFW.SetClipboardString(WindowPtr, value);
+                }
+            }
         }
         public Vector2d ScreenTranslation => -ScreenPosition;
         public Vector2d ScreenPosition
@@ -80,36 +97,53 @@ namespace linerider
         private bool _invalidated;
         private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
         private Rectangle _previouswindowpos;
-        public MainWindow()
+        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Default, Profile = ContextProfile.Compatability, APIVersion = new Version(3,2) }) {
+            /*
             : base(
                 1337, 1337, // These size values don't matter, they're overridden below
                 new GraphicsMode(new ColorFormat(24), 0, 0, 0, ColorFormat.Empty),
-                   string.Empty,
-                   GameWindowFlags.Default,
-                   DisplayDevice.Default,
-                   2,
-                   0,
-                   GraphicsContextFlags.Default)
-        {
+                string.Empty,
+                GameWindowFlags.Default,
+                DisplayDevice.Default,
+                2,
+                0,
+                GraphicsContextFlags.Default)*/
+
             // Manually setting window size/position as OpenTK 2 messes them up at high DPI
-            Size = new Size(Constants.WindowSize.Width, Constants.WindowSize.Height);
-            Location = new Point(
-                (int)Math.Round((double)Constants.ScreenSize.Width / 2 - Size.Width / 2),
-                (int)Math.Round((double)Constants.ScreenSize.Height / 2 - Size.Height / 2)
+            Size = new Vector2i(Constants.WindowSize.Width, Constants.WindowSize.Height);
+            Location = new Vector2i(
+                (int)Math.Round((double)Constants.ScreenSize.Width / 2 - Size.X / 2),
+                (int)Math.Round((double)Constants.ScreenSize.Height / 2 - Size.Y / 2)
             );
             SafeFrameBuffer.Initialize();
             Track = new Editor();
             VSync = VSyncMode.On;
-            Context.ErrorChecking = false;
+            // Context.ErrorChecking = false;
             WindowBorder = WindowBorder.Resizable;
-            RenderFrame += (o, e) => { Render(); };
-            UpdateFrame += (o, e) => { GameUpdate(); };
+            RenderFrame += (o) => { Render(); };
+            UpdateFrame += (o) => { GameUpdate(); };
             new Thread(AutosaveThreadRunner) { IsBackground = true, Name = "Autosave" }.Start();
             GameService.Initialize(this);
             AddonManager.Initialize(this);
             RegisterHotkeys();
             if (Settings.startWindowMaximized)
                 WindowState = WindowState.Maximized;
+            //GL.DebugMessageCallback(DebugMessageDelegate, IntPtr.Zero);
+        }
+
+        private static DebugProc DebugMessageDelegate = OnGLDebugMessage;
+        private static void OnGLDebugMessage(
+            DebugSource source,
+            DebugType type,
+            int id,
+            DebugSeverity severity,
+            int length,
+            IntPtr pMessage,
+            IntPtr pUserParam)
+        {
+            string message = Marshal.PtrToStringAnsi(pMessage, length);
+
+            Console.WriteLine("[{0} source={1} type={2} id={3}] {4}", severity, source, type, id, message);
         }
 
         public override void Dispose()
@@ -187,12 +221,12 @@ namespace linerider
                 }
                 else
                 {
-                    GL.ClearColor(Settings.Computed.BGColor);
+                    GL.ClearColor(Settings.Computed.BGColor.R, Settings.Computed.BGColor.G, Settings.Computed.BGColor.B, Settings.Computed.BGColor.A);
                     Constants.TriggerLineColorChange = Settings.Computed.LineColor;
                 }
 
                 MSAABuffer.Use(RenderSize.Width, RenderSize.Height);
-                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
                 GL.Enable(EnableCap.Blend);
 
@@ -217,7 +251,7 @@ namespace linerider
                 {
                     GameRenderer.DbgDrawCamera();
                 }
-
+                
                 Canvas.RenderCanvas();
                 MSAABuffer.End();
 
@@ -228,7 +262,7 @@ namespace linerider
                 Track.FramerateCounter.AddFrame(seconds);
                 Track.FramerateWatch.Restart();
             }
-            if (!Focused && !TrackRecorder.Recording)
+            if (!IsFocused && !TrackRecorder.Recording)
             {
                 Thread.Sleep(16);
             }
@@ -349,7 +383,7 @@ namespace linerider
                 Cursor = cursor;
             }
         }
-        protected override void OnLoad(EventArgs e)
+        protected override void OnLoad()
         {
             Shaders.Load();
             MSAABuffer = new MsaaFbo();
@@ -380,9 +414,11 @@ namespace linerider
             Cursors.Refresh(Canvas);
         }
 
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
+            if (Track == null) return;
+            if (Canvas == null) return;
             Track.Camera.OnResize();
             try
             {
@@ -402,7 +438,7 @@ namespace linerider
             base.OnMouseDown(e);
             try
             {
-                InputUtils.UpdateMouse(e.Mouse);
+                InputUtils.UpdateMouse(MouseState);
                 if (TrackRecorder.Recording)
                     return;
                 bool r = _input.ProcessMouseMessage(e);
@@ -418,7 +454,7 @@ namespace linerider
                     if (!Track.Playing)
                     {
                         bool dragstart = false;
-                        MouseGamePos = ScreenPosition + new Vector2d(e.X, e.Y) / Track.Zoom;
+                        MouseGamePos = ScreenPosition + new Vector2d(MouseState.Position.X, MouseState.Position.Y) / Track.Zoom;
                         if (Track.Offset == 0 &&
                          e.Button == MouseButton.Left &&
                         InputUtils.Check(Hotkey.EditorMoveStart))
@@ -456,11 +492,11 @@ namespace linerider
                         {
                             if (e.Button == MouseButton.Left)
                             {
-                                CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y));
+                                CurrentTools.CurrentTool.OnMouseDown(new Vector2d(MouseState.X, MouseState.Y));
                             }
                             else if (e.Button == MouseButton.Right)
                             {
-                                CurrentTools.CurrentTool.OnMouseRightDown(new Vector2d(e.X, e.Y));
+                                CurrentTools.CurrentTool.OnMouseRightDown(new Vector2d(MouseState.X, MouseState.Y));
                             }
                         }
                     }
@@ -468,7 +504,7 @@ namespace linerider
                     {
                         if (e.Button == MouseButton.Left)
                         {
-                            CurrentTools.CurrentTool.OnMouseDown(new Vector2d(e.X, e.Y));
+                            CurrentTools.CurrentTool.OnMouseDown(new Vector2d(MouseState.X, MouseState.Y));
                         }
                     }
                 }
@@ -489,7 +525,7 @@ namespace linerider
             base.OnMouseUp(e);
             try
             {
-                InputUtils.UpdateMouse(e.Mouse);
+                InputUtils.UpdateMouse(MouseState);
                 if (TrackRecorder.Recording)
                     return;
                 _dragRider = false;
@@ -506,11 +542,11 @@ namespace linerider
                     }
                     if (e.Button == MouseButton.Left)
                     {
-                        CurrentTools.CurrentTool.OnMouseUp(new Vector2d(e.X, e.Y));
+                        CurrentTools.CurrentTool.OnMouseUp(new Vector2d(MouseState.Position.X, MouseState.Position.Y));
                     }
                     else if (e.Button == MouseButton.Right)
                     {
-                        CurrentTools.CurrentTool.OnMouseRightUp(new Vector2d(e.X, e.Y));
+                        CurrentTools.CurrentTool.OnMouseRightUp(new Vector2d(MouseState.Position.X, MouseState.Position.Y));
                     }
                 }
                 UpdateCursor();
@@ -531,7 +567,7 @@ namespace linerider
             {
                 Vector2d pos = new Vector2d(e.X, e.Y);
                 MouseGamePos = ScreenPosition + pos / Track.Zoom;
-                InputUtils.UpdateMouse(e.Mouse);
+                InputUtils.UpdateMouse(MouseState);
                 if (TrackRecorder.Recording)
                     return;
                 bool r = _input.ProcessMouseMessage(e);
@@ -577,7 +613,7 @@ namespace linerider
             base.OnMouseWheel(e);
             try
             {
-                InputUtils.UpdateMouse(e.Mouse);
+                InputUtils.UpdateMouse(MouseState);
                 if (TrackRecorder.Recording)
                     return;
                 if (_input.ProcessMouseMessage(e))
@@ -587,8 +623,8 @@ namespace linerider
                     UpdateCursor();
                     return;
                 }
-                float delta = (float.IsNaN(e.DeltaPrecise) ? e.Delta : e.DeltaPrecise) * Settings.ScrollSensitivity;
-                Point cursorPos = new Point(e.X, e.Y);
+                float delta = e.OffsetY * Settings.ScrollSensitivity;//(float.IsNaN(e.DeltaPrecise) ? e.Delta : e.DeltaPrecise) * Settings.ScrollSensitivity;
+                Point cursorPos = new Point((int)MouseState.Position.X, (int)MouseState.Position.Y);
                 Track.ZoomBy(delta / 6, cursorPos);
 
                 UpdateCursor();
@@ -610,7 +646,7 @@ namespace linerider
                 {
                     InputUtils.KeyDown(e.Key);
                 }
-                InputUtils.UpdateKeysDown(e.Keyboard, e.Modifiers);
+                InputUtils.UpdateKeysDown(KeyboardState, e.Modifiers);
                 if (TrackRecorder.Recording)
                     return;
                 KeyModifiers mod = e.Modifiers;
@@ -643,27 +679,25 @@ namespace linerider
                 InputUtils.ProcessKeyboardHotkeys();
                 UpdateCursor();
                 Invalidate();
-                KeyboardState input = e.Keyboard;
+                KeyboardState input = KeyboardState;
                 if (!input.IsAnyKeyDown)
                     return;
 
-                bool toggleFullscreen = ((input.IsKeyDown(Key.AltLeft) || input.IsKeyDown(Key.AltRight)) && input.IsKeyDown(Key.Enter)) || input.IsKeyDown(Key.F11);
+                bool toggleFullscreen = ((input.IsKeyDown(Key.LeftAlt) || input.IsKeyDown(Key.RightAlt)) && input.IsKeyDown(Key.Enter)) || input.IsKeyDown(Key.F11);
                 if (toggleFullscreen)
                 {
                     if (WindowBorder == WindowBorder.Resizable)
                     {
-                        _previouswindowpos = new Rectangle(X, Y, RenderSize.Width, RenderSize.Height);
+                        _previouswindowpos = new Rectangle(ClientLocation.X, ClientLocation.Y, RenderSize.Width, RenderSize.Height);
                         WindowBorder = WindowBorder.Hidden;
                         RenderSize = Constants.ScreenSize;
-                        X = 0;
-                        Y = 0;
+                        ClientLocation = Vector2i.Zero;
                     }
                     else
                     {
                         WindowBorder = WindowBorder.Resizable;
                         RenderSize = new Size(_previouswindowpos.Width, _previouswindowpos.Height);
-                        X = _previouswindowpos.X;
-                        Y = _previouswindowpos.Y;
+                        ClientLocation = new Vector2i(_previouswindowpos.X, _previouswindowpos.Y);
                     }
                     return;
                 }
@@ -682,7 +716,7 @@ namespace linerider
             base.OnKeyUp(e);
             try
             {
-                InputUtils.UpdateKeysDown(e.Keyboard, e.Modifiers);
+                InputUtils.UpdateKeysDown(KeyboardState, e.Modifiers);
                 if (TrackRecorder.Recording)
                     return;
                 _ = InputUtils.CheckCurrentHotkey();
@@ -713,7 +747,8 @@ namespace linerider
         {
             if (RenderSize.Height > 0 && RenderSize.Width > 0)
             {
-                GL.Viewport(new Rectangle(0, 0, RenderSize.Width, RenderSize.Height));
+                //GL.Viewport(new Rectangle(0, 0, RenderSize.Width, RenderSize.Height));
+                GL.Viewport(0, 0, RenderSize.Width, RenderSize.Height);
                 GL.MatrixMode(MatrixMode.Projection);
                 GL.LoadIdentity();
                 GL.Ortho(0, RenderSize.Width, RenderSize.Height, 0, 0, 1);

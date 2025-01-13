@@ -1,8 +1,13 @@
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider.UI
 {
@@ -30,11 +35,11 @@ namespace linerider.UI
             public Action keyuphandler = null;
         }
         private static GameWindow _window;
-        private static KeyboardState _kbstate;
-        private static KeyboardState _prev_kbstate;
+        private static KeyboardState _kbstate = default(KeyboardState);
+        private static KeyboardState _prev_kbstate = default(KeyboardState);
         private static readonly List<MouseButton> _mousebuttonsdown = new List<MouseButton>();
-        private static MouseState _mousestate;
-        private static MouseState _prev_mousestate;
+        private static MouseState _mousestate = default(MouseState);
+        private static MouseState _prev_mousestate = default(MouseState);
         private static bool _hasmoved = false;
         private static readonly ResourceSync _lock = new ResourceSync();
         private static KeyModifiers _modifiersdown;
@@ -67,7 +72,7 @@ namespace linerider.UI
         public static Keybinding ReadHotkey()
         {
             Key key = RepeatKey;
-            if (!_kbstate[key])
+            if (!_window.KeyboardState[key])
                 key = (Key)(-1);
             if (_mousebuttonsdown.Count == 1 && key == (Key)(-1))
             {
@@ -88,7 +93,12 @@ namespace linerider.UI
             using (_lock.AcquireWrite())
             {
                 _prev_kbstate = _kbstate;
-                _kbstate = ks;
+                _kbstate = ks.GetSnapshot();
+
+                // HACK: dont consider numlock and capslock as modifiers, because they invalidate all hotkeys while they are active
+                modifiers &= ~KeyModifiers.NumLock;
+                modifiers &= ~KeyModifiers.CapsLock;
+
                 _modifiersdown = modifiers;
             }
         }
@@ -143,8 +153,8 @@ namespace linerider.UI
                     {
                         bool waspressed = CheckPressed(
                             bind,
-                            ref _prev_kbstate,
-                            ref _prev_mousestate);
+                            _prev_kbstate != null ? _prev_kbstate : _window.KeyboardState,
+                            _prev_mousestate != null ? _prev_mousestate : _window.MouseState);
                         if (waspressed)
                         {
                             continue;
@@ -179,8 +189,8 @@ namespace linerider.UI
                     {
                         bool waspressed = CheckPressed(
                             bind,
-                            ref _prev_kbstate,
-                            ref _prev_mousestate);
+                            _prev_kbstate != null ? _prev_kbstate : _window.KeyboardState,
+                            _prev_mousestate != null ? _prev_mousestate : _window.MouseState);
                         if (waspressed && !handler.repeat)
                         {
                             continue;
@@ -196,8 +206,13 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                x = _mousestate.X;
-                y = _mousestate.Y;
+                if (_mousestate == null) {
+                    x = (int)_window.MouseState.X;
+                    y = (int)_window.MouseState.Y;
+                    return false;
+                }
+                x = (int)_mousestate.X;
+                y = (int)_mousestate.Y;
                 if (_hasmoved)
                 {
                     _hasmoved = false;
@@ -210,14 +225,20 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
+                if (_mousestate == null) {
+                    _mousestate = ms.GetSnapshot();
+                }
+                if (_prev_mousestate == null) {
+                    _prev_mousestate = ms.GetSnapshot();
+                }
                 if (_mousestate.X != ms.X || _mousestate.Y != ms.Y)
                 {
                     _hasmoved = true;
                 }
                 _prev_mousestate = _mousestate;
-                _mousestate = ms;
+                _mousestate = ms.GetSnapshot(); 
                 _mousebuttonsdown.Clear();
-                for (MouseButton btn = 0; btn < MouseButton.LastButton; btn++)
+                for (MouseButton btn = 0; btn < MouseButton.Last; btn++)
                 {
                     if (_mousestate[btn])
                         _mousebuttonsdown.Add(btn);
@@ -238,7 +259,7 @@ namespace linerider.UI
                         {
                             continue;
                         }
-                        if (CheckPressed(bind, ref _kbstate, ref _mousestate))
+                        if (CheckPressed(bind, _kbstate != null ? _kbstate : _window.KeyboardState, _mousestate != null ? _mousestate : _window.MouseState))
                             return true;
                     }
                 }
@@ -256,16 +277,16 @@ namespace linerider.UI
             if (bind.UsesKeys)
             {
                 if (_modifiersdown != bind.Modifiers ||
-                bind.Key != RepeatKey) // Someone overrode us
+                bind.Key != RepeatKey) // Someone overrode us 
                     return false;
             }
             if (bind.UsesMouse)
             {
                 // We can conflict with left/right, not others
                 int buttonsdown = _mousebuttonsdown.Count;
-                if (_mousestate[MouseButton.Left])
+                if (_window.MouseState[MouseButton.Left])
                     buttonsdown--;
-                if (_mousestate[MouseButton.Right])
+                if (_window.MouseState[MouseButton.Right])
                     buttonsdown--;
                 if (buttonsdown > 1)
                     return false;
@@ -286,16 +307,16 @@ namespace linerider.UI
                         {
                             continue;
                         }
-                        if (CheckPressed(bind, ref _kbstate, ref _mousestate))
+                        if (CheckPressed(bind, _kbstate != null ? _kbstate : _window.KeyboardState, _mousestate != null ? _mousestate : _window.MouseState))
                             return bind;
                     }
                 }
             }
             return null;
         }
-        private static bool CheckPressed(Keybinding bind, ref KeyboardState state, ref MouseState mousestate)
+        private static bool CheckPressed(Keybinding bind, KeyboardState state, MouseState mousestate)
         {
-            if (_window != null && !_window.Focused)
+            if (_window != null && !_window.IsFocused)
                 return false;
             if (bind.Key != (Key)(-1))
             {
@@ -309,12 +330,12 @@ namespace linerider.UI
                         // issue.
                         switch (bind.Key)
                         {
-                            case Key.ControlLeft:
-                                if (!state.IsKeyDown(Key.WinLeft))
+                            case Key.LeftControl:
+                                if (!state.IsKeyDown(Key.LeftSuper))
                                     return false;
                                 break;
-                            case Key.ControlRight:
-                                if (!state.IsKeyDown(Key.WinRight))
+                            case Key.RightControl:
+                                if (!state.IsKeyDown(Key.RightSuper))
                                     return false;
                                 break;
                             default:
@@ -335,21 +356,21 @@ namespace linerider.UI
             if (bind.Modifiers != 0)
             {
                 bool alt =
-                state.IsKeyDown(Key.AltLeft) ||
-                state.IsKeyDown(Key.AltRight);
+                state.IsKeyDown(Key.LeftAlt) ||
+                state.IsKeyDown(Key.RightAlt);
                 bool ctrl =
-                state.IsKeyDown(Key.ControlLeft) ||
-                state.IsKeyDown(Key.ControlRight);
+                state.IsKeyDown(Key.LeftControl) ||
+                state.IsKeyDown(Key.RightControl);
                 if (_macOS)
                 {
                     // Remap the command key to ctrl.
                     ctrl |=
-                    state.IsKeyDown(Key.WinLeft) ||
-                    state.IsKeyDown(Key.WinRight);
+                    state.IsKeyDown(Key.LeftSuper) ||
+                    state.IsKeyDown(Key.RightSuper);
                 }
                 bool shift =
-                state.IsKeyDown(Key.ShiftLeft) ||
-                state.IsKeyDown(Key.ShiftRight);
+                state.IsKeyDown(Key.LeftShift) ||
+                state.IsKeyDown(Key.RightShift);
 
                 if ((bind.Modifiers.HasFlag(KeyModifiers.Alt) && !alt) ||
                 (bind.Modifiers.HasFlag(KeyModifiers.Shift) && !shift) ||
@@ -362,14 +383,14 @@ namespace linerider.UI
         {
             switch (key)
             {
-                case Key.AltLeft:
-                case Key.AltRight:
-                case Key.ShiftLeft:
-                case Key.ShiftRight:
-                case Key.ControlLeft:
-                case Key.ControlRight:
-                case Key.WinLeft:
-                case Key.WinRight:
+                case Key.LeftAlt:
+                case Key.RightAlt:
+                case Key.LeftShift:
+                case Key.RightShift:
+                case Key.LeftControl:
+                case Key.RightControl:
+                case Key.LeftSuper:
+                case Key.RightSuper:
                     return true;
             }
             return false;
@@ -377,7 +398,7 @@ namespace linerider.UI
         public static void SetWindow(GameWindow window)
         {
             _window = window ?? throw new NullReferenceException("InputUtils SetWindow cannot be null");
-            _macOS = Configuration.RunningOnMacOS;
+            _macOS = OperatingSystem.IsMacOS();
         }
     }
 }

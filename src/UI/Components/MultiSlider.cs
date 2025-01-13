@@ -1,10 +1,11 @@
 using Gwen.Controls;
 using Gwen;
-using System.Drawing;
 using Gwen.Skin.Texturing;
 using System;
 using Gwen.Input;
 using OpenTK;
+using OpenTK.Mathematics;
+using SkiaSharp;
 
 namespace linerider.UI.Components
 {
@@ -56,7 +57,7 @@ namespace linerider.UI.Components
         private Color _color2;
         private Color _backgroundColor;
         private Padding _padding = Padding.Zero;
-        private Bitmap _bitmap;
+        private SKBitmap _bitmap;
         private int _oldWidth;
         private bool _held;
 
@@ -73,7 +74,7 @@ namespace linerider.UI.Components
         public int MinX => base.Padding.Left;
         public int MaxX => Width - base.Padding.Right;
         public new int Height => base.Height;
-        public Bitmap Bitmap => _bitmap;
+        public SKBitmap Bitmap => _bitmap;
         public Color SliderColor => _backgroundColor;
 
         /// <summary>

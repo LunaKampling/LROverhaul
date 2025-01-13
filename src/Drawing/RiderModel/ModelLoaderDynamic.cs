@@ -1,5 +1,5 @@
 ﻿using linerider.Utils;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -43,14 +43,18 @@ namespace linerider.Drawing.RiderModel
             Model.BodyDead = Rotate90(Model.BodyDead);
         }
 
-        private Bitmap Rotate90(Bitmap img)
+        private SKBitmap Rotate90(SKBitmap img)
         {
-            Bitmap clone = new Bitmap(img);
-            clone.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            SKBitmap clone = new SKBitmap(img.Height, img.Width, img.ColorType, img.AlphaType);
+            using (var surface = new SKCanvas(clone)) {
+                surface.Translate(clone.Width, 0);
+                surface.RotateDegrees(90);
+                surface.DrawBitmap(img, 0, 0);
+            }
             return clone;
         }
 
-        private DoubleRect CalcRect(Bitmap img, Point shift) => new DoubleRect(
+        private DoubleRect CalcRect(SKBitmap img, Point shift) => new DoubleRect(
                 (img.Width / 2 + shift.X) * -1 * TextureScale,
                 (img.Height / 2 + shift.Y) * -1 * TextureScale,
                 img.Width * TextureScale,

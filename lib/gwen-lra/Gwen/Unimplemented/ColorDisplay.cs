@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using Gwen.Controls;
 
 namespace Gwen.ControlInternal
