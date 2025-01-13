@@ -37,10 +37,6 @@ namespace linerider
         {
             public string Raw;
             public Size BaseSize;
-            public Size Size => new Size(
-                (int)Math.Round(BaseSize.Width * Settings.Computed.UIScale),
-                (int)Math.Round(BaseSize.Height * Settings.Computed.UIScale)
-            );
             public SKBitmap Bitmap => SkiaUtils.LoadSVG(Raw);
         }
         private static Assembly Assembly = null;

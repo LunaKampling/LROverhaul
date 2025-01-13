@@ -66,13 +66,11 @@ namespace linerider.UI
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(res.Raw);
 
-            Size size = res.Size;
             Point hotspot = GetSvgHotSpot(doc);
 
             PruneSvgDoc(doc);
 
-            //SvgDocument svg = SvgDocument.Open(doc);
-            SKBitmap bitmap = SkiaUtils.LoadSVG(doc.OuterXml, size.Width, size.Height);//svg.Draw(size.Width, size.Height);
+            SKBitmap bitmap = SkiaUtils.LoadSVG(doc.OuterXml);
 
             int shadowX = (int)Math.Round(2 * Settings.Computed.UIScale);
             int shadowY = (int)Math.Round(1 * Settings.Computed.UIScale);

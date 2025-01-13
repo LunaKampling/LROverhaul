@@ -36,10 +36,8 @@ namespace linerider.UI.Widgets
             KeyboardInputEnabled = false;
             MouseInputEnabled = false;
 
-            Size Size = GameResources.ux_loading.Size;
-
-            // Double resolution for better quality on animation
-            SKBitmap bitmap = SkiaUtils.LoadSVG(GameResources.ux_loading.Raw, Size.Width * 2, Size.Height * 2);
+            // Double resolution for less janky sprite quality
+            SKBitmap bitmap = SkiaUtils.LoadSVG(GameResources.ux_loading.Raw, 2);
             SetImage(bitmap);
         }
         protected override void Render(Gwen.Skin.SkinBase skin)
