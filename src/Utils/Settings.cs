@@ -20,12 +20,14 @@ using linerider.UI;
 using linerider.Utils;
 using OpenTK;
 using OpenTK.Input;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider
 {
@@ -350,10 +352,10 @@ namespace linerider
             autosaveMinutes = 5;
             AutosavePrefix = "Autosave";
             startWindowMaximized = false;
-            DefaultSaveFormat = ".trk";
-            DefaultAutosaveFormat = ".trk";
-            DefaultQuicksaveFormat = ".trk";
-            DefaultCrashBackupFormat = ".trk";
+            DefaultSaveFormat = ".json";
+            DefaultAutosaveFormat = ".json";
+            DefaultQuicksaveFormat = ".json";
+            DefaultCrashBackupFormat = ".json";
             DrawCollisionGrid = false;
             DrawAGWs = false;
             DrawFloatGrid = false;
@@ -378,16 +380,16 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.EditorEraserTool, new Keybinding(Key.E));
             SetupDefaultKeybind(Hotkey.EditorSelectTool, new Keybinding(Key.R));
             SetupDefaultKeybind(Hotkey.EditorPanTool, new Keybinding(Key.T));
-            SetupDefaultKeybind(Hotkey.EditorToolColor1, new Keybinding(Key.Number1));
-            SetupDefaultKeybind(Hotkey.EditorToolColor2, new Keybinding(Key.Number2));
-            SetupDefaultKeybind(Hotkey.EditorToolColor3, new Keybinding(Key.Number3));
-            SetupDefaultKeybind(Hotkey.EditorToolColor4, new Keybinding(Key.Number4));
-            SetupDefaultKeybind(Hotkey.EditorToolColor5, new Keybinding(Key.Number5));
+            SetupDefaultKeybind(Hotkey.EditorToolColor1, new Keybinding(Key.D1));
+            SetupDefaultKeybind(Hotkey.EditorToolColor2, new Keybinding(Key.D2));
+            SetupDefaultKeybind(Hotkey.EditorToolColor3, new Keybinding(Key.D3));
+            SetupDefaultKeybind(Hotkey.EditorToolColor4, new Keybinding(Key.D4));
+            SetupDefaultKeybind(Hotkey.EditorToolColor5, new Keybinding(Key.D5));
 
             SetupDefaultKeybind(Hotkey.EditorCycleToolSetting, new Keybinding(Key.Tab));
             SetupDefaultKeybind(Hotkey.EditorMoveStart, new Keybinding(Key.D));
 
-            SetupDefaultKeybind(Hotkey.EditorRemoveLatestLine, new Keybinding(Key.BackSpace));
+            SetupDefaultKeybind(Hotkey.EditorRemoveLatestLine, new Keybinding(Key.Backspace));
             SetupDefaultKeybind(Hotkey.EditorFocusStart, new Keybinding(Key.Home));
             SetupDefaultKeybind(Hotkey.EditorFocusLastLine, new Keybinding(Key.End));
             SetupDefaultKeybind(Hotkey.EditorFocusRider, new Keybinding(Key.F1));
@@ -407,26 +409,26 @@ namespace linerider
                 new Keybinding(Key.Y, KeyModifiers.Control),
                 new Keybinding(Key.Z, KeyModifiers.Control | KeyModifiers.Shift));
 
-            SetupDefaultKeybind(Hotkey.CopyX0, new Keybinding(Key.Keypad0, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY0, new Keybinding(Key.Keypad0, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX1, new Keybinding(Key.Keypad1, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY1, new Keybinding(Key.Keypad1, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX2, new Keybinding(Key.Keypad2, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY2, new Keybinding(Key.Keypad2, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX3, new Keybinding(Key.Keypad3, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY3, new Keybinding(Key.Keypad3, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX4, new Keybinding(Key.Keypad4, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY4, new Keybinding(Key.Keypad4, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX5, new Keybinding(Key.Keypad5, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY5, new Keybinding(Key.Keypad5, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX6, new Keybinding(Key.Keypad6, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY6, new Keybinding(Key.Keypad6, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX7, new Keybinding(Key.Keypad7, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY7, new Keybinding(Key.Keypad7, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX8, new Keybinding(Key.Keypad8, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY8, new Keybinding(Key.Keypad8, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.CopyX9, new Keybinding(Key.Keypad9, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.CopyY9, new Keybinding(Key.Keypad9, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX0, new Keybinding(Key.KeyPad0, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY0, new Keybinding(Key.KeyPad0, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX1, new Keybinding(Key.KeyPad1, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY1, new Keybinding(Key.KeyPad1, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX2, new Keybinding(Key.KeyPad2, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY2, new Keybinding(Key.KeyPad2, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX3, new Keybinding(Key.KeyPad3, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY3, new Keybinding(Key.KeyPad3, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX4, new Keybinding(Key.KeyPad4, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY4, new Keybinding(Key.KeyPad4, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX5, new Keybinding(Key.KeyPad5, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY5, new Keybinding(Key.KeyPad5, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX6, new Keybinding(Key.KeyPad6, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY6, new Keybinding(Key.KeyPad6, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX7, new Keybinding(Key.KeyPad7, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY7, new Keybinding(Key.KeyPad7, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX8, new Keybinding(Key.KeyPad8, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY8, new Keybinding(Key.KeyPad8, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.CopyX9, new Keybinding(Key.KeyPad9, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.CopyY9, new Keybinding(Key.KeyPad9, KeyModifiers.Control));
 
             SetupDefaultKeybind(Hotkey.PlaybackStartIgnoreFlag, new Keybinding(Key.Y, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.PlaybackStartGhostFlag, new Keybinding(Key.I, KeyModifiers.Shift));
@@ -439,12 +441,12 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.PlaybackUnzoom, new Keybinding(Key.X));
 
             SetupDefaultKeybind(Hotkey.PlaybackSpeedUp,
-                new Keybinding(Key.Plus),
-                new Keybinding(Key.KeypadPlus));
+                new Keybinding(Key.Equal),
+                new Keybinding(Key.KeyPadAdd));
 
             SetupDefaultKeybind(Hotkey.PlaybackSpeedDown,
                 new Keybinding(Key.Minus),
-                new Keybinding(Key.KeypadMinus));
+                new Keybinding(Key.KeyPadSubtract));
 
             SetupDefaultKeybind(Hotkey.PlaybackFrameNext, new Keybinding(Key.Right));
             SetupDefaultKeybind(Hotkey.PlaybackFramePrev, new Keybinding(Key.Left));
@@ -480,9 +482,9 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.ToolDelete, new Keybinding(Key.Delete));
             SetupDefaultKeybind(Hotkey.ToolCopyValues, new Keybinding(Key.C, KeyModifiers.Shift | KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.ToolPasteValues, new Keybinding(Key.V, KeyModifiers.Shift | KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.ToolSwitchBlue, new Keybinding(Key.Number1, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.ToolSwitchRed, new Keybinding(Key.Number2, KeyModifiers.Alt));
-            SetupDefaultKeybind(Hotkey.ToolSwitchGreen, new Keybinding(Key.Number3, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.ToolSwitchBlue, new Keybinding(Key.D1, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.ToolSwitchRed, new Keybinding(Key.D2, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.ToolSwitchGreen, new Keybinding(Key.D3, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.ToolAddSelection, new Keybinding(KeyModifiers.Shift));
             SetupDefaultKeybind(Hotkey.ToolToggleSelection, new Keybinding(KeyModifiers.Control));
 
@@ -497,9 +499,9 @@ namespace linerider
         }
         private static void SetupAddonDefaultKeybinds()
         {
-            SetupDefaultKeybind(Hotkey.MagicAnimateAdvanceFrame, new Keybinding(Key.Keypad0));
-            SetupDefaultKeybind(Hotkey.MagicAnimateRecedeFrame, new Keybinding(Key.Keypad1));
-            SetupDefaultKeybind(Hotkey.MagicAnimateRecedeMultiFrame, new Keybinding(Key.Keypad2));
+            SetupDefaultKeybind(Hotkey.MagicAnimateAdvanceFrame, new Keybinding(Key.KeyPad0));
+            SetupDefaultKeybind(Hotkey.MagicAnimateRecedeFrame, new Keybinding(Key.KeyPad1));
+            SetupDefaultKeybind(Hotkey.MagicAnimateRecedeMultiFrame, new Keybinding(Key.KeyPad2));
 
             SetupDefaultKeybind(Hotkey.LineGeneratorWindow, new Keybinding(Key.G));
         }
@@ -654,16 +656,16 @@ namespace linerider
         public static void PostprocessValues()
         {
             if (DefaultSaveFormat == null)
-                DefaultSaveFormat = ".trk";
+                DefaultSaveFormat = ".json";
 
             if (DefaultQuicksaveFormat == null)
-                DefaultQuicksaveFormat = ".trk";
+                DefaultQuicksaveFormat = ".json";
 
             if (DefaultAutosaveFormat == null)
-                DefaultAutosaveFormat = ".trk";
+                DefaultAutosaveFormat = ".json";
 
             if (DefaultCrashBackupFormat == null)
-                DefaultCrashBackupFormat = ".trk";
+                DefaultCrashBackupFormat = ".json";
 
             if (AutosavePrefix == null)
                 AutosavePrefix = "Autosave";

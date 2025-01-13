@@ -61,7 +61,7 @@ namespace linerider.Audio
             }
         }
         public float Duration => _stream == null || _stream.Channels == 0 ? 0 : _stream.Duration;
-        public bool Playing => AL.GetSourceState(_alsourceid) == ALSourceState.Playing;
+        public bool Playing => AL.GetSource(_alsourceid, ALGetSourcei.SourceState) == (int)ALSourceState.Playing;
         public AudioStreamer()
         {
             _alsourceid = AL.GenSource();
@@ -141,7 +141,7 @@ namespace linerider.Audio
                     ALSourceState state;
                     lock (_sync)
                     {
-                        state = AL.GetSourceState(_alsourceid);
+                        state = (ALSourceState)AL.GetSource(_alsourceid, ALGetSourcei.SourceState);
 
                         if (state == ALSourceState.Playing)
                         {
@@ -164,19 +164,21 @@ namespace linerider.Audio
                     }
                 }
             }
-            catch (AudioException ae)
+            catch (Exception ae)
             {
                 Program.NonFatalError(ae.ToString());
             }
         }
-        private void QueueBuffer(int buffer)
+        private unsafe void QueueBuffer(int buffer)
         {
             if (!_needsrefill)
                 return;
             int len = Speed > 0 ? _stream.ReadBuffer() : _stream.ReadBufferReversed();
             if (len > 0)
             {
-                AL.BufferData(buffer, _stream.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, _stream.Buffer, len * sizeof(short), _stream.SampleRate);
+                fixed (short* buf = _stream.Buffer){
+                    AL.BufferData(buffer, _stream.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, buf, len * sizeof(short), _stream.SampleRate);
+                }
                 AudioDevice.Check();
                 AL.SourceQueueBuffer(_alsourceid, buffer);
                 AudioDevice.Check();

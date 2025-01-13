@@ -1,6 +1,7 @@
 ﻿using linerider.Game;
 using linerider.IO.SOL;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

@@ -17,7 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using linerider.Rendering;
 using linerider.Utils;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -48,7 +48,7 @@ namespace linerider.Drawing.RiderModel
         public static float RopeThickness = 0;
         public static Color RopeColor = Color.Black;
 
-        public static void SetSprites(Bitmap body_img, Bitmap bodydead_img, Bitmap sled_img, Bitmap sledbroken_img, Bitmap arm_img, Bitmap leg_img)
+        public static void SetSprites(SKBitmap body_img, SKBitmap bodydead_img, SKBitmap sled_img, SKBitmap sledbroken_img, SKBitmap arm_img, SKBitmap leg_img)
         {
             BodyTexture = StaticRenderer.LoadTexture(body_img);
             BodyDeadTexture = StaticRenderer.LoadTexture(bodydead_img);

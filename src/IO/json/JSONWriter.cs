@@ -1,10 +1,10 @@
 using linerider.Game;
 using linerider.IO.json;
 using linerider.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Utf8Json;
 
 namespace linerider.IO
 {
@@ -45,9 +45,8 @@ namespace linerider.IO
                     break;
             }
             GameLine[] sort = trk.GetSortedLines();
-            trackobj.linesArray = new object[sort.Length][];
+            trackobj.lines = new List<line_json>();
             trackobj.gameTriggers = new List<track_json.gametrigger_json>();
-            int idx = 0;
             foreach (GameLine line in sort)
             {
                 line_json jline = new line_json();
@@ -81,7 +80,12 @@ namespace linerider.IO
                         jline.multiplier = red.Multiplier;
                     }
                 }
-                trackobj.linesArray[idx++] = line_to_linearrayline(jline);
+                else
+                {
+                    jline.flipped = false;
+                    jline.width = line.Width;
+                }
+                trackobj.lines.Add(jline);
             }
             foreach (GameTrigger trigger in trk.Triggers)
             {
@@ -126,30 +130,13 @@ namespace linerider.IO
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
             string filename = Path.Combine(dir, savename + ".track.json");
-            using (FileStream file = File.Create(filename))
+
+            using (StreamWriter writer = new StreamWriter(filename))
             {
-                byte[] bytes = JsonSerializer.Serialize(trackobj);
-                file.Write(bytes, 0, bytes.Length);
+                string json = JsonConvert.SerializeObject(trackobj);
+                writer.WriteLine(json);
             }
             return filename;
-        }
-        private static object[] line_to_linearrayline(line_json line)
-        {
-            //['type', 'id', 'x1', 'y1', 'x2', 'y2', 'extended', 'flipped', 'leftLine', 'rightLine', 'multiplier']
-            List<object> ret = new List<object>(11) { line.type, line.id, line.x1, line.y1, line.x2, line.y2 };
-
-            if (line.type != 2)
-            {
-                ret.Add(line.extended);
-                ret.Add(line.flipped);
-                if (line.multiplier > 1)
-                {
-                    ret.Add(-1);
-                    ret.Add(-1);
-                    ret.Add(line.multiplier);
-                }
-            }
-            return ret.ToArray();
         }
     }
 }

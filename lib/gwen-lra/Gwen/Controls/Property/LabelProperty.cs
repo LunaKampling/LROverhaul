@@ -48,7 +48,7 @@ namespace Gwen.Controls
             if (ShouldDrawBackground)
             {
                 skin.Renderer.DrawColor = Skin.Colors.ForegroundHighlight;
-                System.Drawing.Rectangle r = RenderBounds;
+                Rectangle r = RenderBounds;
                 skin.Renderer.DrawFilledRect(r);
             }
             base.Render(skin);

@@ -20,11 +20,14 @@ using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
 using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Input;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Diagnostics;
+using SkiaSharp;
+using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider.Tools
 {
@@ -32,7 +35,7 @@ namespace linerider.Tools
     {
         private bool _invalidated;
         public override string Name => "Bezier Tool";
-        public override Bitmap Icon => GameResources.icon_tool_bezier.Bitmap;
+        public override SKBitmap Icon => GameResources.icon_tool_bezier.Bitmap;
         public override MouseCursor Cursor => game.Cursors.List[CursorsHandler.Type.Line];
         public override Swatch Swatch => SharedSwatches.DrawingToolsSwatch;
         public override bool ShowSwatch => true;
@@ -145,7 +148,7 @@ namespace linerider.Tools
             switch (k)
             {
                 case Key.Space:
-                case Key.KeypadEnter:
+                case Key.KeyPadEnter:
                 case Key.Enter:
                     FinalizePlacement();
                     break;

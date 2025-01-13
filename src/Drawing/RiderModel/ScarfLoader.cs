@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
+using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -128,7 +128,7 @@ namespace linerider.Drawing.RiderModel
         private List<ScarfSegment> LoadImage()
         {
             List<ScarfSegment> segments = new List<ScarfSegment>();
-            Bitmap scarfImg = new Bitmap(Filepath);
+            SKBitmap scarfImg = SKBitmap.Decode(Filepath);
 
             for (int i = scarfImg.Width - 1; i >= 0; i -= 1)
             {

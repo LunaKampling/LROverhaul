@@ -21,17 +21,19 @@ using linerider.Rendering;
 using linerider.UI;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.Tools
 {
     public class SelectTool : Tool
     {
         public override string Name => "Select Tool";
-        public override Bitmap Icon => GameResources.icon_tool_select.Bitmap;
+        public override SKBitmap Icon => GameResources.icon_tool_select.Bitmap;
         public override Swatch Swatch => SharedSwatches.EraserAndSelectToolSwatch;
         public override bool ShowSwatch => true;
         public override string Tooltip

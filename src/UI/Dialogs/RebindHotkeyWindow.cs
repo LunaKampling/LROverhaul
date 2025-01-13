@@ -82,7 +82,7 @@ namespace linerider.UI
                 bool changemade = false;
                 if (ModifierOnly)
                 {
-                    hk.Key = (OpenTK.Input.Key)(-1);
+                    hk.Key = (OpenTK.Windowing.GraphicsLibraryFramework.Keys)(-1);
                 }
                 if (!hk.IsEmpty)
                 {
@@ -95,9 +95,9 @@ namespace linerider.UI
                     {
                         if (hk.UsesModifiers)
                         {
-                            System.Collections.Generic.List<OpenTK.Input.KeyModifiers> mods = InputUtils.SplitModifiers(hk.Modifiers);
-                            System.Collections.Generic.List<OpenTK.Input.KeyModifiers> oldmods = InputUtils.SplitModifiers(_binding.Modifiers);
-                            foreach (OpenTK.Input.KeyModifiers v in mods)
+                            System.Collections.Generic.List<OpenTK.Windowing.GraphicsLibraryFramework.KeyModifiers> mods = InputUtils.SplitModifiers(hk.Modifiers);
+                            System.Collections.Generic.List<OpenTK.Windowing.GraphicsLibraryFramework.KeyModifiers> oldmods = InputUtils.SplitModifiers(_binding.Modifiers);
+                            foreach (OpenTK.Windowing.GraphicsLibraryFramework.KeyModifiers v in mods)
                             {
                                 if (!oldmods.Contains(v))
                                     changemade = true;

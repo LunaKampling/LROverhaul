@@ -1,5 +1,6 @@
 ﻿using linerider.Drawing.RiderModel;
 using OpenTK;
+using OpenTK.Mathematics;
 using System.Collections.Generic;
 
 namespace linerider.Game

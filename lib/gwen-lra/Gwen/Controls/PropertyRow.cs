@@ -34,7 +34,7 @@ namespace Gwen.Controls
         /// </summary>
         public string Label { get => m_Label.Text; set => m_Label.Text = value; }
 
-        public System.Drawing.Color LabelColor
+        public Color LabelColor
         {
             get => m_Label.TextColorOverride;
             set => m_Label.TextColorOverride = value;
@@ -79,7 +79,7 @@ namespace Gwen.Controls
 
         #region Methods
 
-        protected override void ProcessLayout(System.Drawing.Size size)
+        protected override void ProcessLayout(Size size)
         {
             if (Parent is PropertyTable parent)
             {

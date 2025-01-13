@@ -20,15 +20,16 @@ using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
 using OpenTK;
-using System.Drawing;
-using Color = System.Drawing.Color;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
+using SkiaSharp;
 
 namespace linerider.Tools
 {
     public class SmoothPencilTool : Tool
     {
         public override string Name => "Smooth Pencil Tool";
-        public override Bitmap Icon => GameResources.icon_tool_smooth_pencil.Bitmap;
+        public override SKBitmap Icon => GameResources.icon_tool_smooth_pencil.Bitmap;
 
         private bool SmoothMoved = false;
 

@@ -4,13 +4,12 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Graphics;
 using Gwen;
 using Gwen.Controls;
-using System.Drawing;
 using TestApplication.Tests;
-using System.Drawing.Imaging;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Threading;
+
 namespace TestApplication
 {
     public class Window : GameWindow
@@ -205,7 +204,7 @@ namespace TestApplication
             SwapBuffers();
             base.OnRenderFrame(e);
         }
-        protected override void OnKeyDown(OpenTK.Input.KeyboardKeyEventArgs e)
+        protected override void OnKeyDown(OpenTK.Windowing.GraphicsLibraryFrameworkboardKeyEventArgs e)
         {
             base.OnKeyDown(e);
             try
@@ -218,7 +217,7 @@ namespace TestApplication
                 Console.WriteLine(ex.ToString());
                 throw ex;
             }
-            if (e.Key == OpenTK.Input.Key.F5)
+            if (e.Key == OpenTK.Windowing.GraphicsLibraryFramework.F5)
             {
                 skinpng.Dispose();
                 skinpng = new Texture(Canvas.Skin.Renderer);
@@ -232,16 +231,16 @@ namespace TestApplication
                 Canvas.SetSkin(skin, true);
                 skinimg.Dispose();
             }
-            if (e.Key == OpenTK.Input.Key.F12)
+            if (e.Key == OpenTK.Windowing.GraphicsLibraryFramework.F12)
             {
                 _slow = !_slow;
             }
-            if (e.Key == OpenTK.Input.Key.F11)
+            if (e.Key == OpenTK.Windowing.GraphicsLibraryFramework.F11)
             {
                 _steps = true;
             }
         }
-        protected override void OnKeyUp(OpenTK.Input.KeyboardKeyEventArgs e)
+        protected override void OnKeyUp(OpenTK.Windowing.GraphicsLibraryFrameworkboardKeyEventArgs e)
         {
             base.OnKeyUp(e);
             try

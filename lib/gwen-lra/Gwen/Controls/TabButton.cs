@@ -136,7 +136,7 @@ namespace Gwen.Controls
             return true;
         }
 
-        protected override System.Drawing.Color CurrentColor => IsActive
+        protected override Color CurrentColor => IsActive
                     ? IsDisabled ? Skin.Colors.Text.Disabled : Skin.Colors.Text.Foreground
                     : IsDisabled
                     ? Skin.Colors.Text.Disabled

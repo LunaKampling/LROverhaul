@@ -2,11 +2,10 @@ using linerider.Drawing;
 using linerider.Game;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Diagnostics;
 
 namespace linerider.Rendering
 {
@@ -207,8 +206,8 @@ namespace linerider.Rendering
             GL.Uniform1(_shader.GetUniform("u_alphachannel"), 0);
             GL.Uniform1(_shader.GetUniform("u_overlay"), Overlay ? 1 : 0);
             GL.Uniform1(_shader.GetUniform("u_knobstate"), (int)KnobState);
-            GL.Uniform4(_shader.GetUniform("u_knobcolor"), Settings.Computed.BGColor);
-            GL.Uniform1(_shader.GetUniform("u_knobsize"), relativeKnobSize);
+            GL.Uniform4(_shader.GetUniform("u_knobcolor"), Settings.Computed.BGColor.R / 255.0f, Settings.Computed.BGColor.G / 255.0f, Settings.Computed.BGColor.B / 255.0f, Settings.Computed.BGColor.A / 255.0f);
+            GL.Uniform1(_shader.GetUniform("u_knobsize"), (float)relativeKnobSize);
         }
         public void Draw()
         {

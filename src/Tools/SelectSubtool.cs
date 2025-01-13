@@ -4,12 +4,13 @@ using linerider.UI;
 using linerider.Utils;
 using Newtonsoft.Json.Linq;
 using OpenTK;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Diagnostics;
 
 namespace linerider.Tools
@@ -504,14 +505,14 @@ namespace linerider.Tools
                     _ = lineArray.Append(",");
                 }
             }
-
-            Clipboard.SetText(lineArray.ToString() + "]");
+      
+            game.Clipboard = lineArray.ToString() + "]";
 
             game.Track.Notify("Copied!");
         }
         public void PasteValues(Layer layer)
         {
-            string lineArray = Clipboard.GetText();
+            string lineArray = game.Clipboard;
             List<GameLine> lineList = ParseJson(lineArray, layer);
 
             if (lineList is null)

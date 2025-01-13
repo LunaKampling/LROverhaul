@@ -1,7 +1,6 @@
 using Gwen;
 using Gwen.Controls;
 using System;
-using System.Drawing;
 using System.Globalization;
 using System.Text;
 

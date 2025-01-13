@@ -17,14 +17,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.UI;
-using Svg;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using SkiaSharp;
 
 #pragma warning disable IDE1006 // Naming Styles
 
@@ -37,11 +36,7 @@ namespace linerider
         {
             public string Raw;
             public Size BaseSize;
-            public Size Size => new Size(
-                (int)Math.Round(BaseSize.Width * Settings.Computed.UIScale),
-                (int)Math.Round(BaseSize.Height * Settings.Computed.UIScale)
-            );
-            public Bitmap Bitmap => SvgDocument.FromSvg<SvgDocument>(Raw).Draw(Size.Width, Size.Height);
+            public SKBitmap Bitmap => SkiaUtils.LoadSVG(Raw);
         }
         private static Assembly Assembly = null;
         private static Dictionary<string, object> _lookuptable = null;
@@ -54,15 +49,21 @@ namespace linerider
         }
         #endregion
         #region Getters
-        public static Bitmap GetBitmap(string name)
+        public static SKBitmap GetBitmap(string name)
         {
             if (_lookuptable.TryGetValue(name, out object lookup))
             {
-                return (Bitmap)lookup;
+                return (SKBitmap)lookup;
             }
             using (Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
             {
-                Bitmap ret = new Bitmap(stream);
+                // PNG spec says alpha is never premultiplied, skia assumes premultiplied anyways
+                // and this is what has to be done to have it not do that
+                var codec = SKCodec.Create(stream);
+                var info = codec.Info;
+                var imageInfo = new SKImageInfo(info.Width, info.Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
+                SKBitmap ret = new SKBitmap(imageInfo);
+                codec.GetPixels(ret.Info, ret.GetPixels());
                 _lookuptable[name] = ret;
                 return ret;
             }
@@ -127,9 +128,9 @@ namespace linerider
         public static Fonts GetFont(string name)
         {
             string fnt = GetString($"{name}.fnt");
-            Bitmap bitmap = GetBitmap($"{name}_0.png");
+            SKBitmap bitmap = GetBitmap($"{name}_0.png");
             string fntbold = GetString($"{name}_bold.fnt");
-            Bitmap bitmapbold = GetBitmap($"{name}_bold_0.png");
+            SKBitmap bitmapbold = GetBitmap($"{name}_bold_0.png");
 
             Gwen.Renderer.OpenTK renderer = new Gwen.Renderer.OpenTK();
             Gwen.Renderer.BitmapFont bitmapfont = new Gwen.Renderer.BitmapFont(renderer, fnt, renderer.CreateTexture(bitmap));
@@ -141,7 +142,7 @@ namespace linerider
         #endregion
         #region Resources: Generic
         internal static byte[] beep => GetBytes("beep.wav");
-        internal static Bitmap defaultskin => GetBitmap("DefaultSkin.png");
+        internal static SKBitmap defaultskin => GetBitmap("DefaultSkin.png");
         internal static byte[] icon => GetBytes("icon.ico");
         internal static string defaultcolors => GetString("DefaultColors.xml");
         #endregion
@@ -149,13 +150,13 @@ namespace linerider
         internal static Fonts font_liberation_sans_15 => GetFont("fonts.liberation_sans_15");
         #endregion
         #region Resources: Rider
-        internal static Bitmap rider_sled => GetBitmap("rider.sled.png");
-        internal static Bitmap rider_sledbroken => GetBitmap("rider.sledbroken.png");
-        internal static Bitmap rider_arm => GetBitmap("rider.arm.png");
-        internal static Bitmap rider_leg => GetBitmap("rider.leg.png");
-        internal static Bitmap rider_body => GetBitmap("rider.body.png");
-        internal static Bitmap rider_bodydead => GetBitmap("rider.bodydead.png");
-        internal static Bitmap rider_rope => GetBitmap("rider.rope.png");
+        internal static SKBitmap rider_sled => GetBitmap("rider.sled.png");
+        internal static SKBitmap rider_sledbroken => GetBitmap("rider.sledbroken.png");
+        internal static SKBitmap rider_arm => GetBitmap("rider.arm.png");
+        internal static SKBitmap rider_leg => GetBitmap("rider.leg.png");
+        internal static SKBitmap rider_body => GetBitmap("rider.body.png");
+        internal static SKBitmap rider_bodydead => GetBitmap("rider.bodydead.png");
+        internal static SKBitmap rider_rope => GetBitmap("rider.rope.png");
         internal static string rider_regions_file => GetString("rider..regions");
         #endregion
         #region Resources: Cursors

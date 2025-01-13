@@ -19,15 +19,16 @@
 using linerider.UI;
 using linerider.Utils;
 using OpenTK;
-using System.Drawing;
-using linerider.Game;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
+using SkiaSharp;
 
 namespace linerider.Tools
 {
     public class EraserTool : Tool
     {
         public override string Name => "Eraser Tool";
-        public override Bitmap Icon => GameResources.icon_tool_eraser.Bitmap;
+        public override SKBitmap Icon => GameResources.icon_tool_eraser.Bitmap;
         public override Swatch Swatch => SharedSwatches.EraserAndSelectToolSwatch;
         public override bool RequestsMousePrecision => false;
         public override bool ShowSwatch => true;

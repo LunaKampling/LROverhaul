@@ -18,11 +18,10 @@
 
 using Gwen.Controls;
 using linerider.UI.Components;
-using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
-using Svg;
 using System;
-using System.Drawing;
+using SkiaSharp;
 
 namespace linerider.UI.Widgets
 {
@@ -36,10 +35,8 @@ namespace linerider.UI.Widgets
             KeyboardInputEnabled = false;
             MouseInputEnabled = false;
 
-            Size Size = GameResources.ux_loading.Size;
-
-            // Double resolution for better quality on animation
-            Bitmap bitmap = SvgDocument.FromSvg<SvgDocument>(GameResources.ux_loading.Raw).Draw(Size.Width * 2, Size.Height * 2);
+            // Double resolution for less janky sprite quality
+            SKBitmap bitmap = SkiaUtils.LoadSVG(GameResources.ux_loading.Raw, 2);
             SetImage(bitmap);
         }
         protected override void Render(Gwen.Skin.SkinBase skin)

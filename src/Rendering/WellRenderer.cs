@@ -2,10 +2,10 @@ using linerider.Drawing;
 using linerider.Game;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 namespace linerider.Rendering
 {
     public class WellRenderer : IDisposable

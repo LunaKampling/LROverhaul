@@ -25,6 +25,6 @@
             if (ShouldDrawBackground)
                 skin.DrawButton(this, true, false, IsDisabled);
         }
-        protected override void ProcessLayout(System.Drawing.Size size) => MoveTo(X, Y);
+        protected override void ProcessLayout(Size size) => MoveTo(X, Y);
     }
 }

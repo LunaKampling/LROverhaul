@@ -18,8 +18,8 @@
 
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
-using System.Drawing;
 namespace linerider.Game
 {
     public abstract class GameLine : Line

@@ -1,14 +1,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "linerider", "linerider.csproj", "{AB45D1B5-B29D-4792-9CA8-C7C11E33A447}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "linerider", "linerider.csproj", "{AB45D1B5-B29D-4792-9CA8-C7C11E33A447}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{D04B6F1D-AB15-440B-BFB5-5699E5FA5F80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen", "..\lib\gwen-lra\Gwen\Gwen.csproj", "{ADDA2F43-96C0-497F-8216-29C67ABC9806}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gwen", "..\lib\gwen-lra\Gwen\Gwen.csproj", "{ADDA2F43-96C0-497F-8216-29C67ABC9806}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Renderer.OpenTK", "..\lib\gwen-lra\Gwen.Renderer.OpenTK\Gwen.Renderer.OpenTK.csproj", "{41650C82-D630-4E5C-845A-F1513C8FDC99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gwen.Renderer.OpenTK", "..\lib\gwen-lra\Gwen.Renderer.OpenTK\Gwen.Renderer.OpenTK.csproj", "{41650C82-D630-4E5C-845A-F1513C8FDC99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

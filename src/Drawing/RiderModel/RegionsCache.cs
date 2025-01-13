@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
+using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -36,7 +37,7 @@ namespace linerider.Drawing.RiderModel
 
         public bool Parse(List<string> cacheLines)
         {
-            RectangleConverter converter = new RectangleConverter();
+            //RectangleConverter converter = new RectangleConverter();
             ParseMode mode = ParseMode.None;
 
             foreach (string cacheLine in cacheLines)
@@ -89,7 +90,9 @@ namespace linerider.Drawing.RiderModel
                     case ParseMode.BodyDeadRegions:
                     {
                         _ = new Rectangle();
-                        Rectangle region = (Rectangle)converter.ConvertFrom(null, Program.Culture, cacheLine);
+                        int[] ints = cacheLine.Split(", ").Select((str) => int.Parse(str)).ToArray();
+                        Rectangle region = new Rectangle(ints[0], ints[1], ints[2], ints[3]);
+                        //Rectangle region = (Rectangle)converter.ConvertFrom(null, Program.Culture, cacheLine);
 
                         if (mode == ParseMode.BodyRegions)
                             RegionsBody.Add(region);
@@ -102,12 +105,17 @@ namespace linerider.Drawing.RiderModel
             return true;
         }
 
+        public string RectangleToString(Rectangle r){
+            int[] ints = {r.Left, r.Top, r.Width, r.Height};
+            return string.Join(", ", ints.Select((i) => i.ToString()).ToArray());
+        }
+
         public void Build()
         {
             string[] filesToHash = { Filenames.Regions, Filenames.Body, Filenames.BodyDead };
-            Bitmap regionsPNG = new Bitmap(Path.Combine(SkinHomePath, Filenames.Regions));
-            Bitmap bodyPNG = new Bitmap(Path.Combine(SkinHomePath, Filenames.Body));
-            Bitmap bodyDeadPNG = new Bitmap(Path.Combine(SkinHomePath, Filenames.BodyDead));
+            SKBitmap regionsPNG = SKBitmap.Decode(Path.Combine(SkinHomePath, Filenames.Regions));
+            SKBitmap bodyPNG = SKBitmap.Decode(Path.Combine(SkinHomePath, Filenames.Body));
+            SKBitmap bodyDeadPNG = SKBitmap.Decode(Path.Combine(SkinHomePath, Filenames.BodyDead));
             List<string> regionsFileLines = new List<string>();
 
             RegionsBody.Clear();
@@ -132,7 +140,7 @@ namespace linerider.Drawing.RiderModel
             // Calc scarf regions
             List<string> aliveRegions = new List<string>();
             List<string> crashedRegions = new List<string>();
-            RectangleConverter converter = new RectangleConverter();
+            //RectangleConverter converter = new RectangleConverter();
             for (int i = 0; i < regionsPNG.Width; i++)
             {
                 Rectangle aliveRegion = new Rectangle(bodyPNG.Width, bodyPNG.Height, 0, 0);
@@ -176,8 +184,8 @@ namespace linerider.Drawing.RiderModel
                 if (crashedRegion.X == bodyPNG.Width && crashedRegion.Y == bodyPNG.Height)
                     crashedRegion = new Rectangle(0, 0, 0, 0);
 
-                aliveRegions.Add(converter.ConvertToString(aliveRegion));
-                crashedRegions.Add(converter.ConvertToString(crashedRegion));
+                aliveRegions.Add(RectangleToString(aliveRegion));
+                crashedRegions.Add(RectangleToString(crashedRegion));
 
                 RegionsBody.Add(aliveRegion);
                 RegionsBodyDead.Add(crashedRegion);

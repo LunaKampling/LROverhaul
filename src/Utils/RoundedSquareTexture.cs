@@ -1,15 +1,14 @@
 ﻿using Gwen.Skin.Texturing;
 using Gwen;
 using System;
-using System.Drawing;
-using Svg;
+using SkiaSharp;
 
 namespace linerider.Utils
 {
     public class RoundedSquareTexture
     {
         private Texture _texture;
-        private Bitmap _bitmap;
+        private SKBitmap _bitmap;
         private Bordered _bordered;
         private int _size;
         private int _width => _stretchHorizontally ? _size + 1 : _size;
@@ -27,7 +26,7 @@ namespace linerider.Utils
             }
         }
         public Bordered Bordered => _bordered;
-        public Bitmap Bitmap => _bitmap;
+        public SKBitmap Bitmap => _bitmap;
 
         /// <summary>
         /// <para>Generates a circle-like square with 1px solid area in the middle to use with <see cref="Gwen.Skin.Texturing.Bordered"/>.</para>
@@ -62,18 +61,18 @@ namespace linerider.Utils
             _bordered = new Bordered(_texture, 0, 0, _width, _height, bounds);
         }
 
-        private Bitmap GenerateBitmap()
+        private SKBitmap GenerateBitmap()
         {
             int radius = _stretchHorizontally || _stretchVertically ? Radius - 1 : Radius;
 
-            string svg = string.Join("\n", new string[]
-            {
-                $"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {_width} {_height}\">",
-                $"<rect width=\"100%\" height=\"100%\" rx=\"{radius}\" fill=\"#FFF\"/>",
-                "</svg>"
-            });
-
-            Bitmap bitmap = SvgDocument.FromSvg<SvgDocument>(svg).Draw(_width, _height);
+            SKBitmap bitmap = new SKBitmap(_width + radius, _height + radius);
+            SKPaint paint = new SKPaint {
+                Color = Color.White
+            };
+            
+            using (var surface = new SKCanvas(bitmap)) {
+                surface.DrawRoundRect(new Rectangle(0,0,_width, _height), radius, radius, paint);
+            }
 
             return bitmap;
         }

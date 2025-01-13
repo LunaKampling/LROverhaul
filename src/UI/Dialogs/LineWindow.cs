@@ -3,6 +3,7 @@ using Gwen.Controls;
 using linerider.Game;
 using linerider.Utils;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Linq;
 

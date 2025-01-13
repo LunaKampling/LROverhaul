@@ -3,7 +3,6 @@ using Gwen.Controls;
 using linerider.Tools;
 using linerider.UI.Components;
 using System;
-using System.Drawing;
 
 namespace linerider.UI.Widgets
 {
@@ -111,7 +110,7 @@ namespace linerider.UI.Widgets
             {
                 Name = "Generators",
                 Icon = GameResources.icon_generators.Bitmap,
-                Action = (o, e) => _canvas.ShowGeneratorWindow(OpenTK.Vector2d.Zero),
+                Action = (o, e) => _canvas.ShowGeneratorWindow(OpenTK.Mathematics.Vector2d.Zero),
                 Hotkey = Hotkey.LineGeneratorWindow,
                 HotkeyCondition = hotkeyCondition,
             };

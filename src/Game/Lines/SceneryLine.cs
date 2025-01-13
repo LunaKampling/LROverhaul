@@ -17,13 +17,14 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace linerider.Game
 {
     public class SceneryLine : GameLine
     {
         public override LineType Type => LineType.Scenery;
-        public override System.Drawing.Color Color => Settings.Colors.SceneryLine;
+        public override Color Color => Settings.Colors.SceneryLine;
         protected SceneryLine()
         {
         }

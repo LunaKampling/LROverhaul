@@ -1,10 +1,12 @@
 using linerider.Game;
 using linerider.IO.json;
 using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Utf8Json;
+using Newtonsoft.Json;
+
 namespace linerider.IO
 {
     public static class JSONLoader
@@ -16,11 +18,13 @@ namespace linerider.IO
                 Filename = trackfile
             };
             track_json trackobj;
-            using (FileStream file = File.OpenRead(trackfile))
+
+            using (StreamReader reader = new StreamReader(trackfile))
             {
                 try
                 {
-                    trackobj = JsonSerializer.Deserialize<track_json>(file);
+                    var json = reader.ReadToEnd();
+                    trackobj = JsonConvert.DeserializeObject<track_json>(json);
                 }
                 catch (Exception ex)
                 {
@@ -69,7 +73,7 @@ namespace linerider.IO
             if (!string.IsNullOrEmpty(trackobj.linesArrayCompressed))
             {
                 string json2 = LZString.DecompressBase64(trackobj.linesArrayCompressed);
-                trackobj.linesArray = JsonSerializer.Deserialize<object[][]>(json2);
+                trackobj.linesArray = JsonConvert.DeserializeObject<object[][]>(json2);
                 trackobj.linesArrayCompressed = null;
             }
             Layer layer = ret._layers.currentLayer;
@@ -195,6 +199,7 @@ namespace linerider.IO
                         }
                     }
                 }
+                line.width = 1;
                 AddLine(track, line, layer);
             }
         }
@@ -235,7 +240,7 @@ namespace linerider.IO
                         add.Extension |= StandardLine.Ext.Left;
                     if (Convert.ToBoolean(line.rightExtended))
                         add.Extension |= StandardLine.Ext.Right;
-                    if (line.multiplier > 1)
+                    if (line.multiplier != 0)
                     {
                         add.Multiplier = line.multiplier;
                     }
@@ -249,7 +254,8 @@ namespace linerider.IO
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2))
                     {
-                        ID = GameLine.UninitializedID
+                        ID = GameLine.UninitializedID,
+                        Width = line.width
                     };
                     track.AddLine(add, layer);
                     break;

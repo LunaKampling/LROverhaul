@@ -1,8 +1,8 @@
 ﻿using OpenTK.Graphics;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Desktop;
 using System;
-using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 
 namespace linerider.Utils
 {
@@ -66,8 +66,12 @@ namespace linerider.Utils
         public const int MaxFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
         public const float KnobSize = 0.8f;
         public const float MaxLimitedKnobSize = MaxZoom;
-
-        public static readonly Size ScreenSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+        public static Size ScreenSize {
+            get {
+                var monitor = Monitors.GetPrimaryMonitor();
+                return new Size(monitor.HorizontalResolution, monitor.VerticalResolution);
+            }
+        }
         public static readonly double ScreenScale = Math.Max(1,
             Math.Round(((double)ScreenSize.Width / 1600 < (double)ScreenSize.Height / 1080)
                 ? ((double)ScreenSize.Width / 1600)
