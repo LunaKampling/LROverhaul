@@ -97,7 +97,7 @@ namespace linerider.UI
                     })
                 };
 
-                surface.DrawBitmap(bitmap, 0, 0, paint);
+                surface.DrawBitmap(bitmap, shiftX, shiftY, paint);
             }
             if (applyBlur)
                 shadow = blur.Apply(shadow, 2.0, 5);
