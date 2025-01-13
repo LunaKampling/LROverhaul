@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Game;
 using linerider.UI;
 using linerider.Utils;
 using OpenTK;
@@ -96,7 +97,7 @@ namespace linerider.Tools
         {
             using (TrackWriter trk = game.Track.CreateTrackWriter())
             {
-                Game.GameLine[] lines = LinesInRadius(trk, pos, radius);
+                GameLine[] lines = LinesInRadius(trk, pos, radius);
                 if (lines.Length != 0)
                 {
                     LineType linefilter = Swatch.Selected;
