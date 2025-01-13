@@ -9,8 +9,7 @@
 
 # Downloads
 You can download the latest version from [here](https://github.com/LunaKampling/LROverhaul/releases/tag/Latest) (note this is not the same as the main branch).
-* **Windows**: Windows older than Win10 19H1 (May 2019 update) may require [.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) to be installed manually.
-* **Mac/Linux**: You will need the [mono framework](http://www.mono-project.com/download/stable/) installed in order to run the executable file.
+* LRO requires [.NET Desktop Runtime 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0). You will be suggested to download and install it if it is not yet.
 
 # Features
 * Updated UI with scalable graphics
