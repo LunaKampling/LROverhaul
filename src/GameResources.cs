@@ -24,7 +24,6 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using SkiaSharp;
-using System.Drawing;
 
 #pragma warning disable IDE1006 // Naming Styles
 

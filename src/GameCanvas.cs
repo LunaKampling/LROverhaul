@@ -24,7 +24,6 @@ using linerider.UI;
 using linerider.UI.Components;
 using linerider.UI.Widgets;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;

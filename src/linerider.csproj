@@ -4,21 +4,19 @@
     <TargetFrameworks>net8.0;net8.0-windows</TargetFrameworks>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <OutputType>Exe</OutputType>
-	<OutputType Condition="'$(TargetFramework)' == 'net8.0-windows'">WinExe</OutputType>
+	  <OutputType Condition="'$(TargetFramework)' == 'net8.0-windows'">WinExe</OutputType>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <AllowedReferenceRelatedFileExtensions>
-      *.pdb;
-    </AllowedReferenceRelatedFileExtensions>
+    <AllowedReferenceRelatedFileExtensions>*.pdb;</AllowedReferenceRelatedFileExtensions>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT' AND '$(TargetFramework)' == 'net8.0-windows'">
-	<DefineConstants>WINDOWS</DefineConstants>
-	<TargetFramework>net8.0-windows</TargetFramework>
-	<UseWindowsForms>true</UseWindowsForms>
+  	<DefineConstants>WINDOWS</DefineConstants>
+  	<TargetFramework>net8.0-windows</TargetFramework>
+  	<UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
-	<TargetFramework>net8.0</TargetFramework>
+	  <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\build</OutputPath>

@@ -27,15 +27,12 @@ using linerider.Rendering;
 using linerider.Tools;
 using linerider.UI;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Input;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -77,8 +74,8 @@ namespace linerider
                     return GLFW.GetClipboardString(WindowPtr);
                 }
             }
-            set { 
-                unsafe { 
+            set {
+                unsafe {
                     GLFW.SetClipboardString(WindowPtr, value);
                 }
             }
@@ -95,9 +92,8 @@ namespace linerider
         private Gwen.Input.OpenTK _input;
         private bool _dragRider;
         private bool _invalidated;
-        private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
         private Rectangle _previouswindowpos;
-        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Default, Profile = ContextProfile.Compatability, APIVersion = new Version(3,2) }) {
+        public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Default, Profile = ContextProfile.Compatability, APIVersion = new Version(3, 2) }) {
             Size = new Vector2i(Constants.WindowSize.Width, Constants.WindowSize.Height);
             Location = new Vector2i(
                 (int)Math.Round((double)Constants.ScreenSize.Width / 2 - Size.X / 2),
