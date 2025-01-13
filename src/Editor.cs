@@ -712,7 +712,7 @@ namespace linerider
                                 _ = TrackIO.SaveToSOL(_track, backupName);
                                 break;
                             default:
-                                _ = TrackIO.SaveTrackToFile(_track, backupName);
+                                _ = TrackIO.SaveTrackToJsonFile(_track, backupName);
                                 break;
                         }
                     }

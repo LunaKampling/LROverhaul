@@ -81,7 +81,7 @@ namespace linerider
         /// Ticks the rider in the simulation
         /// </summary>
         public Rider TickBasic(Rider state, int maxiteration = 6) => state.Simulate(_track.Grid, _track.Bones, null, maxiteration);
-        public string SaveTrackTrk(string savename) => TRKWriter.SaveTrack(_track, savename);
+        public string SaveTrackTrk(string savename) => JSONWriter.SaveTrack(_track, savename);
         public Dictionary<string, bool> GetFeatures() => TrackIO.GetTrackFeatures(Track);
         public void Dispose()
         {
