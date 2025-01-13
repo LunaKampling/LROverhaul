@@ -98,18 +98,6 @@ namespace linerider
         private readonly Stopwatch _autosavewatch = Stopwatch.StartNew();
         private Rectangle _previouswindowpos;
         public MainWindow() : base(GameWindowSettings.Default, new NativeWindowSettings() { Flags = ContextFlags.Default, Profile = ContextProfile.Compatability, APIVersion = new Version(3,2) }) {
-            /*
-            : base(
-                1337, 1337, // These size values don't matter, they're overridden below
-                new GraphicsMode(new ColorFormat(24), 0, 0, 0, ColorFormat.Empty),
-                string.Empty,
-                GameWindowFlags.Default,
-                DisplayDevice.Default,
-                2,
-                0,
-                GraphicsContextFlags.Default)*/
-
-            // Manually setting window size/position as OpenTK 2 messes them up at high DPI
             Size = new Vector2i(Constants.WindowSize.Width, Constants.WindowSize.Height);
             Location = new Vector2i(
                 (int)Math.Round((double)Constants.ScreenSize.Width / 2 - Size.X / 2),
@@ -221,7 +209,7 @@ namespace linerider
                 }
                 else
                 {
-                    GL.ClearColor(Settings.Computed.BGColor.R, Settings.Computed.BGColor.G, Settings.Computed.BGColor.B, Settings.Computed.BGColor.A);
+                    GL.ClearColor(Settings.Computed.BGColor.R / 255.0f, Settings.Computed.BGColor.G / 255.0f, Settings.Computed.BGColor.B / 255.0f, Settings.Computed.BGColor.A / 255.0f);
                     Constants.TriggerLineColorChange = Settings.Computed.LineColor;
                 }
 
