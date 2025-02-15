@@ -163,8 +163,8 @@ namespace linerider.UI
             PropertyTable table = tree.Add("Acceleration", 120);
             multiplier = new NumberProperty(table)
             {
-                Min = -255,
-                Max = 255,
+                Min = -9999,
+                Max = 9999,
                 NumberValue = inv ? -currentMultiplier : currentMultiplier,
             };
             multiplier.ValueChanged += (o, e) =>

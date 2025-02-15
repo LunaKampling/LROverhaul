@@ -284,7 +284,7 @@ namespace linerider.UI
             CircleMultiplier = new Spinner(null)
             {
                 Min = 0,
-                Max = 255,
+                Max = 9999,
                 Value = gen_Circle.multiplier,
                 IsDisabled = gen_Circle.lineType != LineType.Acceleration
             };
@@ -491,7 +491,7 @@ namespace linerider.UI
             LineMultiplier = new Spinner(null)
             {
                 Min = 0,
-                Max = 255,
+                Max = 9999,
                 Value = gen_Line.multiplier,
                 IsDisabled = gen_Line.lineType != LineType.Acceleration
             };
@@ -735,7 +735,7 @@ namespace linerider.UI
             KramualMultiplier = new Spinner(null) //red line multiplier
             {
                 Min = 0,
-                Max = 255,
+                Max = 9999,
                 Value = gen_Kramual.multiplier,
                 IsDisabled = gen_Kramual.lineType != LineType.Acceleration
             };
