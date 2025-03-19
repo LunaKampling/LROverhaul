@@ -112,6 +112,10 @@ namespace linerider.UI
 
             _ = table.Add("Quality", qualitycb);
 
+            CheckProperty startOnCurrentFrameCheck = AddPropertyCheckbox(
+                table,
+                "Start on Current Frame",
+                false);
             CheckProperty smoothcheck = AddPropertyCheckbox(
                 table,
                 "Smooth Playback",
@@ -239,7 +243,7 @@ namespace linerider.UI
                     }
 
                     Settings.ForceSave();
-                    Record();
+                    Record(startOnCurrentFrameCheck.IsChecked ? (uint)_game.Track.Offset : 0);
                 };
         }
         private bool CheckRecord()
@@ -256,9 +260,10 @@ namespace linerider.UI
             }
             return true;
         }
-        private void Record() => IO.TrackRecorder.RecordTrack(
+        private void Record(uint frame = 0) => IO.TrackRecorder.RecordTrack(
                 _game,
                 Settings.RecordSmooth,
-                Settings.RecordMusic && !Settings.MuteAudio);
+                Settings.RecordMusic && !Settings.MuteAudio,
+                frame);
     }
 }
