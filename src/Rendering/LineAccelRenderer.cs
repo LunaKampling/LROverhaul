@@ -6,6 +6,7 @@ using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 namespace linerider.Rendering
 {
     public class LineAccelRenderer : IDisposable
@@ -47,9 +48,7 @@ namespace linerider.Rendering
             _ = System.Threading.Tasks.Parallel.For(0, lines.Count,
             (idx) =>
             {
-                StandardLine line = lines[idx];
-                var visible = !line.layer.GetVisibility();
-                if (visible)
+                if (lines[idx].layer.GetVisibility())
                 {
                     GenericVertex[] acc = GetAccelDecor(lines[idx]);
                     redshapes[idx] = acc;
@@ -62,6 +61,8 @@ namespace linerider.Rendering
             int shapepos = 0;
             for (int idx = 0; idx < lines.Count; idx++)
             {
+                if (!lines[idx].layer.GetVisibility()) continue;
+
                 GenericVertex[] acc = redshapes[idx];
                 accelentry entry = new accelentry()
                 {
