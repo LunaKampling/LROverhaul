@@ -212,7 +212,7 @@ namespace linerider
         // Computed settings
         public static class Computed
         {
-            public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaximumZoom;
+            public static float MaxZoom => SuperZoom ? Constants.MaximumSuperZoom : Constants.MaximumZoom;
             public static double UIScale => Settings.UIScale > 0 ? Settings.UIScale : (float)Constants.ScreenScale;
             public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;

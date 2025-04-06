@@ -23,7 +23,7 @@ namespace linerider.UI
             Spinner positionFrameSpinner = new Spinner(null)
             {
                 Min = 0,
-                Max = Constants.MaxFrames,
+                Max = Constants.MaximumFrames,
                 Value = _editor.Offset,
                 Width = _controlWidth,
             };
@@ -39,8 +39,8 @@ namespace linerider.UI
 
             Spinner totalFramesSpinner = new Spinner(null)
             {
-                Min = Constants.MinFrames,
-                Max = Constants.MaxFrames,
+                Min = Constants.MinimumFrames,
+                Max = Constants.MaximumFrames,
                 Value = _canvas.TrackDuration,
                 Width = _controlWidth,
             };
