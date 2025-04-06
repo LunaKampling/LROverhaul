@@ -880,7 +880,8 @@ namespace linerider.UI
                 string ext = Path.GetExtension(scarfPath).ToLower();
                 string scarfFilename = Path.GetFileName(scarfPath);
                 string scarfName = ext == ".txt" || ext == ".png" ? Path.GetFileNameWithoutExtension(scarfPath) : Path.GetFileName(scarfPath);
-                _ = scarfCombobox.AddItem(scarfName, scarfFilename, scarfFilename);
+                string scarfNameSlice = scarfName.Length > 18 ? scarfName.Substring(0, 15) + "..." : scarfName;
+                _ = scarfCombobox.AddItem(scarfNameSlice, scarfFilename, scarfFilename);
             }
 
             scarfCombobox.ItemSelected += (o, e) =>
