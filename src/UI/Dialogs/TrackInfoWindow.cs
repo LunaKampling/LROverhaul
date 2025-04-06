@@ -166,9 +166,9 @@ namespace linerider.UI
             PropertyTable table = _tree.Add("Settings", 150);
             NumberProperty startzoom = new NumberProperty(null)
             {
-                Min = 1,
+                Min = Constants.MinimumZoom,
                 NumberValue = _editor.StartZoom,
-                Max = Constants.MaxZoom,
+                Max = Constants.MaximumZoom,
             };
             startzoom.ValueChanged += (o, e) =>
             {

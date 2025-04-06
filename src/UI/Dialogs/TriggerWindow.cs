@@ -149,7 +149,7 @@ namespace linerider.UI
             _zoomtarget = new Spinner(null)
             {
                 Min = Constants.MinimumZoom,
-                Max = Constants.MaxZoom,
+                Max = Constants.MaximumZoom,
                 Value = _editor.Zoom,
             };
             _zoomtarget.ValueChanged += (o, e) =>
