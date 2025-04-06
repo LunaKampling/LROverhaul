@@ -94,7 +94,7 @@ namespace linerider.UI
         {
             MessageBox mbox = MessageBox.Show(
                 _canvas,
-                "The line has been modified. Do you want to save your changes?",
+                "These triggers have been modified. Do you want to save your changes?",
                 "Save Changes?",
                 MessageBox.ButtonType.YesNoCancel);
             mbox.RenameButtonsYN("Save", "Discard", "Cancel");
