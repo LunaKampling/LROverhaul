@@ -145,7 +145,6 @@ namespace linerider.UI.Widgets
             AddBinding(menuTable, "Quicksave", Hotkey.Quicksave);
             AddBinding(menuTable, "Save As Menu", Hotkey.SaveAsWindow);
             AddBinding(menuTable, "Open Preferences", Hotkey.PreferencesWindow);
-            AddBinding(menuTable, "Open Game Menu", Hotkey.GameMenuWindow);
             AddBinding(menuTable, "Open Track Properties", Hotkey.TrackPropertiesWindow);
             AddBinding(menuTable, "Load Track", Hotkey.LoadWindow);
             AddBinding(menuTable, "Open Trigger Menu", Hotkey.TriggerMenuWindow);

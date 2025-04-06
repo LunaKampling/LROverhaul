@@ -25,7 +25,14 @@ namespace linerider.UI.Widgets
             _game = game;
 
             MakeButtons();
-            MakeMenu();
+
+            _menu = new Menu(_canvas)
+            {
+                AutoSizeToContents = false,
+                IsHidden = true,
+            };
+
+            PopulateMenu();
         }
 
         private void MakeButtons()
@@ -111,14 +118,8 @@ namespace linerider.UI.Widgets
                 },
             };
         }
-        private void MakeMenu()
+        private void PopulateMenu()
         {
-            _menu = new Menu(_canvas)
-            {
-                AutoSizeToContents = false,
-                IsHidden = true,
-            };
-
             _ = AddMenuItem("Save As...", Hotkey.SaveAsWindow, () => _canvas.ShowSaveDialog());
             _ = AddMenuItem("Load...", Hotkey.LoadWindow, () => _canvas.ShowLoadDialog());
             _ = AddMenuItem("New", () => NewTrack());

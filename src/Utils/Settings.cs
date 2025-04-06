@@ -456,7 +456,6 @@ namespace linerider
 
             SetupDefaultKeybind(Hotkey.PreferencesWindow,
                 new Keybinding(Key.P, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.GameMenuWindow, new Keybinding(Key.Escape));
             SetupDefaultKeybind(Hotkey.TrackPropertiesWindow, new Keybinding(Key.T, KeyModifiers.Control));
 
             SetupDefaultKeybind(Hotkey.PreferenceAllCheckboxSettings, new Keybinding(Key.O, KeyModifiers.Shift | KeyModifiers.Control));
