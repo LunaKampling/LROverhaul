@@ -373,7 +373,6 @@ namespace linerider
             }
         }
         public void ShowScreenCaptureWindow() => ShowDialog(new ScreenshotWindow(this, game.Track, game));
-        public void ShowGameMenuWindow() => ShowDialog(new GameMenuWindow(this, game.Track));
         public void ShowffmpegMissing()
         {
             MessageBox mbox = MessageBox.Show(

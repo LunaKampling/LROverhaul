@@ -59,13 +59,13 @@ namespace linerider.Utils
         public const int PhysicsRate = 40;
         public const int FrameRate = 60;
         public static bool ScaleCamera = true;
-        public const double MinimumZoom = 0.1;
-        public const float MaxZoom = 24;
-        public const float MaxSuperZoom = 200;
-        public const int MinFrames = PhysicsRate;
-        public const int MaxFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
+        public const float MinimumZoom = 0.01f;
+        public const float MaximumZoom = 24;
+        public const float MaximumSuperZoom = 200;
+        public const int MinimumFrames = PhysicsRate;
+        public const int MaximumFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
         public const float KnobSize = 0.8f;
-        public const float MaxLimitedKnobSize = MaxZoom;
+        public const float MaxLimitedKnobSize = MaximumZoom;
         public static Size ScreenSize {
             get {
                 var monitor = Monitors.GetPrimaryMonitor();

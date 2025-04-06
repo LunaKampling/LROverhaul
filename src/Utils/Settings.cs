@@ -212,7 +212,7 @@ namespace linerider
         // Computed settings
         public static class Computed
         {
-            public static float MaxZoom => SuperZoom ? Constants.MaxSuperZoom : Constants.MaxZoom;
+            public static float MaxZoom => SuperZoom ? Constants.MaximumSuperZoom : Constants.MaximumZoom;
             public static double UIScale => Settings.UIScale > 0 ? Settings.UIScale : (float)Constants.ScreenScale;
             public static Color BGColor => NightMode ? Colors.EditorNightBg : Colors.EditorBg;
             public static Color LineColor => NightMode ? Colors.EditorNightLine : Colors.EditorLine;
@@ -456,7 +456,6 @@ namespace linerider
 
             SetupDefaultKeybind(Hotkey.PreferencesWindow,
                 new Keybinding(Key.P, KeyModifiers.Control));
-            SetupDefaultKeybind(Hotkey.GameMenuWindow, new Keybinding(Key.Escape));
             SetupDefaultKeybind(Hotkey.TrackPropertiesWindow, new Keybinding(Key.T, KeyModifiers.Control));
 
             SetupDefaultKeybind(Hotkey.PreferenceAllCheckboxSettings, new Keybinding(Key.O, KeyModifiers.Shift | KeyModifiers.Control));

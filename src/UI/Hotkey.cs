@@ -78,7 +78,6 @@ namespace linerider.UI
         ToggleCameraLock,
 
         PreferencesWindow,
-        GameMenuWindow,
         TrackPropertiesWindow,
         LoadWindow,
         Quicksave,

@@ -50,7 +50,7 @@ namespace linerider.IO
                 ret.StartZoom = (float)MathHelper.Clamp(
                     trackobj.startZoom,
                     Utils.Constants.MinimumZoom,
-                    Utils.Constants.MaxZoom);
+                    Utils.Constants.MaximumZoom);
             }
 
             ret.YGravity = trackobj.yGravity;
@@ -104,7 +104,7 @@ namespace linerider.IO
                                     ZoomTarget = (float)MathHelper.Clamp(
                                         trigger.target,
                                         Utils.Constants.MinimumZoom,
-                                        Utils.Constants.MaxZoom),
+                                        Utils.Constants.MaximumZoom),
                                     ZoomFrames = trigger.frames,
                                     LineID = trigger.ID
                                 });
