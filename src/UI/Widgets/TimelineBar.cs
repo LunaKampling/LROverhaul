@@ -116,6 +116,7 @@ namespace linerider.UI.Widgets
                 Alignment = Pos.Center,
                 TextRequest = (o, e) =>
                 {
+                    return _editor.momentOffset.displayString();
                     int iteration = _editor.IterationsOffset;
                     if (iteration == 6)
                         return "";
@@ -179,7 +180,7 @@ namespace linerider.UI.Widgets
             _playheadLimiter.IsHidden = Settings.LockTrackDuration;
 
             if (!_playheadFlag.IsHeld && _editor.HasFlag)
-                _playheadFlag.Value = _editor.Flag.FrameID;
+                _playheadFlag.Value = _editor.Flag.Moment.Frame;
 
             _totalTime.Font = _playheadLimiter.IsHeld ? _canvas.Fonts.DefaultBold : _canvas.Fonts.Default;
             _flagTime.Font = _playheadFlag.IsHeld ? _canvas.Fonts.DefaultBold : _canvas.Fonts.Default;

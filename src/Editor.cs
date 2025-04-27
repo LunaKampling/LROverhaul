@@ -19,6 +19,7 @@
 using linerider.Audio;
 using linerider.Drawing;
 using linerider.Game;
+using linerider.Game.Physics;
 using linerider.IO;
 using linerider.Rendering;
 using linerider.Tools;
@@ -277,7 +278,7 @@ namespace linerider
                 if (_renderriderinvalid)
                 {
                     _renderriderinvalid = false;
-                    _renderrider = Timeline.ExtractFrame(Offset, IterationsOffset);
+                    _renderrider = Timeline.ExtractFrame(momentOffset);
                 }
                 return _renderrider;
             }
@@ -304,19 +305,23 @@ namespace linerider
         /// </summary>
         public int IterationsOffset
         {
-            get => _iteration;
+            get => momentOffset.Iteration;
             set
             {
                 if (IterationsOffset > 6 || IterationsOffset < 0)
                     throw new Exception("iteration num out of range");
-                _iteration = value;
+                momentOffset.Iteration = value;
+                momentOffset.Subiteration = Moment.maxSubiteration(value);
             }
         }
         public string CurrentNotifyMessage { get; private set; } = "";
+
         /// <summary>
         /// The current number of frames since start (incl flag)
         /// </summary>
-        public int Offset { get; private set; }
+        public int Offset { get => momentOffset.Frame; private set { momentOffset.Frame = value; } } 
+
+        public Moment momentOffset = new Moment(0);
 
         public Timeline Timeline { get; private set; }
         public bool MoveStartWarned = false;
@@ -387,7 +392,8 @@ namespace linerider
                 drawOptions.Rider = Rider.Lerp(prev, current, blend);
                 renderframe = Offset - 1;
             }
-            drawOptions.Iteration = IterationsOffset;
+            //drawOptions.Iteration = IterationsOffset;
+            drawOptions.Moment = momentOffset;
             // TODO: there's a race condition here where if the track finished 
             // loading between this if statement and the render call above
             // and theres a line change queued, the line may not exist in
@@ -502,13 +508,13 @@ namespace linerider
         public void SetFlagFrame(int offset, bool canremove = true)
         {
             offset = Math.Max(0, offset);
-            bool removeFlag = canremove && HasFlag && _flag.FrameID == offset;
+            bool removeFlag = canremove && HasFlag && _flag.Moment.Frame == offset;
 
             if (removeFlag)
                 _hasflag = false;
             else
             {
-                _flag = new RiderFrame { State = Timeline.GetFrame(offset), FrameID = offset };
+                _flag = new RiderFrame { State = Timeline.GetFrame(offset), Moment = new Moment(offset) };
                 _hasflag = true;
             }
 
@@ -556,7 +562,7 @@ namespace linerider
         {
             CancelTriggers();
             UseUserZoom = false;
-            int frame = HasFlag ? _flag.FrameID : 0;
+            int frame = HasFlag ? _flag.Moment.Frame : 0;
             Start(frame);
         }
         public void StartIgnoreFlag()
@@ -613,7 +619,7 @@ namespace linerider
             }
 
             CancelTriggers();
-            int frame = HasFlag ? _flag.FrameID : 0;
+            int frame = HasFlag ? _flag.Moment.Frame : 0;
             SetFrame(frame);
             Camera.BeginFrame(1, Zoom);
 
@@ -650,6 +656,15 @@ namespace linerider
             IterationsOffset = 6;
             InvalidateRenderRider();
             game.Invalidate();
+        }
+
+        public void updateRenderRiderAndCamera(bool updateSlider = true)
+        {
+            if (momentOffset.Frame + 1 > FrameCount) FrameCount = momentOffset.Frame + 1;
+            _ = Timeline.GetFrame(momentOffset);
+            InvalidateRenderRider();
+            game.Invalidate();
+            UpdateCamera();
         }
 
         public void Update(int times)

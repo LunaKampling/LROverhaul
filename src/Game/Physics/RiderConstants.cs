@@ -61,6 +61,39 @@ namespace linerider.Game
         public const int BodyHandRight = 7;
         public const int BodyFootLeft = 8;
         public const int BodyFootRight = 9;
+
+        public static string contactPointName(int contactPoint)
+        {
+            switch (contactPoint)
+            {
+                case SledTL:
+                    return "SledTL";
+                case SledBL:
+                    return "SledBL";
+                case SledBR:
+                    return "SledBR";
+                case SledTR:
+                    return "SledTR";
+                case BodyButt:
+                    return "BodyButt";
+                case BodyShoulder:
+                    return "BodyShoulder";
+                case BodyHandLeft:
+                    return "BodyHandLeft";
+                case BodyHandRight:
+                    return "BodyHandRight";
+                case BodyFootLeft:
+                    return "BodyFootLeft";
+                case BodyFootRight:
+                    return "BodyFootRight";
+            }
+
+            return "?";
+        }
+
+        public const int Iterations = 6;
+        public const int Subiterations = 22;
+
         public static readonly Bone[] Bones;
         public static Bone[] ScarfBones;
         static RiderConstants()

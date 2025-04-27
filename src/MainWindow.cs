@@ -995,9 +995,8 @@ namespace linerider
                 StopHandTool();
                 if (!Track.Paused)
                     Track.TogglePause();
-                Track.NextFrame();
-                Invalidate();
-                Track.UpdateCamera();
+                Track.momentOffset.IncrementFrame();
+                Track.updateRenderRiderAndCamera();
                 if (CurrentTools.CurrentTool.IsMouseButtonDown)
                 {
                     CurrentTools.CurrentTool.OnMouseMoved(InputUtils.GetMouse());
@@ -1010,9 +1009,8 @@ namespace linerider
                 StopHandTool();
                 if (!Track.Paused)
                     Track.TogglePause();
-                Track.PreviousFrame();
-                Invalidate();
-                Track.UpdateCamera(true);
+                Track.momentOffset.DecrementFrame();
+                Track.updateRenderRiderAndCamera();
                 if (CurrentTools.CurrentTool.IsMouseButtonDown)
                 {
                     CurrentTools.CurrentTool.OnMouseMoved(InputUtils.GetMouse());
@@ -1041,18 +1039,9 @@ namespace linerider
 
                 if (!Track.Paused)
                     Track.TogglePause();
-
-                if (Track.IterationsOffset != 6)
-                {
-                    Track.IterationsOffset++;
-                }
-                else
-                {
-                    Track.NextFrame();
-                    Track.IterationsOffset = 0;
-                    Track.UpdateCamera();
-                }
-                Track.InvalidateRenderRider();
+                
+                Track.momentOffset.IncrementIteration();
+                Track.updateRenderRiderAndCamera();
             },
             null,
             repeat: true);
@@ -1062,21 +1051,26 @@ namespace linerider
                     return;
 
                 StopTools();
-                if (Track.IterationsOffset > 0)
-                {
-                    Track.IterationsOffset--;
-                }
-                else
-                {
-                    Track.PreviousFrame();
-                    Track.IterationsOffset = 6;
-                    Invalidate();
-                    Track.UpdateCamera();
-                }
-                Track.InvalidateRenderRider();
+                
+                Track.momentOffset.DecrementIteration();
+                Track.updateRenderRiderAndCamera();
             },
             null,
             repeat: true);
+            InputUtils.RegisterHotkey(Hotkey.PlaybackSubiterationNext, () => !Track.Playing, () =>
+            {
+                StopTools();
+                
+                Track.momentOffset.IncrementSubiteration();
+                Track.updateRenderRiderAndCamera();
+            }, repeat: true);
+            InputUtils.RegisterHotkey(Hotkey.PlaybackSubiterationPrev, () => !Track.Playing, () =>
+            {
+                StopTools();
+                
+                Track.momentOffset.DecrementSubiteration();
+                Track.updateRenderRiderAndCamera();
+            }, repeat: true);
             InputUtils.RegisterHotkey(Hotkey.PlaybackResetCamera, () => true, () => Track.ResetCamera());
             InputUtils.RegisterHotkey(Hotkey.PlaybackStart, () => true, () =>
             {

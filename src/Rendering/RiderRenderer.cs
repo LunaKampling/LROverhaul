@@ -44,7 +44,7 @@ namespace linerider.Rendering
                     GameDrawingMatrix.Scale / 2.5f);
             }
         }
-        public void DrawContacts(Rider rider, List<int> diagnosis, float opacity)
+        public void DrawContacts(Rider rider, List<int> diagnosis, float opacity, int subiteration = RiderConstants.Subiterations)
         {
             if (diagnosis == null)
                 diagnosis = new List<int>();
@@ -55,27 +55,49 @@ namespace linerider.Rendering
                 ? Constants.ConstraintRepelColor
                 : Constants.ConstraintColor;
 
+                float sizemult = 1;
+
+                if (subiteration != RiderConstants.Subiterations)
+                {
+                    if (i > subiteration)
+                    {
+                        constraintcolor = Color.Gray;
+                        sizemult = 0.5f;
+                    }
+
+                    if (i < subiteration)
+                    {
+                        constraintcolor = Color.Lime;
+                        sizemult = 0.5f;
+                    }
+
+                    if (i == subiteration)
+                    {
+                        constraintcolor = Color.Cyan;
+                    }
+                }
+
                 constraintcolor = ChangeOpacity(constraintcolor, opacity);
 
-                if (bones[i].Breakable)
+                if (bones[i].Breakable && subiteration == RiderConstants.Subiterations)
                 {
                     continue;
                 }
-                else if (bones[i].OnlyRepel)
+                else if (bones[i].OnlyRepel && subiteration == RiderConstants.Subiterations)
                 {
                     _lines.AddLine(
                         GameDrawingMatrix.ScreenCoordD(rider.Body[bones[i].joint1].Location),
                         GameDrawingMatrix.ScreenCoordD(rider.Body[bones[i].joint2].Location),
                         constraintcolor,
-                        GameDrawingMatrix.Scale / 4);
+                        GameDrawingMatrix.Scale / 4 * sizemult);
                 }
-                else if (i <= 3)
+                else if (i <= 3 || subiteration != RiderConstants.Subiterations)
                 {
                     _lines.AddLine(
                         GameDrawingMatrix.ScreenCoordD(rider.Body[bones[i].joint1].Location),
                         GameDrawingMatrix.ScreenCoordD(rider.Body[bones[i].joint2].Location),
                         constraintcolor,
-                        GameDrawingMatrix.Scale / 4);
+                        GameDrawingMatrix.Scale / 4 * sizemult);
                 }
             }
             if (!rider.Crashed && diagnosis.Count != 0)

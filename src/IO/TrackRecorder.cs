@@ -172,7 +172,7 @@ namespace linerider.IO
                 Constants.TriggerLineColorChange = Color.FromArgb(255, game.Track.StartingLineColorR, game.Track.StartingLineColorG, game.Track.StartingLineColorB);
 
                 Game.Rider state = game.Track.GetStart();
-                int frame = Settings.LockTrackDuration ? game.Canvas.TrackDuration : flag.FrameID;
+                int frame = Settings.LockTrackDuration ? game.Canvas.TrackDuration : flag.Moment.Frame;
                 game.Canvas.SetCanvasSize(game.RenderSize.Width, game.RenderSize.Height);
                 game.Canvas.Layout();
 

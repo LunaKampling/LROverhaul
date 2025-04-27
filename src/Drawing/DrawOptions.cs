@@ -1,4 +1,5 @@
 using linerider.Game;
+using linerider.Game.Physics;
 using System.Collections.Generic;
 
 namespace linerider.Drawing
@@ -18,7 +19,7 @@ namespace linerider.Drawing
         public List<int> RiderDiagnosis = null;
         public bool ShowContactLines = false;
         public bool ShowMomentumVectors = false;
-        public int Iteration = 6;
+        public Moment Moment;
         public float Zoom;
         public int OverlayFrame = -1;
         public bool IsRunning => !Paused;

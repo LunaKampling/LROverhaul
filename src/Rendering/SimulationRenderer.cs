@@ -80,8 +80,8 @@ namespace linerider.Rendering
                 _riderrenderer.DrawMomentum(options.Rider, 1);
                 if (
                     !options.IsRunning &&
-                    options.Iteration != 6 &&
-                    options.Iteration != 0 &&
+                    options.Moment.Iteration != 6 &&
+                    options.Moment.Iteration != 0 &&
                     !Settings.OnionSkinning)
                 {
                     Rider frame = timeline.GetFrame(game.Track.Offset + 1, 0);
@@ -94,7 +94,7 @@ namespace linerider.Rendering
             }
             if (options.ShowContactLines)
             {
-                _riderrenderer.DrawContacts(options.Rider, options.RiderDiagnosis, 1);
+                _riderrenderer.DrawContacts(options.Rider, options.RiderDiagnosis, 1, options.Moment.Iteration == 0 ? RiderConstants.Subiterations : options.Moment.Subiteration);
             }
             _riderrenderer.Scale = options.Zoom;
             _riderrenderer.Draw();
