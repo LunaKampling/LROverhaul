@@ -452,6 +452,8 @@ namespace linerider
             SetupDefaultKeybind(Hotkey.PlaybackBackward, new Keybinding(Key.Left, KeyModifiers.Shift));
             SetupDefaultKeybind(Hotkey.PlaybackIterationNext, new Keybinding(Key.Right, KeyModifiers.Alt));
             SetupDefaultKeybind(Hotkey.PlaybackIterationPrev, new Keybinding(Key.Left, KeyModifiers.Alt));
+            SetupDefaultKeybind(Hotkey.PlaybackSubiterationNext, new Keybinding(Key.Right, KeyModifiers.Control));
+            SetupDefaultKeybind(Hotkey.PlaybackSubiterationPrev, new Keybinding(Key.Left, KeyModifiers.Control));
             SetupDefaultKeybind(Hotkey.PlaybackTogglePause, new Keybinding(Key.Space));
 
             SetupDefaultKeybind(Hotkey.PreferencesWindow,

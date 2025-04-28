@@ -169,24 +169,8 @@ namespace linerider.Game
         /// </summary>
         public List<int> DiagnoseFrame(Moment moment)
         {
-            if (moment.Subiteration == Moment.maxSubiteration(moment.Iteration)) return DiagnoseFrame(moment.Frame, moment.Iteration);
-            bool equal = false;
-            Rider? rider = null;
-            if (moment.Iteration == RiderConstants.Iterations)
-            {
-                equal = true;
-            }
-            else
-            {
-                Rider next = GetFrame(moment.Frame + 1);
-                rider = GetFrame(moment.Frame);
-            }
-            return equal
-                ? new List<int>()
-                : ((Rider)rider).Diagnose(
-                    _track.Grid,
-                    _track.Bones,
-                    moment.NextIteration());
+            var prev = moment.Subiteration == Moment.maxSubiteration(moment.Iteration) ? moment : moment.PreviousIteration();
+            return DiagnoseFrame(prev.Frame, prev.Iteration);
         }
 
         public Rider GetFrame(Moment moment)
