@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Game.Physics;
 using linerider.Utils;
 using OpenTK;
 using OpenTK.Mathematics;
@@ -165,11 +166,15 @@ namespace linerider.Game
             ang.Degrees += Math.Cos(radian) * 90;
             return ang.MovePoint(Vector2d.Zero, 2);
         }
+
         private static unsafe void ProcessLines(
             ISimulationGrid grid,
             SimulationPoint[] body,
             ref RectLRTB physinfo,
-            LinkedList<int> collisions = null)
+            LinkedList<int> collisions = null,
+            bool frictionless = false,
+            bool accelless = false
+            )
         {
             int bodylen = body.Length;
             for (int i = 0; i < bodylen; i++)
@@ -194,7 +199,7 @@ namespace linerider.Game
                             continue;
                         foreach (StandardLine line in cell)
                         {
-                            if (line.Interact(ref body[i]))
+                            if (line.Interact(ref body[i], accelless, frictionless))
                             {
                                 _ = (collisions?.AddLast(line.ID));
                             }
@@ -325,7 +330,7 @@ namespace linerider.Game
             }
         }
 
-        public static unsafe void ProcessBones(Bone[] bones, SimulationPoint[] body, ref bool dead, ref int rState, List<int> breaks = null)
+        public static unsafe void ProcessBones(Bone[] bones, SimulationPoint[] body, ref bool dead, ref int rState, List<int> breaks = null, int subiteration = RiderConstants.Subiterations)
         {
             int bonelen = bones.Length;
 
@@ -334,6 +339,11 @@ namespace linerider.Game
 
             for (int i = 0; i < bonelen; i++)
             {
+                if (i > subiteration)
+                {
+                    return;
+                }
+
                 Bone bone = bones[i];
                 int j1 = bone.joint1;
                 int j2 = bone.joint2;
@@ -379,31 +389,60 @@ namespace linerider.Game
             DoubleRect ret = new DoubleRect(left, top, right - left, bottom - top);
             return ret;
         }
-        public Rider Simulate(Track track, int maxiteration = 6, LinkedList<int> collisions = null) => Simulate(track.Grid, track.Bones, collisions, maxiteration);
+        public Rider Simulate(Track track, int maxiteration = 6, LinkedList<int> collisions = null, int maxsubiteration = RiderConstants.Subiterations) => Simulate(track.Grid, track.Bones, collisions, maxiteration);
+
         public Rider Simulate(
             ISimulationGrid grid,
             Bone[] bones,
             LinkedList<int> collisions,
-            int maxiteration = 6,
+            int maxiteration = RiderConstants.Iterations,
             bool stepscarf = true,
-            int frameid = 0)
+            int maxsubiteration = RiderConstants.Subiterations,
+            int frameid = 0
+        )
         {
-            SimulationPoint[] body = Body.Step();
+            var moment = new Moment(frameid, maxiteration, maxsubiteration);
+            return Simulate(grid, bones, collisions, moment, stepscarf, frameid);
+        }
+
+        public Rider Simulate(
+            ISimulationGrid grid,
+            Bone[] bones,
+            LinkedList<int> collisions,
+            Moment moment,
+            bool stepscarf = true,
+            int frameid = 0,
+            int momentumsubit = 3)
+        {
+            int maxiteration = moment.Iteration;
+            int maxsubiteration = moment.Subiteration;
+            bool gravity = !(maxiteration == 0 && maxsubiteration < 3);
+            SimulationPoint[] body = Body.Step(gravity: gravity);
             _ = Body.Length;
             bool dead = Crashed;
             bool sledbroken = SledBroken;
             int rState = remountState;
             int rTimer = remountTimer;
             RectLRTB phys = new RectLRTB(ref body[0]);
+            bool skipRestOfFrame = false;
             using (grid.Sync.AcquireRead())
             {
                 for (int i = 0; i < maxiteration; i++)
                 {
-                    ProcessBones(bones, body, ref dead, ref rState);
-                    ProcessLines(grid, body, ref phys, collisions);
+                    if (i < maxiteration - 1) ProcessBones(bones, body, ref dead, ref rState);
+                    else
+                    {
+                        ProcessBones(bones, body, ref dead, ref rTimer, subiteration: maxsubiteration);
+                        if (maxsubiteration < RiderConstants.Subiterations)
+                        {
+                            skipRestOfFrame = true;
+                            break;
+                        }
+                    }
+                    ProcessLines(grid, body, ref phys, collisions, frictionless: momentumsubit < 2, accelless: momentumsubit < 1);
                 }
             }
-            if (maxiteration == 6)
+            if (maxiteration == 6 && !skipRestOfFrame)
             {
                 Vector2d nose = body[RiderConstants.SledTR].Location - body[RiderConstants.SledTL].Location;
                 Vector2d tail = body[RiderConstants.SledBL].Location - body[RiderConstants.SledTL].Location;
@@ -416,7 +455,7 @@ namespace linerider.Game
                 }
             }
 
-            if (UseRemount)
+            if (UseRemount && !skipRestOfFrame)
             {
                 ProcessRemount(bones, body, ref dead, ref sledbroken, ref rState, ref rTimer);
             }
@@ -477,27 +516,50 @@ namespace linerider.Game
             }
             return new Rider(body, scarf, phys, dead, sledbroken, UseRemount, rState, rTimer);
         }
+
         public List<int> Diagnose(
             ISimulationGrid grid,
             Bone[] bones,
             int maxiteration = 6)
         {
+            return Diagnose(grid, bones, new Moment(0, maxiteration));
+        }
+
+        public List<int> Diagnose(
+            ISimulationGrid grid,
+            Bone[] bones,
+            Moment moment)
+        {
+            int maxiteration = moment.Iteration;
+            int maxsubiteration = moment.Subiteration;
+            bool gravity = !(maxiteration == 0 && maxsubiteration < 3);
             List<int> ret = new List<int>();
             if (Crashed)
                 return ret;
             Debug.Assert(maxiteration != 0, "Momentum tick can't die but attempted diagnose");
 
-            SimulationPoint[] body = Body.Step();
+            SimulationPoint[] body = Body.Step(gravity: gravity);
             _ = Body.Length;
             bool dead = Crashed;
             int rState = remountState;
             RectLRTB phys = new RectLRTB(ref body[0]);
+            bool skipRestOfFrame = false;
             List<int> breaks = new List<int>();
             using (grid.Sync.AcquireRead())
             {
                 for (int i = 0; i < maxiteration; i++)
                 {
-                    ProcessBones(bones, body, ref dead, ref rState, breaks);
+                    if (i < maxiteration - 1) ProcessBones(bones, body, ref dead, ref rState, breaks);
+                    else
+                    {
+                        ProcessBones(bones, body, ref dead, ref rState, breaks, maxsubiteration);
+                        if (maxsubiteration < RiderConstants.Subiterations)
+                        {
+                            skipRestOfFrame = true;
+                            break;
+                        }
+                    }
+
                     if (dead)
                     {
                         return breaks;
@@ -505,7 +567,7 @@ namespace linerider.Game
                     ProcessLines(grid, body, ref phys);
                 }
             }
-            if (maxiteration == 6)
+            if (maxiteration == 6 && !skipRestOfFrame)
             {
                 Vector2d nose = body[RiderConstants.SledTR].Location - body[RiderConstants.SledTL].Location;
                 Vector2d tail = body[RiderConstants.SledBL].Location - body[RiderConstants.SledTL].Location;

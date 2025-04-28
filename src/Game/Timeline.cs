@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Game.Physics;
 using linerider.Utils;
 using OpenTK;
 using OpenTK.Graphics;
@@ -114,6 +115,23 @@ namespace linerider.Game
                 }
             }
         }
+
+        /// <summary>
+        /// Extracts the rider and death details of the specified frame.
+        /// </summary>
+        public RiderFrame ExtractFrame(Moment moment)
+        {
+            Rider rider;
+            List<int> diagnosis = null;
+            using (_track.Grid.Sync.AcquireRead())
+            {
+                diagnosis = DiagnoseFrame(moment);
+                rider = GetFrame(moment);
+            }
+
+            return new RiderFrame(moment, rider, diagnosis);
+        }
+
         /// <summary>
         /// Extracts the rider and death details of the specified frame.
         /// </summary>
@@ -126,7 +144,7 @@ namespace linerider.Game
                 diagnosis = DiagnoseFrame(frame, iteration);
                 rider = GetFrame(frame, iteration);
             }
-            return new RiderFrame(frame, rider, diagnosis, iteration);
+            return new RiderFrame(new Moment(frame, iteration), rider, diagnosis);
         }
         /// <summary>
         /// Gets an up to date diagnosis state for the frame, recomputing if
@@ -145,6 +163,49 @@ namespace linerider.Game
                     _track.Bones,
                     Math.Min(6, iteration + 1));
         }
+        /// <summary>
+        /// Gets an up to date diagnosis state for the frame, recomputing if
+        /// necessary.
+        /// </summary>
+        public List<int> DiagnoseFrame(Moment moment)
+        {
+            var prev = moment.Subiteration == Moment.maxSubiteration(moment.Iteration) ? moment : moment.PreviousIteration();
+            return DiagnoseFrame(prev.Frame, prev.Iteration);
+        }
+
+        public Rider GetFrame(Moment moment)
+        {
+            if ((moment.Iteration == 6 || moment.Frame <= 0) && moment.Subiteration == Moment.maxSubiteration(moment.Iteration))
+            {
+                return GetFrame(moment.Frame);
+            }
+
+            if (moment.Subiteration == Moment.maxSubiteration(moment.Iteration))
+            {
+                return GetFrame(moment.Frame, moment.Iteration);
+            }
+            
+            Rider past;
+            
+            if (moment.Iteration != 0)
+            {
+                past = GetFrame(moment.Frame - 1);
+                return past.Simulate(_track.Grid, _track.Bones,null, moment, frameid: moment.Frame);
+            }
+
+            if (moment.Frame <= 1)
+            {
+                past = GetFrame(0);
+                return past.Simulate(_track.Grid, _track.Bones, null, moment, frameid: 0);
+            }
+
+            var extra_past_frame = moment.Frame - 2;
+            var extra_past = GetFrame(extra_past_frame);
+
+            past = extra_past.Simulate(_track.Grid, _track.Bones,null, new Moment(extra_past_frame), frameid: extra_past_frame, momentumsubit: moment.Subiteration);
+            return past.Simulate(_track.Grid, _track.Bones, null, moment);
+        }
+
         /// <summary>
         /// Gets an up to date rider state for the frame, recomputing if
         /// necessary.

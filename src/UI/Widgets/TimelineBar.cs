@@ -114,19 +114,7 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Fill,
                 Alignment = Pos.Center,
-                TextRequest = (o, e) =>
-                {
-                    int iteration = _editor.IterationsOffset;
-                    if (iteration == 6)
-                        return "";
-
-                    string label = $"Physics Iteration: {iteration}";
-
-                    if (iteration == 0)
-                        label += " (momentum tick)";
-
-                    return label;
-                },
+                TextRequest = (o, e) => _editor.momentOffset.displayString()
             };
             _ = new TrackLabel(textPanel)
             {
@@ -179,7 +167,7 @@ namespace linerider.UI.Widgets
             _playheadLimiter.IsHidden = Settings.LockTrackDuration;
 
             if (!_playheadFlag.IsHeld && _editor.HasFlag)
-                _playheadFlag.Value = _editor.Flag.FrameID;
+                _playheadFlag.Value = _editor.Flag.Moment.Frame;
 
             _totalTime.Font = _playheadLimiter.IsHeld ? _canvas.Fonts.DefaultBold : _canvas.Fonts.Default;
             _flagTime.Font = _playheadFlag.IsHeld ? _canvas.Fonts.DefaultBold : _canvas.Fonts.Default;

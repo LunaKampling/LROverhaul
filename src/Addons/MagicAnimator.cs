@@ -18,14 +18,14 @@ namespace linerider.Addons
         {
             RiderFrame flag = window.Track.Flag;
             int currentFrame = window.Track.Offset;
-            if (flag == null || currentFrame <= flag.FrameID)
+            if (flag == null || currentFrame <= flag.Moment.Frame)
             {
                 // Behavior only defined if flag is set and current frame is ahead of it
                 return;
             }
 
             Rider flagFrameRider = flag.State;
-            Rider flagNextFrameRider = window.Track.Timeline.ExtractFrame(flag.FrameID + 1).State;
+            Rider flagNextFrameRider = window.Track.Timeline.ExtractFrame(flag.Moment.Frame + 1).State;
 
             // Where the Rider was at the flag frame, and the frame after that
             // This establishes the initial frame of reference
@@ -43,7 +43,7 @@ namespace linerider.Addons
             // Add the user-configurable speed offsets
             firstFrameDiff = Vector2d.Add(firstFrameDiff, new Vector2d(Settings.animationRelativeVelX, Settings.animationRelativeVelY));
 
-            int framesElapsed = currentFrame - flag.FrameID;
+            int framesElapsed = currentFrame - flag.Moment.Frame;
 
             // Apply the speed vector to the number of elapsed frames, and add it to the initial reference frame
             // to get an expected position for the current frame
@@ -160,7 +160,7 @@ namespace linerider.Addons
             }
             RiderFrame flag = window.Track.Flag;
             int currentFrame = window.Track.Offset;
-            int framesElapsed = currentFrame - flag.FrameID;
+            int framesElapsed = currentFrame - flag.Moment.Frame;
 
             window.Invalidate();
             window.Track.UndoManager.BeginAction();

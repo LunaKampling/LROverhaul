@@ -43,9 +43,7 @@ namespace linerider.Addons
         public static void CoordsUpdate()
         {
             MainWindow game = GameRenderer.Game;
-            frame = game.Track.Offset;
-            iteration = game.Track.IterationsOffset;
-            Rider rider = game.Track.Timeline.GetFrame(frame, iteration);
+            Rider rider = game.Track.Timeline.GetFrame(game.Track.momentOffset);
 
             for (int i = 0; i < ConPName.Length; i++)
             {

@@ -47,13 +47,13 @@ namespace linerider.Game
             }
             return true;
         }
-        public SimulationPoint[] Step(bool friction = false)
+        public SimulationPoint[] Step(bool friction = false, bool gravity = true)
         {
             int len = _points.Length;
             SimulationPoint[] ret = new SimulationPoint[len];
             for (int i = 0; i < len; i++)
             {
-                ret[i] = !friction ? _points[i].Step() : _points[i].StepFriction();
+                ret[i] = !friction ? _points[i].Step(gravity) : _points[i].StepFriction();
             }
             return ret;
         }

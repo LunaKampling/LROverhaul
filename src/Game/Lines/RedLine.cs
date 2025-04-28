@@ -57,15 +57,17 @@ namespace linerider.Game
             _acc = DiffNormal * (ConstAcc * _multiplier);
             _acc = inv ? _acc.PerpendicularRight : _acc.PerpendicularLeft;
         }
-        public override bool Interact(ref SimulationPoint p)
+
+        public override bool Interact(ref SimulationPoint p, bool frictionless = false, bool accelless = false)
         {
             if (base.Interact(ref p))
             {
-                p = p.Replace(p.Location, p.Previous + _acc);
+                p = p.Replace(p.Location, p.Previous + (!accelless ? _acc : Vector2d.Zero));
                 return true;
             }
             return false;
         }
+
         public override GameLine Clone()
         {
             LineTrigger trigger = null;

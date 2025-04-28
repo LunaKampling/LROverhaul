@@ -96,7 +96,8 @@ namespace linerider.Game
             DiffNormal = inv ? DiffNormal.PerpendicularRight : DiffNormal.PerpendicularLeft;
             ExtensionRatio = Math.Min(0.25, Zone / Distance);
         }
-        public virtual bool Interact(ref SimulationPoint p)
+
+        public virtual bool Interact(ref SimulationPoint p, bool frictionless = false, bool accelless = false)
         {
             if (Vector2d.Dot(p.Momentum, DiffNormal) > 0)
             {
@@ -109,7 +110,7 @@ namespace linerider.Game
                     {
                         Vector2d pos = p.Location - disty * DiffNormal;
                         _ = p.Previous;
-                        if (p.Friction != 0)
+                        if (!frictionless && p.Friction != 0)
                         {
                             Vector2d friction = DiffNormal.Yx * p.Friction * disty;
                             if (p.Previous.X >= pos.X)

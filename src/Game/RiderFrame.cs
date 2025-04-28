@@ -16,6 +16,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using linerider.Game.Physics;
 using System.Collections.Generic;
 
 namespace linerider.Game
@@ -25,19 +26,17 @@ namespace linerider.Game
     /// </summary>
     public class RiderFrame
     {
-        public int FrameID;
         public Rider State;
         public List<int> Diagnosis;
-        public int IterationID = 6;
+        public Moment Moment;
         public RiderFrame()
         {
         }
-        public RiderFrame(int frameid, Rider state, List<int> diagnosis, int iterationid)
+        public RiderFrame(Moment moment, Rider state, List<int> diagnosis)
         {
-            FrameID = frameid;
+            Moment = moment;
             State = state;
             Diagnosis = diagnosis;
-            IterationID = iterationid;
         }
     }
 }

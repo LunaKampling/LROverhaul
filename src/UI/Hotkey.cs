@@ -64,6 +64,8 @@ namespace linerider.UI
         PlaybackFramePrev,
         PlaybackIterationNext,
         PlaybackIterationPrev,
+        PlaybackSubiterationNext,
+        PlaybackSubiterationPrev,
         PlaybackTogglePause,
         PlaybackForward,
         PlaybackBackward,
