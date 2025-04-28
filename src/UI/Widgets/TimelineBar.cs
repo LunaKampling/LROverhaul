@@ -114,20 +114,7 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Fill,
                 Alignment = Pos.Center,
-                TextRequest = (o, e) =>
-                {
-                    return _editor.momentOffset.displayString();
-                    int iteration = _editor.IterationsOffset;
-                    if (iteration == 6)
-                        return "";
-
-                    string label = $"Physics Iteration: {iteration}";
-
-                    if (iteration == 0)
-                        label += " (momentum tick)";
-
-                    return label;
-                },
+                TextRequest = (o, e) => _editor.momentOffset.displayString()
             };
             _ = new TrackLabel(textPanel)
             {

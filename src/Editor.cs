@@ -392,7 +392,6 @@ namespace linerider
                 drawOptions.Rider = Rider.Lerp(prev, current, blend);
                 renderframe = Offset - 1;
             }
-            //drawOptions.Iteration = IterationsOffset;
             drawOptions.Moment = momentOffset;
             // TODO: there's a race condition here where if the track finished 
             // loading between this if statement and the render call above

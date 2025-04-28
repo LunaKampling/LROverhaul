@@ -26,10 +26,8 @@ namespace linerider.Game
     /// </summary>
     public class RiderFrame
     {
-        //public int FrameID;
         public Rider State;
         public List<int> Diagnosis;
-        //public int IterationID = 6;
         public Moment Moment;
         public RiderFrame()
         {
