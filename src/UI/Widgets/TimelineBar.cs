@@ -78,7 +78,7 @@ namespace linerider.UI.Widgets
                     _editor.SetFrame(_playheadLimiter.Value, false);
                     _editor.UpdateCamera();
                 }
-                _slider.Max = Math.Max(Constants.MinFrames, _playheadLimiter.Value);
+                _slider.Max = Math.Max(Constants.MinimumFrames, _playheadLimiter.Value);
                 _editor.Scheduler.Reset();
                 Audio.AudioService.EnsureSync();
             };

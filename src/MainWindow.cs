@@ -638,16 +638,32 @@ namespace linerider
                 {
                     return;
                 }
-                if (e.Key == Key.Escape && !e.IsRepeat)
+                System.Collections.Generic.List<ControlBase> openwindows = Canvas.GetOpenWindows();
+                if (openwindows != null && openwindows.Count >= 1)
                 {
-                    System.Collections.Generic.List<ControlBase> openwindows = Canvas.GetOpenWindows();
-                    if (openwindows != null && openwindows.Count >= 1)
+                    bool windowClosed = false;
+                    foreach (ControlBase v in openwindows)
                     {
-                        foreach (ControlBase v in openwindows)
+                        if (
+                            (e.Key == Key.Escape && !e.IsRepeat) ||
+                            // Some of these don't make sense to toggle
+                            //(InputUtils.CheckPressed(Hotkey.SaveAsWindow) && v is SaveWindow) ||
+                            //(InputUtils.CheckPressed(Hotkey.Quicksave) && v is SaveWindow) ||
+                            (InputUtils.CheckPressed(Hotkey.LoadWindow) && v is LoadWindow) ||
+                            (InputUtils.CheckPressed(Hotkey.PreferencesWindow) && v is PreferencesWindow) ||
+                            (InputUtils.CheckPressed(Hotkey.TrackPropertiesWindow) && v is TrackInfoWindow) ||
+                            (InputUtils.CheckPressed(Hotkey.TriggerMenuWindow) && v is TriggerWindow) ||
+                            (InputUtils.CheckPressed(Hotkey.LineGeneratorWindow) && v is GeneratorWindow)
+                        )
                         {
                             _ = ((WindowControl)v).Close();
                             Invalidate();
+                            windowClosed = true;
                         }
+                    }
+
+                    if (windowClosed)
+                    {
                         return;
                     }
                 }
@@ -1109,12 +1125,6 @@ namespace linerider
             () =>
             {
                 Canvas.ShowPreferencesDialog();
-            });
-            InputUtils.RegisterHotkey(Hotkey.GameMenuWindow,
-            () => !CurrentTools.CurrentTool.Active,
-            () =>
-            {
-                Canvas.ShowGameMenuWindow();
             });
             InputUtils.RegisterHotkey(Hotkey.TriggerMenuWindow,
             () => !CurrentTools.CurrentTool.Active,
