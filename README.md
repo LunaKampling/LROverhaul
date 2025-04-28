@@ -26,7 +26,7 @@ Clone the repository and either build `src/linerider.sln` with Visual Studio or 
 This project requires .NET 8
 
 # Issues
-We are tracking the development, bug reports and feature requests on [Trello](https://trello.com/b/qu4SvIr6/lroverhaul-compatibility-update). If whatever you wish to report isn't present there, just add it :>
+We are tracking the development, bug reports and feature requests on [GitHub](https://github.com/LunaKampling/LROverhaul/issues). If whatever you wish to report isn't present there, just add it :>
 
 # Libraries
 This project uses binaries, sources, or modified sources from the following libraries:
