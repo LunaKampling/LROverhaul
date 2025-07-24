@@ -85,6 +85,32 @@ namespace linerider
             {
                 ret = GetGridPositions61(linestart, lineend);
             }
+            else if (gridversion == 60)
+            {
+                for (int cell_x = p1X; cell_x <= p2X; cell_x++)
+                {
+                    for (int cell_y = p1Y; cell_y <= p2Y; cell_y++)
+                    {
+                        Vector2d line_normal_unit = diff.Normalized().PerpendicularLeft; // Does not depend on flipped
+                        Vector2d curr_pos = CellSize * new Vector2d(cell_x + 0.5, cell_y + 0.5);
+                        CellLocation next_cell_pos = CellInfo(curr_pos.X, curr_pos.Y);
+                        Vector2d line_halfway = 0.5 * new Vector2d(Math.Abs(diff.X), Math.Abs(diff.Y));
+                        Vector2d line_midpoint = linestart + diff * 0.5;
+                        Vector2d dist_between_centers = line_midpoint - curr_pos;
+                        Vector2d absolute_normal = new Vector2d(Math.Abs(line_normal_unit.X), Math.Abs(line_normal_unit.Y));
+                        double dist_from_cell_center = Vector2d.Dot(absolute_normal, next_cell_pos.Remainder);
+                        double cell_overlap_into_hitbox = Vector2d.Dot(new Vector2d(dist_from_cell_center, dist_from_cell_center), absolute_normal);
+                        double norm_dist_between_centers = Vector2d.Dot(line_normal_unit, dist_between_centers);
+                        double dist_from_line = Math.Abs(norm_dist_between_centers * line_normal_unit.X) + Math.Abs(norm_dist_between_centers * line_normal_unit.Y);
+                        if (line_halfway.X + next_cell_pos.Remainder.X >= Math.Abs(dist_between_centers.X)
+                            && line_halfway.Y + next_cell_pos.Remainder.Y >= Math.Abs(dist_between_centers.Y)
+                            && cell_overlap_into_hitbox >= dist_from_line)
+                        {
+                            ret.Add(next_cell_pos);
+                        }
+                    }
+                }
+            }
             return ret;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
