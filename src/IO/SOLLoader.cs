@@ -34,13 +34,17 @@ namespace linerider.IO
             Dictionary<int, StandardLine> addedlines = new Dictionary<int, StandardLine>(buffer.Count);
             string version = trackdata.data.First(x => x.name == "version").data as string;
 
-            if (version == "6.1")
+            if (version == "6.2")
+            {
+                ret.SetVersion(62);
+            }
+            else if (version == "6.1")
             {
                 ret.SetVersion(61);
             }
             else
             {
-                ret.SetVersion(62);
+                ret.SetVersion(60);
             }
             try
             {
