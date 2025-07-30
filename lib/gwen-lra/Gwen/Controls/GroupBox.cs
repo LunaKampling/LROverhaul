@@ -31,7 +31,7 @@ namespace Gwen.Controls
             set => m_Label.Text = value;
         }
 
-        protected override Margin PanelMargin => new Margin(5, m_Label.TextHeight + 5, 5, 5);
+        protected override Margin PanelMargin => new(5, m_Label.TextHeight + 5, 5, 5);
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupBox"/> class.

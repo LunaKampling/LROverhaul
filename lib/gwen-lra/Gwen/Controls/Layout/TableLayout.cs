@@ -9,7 +9,7 @@ namespace Gwen.Controls
     /// </summary>
     public class TableLayout : ControlBase
     {
-        protected List<int> m_rowwidths = new List<int>();
+        protected List<int> m_rowwidths = [];
         private bool m_autosizerows = true;
         private int m_cols = 0;
         public bool AutoSizeRows
@@ -52,7 +52,7 @@ namespace Gwen.Controls
             m_rowwidths[column] = width;
             Invalidate();
         }
-        public TableRow CreateRow() => new TableRow(this);
+        public TableRow CreateRow() => new(this);
         private void CalculateRows()
         {
             if (AutoSizeRows)

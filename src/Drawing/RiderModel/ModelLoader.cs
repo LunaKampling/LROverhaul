@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
-using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -37,7 +37,7 @@ namespace linerider.Drawing.RiderModel
 
         private void ApplyPalette()
         {
-            Dictionary<Color, Color> colorsMap = new Dictionary<Color, Color>();
+            Dictionary<Color, Color> colorsMap = [];
 
             for (int i = 0; i < Model.Palette.Width; i++)
             {
@@ -70,8 +70,9 @@ namespace linerider.Drawing.RiderModel
         }
         private void ApplyRegions()
         {
-            SKBitmap newModelBody = new SKBitmap(Model.Body.Info);
-            using (var surface = new SKCanvas(newModelBody)){
+            SKBitmap newModelBody = new(Model.Body.Info);
+            using (var surface = new SKCanvas(newModelBody))
+            {
                 surface.DrawBitmap(Model.Body, 0, 0);
                 for (int i = 0; i < Model.RegionsBody.Count; i++)
                 {
@@ -79,7 +80,8 @@ namespace linerider.Drawing.RiderModel
                     Color color = Color.FromArgb(ScarfColors.GetColorList()[i % ScarfColors.Count()]);
                     color = Color.FromArgb(255, color); // Add 255 alpha
 
-                    SKPaint paint = new SKPaint {
+                    SKPaint paint = new()
+                    {
                         Color = color,
                     };
 
@@ -87,16 +89,18 @@ namespace linerider.Drawing.RiderModel
                 }
             }
             Model.Body = newModelBody;
-            SKBitmap newModelBodyDead = new SKBitmap(Model.BodyDead.Info);
-            using (var surface = new SKCanvas(newModelBodyDead)){
+            SKBitmap newModelBodyDead = new(Model.BodyDead.Info);
+            using (var surface = new SKCanvas(newModelBodyDead))
+            {
                 surface.DrawBitmap(Model.BodyDead, 0, 0);
                 for (int i = 0; i < Model.RegionsBodyDead.Count; i++)
                 {
                     Rectangle region = Model.RegionsBodyDead[i];
                     Color color = Color.FromArgb(ScarfColors.GetColorList()[i % ScarfColors.Count()]);
                     color = Color.FromArgb(255, color); // Add 255 alpha
-                    
-                    SKPaint paint = new SKPaint {
+
+                    SKPaint paint = new()
+                    {
                         Color = color,
                     };
 

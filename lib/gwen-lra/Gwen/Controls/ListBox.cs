@@ -115,7 +115,7 @@ namespace Gwen.Controls
         public ListBox(ControlBase parent)
             : base(parent)
         {
-            SelectedRows = new List<ListBoxRow>();
+            SelectedRows = [];
 
             MouseInputEnabled = true;
             // EnableScroll(false, true);
@@ -227,7 +227,7 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public ListBoxRow AddRow(string label, string name, object UserData)
         {
-            ListBoxRow row = new ListBoxRow(this)
+            ListBoxRow row = new(this)
             {
                 Dock = Dock.Top,
                 Text = label,

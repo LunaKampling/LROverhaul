@@ -4,7 +4,7 @@ namespace Gwen.Controls
 {
     public partial class ControlBase
     {
-        public Rectangle RenderBounds => new Rectangle(0, 0, Width, Height);
+        public Rectangle RenderBounds => new(0, 0, Width, Height);
         /// <summary>
 		/// Renders the control using specified skin.
 		/// </summary>

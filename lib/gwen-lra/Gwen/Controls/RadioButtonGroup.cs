@@ -63,7 +63,7 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public virtual RadioButton AddOption(string text, string optionName)
         {
-            RadioButton lrb = new RadioButton(this)
+            RadioButton lrb = new(this)
             {
                 Name = optionName,
                 Text = text

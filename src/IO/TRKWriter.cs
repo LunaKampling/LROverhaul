@@ -19,8 +19,8 @@ namespace linerider.IO
             string filename = Path.Combine(dir, savename + ".trk");
             using (FileStream file = File.Create(filename))
             {
-                BinaryWriter bw = new BinaryWriter(file);
-                bw.Write(new byte[] { (byte)'T', (byte)'R', (byte)'K', 0xF2 }); //TRK
+                BinaryWriter bw = new(file);
+                bw.Write([(byte)'T', (byte)'R', (byte)'K', 0xF2]); //TRK
                 bw.Write((byte)1);
                 string featurestring = "";
                 GameLine[] lines = trk.GetLines();
@@ -118,11 +118,11 @@ namespace linerider.IO
                     bw.Write(line.Position2.X);
                     bw.Write(line.Position2.Y);
                 }
-                bw.Write(new byte[] { (byte)'M', (byte)'E', (byte)'T', (byte)'A' });
-                List<string> metadata = new List<string>
-                {
+                bw.Write([(byte)'M', (byte)'E', (byte)'T', (byte)'A']);
+                List<string> metadata =
+                [
                     TrackMetadata.startzoom + "=" + trk.StartZoom.ToString(Program.Culture)
-                };
+                ];
 
                 // Only add if the values are different from default
                 if (trk.YGravity != 1)
@@ -150,7 +150,7 @@ namespace linerider.IO
                     metadata.Add(TrackMetadata.linecolorB + "=" + trk.LineColorB.ToString(Program.Culture));
                 }
 
-                StringBuilder triggerstring = new StringBuilder();
+                StringBuilder triggerstring = new();
                 for (int i = 0; i < trk.Triggers.Count; i++)
                 {
                     GameTrigger t = trk.Triggers[i];

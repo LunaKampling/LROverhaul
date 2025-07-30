@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 namespace linerider.Utils
@@ -27,7 +26,7 @@ namespace linerider.Utils
     /// </summary>
     internal class Turtle
     {
-        private Vector2d _point = new Vector2d(0, 0);
+        private Vector2d _point = new(0, 0);
         /// <summary>
         /// The current point the turtle is at.
         /// Calling setter resets angle;

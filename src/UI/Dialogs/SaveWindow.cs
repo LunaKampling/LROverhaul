@@ -18,7 +18,7 @@ namespace linerider.UI
         public SaveWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
             Title = "Save Track As...";
-            RichLabel l = new RichLabel(this)
+            RichLabel l = new(this)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true
@@ -31,7 +31,7 @@ namespace linerider.UI
                 Text = "",
                 Margin = new Margin(0, 0, 0, 5)
             };
-            ControlBase bottomcontainer = new ControlBase(this)
+            ControlBase bottomcontainer = new(this)
             {
                 Margin = Margin.Zero,
                 Dock = Dock.Bottom,
@@ -55,7 +55,7 @@ namespace linerider.UI
             };
             _savebutton.DropDownClicked += (o, e) =>
               {
-                  Menu pop = new Menu(_canvas);
+                  Menu pop = new(_canvas);
                   pop.AddItem(".track.json").Clicked += (o2, e2) =>
                   {
                       _savebutton.Text = "Save (.json)";
@@ -191,7 +191,7 @@ namespace linerider.UI
         }
         private List<string> GetDirectories()
         {
-            List<string> ret = new List<string>();
+            List<string> ret = [];
             string dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);

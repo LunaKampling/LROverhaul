@@ -2,9 +2,8 @@ using linerider.Drawing;
 using linerider.Drawing.RiderModel;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -13,12 +12,12 @@ namespace linerider.Rendering
 {
     public class RiderRenderer
     {
-        private readonly AutoArray<RiderVertex> Array = new AutoArray<RiderVertex>(500);
+        private readonly AutoArray<RiderVertex> Array = new(500);
         public float Scale = 1.0f;
         private readonly Shader _shader;
         private readonly GLBuffer<RiderVertex> _vbo;
-        private readonly LineVAO _lines = new LineVAO();
-        private readonly LineVAO _momentumvao = new LineVAO();
+        private readonly LineVAO _lines = new();
+        private readonly LineVAO _momentumvao = new();
         public RiderRenderer()
         {
             _shader = Shaders.RiderShader;
@@ -46,8 +45,7 @@ namespace linerider.Rendering
         }
         public void DrawContacts(Rider rider, List<int> diagnosis, float opacity, int subiteration = RiderConstants.Subiterations)
         {
-            if (diagnosis == null)
-                diagnosis = new List<int>();
+            diagnosis ??= [];
             Bone[] bones = RiderConstants.Bones;
             for (int i = 0; i < bones.Length; i++)
             {
@@ -367,18 +365,18 @@ namespace linerider.Rendering
         {
             Angle angle = Angle.FromLine(origin, rotationAnchor);
             Vector2d[] t = Utility.RotateRect(rect, Vector2d.Zero, angle);
-            Vector2d[] transform = new Vector2d[] {
+            Vector2d[] transform = [
             t[0] + origin,// 0 tl
             t[1] + origin,// 1 tr
             t[2] + origin,  // 2 br
             t[3] + origin,  // 3 bl
-            };
+            ];
             Vector2[] texrect = GameDrawingMatrix.ScreenCoords(transform);
             Color color = Color.FromArgb((int)(255f * opacity), Color.White);
-            Color[] colors = new Color[] { color, color, color, color };
+            Color[] colors = [color, color, color, color];
             if (pretty)
             {
-                Random random = new Random(Environment.TickCount / 100 % 255);
+                Random random = new(Environment.TickCount / 100 % 255);
                 for (int i = 0; i < colors.Length; i++)
                 {
                     bool redness = random.Next() % 2 == 0;
@@ -396,12 +394,12 @@ namespace linerider.Rendering
             _ = uv.Top;
             _ = uv.Right;
             _ = uv.Bottom;
-            RiderVertex[] verts = new RiderVertex[] {
-                new RiderVertex(texrect[0],  new Vector2(uv.Left, uv.Top),tex,colors[0]),
-                new RiderVertex(texrect[1],  new Vector2(uv.Right, uv.Top),tex,colors[1]),
-                new RiderVertex(texrect[2],  new Vector2(uv.Right, uv.Bottom),tex,colors[2]),
-                new RiderVertex(texrect[3],  new Vector2(uv.Left, uv.Bottom),tex,colors[3])
-            };
+            RiderVertex[] verts = [
+                new(texrect[0],  new Vector2(uv.Left, uv.Top),tex,colors[0]),
+                new(texrect[1],  new Vector2(uv.Right, uv.Top),tex,colors[1]),
+                new(texrect[2],  new Vector2(uv.Right, uv.Bottom),tex,colors[2]),
+                new(texrect[3],  new Vector2(uv.Left, uv.Bottom),tex,colors[3])
+            ];
             Array.Add(verts[0]);
             Array.Add(verts[1]);
             Array.Add(verts[2]);
@@ -415,12 +413,12 @@ namespace linerider.Rendering
         {
             Vector2d[] calc = Utility.GetThickLine(p1, p2, Angle.FromLine(p1, p2), size);
             Vector2[] t = GameDrawingMatrix.ScreenCoords(calc);
-            RiderVertex[] verts = new RiderVertex[] {
+            RiderVertex[] verts = [
                 RiderVertex.NoTexture(t[0],color),
                 RiderVertex.NoTexture(t[1],color),
                 RiderVertex.NoTexture(t[2],color),
                 RiderVertex.NoTexture(t[3],color)
-            };
+            ];
             Array.Add(verts[0]);
             Array.Add(verts[1]);
             Array.Add(verts[2]);
@@ -442,7 +440,7 @@ namespace linerider.Rendering
             int alt;
             int scarfPart;
 
-            List<Vector2> altvectors = new List<Vector2>();
+            List<Vector2> altvectors = [];
             for (int i = 0; i < lines.Length; i += 2)
             {
                 scarfPart = (i % segmentsCount + (segmentsCount - 1)) % segmentsCount;
@@ -462,12 +460,12 @@ namespace linerider.Rendering
             {
                 scarfPart = i / 2 % segmentsCount;
                 alt = Utility.ColorToRGBA_LE(colorSegments[scarfPart], (byte)(opacitySegments[scarfPart] * opacity));
-                RiderVertex[] verts = new RiderVertex[] {
+                RiderVertex[] verts = [
                     RiderVertex.NoTexture(altvectors[i + 0],alt),
                     RiderVertex.NoTexture(altvectors[i + 1],alt),
                     RiderVertex.NoTexture(altvectors[i + 2],alt),
                     RiderVertex.NoTexture(altvectors[i + 3],alt)
-                };
+                ];
                 Array.Add(verts[0]);
                 Array.Add(verts[1]);
                 Array.Add(verts[2]);
@@ -499,23 +497,17 @@ namespace linerider.Rendering
         /// A vertex meant for the simulation line shader
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private struct RiderVertex
+        private struct RiderVertex(Vector2 position, Vector2 uv, RiderRenderer.Tex unit, Color Color)
         {
             public static readonly int Size = Marshal.SizeOf(typeof(RiderVertex));
-            public Vector2 Position;
-            public Vector2 tex_coord;
-            public float texture_unit;
-            public int color;
-            public RiderVertex(Vector2 position, Vector2 uv, Tex unit, Color Color)
-            {
-                Position = position;
-                tex_coord = uv;
-                texture_unit = (float)unit;
-                color = Utility.ColorToRGBA_LE(Color);
-            }
+            public Vector2 Position = position;
+            public Vector2 tex_coord = uv;
+            public float texture_unit = (float)unit;
+            public int color = Utility.ColorToRGBA_LE(Color);
+
             public static RiderVertex NoTexture(Vector2 position, int color)
             {
-                RiderVertex ret = new RiderVertex
+                RiderVertex ret = new()
                 {
                     color = color,
                     Position = position,

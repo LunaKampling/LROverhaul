@@ -138,7 +138,7 @@ namespace Gwen.Controls
         private void SetupDefault()
         {
             int extra = TextHeight / 4;
-            Padding textpadding = new Padding(extra * 2, extra, extra * 2, extra);
+            Padding textpadding = new(extra * 2, extra, extra * 2, extra);
             if (TextPadding != textpadding)
             {
                 TextPadding = textpadding;

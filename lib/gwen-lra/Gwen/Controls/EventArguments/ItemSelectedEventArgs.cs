@@ -2,13 +2,8 @@
 
 namespace Gwen.Controls
 {
-    public class ItemSelectedEventArgs : EventArgs
+    public class ItemSelectedEventArgs(ControlBase selecteditem) : EventArgs
     {
-        public ControlBase SelectedItem { get; private set; }
-
-        public ItemSelectedEventArgs(ControlBase selecteditem)
-        {
-            SelectedItem = selecteditem;
-        }
+        public ControlBase SelectedItem { get; private set; } = selecteditem;
     }
 }

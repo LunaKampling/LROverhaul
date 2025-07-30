@@ -1,8 +1,8 @@
 ﻿using linerider.Utils;
+using SkiaSharp;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -49,7 +49,7 @@ namespace linerider.Drawing.RiderModel
                 Regions = SKBitmap.Decode(regionsPngPath);
 
             if (File.Exists(regionsPath) && File.ReadLines(regionsPath).First() == RegionsCache.HeaderMain)
-                RegionsCacheLines = File.ReadAllLines(regionsPath).ToList();
+                RegionsCacheLines = [.. File.ReadAllLines(regionsPath)];
 
             if (RegionsCacheLines != null)
             {

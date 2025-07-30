@@ -18,10 +18,10 @@
 
 using Gwen.Controls;
 using linerider.UI.Components;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
-using System;
+using OpenTK.Mathematics;
 using SkiaSharp;
+using System;
 
 namespace linerider.UI.Widgets
 {
@@ -43,7 +43,7 @@ namespace linerider.UI.Widgets
         {
             ((Gwen.Renderer.OpenTK)skin.Renderer).Flush();
             float rotation = Environment.TickCount % 1000 / 1000f;
-            Vector3d trans = new Vector3d(X + Width / 2, Y + Height / 2, 0);
+            Vector3d trans = new(X + Width / 2, Y + Height / 2, 0);
             GL.Translate(Width / -4, Height / -4, 0);
             GL.PushMatrix();
             GL.Translate(trans);

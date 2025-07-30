@@ -67,7 +67,7 @@ namespace linerider.UI
                 Margin = new Margin(0, 20, 0, 5),
             };
 
-            RadioButtonGroup transferOpts = new RadioButtonGroup(this)
+            RadioButtonGroup transferOpts = new(this)
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false,
@@ -108,7 +108,7 @@ namespace linerider.UI
 
             allDataOpt.Select();
 
-            Panel buttonsGroup = new Panel(this)
+            Panel buttonsGroup = new(this)
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
@@ -116,13 +116,13 @@ namespace linerider.UI
                 Margin = new Margin(0, 5, 0, 0),
             };
 
-            Button cancelBtn = new Button(buttonsGroup)
+            Button cancelBtn = new(buttonsGroup)
             {
                 Dock = Dock.Right,
                 Text = "Cancel",
                 Margin = new Margin(10, 0, 0, 0),
             };
-            Button processBtn = new Button(buttonsGroup)
+            Button processBtn = new(buttonsGroup)
             {
                 Dock = Dock.Right,
                 Text = "Process"

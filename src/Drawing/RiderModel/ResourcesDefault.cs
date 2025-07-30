@@ -17,7 +17,7 @@ namespace linerider.Drawing.RiderModel
 
             Rope = GameResources.rider_rope;
 
-            RegionsCacheLines = GameResources.rider_regions_file.Replace("\r", string.Empty).Split('\n').ToList();
+            RegionsCacheLines = [.. GameResources.rider_regions_file.Replace("\r", string.Empty).Split('\n')];
 
             Legacy = false;
 

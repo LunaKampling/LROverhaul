@@ -9,8 +9,8 @@ namespace linerider.Drawing
         private readonly int _frag;
         private readonly int _vert;
         private readonly int _program;
-        private readonly Dictionary<string, int> _attributes = new Dictionary<string, int>();
-        private readonly Dictionary<string, int> _uniforms = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> _attributes = [];
+        private readonly Dictionary<string, int> _uniforms = [];
         public Shader(string vert, string frag)
         {
             _program = GL.CreateProgram();

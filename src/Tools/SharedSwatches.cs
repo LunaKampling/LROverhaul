@@ -2,7 +2,7 @@
 {
     internal class SharedSwatches
     {
-        public static Swatch DrawingToolsSwatch = new Swatch();
-        public static Swatch EraserAndSelectToolSwatch = new Swatch();
+        public static Swatch DrawingToolsSwatch = new();
+        public static Swatch EraserAndSelectToolSwatch = new();
     }
 }

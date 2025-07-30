@@ -1,5 +1,4 @@
-﻿using OpenTK.Graphics;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using System;
 using System.IO;
@@ -8,8 +7,8 @@ namespace linerider.Utils
 {
     internal static class Constants
     {
-        public static Color4 TriggerBGColor = new Color4(244, 245, 249, 255);
-        public static Color4 StaticTriggerBGColor = new Color4(244, 245, 249, 255);
+        public static Color4 TriggerBGColor = new(244, 245, 249, 255);
+        public static Color4 StaticTriggerBGColor = new(244, 245, 249, 255);
         public static Color TriggerLineColorChange = Color.Black;
         public static Color StaticTriggerLineColorChange = Color.Black;
 
@@ -17,9 +16,9 @@ namespace linerider.Utils
         public static readonly Color BgEditorColor = Color.FromArgb(0xF9, 0xF9, 0xF9);
         public static readonly Color BgEditorNightColor = Color.FromArgb(0x33, 0x33, 0x33);
         public static readonly int[] MotionArray =
-        {
+        [
             1, 2, 5, 10, 20, 30, 40, 80, 160, 320, 640
-        };
+        ];
         public static readonly Color RedLineColor = Color.FromArgb(0xE5, 0x39, 0x35);
         public static readonly Color BlueLineColor = Color.FromArgb(0x21, 0x96, 0xF3);
         public static readonly Color SceneryLineColor = Color.FromArgb(0x43, 0xA0, 0x47);
@@ -66,8 +65,10 @@ namespace linerider.Utils
         public const int MaximumFrames = PhysicsRate * 60 * 60 * 3; // 3 hours of frames
         public const float KnobSize = 0.8f;
         public const float MaxLimitedKnobSize = MaximumZoom;
-        public static Size ScreenSize {
-            get {
+        public static Size ScreenSize
+        {
+            get
+            {
                 var monitor = Monitors.GetPrimaryMonitor();
                 return new Size(monitor.HorizontalResolution, monitor.VerticalResolution);
             }
@@ -78,7 +79,7 @@ namespace linerider.Utils
                 : ((double)ScreenSize.Height / 1080),
             2)
         );
-        public static readonly Size WindowSize = new Size(
+        public static readonly Size WindowSize = new(
             Math.Max(1280, (int)Math.Round(ScreenSize.Width / 1.5)),
             Math.Max(720, (int)Math.Round(ScreenSize.Height / 1.5))
         );

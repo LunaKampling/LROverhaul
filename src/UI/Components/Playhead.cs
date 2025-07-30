@@ -1,10 +1,9 @@
 using Gwen;
 using Gwen.ControlInternal;
 using Gwen.Controls;
-using OpenTK;
 using OpenTK.Mathematics;
-using System;
 using SkiaSharp;
+using System;
 
 namespace linerider.UI.Components
 {
@@ -52,7 +51,7 @@ namespace linerider.UI.Components
             set
             {
                 _texture?.Dispose();
-                Texture tx = new Texture(Skin.Renderer);
+                Texture tx = new(Skin.Renderer);
                 Gwen.Renderer.OpenTK.LoadTextureInternal(tx, value);
                 Size = new Size(value.Width, value.Height);
                 _texture = tx;

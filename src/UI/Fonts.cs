@@ -3,15 +3,11 @@ using System;
 
 namespace linerider.UI
 {
-    public class Fonts : IDisposable
+    public class Fonts(Font defaultf, Font boldf) : IDisposable
     {
-        public readonly Font Default;
-        public readonly Font DefaultBold;
-        public Fonts(Font defaultf, Font boldf)
-        {
-            Default = defaultf;
-            DefaultBold = boldf;
-        }
+        public readonly Font Default = defaultf;
+        public readonly Font DefaultBold = boldf;
+
         public void Dispose()
         {
             Default.Dispose();

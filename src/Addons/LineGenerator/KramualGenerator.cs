@@ -1,9 +1,6 @@
-﻿using OpenTK;
+﻿using linerider.Rendering;
 using OpenTK.Mathematics;
-using System;
 using System.Collections.Generic;
-using linerider.Game;
-using linerider.Rendering;
 
 namespace linerider.Game.LineGenerator
 {
@@ -29,13 +26,13 @@ namespace linerider.Game.LineGenerator
         {
             name = _name;
             position = _position;
-            lines = new List<GameLine>();
+            lines = [];
             lineType = _lineType;
         }
 
         private void DefineLocation(Rider rider)
         {
-            cumulativeMomentum = new Vector2d(0, 0); 
+            cumulativeMomentum = new Vector2d(0, 0);
             for (int i = 0; i < rider.Body.Length; i++)
             {
                 cumulativeMomentum += rider.Body[i].Momentum; //adds all momentum together
@@ -46,7 +43,7 @@ namespace linerider.Game.LineGenerator
 
             for (int i = 1; i < rider.Body.Length; i++) //depending on momentum and axis identifies the outmost contact point
             {
-                position =  negative ? vert ?
+                position = negative ? vert ?
                             rider.Body[i].Location.X > position.X ? new Vector2d(rider.Body[i].Location.X + offset, position.Y) : position :
                             rider.Body[i].Location.Y > position.Y ? new Vector2d(position.X, rider.Body[i].Location.Y + offset) : position :
                             vert ?
@@ -59,25 +56,25 @@ namespace linerider.Game.LineGenerator
         {
             bool horMomentumNeg = MVector.X < 0; //Is the momentum negative for this contact point?
             bool verMomentumNeg = MVector.Y < 0;
-            
+
             double xLeft = vert ? position.X : ConPoint.X + (verMomentumNeg ? lineWidth : -lineWidth); //calculates line positions
             double xRight = vert ? position.X : ConPoint.X + (verMomentumNeg ? -lineWidth : lineWidth);
-            double yLeft = vert ? ConPoint.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y; 
-            double yRight = vert ? ConPoint.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y; 
+            double yLeft = vert ? ConPoint.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y;
+            double yRight = vert ? ConPoint.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y;
 
-            Vector2d lineLeft = new Vector2d(xLeft, yLeft); 
-            Vector2d lineRight = new Vector2d(xRight, yRight); 
+            Vector2d lineLeft = new(xLeft, yLeft);
+            Vector2d lineRight = new(xRight, yRight);
 
             if (reverse) lines.Add(CreateLine(trk, lineRight, lineLeft, lineType, reverse, multiplier)); //flips left and right because of the way the reverse draw works
             else lines.Add(CreateLine(trk, lineLeft, lineRight, lineType, reverse, multiplier));
-            
+
             double distanceToConPoint = vert ? position.X - ConPoint.X : position.Y - ConPoint.Y; //calculates distance between kramual and contact point
 
             if (distanceToConPoint > 10 | distanceToConPoint < -10) //is this distance more than 1 Gwell?
             {
                 double extensionOffset = negative ? -distanceToConPoint + 10 - offset : -distanceToConPoint - 10 + offset; //calculates how close the second line can be
 
-                xLeft = vert ? position.X + extensionOffset : ConPoint.X + (verMomentumNeg ? lineWidth : -lineWidth); 
+                xLeft = vert ? position.X + extensionOffset : ConPoint.X + (verMomentumNeg ? lineWidth : -lineWidth);
                 xRight = vert ? position.X + extensionOffset : ConPoint.X + (verMomentumNeg ? -lineWidth : lineWidth);
                 yLeft = vert ? ConPoint.Y + (horMomentumNeg ? -lineWidth : lineWidth) : position.Y + extensionOffset;
                 yRight = vert ? ConPoint.Y + (horMomentumNeg ? lineWidth : -lineWidth) : position.Y + extensionOffset;

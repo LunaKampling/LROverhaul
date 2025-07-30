@@ -2,7 +2,6 @@ using Gwen;
 using Gwen.Controls;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Linq;
@@ -99,14 +98,14 @@ namespace linerider.UI
         {
             SetupLineRightClickOptions(_proptree);
 
-            Panel bottom = new Panel(this)
+            Panel bottom = new(this)
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false,
                 Margin = new Margin(0, 5, 0, 0),
             };
-            Button cancel = new Button(bottom)
+            Button cancel = new(bottom)
             {
                 Text = "Cancel",
                 Dock = Dock.Right,
@@ -117,7 +116,7 @@ namespace linerider.UI
                 closing = true;
                 _ = Close();
             };
-            Button ok = new Button(bottom)
+            Button ok = new(bottom)
             {
                 Text = "Okay",
                 Dock = Dock.Right,
@@ -133,7 +132,7 @@ namespace linerider.UI
 
         private void SetupSceneryOptions(PropertyTree tree, PropertyTable lineProp)
         {
-            NumberProperty width = new NumberProperty(lineProp)
+            NumberProperty width = new(lineProp)
             {
                 Min = 0.1,
                 Max = 25.5,
@@ -271,7 +270,7 @@ namespace linerider.UI
 
             if (_ownerline.Type != LineType.Scenery)
             {
-                NumberProperty id = new NumberProperty(lineProp)
+                NumberProperty id = new(lineProp)
                 {
                     Min = int.MinValue + 1,
                     Max = int.MaxValue - 1,
@@ -343,114 +342,106 @@ namespace linerider.UI
         private void ChangeAngle(double numberValue)
         {
             SimulationCell multilines = GetMultiLines(false);
-            using (TrackWriter trk = _editor.CreateTrackWriter())
+            using TrackWriter trk = _editor.CreateTrackWriter();
+            GameLine cpy = _ownerline.Clone();
+            bool lineIsInverted = cpy.Start == cpy.Position2;
+            Angle angle = Angle.FromDegrees(numberValue - 90);
+
+            Vector2d posEstimate = Utility.Rotate(cpy.End, cpy.Start, angle - Angle.FromVector(cpy.GetVector()));
+            Vector2d newPos = Utility.AngleLock(cpy.Start, posEstimate, angle);
+            if (lineIsInverted) // Inverted line
             {
-                GameLine cpy = _ownerline.Clone();
-                bool lineIsInverted = cpy.Start == cpy.Position2;
-                Angle angle = Angle.FromDegrees(numberValue - 90);
+                cpy.Position1 = newPos;
+            }
+            else
+            {
+                cpy.Position2 = newPos;
+            }
 
-                Vector2d posEstimate = Utility.Rotate(cpy.End, cpy.Start, angle - Angle.FromVector(cpy.GetVector()));
-                Vector2d newPos = Utility.AngleLock(cpy.Start, posEstimate, angle);
-                if (lineIsInverted) // Inverted line
-                {
-                    cpy.Position1 = newPos;
-                }
-                else
-                {
-                    cpy.Position2 = newPos;
-                }
+            UpdateOwnerLine(trk, cpy);
 
-                UpdateOwnerLine(trk, cpy);
-
-                foreach (StandardLine line in multilines)
-                {
-                    GameLine copy = line.Clone();
-                    copy.Position1 = cpy.Position1;
-                    copy.Position2 = cpy.Position2;
-                    UpdateLine(trk, line, copy);
-                }
+            foreach (StandardLine line in multilines)
+            {
+                GameLine copy = line.Clone();
+                copy.Position1 = cpy.Position1;
+                copy.Position2 = cpy.Position2;
+                UpdateLine(trk, line, copy);
             }
         }
         private void ChangeLength(double length)
         {
             SimulationCell multilines = GetMultiLines(false);
-            using (TrackWriter trk = _editor.CreateTrackWriter())
+            using TrackWriter trk = _editor.CreateTrackWriter();
+            GameLine cpy = _ownerline.Clone();
+            double angle = Angle.FromVector(cpy.GetVector()).Radians;
+
+            double x2 = cpy.Position1.X + length * Math.Cos(angle);
+            double y2 = cpy.Position1.Y + length * Math.Sin(angle);
+
+            Vector2d newPos = new(x2, y2);
+            cpy.Position2 = newPos;
+            UpdateOwnerLine(trk, cpy);
+
+            foreach (StandardLine line in multilines)
             {
-                GameLine cpy = _ownerline.Clone();
-                double angle = Angle.FromVector(cpy.GetVector()).Radians;
-
-                double x2 = cpy.Position1.X + length * Math.Cos(angle);
-                double y2 = cpy.Position1.Y + length * Math.Sin(angle);
-
-                Vector2d newPos = new Vector2d(x2, y2);
-                cpy.Position2 = newPos;
-                UpdateOwnerLine(trk, cpy);
-
-                foreach (StandardLine line in multilines)
-                {
-                    GameLine copy = line.Clone();
-                    copy.Position2 = newPos;
-                    UpdateLine(trk, line, copy);
-                }
+                GameLine copy = line.Clone();
+                copy.Position2 = newPos;
+                UpdateLine(trk, line, copy);
             }
         }
         private void ChangeWidth(double width)
         {
-            using (TrackWriter trk = _editor.CreateTrackWriter())
-            {
-                GameLine cpy = _ownerline.Clone();
-                cpy.Width = (float)width;
-                UpdateOwnerLine(trk, cpy);
-            }
+            using TrackWriter trk = _editor.CreateTrackWriter();
+            GameLine cpy = _ownerline.Clone();
+            cpy.Width = (float)width;
+            UpdateOwnerLine(trk, cpy);
         }
         private void ChangeMultiplier(double mul)
         {
             SimulationCell lines = GetMultiLines(false);
-            using (TrackWriter trk = _editor.CreateTrackWriter())
+            using TrackWriter trk = _editor.CreateTrackWriter();
+            RedLine redCpy = null;
+            StandardLine blueCpy = null;
+            LineType origLineType = _ownerline.Type;
+
+            // If adding acceleration to a blue line
+            if (origLineType == LineType.Standard && mul != 0)
             {
-                RedLine redCpy = null;
-                StandardLine blueCpy = null;
-                LineType origLineType = _ownerline.Type;
+                redCpy = RedLine.CloneFromBlue((StandardLine)_ownerline);
+                _editor._renderer.RedrawLine(_ownerline);
+                _editor._renderer.AddLine(redCpy);
+            }
+            // If setting acceleration to 0 of a red line
+            else if (origLineType == LineType.Acceleration && mul == 0)
+            {
+                _editor._renderer.RemoveLine(_ownerline);
+                blueCpy = StandardLine.CloneFromRed((RedLine)_ownerline);
+                _editor._renderer.AddLine(blueCpy);
+            }
+            else
+            {
+                redCpy = (RedLine)_ownerline.Clone();
+            }
 
-                // If adding acceleration to a blue line
-                if (origLineType == LineType.Standard && mul != 0)
+            if (redCpy != null)
+            {
+                redCpy.Multiplier = mul;
+            }
+            StandardLine cpy = redCpy ?? blueCpy;
+            UpdateOwnerLine(trk, cpy);
+            foreach (StandardLine line in lines)
+            {
+                StandardLine copy = origLineType == LineType.Acceleration && _ownerline.Type == LineType.Standard
+                    ? StandardLine.CloneFromRed(line)
+                    : origLineType == LineType.Standard && _ownerline.Type == LineType.Acceleration
+                        ? RedLine.CloneFromBlue(line)
+                        : (StandardLine)line.Clone();
+                // Going from red lines to blue
+                if (copy is RedLine redCopy)
                 {
-                    redCpy = RedLine.CloneFromBlue((StandardLine)_ownerline);
-                    _editor._renderer.RedrawLine(_ownerline);
-                    _editor._renderer.AddLine(redCpy);
+                    redCopy.Multiplier = mul;
                 }
-                // If setting acceleration to 0 of a red line
-                else if (origLineType == LineType.Acceleration && mul == 0)
-                {
-                    _editor._renderer.RemoveLine(_ownerline);
-                    blueCpy = StandardLine.CloneFromRed((RedLine)_ownerline);
-                    _editor._renderer.AddLine(blueCpy);
-                }
-                else
-                {
-                    redCpy = (RedLine)_ownerline.Clone();
-                }
-
-                if (redCpy != null)
-                {
-                    redCpy.Multiplier = mul;
-                }
-                StandardLine cpy = redCpy ?? blueCpy;
-                UpdateOwnerLine(trk, cpy);
-                foreach (StandardLine line in lines)
-                {
-                    StandardLine copy = origLineType == LineType.Acceleration && _ownerline.Type == LineType.Standard
-                        ? StandardLine.CloneFromRed(line)
-                        : origLineType == LineType.Standard && _ownerline.Type == LineType.Acceleration
-                            ? RedLine.CloneFromBlue(line)
-                            : (StandardLine)line.Clone();
-                    // Going from red lines to blue
-                    if (copy is RedLine redCopy)
-                    {
-                        redCopy.Multiplier = mul;
-                    }
-                    UpdateLine(trk, line, copy);
-                }
+                UpdateLine(trk, line, copy);
             }
         }
 
@@ -459,20 +450,18 @@ namespace linerider.UI
             StandardLine.Ext newExt = (StandardLine.Ext)((left ? 1 : 0) + (right ? 2 : 0));
 
             SimulationCell multilines = GetMultiLines(false);
-            using (TrackWriter trk = _editor.CreateTrackWriter())
+            using TrackWriter trk = _editor.CreateTrackWriter();
+            trk.DisableExtensionUpdating();
+
+            StandardLine cpy = (StandardLine)_ownerline.Clone();
+            cpy.Extension = newExt;
+            UpdateOwnerLine(trk, cpy);
+
+            foreach (StandardLine line in multilines)
             {
-                trk.DisableExtensionUpdating();
-
-                StandardLine cpy = (StandardLine)_ownerline.Clone();
-                cpy.Extension = newExt;
-                UpdateOwnerLine(trk, cpy);
-
-                foreach (StandardLine line in multilines)
-                {
-                    StandardLine copy = (StandardLine)line.Clone();
-                    copy.Extension = newExt;
-                    UpdateLine(trk, line, copy);
-                }
+                StandardLine copy = (StandardLine)line.Clone();
+                copy.Extension = newExt;
+                UpdateLine(trk, line, copy);
             }
         }
         private SimulationCell GetMultiLines(bool includeowner)
@@ -482,7 +471,7 @@ namespace linerider.UI
                 return new SimulationCell();
             }
 
-            SimulationCell redlines = new SimulationCell();
+            SimulationCell redlines = new();
             using (TrackReader trk = _editor.CreateTrackReader())
             {
                 StandardLine owner = (StandardLine)_ownerline;

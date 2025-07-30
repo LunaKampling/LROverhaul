@@ -17,7 +17,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -32,9 +31,9 @@ namespace linerider.Game
     /// </summary>
     public class EditorGrid
     {
-        private readonly ResourceSync Sync = new ResourceSync();
-        private readonly Dictionary<int, EditorCell> Cells = new Dictionary<int, EditorCell>(4096);
-        private readonly object _syncRoot = new object();
+        private readonly ResourceSync Sync = new();
+        private readonly Dictionary<int, EditorCell> Cells = new(4096);
+        private readonly object _syncRoot = new();
         public const int CellSize = 32;
         private int GetCellKey(int x, int y)
         {
@@ -107,7 +106,7 @@ namespace linerider.Game
             int startx = (int)Math.Floor(rect.Left / CellSize);
             int endy = (int)Math.Floor((rect.Top + rect.Height) / CellSize);
             int endx = (int)Math.Floor((rect.Left + rect.Width) / CellSize);
-            EditorCell ret = new EditorCell();
+            EditorCell ret = new();
             using (Sync.AcquireWrite())
             {
                 for (int x = startx; x <= endx; x++)
@@ -141,7 +140,7 @@ namespace linerider.Game
             int n = 1;
             int x_inc, y_inc;
             double error;
-            HashSet<GridPoint> hs = new HashSet<GridPoint>();
+            HashSet<GridPoint> hs = [];
             if (dx == 0)
             {
                 x_inc = 0;

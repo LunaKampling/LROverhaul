@@ -16,7 +16,6 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using OpenTK;
 using OpenTK.Windowing.Common.Input;
 using System;
 using System.Threading;
@@ -24,18 +23,15 @@ using System.Threading;
 
 namespace linerider.UI
 {
-    public class PlatformImpl : Gwen.Platform.Neutral.PlatformImplementation
+    public class PlatformImpl(MainWindow game) : Gwen.Platform.Neutral.PlatformImplementation
     {
         public MouseCursor CurrentCursor = MouseCursor.Default;
-        private readonly MainWindow game;
-        public PlatformImpl(MainWindow game)
-        {
-            this.game = game;
-        }
+        private readonly MainWindow game = game;
+
         public override bool SetClipboardText(string text)
         {
             bool ret = false;
-            Thread staThread = new Thread(
+            Thread staThread = new(
                 () =>
                 {
                     try
@@ -58,7 +54,7 @@ namespace linerider.UI
         {
             // Code from http://forums.getpaint.net/index.php?/topic/13712-trouble-accessing-the-clipboard/page__view__findpost__p__226140
             string ret = string.Empty;
-            Thread staThread = new Thread(
+            Thread staThread = new(
                 () =>
                 {
                     try

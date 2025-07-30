@@ -171,7 +171,7 @@ namespace Gwen.Controls
         /// <summary>
         /// Indicates whether the control is on top of its parent's children.
         /// </summary>
-        public virtual bool IsOnTop => m_Parent != null && m_Parent.Children.Count != 0 && m_Parent.Children[m_Parent.Children.Count - 1] == this;
+        public virtual bool IsOnTop => m_Parent != null && m_Parent.Children.Count != 0 && m_Parent.Children[^1] == this;
 
         /// <summary>
         /// User data associated with the control.
@@ -294,8 +294,8 @@ namespace Gwen.Controls
             }
         }
         public event GwenEventHandler<EventArgs> OnThink;
-        private Size m_MinimumSize = new Size(1, 1);
-        private Size m_MaximumSize = new Size(int.MaxValue, int.MaxValue);
+        private Size m_MinimumSize = new(1, 1);
+        private Size m_MaximumSize = new(int.MaxValue, int.MaxValue);
 
         /// <summary>
         /// Determines whether hover should be drawn during rendering.
@@ -366,7 +366,7 @@ namespace Gwen.Controls
         public ControlBase(ControlBase parent = null)
         {
             m_Children = new ControlCollection(this);
-            m_Accelerators = new Dictionary<string, GwenEventHandler<EventArgs>>();
+            m_Accelerators = [];
             Parent = parent;
 
             m_Hidden = false;

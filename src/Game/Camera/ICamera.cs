@@ -17,7 +17,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 
@@ -25,9 +24,9 @@ namespace linerider.Game
 {
     public abstract class ICamera
     {
-        protected AutoArray<CameraEntry> _frames = new AutoArray<CameraEntry>();
+        protected AutoArray<CameraEntry> _frames = new();
         private const int cacherate = Constants.PhysicsRate;
-        private readonly AutoArray<Vector2d> _framecache = new AutoArray<Vector2d>();
+        private readonly AutoArray<Vector2d> _framecache = new();
         private Vector2d _prevcamera = Vector2d.Zero;
         private int _prevframe = -1;
         private float _cachezoom = 1;
@@ -77,7 +76,7 @@ namespace linerider.Game
             if (frame == 1)
             {
                 Rider firstframe = _timeline.GetFrame(0);
-                CameraEntry entry = new CameraEntry(firstframe.CalculateCenter());
+                CameraEntry entry = new(firstframe.CalculateCenter());
                 _frames[0] = entry;
                 _framecache[0] = Vector2d.Zero;
             }
@@ -151,7 +150,7 @@ namespace linerider.Game
             int maxheight)
         {
             Vector2d center = GetCenter();
-            Vector2d size = new Vector2d(maxwidth / zoom, maxheight / zoom);
+            Vector2d size = new(maxwidth / zoom, maxheight / zoom);
             Vector2d origin = center - size / 2;
             return new DoubleRect(origin, size);
         }
@@ -164,7 +163,7 @@ namespace linerider.Game
         {
             DoubleRect ret = GetViewport(zoom, width, height);
             Vector2d pos = ret.Vector + ret.Size / 2;
-            CameraBoundingBox b = new CameraBoundingBox(pos);
+            CameraBoundingBox b = new(pos);
             if (Settings.SmoothCamera || Settings.RoundLegacyCamera)
             {
                 b.SetupSmooth(GetPPF(_currentframe), _zoom);
@@ -186,7 +185,7 @@ namespace linerider.Game
             {
                 int diff = frame - (_frames.Count - 1);
                 Rider[] frames = _timeline.GetFrames(_frames.Count, diff);
-                CameraEntry camoffset = _frames[_frames.Count - 1];
+                CameraEntry camoffset = _frames[^1];
                 for (int i = 0; i < diff; i++)
                 {
                     Vector2d center = frames[i].CalculateCenter();

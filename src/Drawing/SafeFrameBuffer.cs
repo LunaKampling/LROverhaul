@@ -38,7 +38,7 @@ namespace linerider.Drawing
         public static void Initialize()
         {
             string glstr = GL.GetString(StringName.Extensions).ToUpperInvariant();
-            Version _version = new Version();
+            Version _version = new();
             try
             {
                 // This can fail for any number of reasons

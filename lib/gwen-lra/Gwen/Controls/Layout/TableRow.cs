@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Gwen.Controls
 {
-    public class TableRow : ControlBase
+    public class TableRow(TableLayout parent) : ControlBase(parent)
     {
         public class TableCell : ControlBase
         {
@@ -48,12 +48,9 @@ namespace Gwen.Controls
                 m_parentlayout.Invalidate();
             }
         }
-        private readonly TableLayout m_parent;
-        internal TableCell[] cells = new TableCell[0];
-        public TableRow(TableLayout parent) : base(parent)
-        {
-            m_parent = parent ?? throw new Exception("Table layout parent cannot be null");
-        }
+        private readonly TableLayout m_parent = parent ?? throw new Exception("Table layout parent cannot be null");
+        internal TableCell[] cells = [];
+
         /// <summary>
         /// Handler invoked when a child is added.
         /// </summary>
@@ -67,7 +64,7 @@ namespace Gwen.Controls
         }
         public List<int> GetRowWidths()
         {
-            List<int> ret = new List<int>();
+            List<int> ret = [];
             foreach (TableCell child in cells)
             {
                 if (child == null)

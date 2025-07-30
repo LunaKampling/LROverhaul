@@ -60,7 +60,7 @@ namespace Gwen.Controls
                 IconMarginDisabled = true,
                 IsTabable = false
             };
-            ComboBoxArrow arrow = new ComboBoxArrow(this);
+            ComboBoxArrow arrow = new(this);
             m_Button = arrow;
 
             Alignment = Pos.Left | Pos.CenterV;

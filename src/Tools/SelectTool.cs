@@ -20,13 +20,12 @@ using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SkiaSharp;
 
 namespace linerider.Tools
 {
@@ -79,7 +78,7 @@ namespace linerider.Tools
         private GameLine _hoverline = null;
         private bool _hoverknob = false;
         private bool _hoverknobjoint1;
-        private readonly Stopwatch _hovertime = new Stopwatch();
+        private readonly Stopwatch _hovertime = new();
         private bool _hoverclick = false;
         public override bool Active
         {
@@ -94,16 +93,14 @@ namespace linerider.Tools
             if (line is StandardLine stdline && CanLifelock)
             {
                 game.Track.NotifyTrackChanged();
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                using TrackReader trk = game.Track.CreateTrackReader();
+                if (!LifeLock(trk, game.Track.Timeline, stdline))
                 {
-                    if (!LifeLock(trk, game.Track.Timeline, stdline))
-                    {
-                        _lifelocking = true;
-                    }
-                    else if (_lifelocking)
-                    {
-                        DropLine();
-                    }
+                    _lifelocking = true;
+                }
+                else if (_lifelocking)
+                {
+                    DropLine();
                 }
             }
             else
@@ -113,46 +110,44 @@ namespace linerider.Tools
         }
         private bool SelectLine(Vector2d gamepos)
         {
-            using (TrackReader trk = game.Track.CreateTrackReader())
+            using TrackReader trk = game.Track.CreateTrackReader();
+            GameLine line = SelectLine(trk, gamepos, out bool knob);
+            if (line != null)
             {
-                GameLine line = SelectLine(trk, gamepos, out bool knob);
-                if (line != null)
+                _clickstart = gamepos;
+                _active = true;
+                // Is it a knob?
+                if (knob)
                 {
-                    _clickstart = gamepos;
-                    _active = true;
-                    // Is it a knob?
-                    if (knob)
+                    if (InputUtils.Check(Hotkey.ToolSelectBothJoints))
                     {
-                        if (InputUtils.Check(Hotkey.ToolSelectBothJoints))
-                        {
-                            _selection = new LineSelection(line, bothjoints: true);
-                        }
-                        else
-                        {
-                            Vector2d knobpos = Utility.CloserPoint(
-                                gamepos,
-                                line.Position1,
-                                line.Position2);
-                            _selection = new LineSelection(line, knobpos);
-                            _hoverclick = true;
-                            _hovertime.Restart();
-                            foreach (GameLine snap in LineEndsInRadius(trk, knobpos, 1))
-                            {
-                                if ((snap.Position1 == knobpos ||
-                                    snap.Position2 == knobpos) &&
-                                    snap != line)
-                                {
-                                    _selection.snapped.Add(new LineSelection(snap, knobpos));
-                                }
-                            }
-                        }
-                        return true;
+                        _selection = new LineSelection(line, bothjoints: true);
                     }
                     else
                     {
-                        _selection = new LineSelection(line, true);
-                        return true;
+                        Vector2d knobpos = Utility.CloserPoint(
+                            gamepos,
+                            line.Position1,
+                            line.Position2);
+                        _selection = new LineSelection(line, knobpos);
+                        _hoverclick = true;
+                        _hovertime.Restart();
+                        foreach (GameLine snap in LineEndsInRadius(trk, knobpos, 1))
+                        {
+                            if ((snap.Position1 == knobpos ||
+                                snap.Position2 == knobpos) &&
+                                snap != line)
+                            {
+                                _selection.snapped.Add(new LineSelection(snap, knobpos));
+                            }
+                        }
                     }
+                    return true;
+                }
+                else
+                {
+                    _selection = new LineSelection(line, true);
+                    return true;
                 }
             }
             return false;
@@ -217,32 +212,30 @@ namespace linerider.Tools
             _hoverline = null;
             if (!_active)
             {
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                using TrackReader trk = game.Track.CreateTrackReader();
+                GameLine line = SelectLine(trk, gamepos, out bool knob);
+                if (line != null)
                 {
-                    GameLine line = SelectLine(trk, gamepos, out bool knob);
-                    if (line != null)
+                    _hoverline = line;
+                    if (knob)
                     {
-                        _hoverline = line;
-                        if (knob)
+                        Vector2d point = Utility.CloserPoint(
+                            gamepos,
+                            line.Position1,
+                            line.Position2);
+
+                        bool joint1 = point == line.Position1;
+
+                        if (_hoverline != oldhover ||
+                        _hoverknobjoint1 != joint1 ||
+                        _hoverknob != knob)
                         {
-                            Vector2d point = Utility.CloserPoint(
-                                gamepos,
-                                line.Position1,
-                                line.Position2);
-
-                            bool joint1 = point == line.Position1;
-
-                            if (_hoverline != oldhover ||
-                            _hoverknobjoint1 != joint1 ||
-                            _hoverknob != knob)
-                            {
-                                _hoverclick = false;
-                                _hovertime.Restart();
-                            }
-                            _hoverknobjoint1 = joint1;
+                            _hoverclick = false;
+                            _hovertime.Restart();
                         }
-                        _hoverknob = knob;
+                        _hoverknobjoint1 = joint1;
                     }
+                    _hoverknob = knob;
                 }
             }
         }
@@ -445,10 +438,10 @@ namespace linerider.Tools
         private void SnapJoints(TrackReader trk, GameLine line,
          ref Vector2d joint1, ref Vector2d joint2)
         {
-            HashSet<int> ignoreids = new HashSet<int>
-            {
+            HashSet<int> ignoreids =
+            [
                 _selection.line.ID
-            };
+            ];
             foreach (LineSelection snapped in _selection.snapped)
             {
                 _ = ignoreids.Add(snapped.line.ID);

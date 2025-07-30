@@ -63,8 +63,8 @@ namespace linerider.Rendering
         {
             _sync = new ResourceSync();
             _lineactions = new Queue<Tuple<LineActionType, GameLine>>();
-            _physlines = new Dictionary<int, int>();
-            _scenerylines = new Dictionary<int, int>();
+            _physlines = [];
+            _scenerylines = [];
             _decorator = new LineDecorator();
             _physvbo = new LineRenderer(Shaders.LineShader)
             {
@@ -127,9 +127,9 @@ namespace linerider.Rendering
         /// </summary>
         public void InitializeTrack(Track track)
         {
-            AutoArray<GameLine> scenery = new AutoArray<GameLine>(track.SceneryLines);
+            AutoArray<GameLine> scenery = new(track.SceneryLines);
             scenery.UnsafeSetCount(track.SceneryLines);
-            AutoArray<GameLine> phys = new AutoArray<GameLine>(track.BlueLines + track.RedLines);
+            AutoArray<GameLine> phys = new(track.BlueLines + track.RedLines);
             GameLine[] sorted = track.GetSortedLines();
             using (_sync.AcquireWrite())
             {

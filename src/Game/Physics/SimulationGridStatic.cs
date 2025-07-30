@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using linerider.Game;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -45,7 +44,7 @@ namespace linerider
         public static List<CellLocation> GetGridPositions(Vector2d linestart, Vector2d lineend, int gridversion)
         {
             Vector2d diff = lineend - linestart;
-            List<CellLocation> ret = new List<CellLocation>();
+            List<CellLocation> ret = [];
             CellLocation cell = CellInfo(linestart.X, linestart.Y);
             CellLocation gridend = CellInfo(lineend.X, lineend.Y);
 
@@ -59,7 +58,7 @@ namespace linerider
                 p2Y = Math.Max(cell.Y, gridend.Y);
             Rectangle box = Rectangle.FromLTRB(p1X, p1Y, p2X, p2Y);
             Vector2d current = linestart;
-            Vector2d scalar = new Vector2d(1 / diff.Y, 1 / diff.X);
+            Vector2d scalar = new(1 / diff.Y, 1 / diff.X);
             bool xforwards = diff.X > 0;
             bool yforwards = diff.Y > 0;
             if (gridversion == 62)
@@ -90,7 +89,7 @@ namespace linerider
                 Vector2d line_normal_unit = diff.Normalized().PerpendicularLeft; // Does not depend on flipped
                 Vector2d line_halfway = 0.5 * new Vector2d(Math.Abs(diff.X), Math.Abs(diff.Y));
                 Vector2d line_midpoint = linestart + diff * 0.5;
-                Vector2d absolute_normal = new Vector2d(Math.Abs(line_normal_unit.X), Math.Abs(line_normal_unit.Y));
+                Vector2d absolute_normal = new(Math.Abs(line_normal_unit.X), Math.Abs(line_normal_unit.Y));
 
                 for (int cell_x = p1X; cell_x <= p2X; cell_x++)
                 {
@@ -125,7 +124,7 @@ namespace linerider
         private static List<CellLocation> GetGridPositions61(Vector2d start, Vector2d end)
         {
             Vector2d diff = end - start;
-            List<CellLocation> ret = new List<CellLocation>();
+            List<CellLocation> ret = [];
             CellLocation cell = CellInfo(start.X, start.Y);
             CellLocation gridend = CellInfo(end.X, end.Y);
 

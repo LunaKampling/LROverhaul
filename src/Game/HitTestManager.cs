@@ -6,10 +6,10 @@ namespace linerider
 {
     public class HitTestManager
     {
-        private readonly HashSet<int> _allcollisions = new HashSet<int>();
-        private readonly AutoArray<HashSet<int>> _unique_frame_collisions = new AutoArray<HashSet<int>>();
-        private readonly HashSet<int> _renderer_changelist = new HashSet<int>();
-        private readonly Dictionary<int, int> _line_framehit = new Dictionary<int, int>();
+        private readonly HashSet<int> _allcollisions = [];
+        private readonly AutoArray<HashSet<int>> _unique_frame_collisions = new();
+        private readonly HashSet<int> _renderer_changelist = [];
+        private readonly Dictionary<int, int> _line_framehit = [];
         private int _currentframe = Disabled;
         private const int Disabled = -1;
         public HitTestManager()
@@ -37,10 +37,10 @@ namespace linerider
         }
         public void AddFrame(LinkedList<int> collisions)
         {
-            List<LinkedList<int>> list = new List<LinkedList<int>>
-            {
+            List<LinkedList<int>> list =
+            [
                 collisions
-            };
+            ];
             AddFrames(list);
         }
         public void AddFrames(List<LinkedList<int>> collisionlist)
@@ -48,7 +48,7 @@ namespace linerider
             foreach (LinkedList<int> collisions in collisionlist)
             {
                 int frameid = _unique_frame_collisions.Count;
-                HashSet<int> unique = new HashSet<int>();
+                HashSet<int> unique = [];
                 foreach (int collision in collisions)
                 {
                     int id = collision;
@@ -73,7 +73,7 @@ namespace linerider
         /// </summary>
         public HashSet<int> GetChangesForFrame(int newframe)
         {
-            HashSet<int> ret = new HashSet<int>();
+            HashSet<int> ret = [];
             int current = _currentframe;
             foreach (int v in _renderer_changelist)
             {
@@ -169,7 +169,7 @@ namespace linerider
                 }
             }
             _unique_frame_collisions.Clear();
-            _unique_frame_collisions.Add(new HashSet<int>());
+            _unique_frame_collisions.Add([]);
             _line_framehit.Clear();
             _allcollisions.Clear();
             _currentframe = Disabled;

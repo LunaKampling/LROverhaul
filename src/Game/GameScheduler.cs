@@ -24,7 +24,7 @@ namespace linerider
 {
     public class GameScheduler
     {
-        private readonly Stopwatch sw = new Stopwatch();
+        private readonly Stopwatch sw = new();
         private double lastupdate = 0;
         private double updateperiod = 1;
         private bool reset = true;

@@ -6,20 +6,14 @@ namespace Gwen.Controls
     /// <summary>
     /// Multiline label with text chunks having different color/font.
     /// </summary>
-    public class RichLabel : ControlBase
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RichLabel"/> class.
+    /// </remarks>
+    /// <param name="parent">Parent control.</param>
+    public class RichLabel(ControlBase parent) : ControlBase(parent)
     {
-        #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RichLabel"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public RichLabel(ControlBase parent)
-            : base(parent)
-        {
-            newline = new string[] { "\r\n", "\n" };
-            m_TextBlocks = new List<TextBlock>();
-        }
+        #region Constructors
 
         #endregion Constructors
 
@@ -30,7 +24,7 @@ namespace Gwen.Controls
         /// </summary>
         public void AddLineBreak()
         {
-            TextBlock block = new TextBlock { Type = BlockType.NewLine };
+            TextBlock block = new() { Type = BlockType.NewLine };
             m_TextBlocks.Add(block);
         }
 
@@ -51,7 +45,7 @@ namespace Gwen.Controls
                 if (i > 0)
                     AddLineBreak();
 
-                TextBlock block = new TextBlock { Type = BlockType.Text, Text = lines[i], Color = color, Font = font };
+                TextBlock block = new() { Type = BlockType.Text, Text = lines[i], Color = color, Font = font };
 
                 m_TextBlocks.Add(block);
                 m_NeedsRebuild = true;
@@ -103,7 +97,7 @@ namespace Gwen.Controls
                 CreateNewline(ref x, ref y, lineHeight);
             }
 
-            Label label = new Label(this);
+            Label label = new(this);
             label.SetText(x == 0 ? text.TrimStart(' ') : text);
             label.TextColor = block.Color;
             label.TextColorOverride = block.Color;
@@ -263,8 +257,8 @@ namespace Gwen.Controls
 
         #region Fields
 
-        private readonly List<TextBlock> m_TextBlocks;
-        private readonly string[] newline;
+        private readonly List<TextBlock> m_TextBlocks = [];
+        private readonly string[] newline = ["\r\n", "\n"];
         private bool m_NeedsRebuild;
 
         #endregion Fields

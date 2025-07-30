@@ -12,7 +12,7 @@ namespace linerider.UI.Components
 
         public ToolButton(ControlBase parent, Tool tool) : base(parent)
         {
-            Texture tx = new Texture(parent.Skin.Renderer);
+            Texture tx = new(parent.Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, GameResources.ux_tool_background.Bitmap);
             ActiveToolBackground = tx;
 

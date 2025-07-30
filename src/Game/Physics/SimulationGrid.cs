@@ -17,7 +17,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace linerider
         public const int CellSize = 14;
         public int GridVersion = 62;
         public ResourceSync Sync { get; } = new ResourceSync();
-        private readonly Dictionary<int, SimulationCell> Cells = new Dictionary<int, SimulationCell>(4096);
+        private readonly Dictionary<int, SimulationCell> Cells = new(4096);
 
         public List<CellLocation> GetGridPositions(StandardLine line) => GetGridPositions(line, GridVersion);
         public void AddLine(StandardLine line)

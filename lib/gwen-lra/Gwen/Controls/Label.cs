@@ -218,7 +218,7 @@ namespace Gwen.Controls
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        protected virtual Point GetClosestCharacter(int x, int y) => new Point(m_Text.GetClosestCharacter(m_Text.CanvasPosToLocal(new Point(x, y))), 0);
+        protected virtual Point GetClosestCharacter(int x, int y) => new(m_Text.GetClosestCharacter(m_Text.CanvasPosToLocal(new Point(x, y))), 0);
 
         protected override void ProcessLayout(Size size)
         {

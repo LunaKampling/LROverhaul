@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -48,7 +48,7 @@ namespace linerider.Drawing.RiderModel
 
         public List<ScarfSegment> Load()
         {
-            List<ScarfSegment> segments = new List<ScarfSegment>();
+            List<ScarfSegment> segments = [];
 
             switch (Type)
             {
@@ -68,12 +68,12 @@ namespace linerider.Drawing.RiderModel
 
         private List<ScarfSegment> LoadTextLegacy()
         {
-            List<ScarfSegment> segments = new List<ScarfSegment>();
+            List<ScarfSegment> segments = [];
             IEnumerable<string> lines = File.ReadAllLines(Filepath).Skip(1);
 
             foreach (string line in lines)
             {
-                ScarfSegment segment = new ScarfSegment
+                ScarfSegment segment = new()
                 {
                     Color = Convert.ToInt32(line.Substring(0, line.IndexOf(",")), 16),
                     Opacity = Convert.ToByte(line.Substring(line.IndexOf(" ") + 1), 16)
@@ -86,12 +86,12 @@ namespace linerider.Drawing.RiderModel
 
         private List<ScarfSegment> LoadText()
         {
-            List<ScarfSegment> segments = new List<ScarfSegment>();
+            List<ScarfSegment> segments = [];
             IEnumerable<string> lines = File.ReadAllLines(Filepath).Skip(1);
 
             foreach (string line in lines)
             {
-                ScarfSegment segment = new ScarfSegment();
+                ScarfSegment segment = new();
                 string colorRaw;
                 string opacityRaw;
 
@@ -127,14 +127,14 @@ namespace linerider.Drawing.RiderModel
 
         private List<ScarfSegment> LoadImage()
         {
-            List<ScarfSegment> segments = new List<ScarfSegment>();
+            List<ScarfSegment> segments = [];
             SKBitmap scarfImg = SKBitmap.Decode(Filepath);
 
             for (int i = scarfImg.Width - 1; i >= 0; i -= 1)
             {
                 Color color = scarfImg.GetPixel(i, 0);
 
-                ScarfSegment segment = new ScarfSegment()
+                ScarfSegment segment = new()
                 {
                     Color = color.ToArgb() & 0x00FFFFFF,
                     Opacity = color.A,

@@ -122,7 +122,7 @@ namespace Gwen.Controls
         /// Invoked when the node has been collapsed.
         /// </summary>
         public event GwenEventHandler<EventArgs> Collapsed;
-        protected override Margin PanelMargin => new Margin(TreeIndentation, 0, 0, 0);
+        protected override Margin PanelMargin => new(TreeIndentation, 0, 0, 0);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TreeNode"/> class.
@@ -195,7 +195,7 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public TreeNode AddNode(string label)
         {
-            TreeNode node = new TreeNode(this)
+            TreeNode node = new(this)
             {
                 Text = label
             };
@@ -363,7 +363,7 @@ namespace Gwen.Controls
         {
             get
             {
-                List<TreeNode> Trees = new List<TreeNode>();
+                List<TreeNode> Trees = [];
 
                 foreach (ControlBase child in Children)
                 {

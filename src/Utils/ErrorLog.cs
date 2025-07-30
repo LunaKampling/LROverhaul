@@ -19,7 +19,6 @@
 using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 namespace linerider.Utils
 {

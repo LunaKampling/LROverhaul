@@ -1,6 +1,4 @@
-﻿using OpenTK;
-using OpenTK.Mathematics;
-using System;
+﻿using OpenTK.Mathematics;
 using System.Collections.Generic;
 
 namespace linerider.Game.LineGenerator
@@ -10,7 +8,7 @@ namespace linerider.Game.LineGenerator
         public Vector2d positionStart; //Start of the line
         public Vector2d positionEnd; //End of the line
         public int multiplier = 1;
-        public float width = 1; 
+        public float width = 1;
         public bool invert = false;
         public bool reverse = false;
         public LineType lineType;
@@ -18,7 +16,7 @@ namespace linerider.Game.LineGenerator
         public LineGenerator(string _name, Vector2d _positionStart, Vector2d _positionEnd, LineType _lineType)
         {
             name = _name;
-            lines = new List<GameLine>();
+            lines = [];
             positionStart = _positionStart;
             positionEnd = _positionEnd;
             lineType = _lineType;

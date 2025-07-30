@@ -1,10 +1,7 @@
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
@@ -37,13 +34,13 @@ namespace linerider.UI
         private static GameWindow _window;
         private static KeyboardState _kbstate = default(KeyboardState);
         private static KeyboardState _prev_kbstate = default(KeyboardState);
-        private static readonly List<MouseButton> _mousebuttonsdown = new List<MouseButton>();
+        private static readonly List<MouseButton> _mousebuttonsdown = [];
         private static MouseState _mousestate = default(MouseState);
         private static MouseState _prev_mousestate = default(MouseState);
         private static bool _hasmoved = false;
-        private static readonly ResourceSync _lock = new ResourceSync();
+        private static readonly ResourceSync _lock = new();
         private static KeyModifiers _modifiersdown;
-        private static readonly Dictionary<Hotkey, HotkeyHandler> Handlers = new Dictionary<Hotkey, HotkeyHandler>();
+        private static readonly Dictionary<Hotkey, HotkeyHandler> Handlers = [];
         private static HotkeyHandler _current_hotkey = null;
         // Macos has to handle ctrl+ combos differently.
         private static bool _macOS = false;
@@ -54,7 +51,7 @@ namespace linerider.UI
         private static Key RepeatKey = Key.Unknown;
         public static List<KeyModifiers> SplitModifiers(KeyModifiers modifiers)
         {
-            List<KeyModifiers> ret = new List<KeyModifiers>();
+            List<KeyModifiers> ret = [];
             if (modifiers.HasFlag(KeyModifiers.Control))
             {
                 ret.Add(KeyModifiers.Control);
@@ -206,7 +203,8 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                if (_mousestate == null) {
+                if (_mousestate == null)
+                {
                     x = (int)_window.MouseState.X;
                     y = (int)_window.MouseState.Y;
                     return false;
@@ -225,18 +223,14 @@ namespace linerider.UI
         {
             using (_lock.AcquireWrite())
             {
-                if (_mousestate == null) {
-                    _mousestate = ms.GetSnapshot();
-                }
-                if (_prev_mousestate == null) {
-                    _prev_mousestate = ms.GetSnapshot();
-                }
+                _mousestate ??= ms.GetSnapshot();
+                _prev_mousestate ??= ms.GetSnapshot();
                 if (_mousestate.X != ms.X || _mousestate.Y != ms.Y)
                 {
                     _hasmoved = true;
                 }
                 _prev_mousestate = _mousestate;
-                _mousestate = ms.GetSnapshot(); 
+                _mousestate = ms.GetSnapshot();
                 _mousebuttonsdown.Clear();
                 for (MouseButton btn = 0; btn < MouseButton.Last; btn++)
                 {
@@ -245,7 +239,7 @@ namespace linerider.UI
                 }
             }
         }
-        public static Vector2d GetMouse() => new Vector2d(_mousestate.X, _mousestate.Y);
+        public static Vector2d GetMouse() => new(_mousestate.X, _mousestate.Y);
         public static bool Check(Hotkey hotkey) => CheckInternal(hotkey, true) != null;
         public static bool CheckPressed(Hotkey hotkey)
         {

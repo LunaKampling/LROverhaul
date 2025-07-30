@@ -41,7 +41,7 @@ namespace linerider.UI.Components
         public void SetImage(SKBitmap bmp)
         {
             m_texture?.Dispose();
-            Texture tx = new Texture(Skin.Renderer);
+            Texture tx = new(Skin.Renderer);
 
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
             m_texture = tx;
@@ -52,7 +52,7 @@ namespace linerider.UI.Components
         public void SetOverride(SKBitmap bitmap)
         {
             _overridetex?.Dispose();
-            Texture tx = new Texture(Skin.Renderer);
+            Texture tx = new(Skin.Renderer);
 
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bitmap);
             _overridetex = tx;

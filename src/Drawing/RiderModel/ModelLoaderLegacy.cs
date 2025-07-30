@@ -6,11 +6,11 @@ namespace linerider.Drawing.RiderModel
     {
         private class Rect
         {
-            public static readonly DoubleRect Sled = new DoubleRect(-0.6875, -2.3125, 17.9195, 8.95975);
-            public static readonly DoubleRect SledBroken = new DoubleRect(-0.3645, -2.3125, 17.477, 8.7385);
-            public static readonly DoubleRect Body = new DoubleRect(0.026, -3.145, 13.944, 6.972);
-            public static readonly DoubleRect Arm = new DoubleRect(-0.657, -1.2305, 7.82, 3.91);
-            public static readonly DoubleRect Leg = new DoubleRect(-0.6535, -2.013, 8.02, 4.01);
+            public static readonly DoubleRect Sled = new(-0.6875, -2.3125, 17.9195, 8.95975);
+            public static readonly DoubleRect SledBroken = new(-0.3645, -2.3125, 17.477, 8.7385);
+            public static readonly DoubleRect Body = new(0.026, -3.145, 13.944, 6.972);
+            public static readonly DoubleRect Arm = new(-0.657, -1.2305, 7.82, 3.91);
+            public static readonly DoubleRect Leg = new(-0.6535, -2.013, 8.02, 4.01);
         }
 
         protected override void ApplyRects() => Models.SetRects(

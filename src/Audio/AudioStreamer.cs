@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK.Audio;
 using OpenTK.Audio.OpenAL;
 using System;
 using System.Threading;
@@ -29,8 +28,8 @@ namespace linerider.Audio
         // Response: audio stretching turns out to be really complicated.
         // Not sure what sort of dependency we want to include for that, if any.
         // Maybe pursue waveform visualize instead.
-        private readonly object _sync = new object();
-        private readonly ManualResetEvent _event = new ManualResetEvent(false);
+        private readonly object _sync = new();
+        private readonly ManualResetEvent _event = new(false);
         private readonly int[] _buffers;
         private readonly int _alsourceid;
         private AudioSource _stream;
@@ -176,7 +175,8 @@ namespace linerider.Audio
             int len = Speed > 0 ? _stream.ReadBuffer() : _stream.ReadBufferReversed();
             if (len > 0)
             {
-                fixed (short* buf = _stream.Buffer){
+                fixed (short* buf = _stream.Buffer)
+                {
                     AL.BufferData(buffer, _stream.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, buf, len * sizeof(short), _stream.SampleRate);
                 }
                 AudioDevice.Check();

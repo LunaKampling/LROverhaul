@@ -7,7 +7,11 @@ namespace Gwen
     /// <summary>
     /// Represents a texture.
     /// </summary>
-    public class Texture : IDisposable
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="Texture"/> class.
+    /// </remarks>
+    /// <param name="renderer">Renderer to use.</param>
+    public class Texture(Renderer.RendererBase renderer) : IDisposable
     {
         /// <summary>
         /// Texture name. Usually file name, but exact meaning depends on renderer.
@@ -22,31 +26,19 @@ namespace Gwen
         /// <summary>
         /// Indicates that the texture failed to load.
         /// </summary>
-        public bool Failed { get; set; }
+        public bool Failed { get; set; } = false;
 
         /// <summary>
         /// Texture width.
         /// </summary>
-        public int Width { get; set; }
+        public int Width { get; set; } = 4;
 
         /// <summary>
         /// Texture height.
         /// </summary>
-        public int Height { get; set; }
+        public int Height { get; set; } = 4;
 
-        private readonly Renderer.RendererBase m_Renderer;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Texture"/> class.
-        /// </summary>
-        /// <param name="renderer">Renderer to use.</param>
-        public Texture(Renderer.RendererBase renderer)
-        {
-            m_Renderer = renderer;
-            Width = 4;
-            Height = 4;
-            Failed = false;
-        }
+        private readonly Renderer.RendererBase m_Renderer = renderer;
 
         /// <summary>
         /// Loads the specified texture.

@@ -3,24 +3,17 @@ namespace linerider.Game.Physics
     /// <summary>
     /// describes a very specific point in the physics simulation, can include intermediate steps like iterations, subiterations, and the individual components of a momentum tick.
     /// </summary>
-    public class Moment
+    public class Moment(int frame, int iteration = RiderConstants.Iterations,
+        int subiteration = RiderConstants.Subiterations)
     {
-        private int frame;
-        private int iteration;
-        private int subiteration;
+        private int frame = frame;
+        private int iteration = iteration;
+        private int subiteration = subiteration;
 
         public int Frame { get { return frame; } set { frame = value; } }
         public int Iteration { get { return iteration; } set { iteration = value; } }
         public int Subiteration { get { return subiteration; } set { subiteration = value; } }
 
-        public Moment(int frame, int iteration = RiderConstants.Iterations,
-            int subiteration = RiderConstants.Subiterations)
-        {
-            this.frame = frame;
-            this.iteration = iteration;
-            this.subiteration = subiteration;
-        }
-        
         public bool interactWithLines()
         {
             return iteration != 0 && subiteration == RiderConstants.Subiterations;
@@ -38,7 +31,7 @@ namespace linerider.Game.Physics
         {
             return b < a;
         }
-        
+
         public static bool operator <=(Moment a, Moment b)
         {
             if (a.frame < b.frame) return true;

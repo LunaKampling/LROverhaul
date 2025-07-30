@@ -28,7 +28,7 @@ namespace linerider.UI.Widgets
     public class InfoBarRight : WidgetContainer
     {
         private readonly Editor _editor;
-        private readonly Stopwatch _fpswatch = new Stopwatch();
+        private readonly Stopwatch _fpswatch = new();
 
         private TrackLabel _fpslabel;
         private TrackLabel _riderspeedlabel;

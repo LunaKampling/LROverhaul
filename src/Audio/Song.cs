@@ -18,18 +18,12 @@
 
 namespace linerider.Audio
 {
-    public struct Song
+    public struct Song(string location, float offset)
     {
-        public bool Enabled;
-        public string Location;
-        public float Offset;
+        public bool Enabled = true;
+        public string Location = location;
+        public float Offset = offset;
 
-        public Song(string location, float offset)
-        {
-            Location = location;
-            Offset = offset;
-            Enabled = true;
-        }
         public override string ToString()
         {
             // NOTE: .trk spec mandates \r\n newline here

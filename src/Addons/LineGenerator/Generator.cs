@@ -1,5 +1,4 @@
-﻿using OpenTK;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +13,7 @@ namespace linerider.Game.LineGenerator
         public Generator(string _name)
         {
             name = _name;
-            lines = new List<GameLine>();
+            lines = [];
         }
 
         public abstract void Generate_Internal(TrackWriter trk); // This function contains the line generation, for a given generator, and is called by Generate()
@@ -47,19 +46,17 @@ namespace linerider.Game.LineGenerator
         }
         public void DeleteLines() // Delete all lines in the array
         {
-            using (TrackWriter trk = game.Track.CreateTrackWriter())
+            using TrackWriter trk = game.Track.CreateTrackWriter();
+            trk.DisableUndo();
+            if (lines.Count() == 0)
+                return;
+            foreach (GameLine line in lines)
             {
-                trk.DisableUndo();
-                if (lines.Count() == 0)
-                    return;
-                foreach (GameLine line in lines)
-                {
-                    trk.RemoveLine(line);
-                }
-                lines.Clear();
-                game.Track.Invalidate();
-                game.Track.NotifyTrackChanged();
+                trk.RemoveLine(line);
             }
+            lines.Clear();
+            game.Track.Invalidate();
+            game.Track.NotifyTrackChanged();
         }
         public void Finalise() // Finalises the generation, to be called after properly generating the lines to reset the generator
 => lines.Clear();
@@ -81,7 +78,7 @@ namespace linerider.Game.LineGenerator
                     break;
 
                 case LineType.Acceleration:
-                    RedLine red = new RedLine(start, end, inv)
+                    RedLine red = new(start, end, inv)
                     { Multiplier = multiplier };
                     red.CalculateConstants(); // Multiplier needs to be recalculated
                     added = red;

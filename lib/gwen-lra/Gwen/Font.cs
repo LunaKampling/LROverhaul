@@ -7,22 +7,28 @@ namespace Gwen
     /// <summary>
     /// Represents font resource.
     /// </summary>
-    public class Font : IDisposable
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="Font"/> class.
+    /// </remarks>
+    /// <param name="renderer">Renderer to use.</param>
+    /// <param name="faceName">Face name.</param>
+    /// <param name="size">Font size.</param>
+    public class Font(Renderer.RendererBase renderer, string faceName, int size = 10) : IDisposable
     {
         /// <summary>
         /// Font face name. Exact meaning depends on renderer.
         /// </summary>
-        public string FaceName { get; set; }
+        public string FaceName { get; set; } = faceName;
 
         /// <summary>
         /// Font size.
         /// </summary>
-        public int Size { get; set; }
+        public int Size { get; set; } = size;
 
         /// <summary>
         /// Enables or disables font smoothing (default: disabled).
         /// </summary>
-        public bool Smooth { get; set; }
+        public bool Smooth { get; set; } = false;
 
         //public bool Bold { get; set; }
         //public bool DropShadow { get; set; }
@@ -38,7 +44,7 @@ namespace Gwen
         /// </summary>
         public float RealSize { get; set; }
 
-        private readonly Renderer.RendererBase m_Renderer;
+        private readonly Renderer.RendererBase m_Renderer = renderer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Font"/> class.
@@ -49,22 +55,7 @@ namespace Gwen
 
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Font"/> class.
-        /// </summary>
-        /// <param name="renderer">Renderer to use.</param>
-        /// <param name="faceName">Face name.</param>
-        /// <param name="size">Font size.</param>
-        public Font(Renderer.RendererBase renderer, string faceName, int size = 10)
-        {
-            m_Renderer = renderer;
-            FaceName = faceName;
-            Size = size;
-            Smooth = false;
-            //Bold = false;
-            //DropShadow = false;
-        }
-        public virtual List<string> WordWrap(string input, int maxpx) => new List<string>() { input };
+        public virtual List<string> WordWrap(string input, int maxpx) => [input];
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -88,7 +79,7 @@ namespace Gwen
         /// <returns></returns>
         public Font Copy()
         {
-            Font f = new Font(m_Renderer, FaceName)
+            Font f = new(m_Renderer, FaceName)
             {
                 Size = Size,
                 RealSize = RealSize,

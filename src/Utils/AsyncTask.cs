@@ -21,20 +21,15 @@ using System.Threading.Tasks;
 
 namespace linerider.Utils
 {
-    public class AsyncTask : IDisposable
+    public class AsyncTask(Action action, Func<bool> condition, Action oncompletion) : IDisposable
     {
-        private readonly Action _action;
-        private readonly Action _oncompletion;
-        private readonly Func<bool> _condition;
+        private readonly Action _action = action;
+        private readonly Action _oncompletion = oncompletion;
+        private readonly Func<bool> _condition = condition;
         private Task _task = null;
-        private readonly object _sync = new object();
+        private readonly object _sync = new();
         private bool running = false;
-        public AsyncTask(Action action, Func<bool> condition, Action oncompletion)
-        {
-            _action = action;
-            _condition = condition;
-            _oncompletion = oncompletion;
-        }
+
         private void ThreadProc()
         {
             while (true)

@@ -24,8 +24,7 @@ namespace linerider
 
         public static void Initialize(MainWindow wnd)
         {
-            if (game == null)
-                game = wnd;
+            game ??= wnd;
         }
     }
 }

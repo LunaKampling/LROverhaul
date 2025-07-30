@@ -30,7 +30,7 @@ namespace Gwen.Controls
         /// Invoked when the category collapsed state has been changed (header button has been pressed).
         /// </summary>
 		public event GwenEventHandler<EventArgs> Collapsed;
-        protected override Margin PanelMargin => new Margin(0, 0, 0, 5);
+        protected override Margin PanelMargin => new(0, 0, 0, 5);
         /// <summary>
         /// Initializes a new instance of the <see cref="CollapsibleCategory"/> class.
         /// </summary>

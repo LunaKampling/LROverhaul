@@ -18,7 +18,6 @@
 
 using linerider.Utils;
 using OpenTK.Audio.OpenAL;
-using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -55,7 +54,7 @@ namespace linerider.Audio
         {
             int alsource = AL.GenSource();
             audio.Position = 0;
-            List<int> bufs = new List<int>();
+            List<int> bufs = [];
             try
             {
                 while (true)
@@ -66,7 +65,8 @@ namespace linerider.Audio
                         int bufferid = AL.GenBuffer();
                         AudioDevice.Check();
                         bufs.Add(bufferid);
-                        fixed (short* buf = audio.Buffer) {
+                        fixed (short* buf = audio.Buffer)
+                        {
                             AL.BufferData(bufferid, audio.Channels == 1 ? ALFormat.Mono16 : ALFormat.Stereo16, buf, len * sizeof(short), audio.SampleRate);
                         }
                         AL.SourceQueueBuffer(alsource, bufferid);
@@ -89,7 +89,7 @@ namespace linerider.Audio
                         Thread.Sleep(1);
                     AL.DeleteSource(alsource);
                     if (bufs.Count != 0)
-                        AL.DeleteBuffers(bufs.ToArray());
+                        AL.DeleteBuffers([.. bufs]);
                 })
                 { IsBackground = true }.Start();
             }

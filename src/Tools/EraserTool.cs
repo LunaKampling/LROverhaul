@@ -18,7 +18,6 @@
 
 using linerider.UI;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
 using SkiaSharp;
@@ -91,24 +90,22 @@ namespace linerider.Tools
 
         private void Erase(Vector2d pos)
         {
-            using (TrackWriter trk = game.Track.CreateTrackWriter())
+            using TrackWriter trk = game.Track.CreateTrackWriter();
+            Game.GameLine[] lines = LinesInRadius(trk, pos, radius);
+            if (lines.Length != 0)
             {
-                Game.GameLine[] lines = LinesInRadius(trk, pos, radius);
-                if (lines.Length != 0)
+                LineType linefilter = Swatch.Selected;
+                for (int i = 0; i < lines.Length; i++)
                 {
-                    LineType linefilter = Swatch.Selected;
-                    for (int i = 0; i < lines.Length; i++)
+                    if (linefilter == LineType.All || lines[i].Type == linefilter)
                     {
-                        if (linefilter == LineType.All || lines[i].Type == linefilter)
-                        {
-                            _actionmade = true;
-                            trk.RemoveLine(lines[i]);
-                        }
+                        _actionmade = true;
+                        trk.RemoveLine(lines[i]);
                     }
-                    game.Track.NotifyTrackChanged();
                 }
-                _last_erased = pos;
+                game.Track.NotifyTrackChanged();
             }
+            _last_erased = pos;
         }
 
         public override void Cancel() => Stop();

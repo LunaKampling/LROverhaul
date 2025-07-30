@@ -3,7 +3,6 @@ using linerider.Rendering;
 using linerider.UI;
 using linerider.Utils;
 using Newtonsoft.Json.Linq;
-using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
 using System;
@@ -11,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 //using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace linerider.Tools
 {
@@ -36,12 +34,12 @@ namespace linerider.Tools
         private DoubleRect _drawbox = DoubleRect.Empty;
         private Vector2d _clickstart;
         private bool _movingselection = false;
-        private readonly List<LineSelection> _selection = new List<LineSelection>();
-        private readonly List<LineSelection> _boxselection = new List<LineSelection>();
-        private readonly HashSet<int> _selectedlines = new HashSet<int>();
+        private readonly List<LineSelection> _selection = [];
+        private readonly List<LineSelection> _boxselection = [];
+        private readonly HashSet<int> _selectedlines = [];
         private bool _drawingbox = false;
         private bool _movemade = false;
-        private readonly List<GameLine> _copybuffer = new List<GameLine>();
+        private readonly List<GameLine> _copybuffer = [];
         private GameLine _snapline = null;
         private bool _snapknob2 = false;
         private bool _snapknob1 = false;
@@ -85,7 +83,7 @@ namespace linerider.Tools
                         {
                             GameLine line = trk.Track.LineLookup[lineid];
                             _ = _selectedlines.Add(line.ID);
-                            LineSelection selection = new LineSelection(line, true, null);
+                            LineSelection selection = new(line, true, null);
                             _selection.Add(selection);
                             line.SelectionState = SelectionState.Selected;
                             game.Track.RedrawLine(line);
@@ -213,24 +211,22 @@ namespace linerider.Tools
         {
             Vector2d size = gamepos - _drawbox.Vector;
             _drawbox.Size = size;
-            using (TrackWriter trk = game.Track.CreateTrackWriter())
+            using TrackWriter trk = game.Track.CreateTrackWriter();
+            IEnumerable<GameLine> lines = trk.GetLinesInRect(_drawbox.MakeLRTB(), true);
+            UnselectOnUpdate(lines);
+            foreach (GameLine line in lines)
             {
-                IEnumerable<GameLine> lines = trk.GetLinesInRect(_drawbox.MakeLRTB(), true);
-                UnselectOnUpdate(lines);
-                foreach (GameLine line in lines)
+                if (!_selectedlines.Contains(line.ID))
                 {
-                    if (!_selectedlines.Contains(line.ID))
+                    if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(line.ID)) continue;
+
+                    LineSelection selection = new(line, true, null);
+                    if ((line.Type == Swatch.Selected || Swatch.Selected == LineType.All) && line.SelectionState == SelectionState.None)
                     {
-                        if (Settings.Editor.NoHitSelect && game.Track.Timeline.IsLineHit(line.ID)) continue;
+                        line.SelectionState = SelectionState.Selected;
+                        _boxselection.Add(selection);
+                        game.Track.RedrawLine(line);
 
-                        LineSelection selection = new LineSelection(line, true, null);
-                        if ((line.Type == Swatch.Selected || Swatch.Selected == LineType.All) && line.SelectionState == SelectionState.None)
-                        {
-                            line.SelectionState = SelectionState.Selected;
-                            _boxselection.Add(selection);
-                            game.Track.RedrawLine(line);
-
-                        }
                     }
                 }
             }
@@ -341,7 +337,7 @@ namespace linerider.Tools
         private void RenderFilledCorner(DoubleRect box, bool top, bool left)
         {
             DoubleRect corner = GetCorner(box, top, left);
-            DoubleRect rect = new DoubleRect(
+            DoubleRect rect = new(
                 GameDrawingMatrix.ScreenCoordD(corner.Vector),
                 new Vector2d(corner.Width * game.Track.Zoom,
                 corner.Height * game.Track.Zoom));
@@ -350,7 +346,7 @@ namespace linerider.Tools
         private void RenderCorner(DoubleRect box, bool top, bool left)
         {
             DoubleRect corner = GetCorner(box, top, left);
-            DoubleRect rect = new DoubleRect(
+            DoubleRect rect = new(
                 GameDrawingMatrix.ScreenCoordD(corner.Vector),
                 new Vector2d(corner.Width * game.Track.Zoom,
                 corner.Height * game.Track.Zoom));
@@ -463,7 +459,7 @@ namespace linerider.Tools
                         stl.CalculateConstants();
                     add.SelectionState = SelectionState.Selected;
                     trk.AddLine(add); //Adds lines on the current layer. .com does it the same way.
-                    LineSelection selectinfo = new LineSelection(add, true, null);
+                    LineSelection selectinfo = new(add, true, null);
                     _selection.Add(selectinfo);
                     _ = _selectedlines.Add(add.ID);
                 }
@@ -477,7 +473,7 @@ namespace linerider.Tools
             if (!Active || _drawingbox || _selection.Count == 0)
                 return;
 
-            StringBuilder lineArray = new StringBuilder("[");
+            StringBuilder lineArray = new("[");
 
             Vector2d offset = GetCopyOrigin();
 
@@ -493,7 +489,7 @@ namespace linerider.Tools
                     _ = lineArray.Append(",");
                 }
             }
-      
+
             game.Clipboard = lineArray.ToString() + "]";
 
             game.Track.Notify("Copied!");
@@ -514,7 +510,7 @@ namespace linerider.Tools
             {
                 JArray parsedLineArray = JArray.Parse(lineArray);
 
-                List<GameLine> deserializedLines = new List<GameLine>();
+                List<GameLine> deserializedLines = [];
 
                 foreach (JToken line in parsedLineArray)
                 {
@@ -522,8 +518,8 @@ namespace linerider.Tools
 
                     GameLine newLine = null;
 
-                    Vector2d pos1 = new Vector2d((double)inner["x1"], (double)inner["y1"]);
-                    Vector2d pos2 = new Vector2d((double)inner["x2"], (double)inner["y2"]);
+                    Vector2d pos1 = new((double)inner["x1"], (double)inner["y1"]);
+                    Vector2d pos2 = new((double)inner["x2"], (double)inner["y2"]);
                     bool flipped = inner.ContainsKey("flipped") && (bool)inner["flipped"];
                     bool left = inner.ContainsKey("leftExtended") && (bool)inner["leftExtended"];
                     bool right = inner.ContainsKey("rightExtended") && (bool)inner["rightExtended"];
@@ -574,28 +570,26 @@ namespace linerider.Tools
             if (!Active || _drawingbox || _selection.Count == 0)
                 return;
 
-            using (TrackWriter trk = game.Track.CreateTrackWriter())
+            using TrackWriter trk = game.Track.CreateTrackWriter();
+            game.Track.UndoManager.BeginAction();
+
+            List<GameLine> buffer = [];
+
+            foreach (int selected in _selectedlines)
             {
-                game.Track.UndoManager.BeginAction();
+                GameLine line = trk.Track.LineLookup[selected];
+                line.SelectionState = SelectionState.None;
+                trk.RemoveLine(line);
 
-                List<GameLine> buffer = new List<GameLine>();
-
-                foreach (int selected in _selectedlines)
-                {
-                    GameLine line = trk.Track.LineLookup[selected];
-                    line.SelectionState = SelectionState.None;
-                    trk.RemoveLine(line);
-
-                    buffer.Add(CreateLine(trk, line.Start, line.End, false, false, false, type));
-                }
-
-                _selection.Clear();
-                _selectedlines.Clear();
-                Stop();
-
-                game.Track.UndoManager.EndAction();
-                trk.NotifyTrackChanged();
+                buffer.Add(CreateLine(trk, line.Start, line.End, false, false, false, type));
             }
+
+            _selection.Clear();
+            _selectedlines.Clear();
+            Stop();
+
+            game.Track.UndoManager.EndAction();
+            trk.NotifyTrackChanged();
         }
         private void StartAddSelection(Vector2d gamepos)
         {
@@ -605,30 +599,28 @@ namespace linerider.Tools
         }
         private bool ToggleSelection(Vector2d gamepos)
         {
-            using (TrackWriter trk = game.Track.CreateTrackWriter())
+            using TrackWriter trk = game.Track.CreateTrackWriter();
+            GameLine line = SelectLine(trk, gamepos, out bool knob);
+            if (line != null)
             {
-                GameLine line = SelectLine(trk, gamepos, out bool knob);
-                if (line != null)
+                if (_selectedlines.Contains(line.ID))
                 {
-                    if (_selectedlines.Contains(line.ID))
-                    {
-                        _ = _selectedlines.Remove(line.ID);
-                        _selection.RemoveAt(
-                            _selection.FindIndex(
-                                x => x.line.ID == line.ID));
-                        line.SelectionState = SelectionState.None;
-                    }
-                    else
-                    {
-                        _ = _selectedlines.Add(line.ID);
-                        LineSelection selection = new LineSelection(line, true, null);
-                        _selection.Add(selection);
-                        line.SelectionState = SelectionState.Selected;
-                    }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    game.Track.RedrawLine(line);
-                    return true;
+                    _ = _selectedlines.Remove(line.ID);
+                    _selection.RemoveAt(
+                        _selection.FindIndex(
+                            x => x.line.ID == line.ID));
+                    line.SelectionState = SelectionState.None;
                 }
+                else
+                {
+                    _ = _selectedlines.Add(line.ID);
+                    LineSelection selection = new(line, true, null);
+                    _selection.Add(selection);
+                    line.SelectionState = SelectionState.Selected;
+                }
+                _selectionbox = GetBoxFromSelected(_selection);
+                game.Track.RedrawLine(line);
+                return true;
             }
             return false;
         }
@@ -662,22 +654,20 @@ namespace linerider.Tools
         {
             if (_selectionbox.Contains(gamepos.X, gamepos.Y))
             {
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                using TrackReader trk = game.Track.CreateTrackReader();
+                LineSelection selected = SelectInSelection(trk, gamepos);
+                if (selected != null)
                 {
-                    LineSelection selected = SelectInSelection(trk, gamepos);
-                    if (selected != null)
-                    {
-                        bool snapped = IsLineSnappedByKnob(trk, gamepos, selected.clone, out bool knob1);
+                    bool snapped = IsLineSnappedByKnob(trk, gamepos, selected.clone, out bool knob1);
 
-                        _snapknob1 = !snapped || knob1;
-                        _snapknob2 = !snapped || !knob1;
+                    _snapknob1 = !snapped || knob1;
+                    _snapknob2 = !snapped || !knob1;
 
-                        _snapline = selected.clone;
-                        _clickstart = gamepos;
-                        _boxstart = _selectionbox;
-                        _movingselection = true;
-                        return true;
-                    }
+                    _snapline = selected.clone;
+                    _clickstart = gamepos;
+                    _boxstart = _selectionbox;
+                    _movingselection = true;
+                    return true;
                 }
             }
             return false;
@@ -776,50 +766,48 @@ namespace linerider.Tools
                         ? movediff.X * (_boxstart.Height / _boxstart.Width)
                         : -(movediff.X * (_boxstart.Height / _boxstart.Width));
                 }
-                using (TrackWriter trk = game.Track.CreateTrackWriter())
+                using TrackWriter trk = game.Track.CreateTrackWriter();
+                trk.DisableUndo();
+
+                foreach (LineSelection selected in _selection)
                 {
-                    trk.DisableUndo();
+                    Vector2d scalar1 = Vector2d.Divide(
+                        selected.clone.Position1 - _startselectionedges.Vector,
+                        _startselectionedges.Size);
 
-                    foreach (LineSelection selected in _selection)
+                    Vector2d scalar2 = Vector2d.Divide(
+                        selected.clone.Position2 - _startselectionedges.Vector,
+                         _startselectionedges.Size);
+                    if (_nodetop)
                     {
-                        Vector2d scalar1 = Vector2d.Divide(
-                            selected.clone.Position1 - _startselectionedges.Vector,
-                            _startselectionedges.Size);
-
-                        Vector2d scalar2 = Vector2d.Divide(
-                            selected.clone.Position2 - _startselectionedges.Vector,
-                             _startselectionedges.Size);
-                        if (_nodetop)
-                        {
-                            scalar1.Y = 1 - scalar1.Y;
-                            scalar2.Y = 1 - scalar2.Y;
-                        }
-                        if (_nodeleft)
-                        {
-                            scalar1.X = 1 - scalar1.X;
-                            scalar2.X = 1 - scalar2.X;
-                        }
-                        if (_startselectionedges.Size.X == 0)
-                        {
-                            scalar1.X = 0;
-                            scalar2.X = 0;
-                        }
-                        if (_startselectionedges.Size.Y == 0)
-                        {
-                            scalar1.Y = 0;
-                            scalar2.Y = 0;
-                        }
-                        Vector2d p1 = Vector2d.Multiply(scalar1, movediff);
-                        Vector2d p2 = Vector2d.Multiply(scalar2, movediff);
-
-                        trk.MoveLine(
-                            selected.line,
-                            selected.clone.Position1 + p1,
-                            selected.clone.Position2 + p2);
+                        scalar1.Y = 1 - scalar1.Y;
+                        scalar2.Y = 1 - scalar2.Y;
                     }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    game.Track.NotifyTrackChanged();
+                    if (_nodeleft)
+                    {
+                        scalar1.X = 1 - scalar1.X;
+                        scalar2.X = 1 - scalar2.X;
+                    }
+                    if (_startselectionedges.Size.X == 0)
+                    {
+                        scalar1.X = 0;
+                        scalar2.X = 0;
+                    }
+                    if (_startselectionedges.Size.Y == 0)
+                    {
+                        scalar1.Y = 0;
+                        scalar2.Y = 0;
+                    }
+                    Vector2d p1 = Vector2d.Multiply(scalar1, movediff);
+                    Vector2d p2 = Vector2d.Multiply(scalar2, movediff);
+
+                    trk.MoveLine(
+                        selected.line,
+                        selected.clone.Position1 + p1,
+                        selected.clone.Position2 + p2);
                 }
+                _selectionbox = GetBoxFromSelected(_selection);
+                game.Track.NotifyTrackChanged();
             }
             game.Invalidate();
         }
@@ -829,32 +817,30 @@ namespace linerider.Tools
             {
                 _movemade = true;
                 _ = pos - _clickstart;
-                using (TrackWriter trk = game.Track.CreateTrackWriter())
-                {
-                    trk.DisableUndo();
-                    Vector2d center = _startselectionedges.Vector +
-                        _startselectionedges.Size / 2;
-                    Vector2d edge = new Vector2d(_nodeleft
-                        ? _startselectionedges.Left
-                        : _startselectionedges.Right,
-                        _nodetop
-                        ? _startselectionedges.Top
-                        : _startselectionedges.Bottom);
+                using TrackWriter trk = game.Track.CreateTrackWriter();
+                trk.DisableUndo();
+                Vector2d center = _startselectionedges.Vector +
+                    _startselectionedges.Size / 2;
+                Vector2d edge = new(_nodeleft
+                    ? _startselectionedges.Left
+                    : _startselectionedges.Right,
+                    _nodetop
+                    ? _startselectionedges.Top
+                    : _startselectionedges.Bottom);
 
-                    Angle angle = Angle.FromVector(edge - center);
-                    Angle newangle = Angle.FromVector(pos - center);
-                    Angle anglediff = newangle - angle;
-                    if (game.ShouldXySnap())
-                        anglediff = new Angle(Math.Round(anglediff.Degrees / Settings.Editor.XySnapDegrees) * Settings.Editor.XySnapDegrees);
-                    foreach (LineSelection selected in _selection)
-                    {
-                        Vector2d p1 = Utility.Rotate(selected.clone.Position1, center, anglediff);
-                        Vector2d p2 = Utility.Rotate(selected.clone.Position2, center, anglediff);
-                        trk.MoveLine(selected.line, p1, p2);
-                    }
-                    _selectionbox = GetBoxFromSelected(_selection);
-                    game.Track.NotifyTrackChanged();
+                Angle angle = Angle.FromVector(edge - center);
+                Angle newangle = Angle.FromVector(pos - center);
+                Angle anglediff = newangle - angle;
+                if (game.ShouldXySnap())
+                    anglediff = new Angle(Math.Round(anglediff.Degrees / Settings.Editor.XySnapDegrees) * Settings.Editor.XySnapDegrees);
+                foreach (LineSelection selected in _selection)
+                {
+                    Vector2d p1 = Utility.Rotate(selected.clone.Position1, center, anglediff);
+                    Vector2d p2 = Utility.Rotate(selected.clone.Position2, center, anglediff);
+                    trk.MoveLine(selected.line, p1, p2);
                 }
+                _selectionbox = GetBoxFromSelected(_selection);
+                game.Track.NotifyTrackChanged();
             }
             game.Invalidate();
         }
@@ -882,28 +868,26 @@ namespace linerider.Tools
             {
                 _movemade = true;
                 Vector2d movediff = pos - _clickstart;
-                using (TrackWriter trk = game.Track.CreateTrackWriter())
+                using TrackWriter trk = game.Track.CreateTrackWriter();
+                Vector2d pos2 = pos;
+                if (ApplyModifiers(_clickstart, ref pos2))
                 {
-                    Vector2d pos2 = pos;
-                    if (ApplyModifiers(_clickstart, ref pos2))
-                    {
-                        movediff = pos2 - _clickstart;
-                    }
-                    else if (_snapline != null && EnableSnap)
-                    {
-                        movediff += GetSnapOffset(movediff, trk);
-                    }
-                    _selectionbox.Vector = _boxstart.Vector + movediff;
-                    foreach (LineSelection selected in _selection)
-                    {
-                        trk.DisableUndo();
-                        trk.MoveLine(
-                            selected.line,
-                            selected.clone.Position1 + movediff,
-                            selected.clone.Position2 + movediff);
-                    }
-                    game.Track.NotifyTrackChanged();
+                    movediff = pos2 - _clickstart;
                 }
+                else if (_snapline != null && EnableSnap)
+                {
+                    movediff += GetSnapOffset(movediff, trk);
+                }
+                _selectionbox.Vector = _boxstart.Vector + movediff;
+                foreach (LineSelection selected in _selection)
+                {
+                    trk.DisableUndo();
+                    trk.MoveLine(
+                        selected.line,
+                        selected.clone.Position1 + movediff,
+                        selected.clone.Position2 + movediff);
+                }
+                game.Track.NotifyTrackChanged();
             }
             game.Invalidate();
         }
@@ -937,33 +921,31 @@ namespace linerider.Tools
         {
             if (_boxselection.Count != 0)
             {
-                using (TrackWriter trk = game.Track.CreateTrackWriter())
+                using TrackWriter trk = game.Track.CreateTrackWriter();
+                HashSet<int> newSelection = [];
+                foreach (GameLine line in selection)
                 {
-                    HashSet<int> newSelection = new HashSet<int>();
-                    foreach (GameLine line in selection)
+                    newSelection.Add(line.ID);
+                }
+                HashSet<LineSelection> unselected = [];
+                foreach (LineSelection sel in _boxselection)
+                {
+                    if (!newSelection.Contains(sel.line.ID))
                     {
-                        newSelection.Add(line.ID);
-                    }
-                    HashSet<LineSelection> unselected = new HashSet<LineSelection>();
-                    foreach (LineSelection sel in _boxselection)
-                    {
-                        if (!newSelection.Contains(sel.line.ID))
+                        if (!_selectedlines.Contains(sel.line.ID))
                         {
-                            if (!_selectedlines.Contains(sel.line.ID))
+                            if (sel.line.SelectionState != SelectionState.None)
                             {
-                                if (sel.line.SelectionState != SelectionState.None)
-                                {
-                                    sel.line.SelectionState = SelectionState.None;
-                                    game.Track.RedrawLine(sel.line);
-                                    unselected.Add(sel);
-                                }
+                                sel.line.SelectionState = SelectionState.None;
+                                game.Track.RedrawLine(sel.line);
+                                unselected.Add(sel);
                             }
                         }
                     }
-                    foreach (LineSelection sel in unselected)
-                    {
-                        _boxselection.Remove(sel);
-                    }
+                }
+                foreach (LineSelection sel in unselected)
+                {
+                    _boxselection.Remove(sel);
                 }
             }
         }
@@ -971,25 +953,23 @@ namespace linerider.Tools
         {
             if (_selection.Count != 0)
             {
-                using (TrackWriter trk = game.Track.CreateTrackWriter())
+                using TrackWriter trk = game.Track.CreateTrackWriter();
+                Dictionary<int, GameLine> lookup = trk.Track.LineLookup;
+                foreach (LineSelection sel in _selection)
                 {
-                    Dictionary<int, GameLine> lookup = trk.Track.LineLookup;
-                    foreach (LineSelection sel in _selection)
+                    // Prefer the 'real' line, if the track state changed
+                    // our sel.line could be out of sync
+                    if (lookup.TryGetValue(sel.line.ID, out GameLine line))
                     {
-                        // Prefer the 'real' line, if the track state changed
-                        // our sel.line could be out of sync
-                        if (lookup.TryGetValue(sel.line.ID, out GameLine line))
+                        if (line.SelectionState != SelectionState.None)
                         {
-                            if (line.SelectionState != SelectionState.None)
-                            {
-                                line.SelectionState = SelectionState.None;
-                                game.Track.RedrawLine(line);
-                            }
+                            line.SelectionState = SelectionState.None;
+                            game.Track.RedrawLine(line);
                         }
                     }
-                    _selection.Clear();
-                    _selectedlines.Clear();
                 }
+                _selection.Clear();
+                _selectedlines.Clear();
             }
             _movemade = false;
         }
@@ -1003,7 +983,7 @@ namespace linerider.Tools
             }
             foreach (GameLine line in lines)
             {
-                LineSelection selection = new LineSelection(line, true, null);
+                LineSelection selection = new(line, true, null);
                 _ = _selectedlines.Add(line.ID);
                 _selection.Add(selection);
                 _boxselection.Add(selection);

@@ -89,7 +89,7 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public virtual MenuItem AddItem(string text, string iconName, string accelerator = "")
         {
-            MenuItem item = new MenuItem(this)
+            MenuItem item = new(this)
             {
                 Padding = Padding.Four
             };
@@ -125,7 +125,7 @@ namespace Gwen.Controls
         public virtual void CloseAll()
         {
             //System.Diagnostics.Debug.Print("Menu.CloseAll: {0}", this);
-            ControlBase[] copy = Children.ToArray();
+            ControlBase[] copy = [.. Children];
             foreach (ControlBase child in copy)
             {
                 if (child is MenuItem menuitem)

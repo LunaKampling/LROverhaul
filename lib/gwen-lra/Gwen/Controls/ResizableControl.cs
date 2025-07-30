@@ -69,7 +69,7 @@ namespace Gwen.Controls
             _resizer_right.Resized += OnResized;
             _resizer_right.Target = this;
 
-            Resizer sizebl = new Resizer(_resizer_bottom)
+            Resizer sizebl = new(_resizer_bottom)
             {
                 Dock = Dock.Left,
                 ResizeDir = Pos.Bottom | Pos.Left
@@ -77,7 +77,7 @@ namespace Gwen.Controls
             sizebl.Resized += OnResized;
             sizebl.Target = this;
 
-            Resizer sizebr = new Resizer(_resizer_bottom)
+            Resizer sizebr = new(_resizer_bottom)
             {
                 Dock = Dock.Right,
                 ResizeDir = Pos.Bottom | Pos.Right
@@ -85,7 +85,7 @@ namespace Gwen.Controls
             sizebr.Resized += OnResized;
             sizebr.Target = this;
 
-            Resizer sizetl = new Resizer(_resizer_top)
+            Resizer sizetl = new(_resizer_top)
             {
                 Dock = Dock.Left,
                 ResizeDir = Pos.Left | Pos.Top
@@ -93,7 +93,7 @@ namespace Gwen.Controls
             sizetl.Resized += OnResized;
             sizetl.Target = this;
 
-            Resizer sizetr = new Resizer(_resizer_top)
+            Resizer sizetr = new(_resizer_top)
             {
                 Dock = Dock.Right,
                 ResizeDir = Pos.Right | Pos.Top
@@ -105,8 +105,8 @@ namespace Gwen.Controls
             PrivateChildren.Insert(1, _resizer_bottom);
             PrivateChildren.Insert(2, _resizer_right);
             PrivateChildren.Insert(3, _resizer_left);
-            m_Resizers = new Resizer[]
-            {
+            m_Resizers =
+            [
                 _resizer_top,
                 _resizer_bottom,
                 _resizer_left,
@@ -115,7 +115,7 @@ namespace Gwen.Controls
                 sizetl,
                 sizebr,
                 sizebl
-            };
+            ];
         }
 
         /// <summary>

@@ -58,7 +58,7 @@ namespace linerider.UI
                 Alignment = Pos.CenterH | Pos.Top,
                 Text = "Press Esc to cancel.",
             };
-            Panel container = new Panel(this)
+            Panel container = new(this)
             {
                 Dock = Dock.Bottom,
                 Padding = new Padding(0, 10, 0, 10),

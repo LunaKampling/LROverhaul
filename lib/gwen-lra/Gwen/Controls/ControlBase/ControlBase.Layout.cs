@@ -76,7 +76,7 @@ namespace Gwen.Controls
         protected virtual void ProcessLayout(Size size)
         {
             ControlBase control = this;
-            Rectangle bounds = new Rectangle(control.Padding.Left,
+            Rectangle bounds = new(control.Padding.Left,
                                             control.Padding.Top,
                                             size.Width - (control.Padding.Right + control.Padding.Left),
                                             size.Height - (control.Padding.Bottom + control.Padding.Top));
@@ -346,7 +346,7 @@ namespace Gwen.Controls
             size.Height += control.Padding.Top + control.Padding.Bottom;
             return size;
         }
-        protected static Size ClampSize(ControlBase control, Size size) => new Size(
+        protected static Size ClampSize(ControlBase control, Size size) => new(
                 Math.Min(Math.Max(control.MinimumSize.Width, size.Width), control.MaximumSize.Width),
                 Math.Min(Math.Max(control.MinimumSize.Height, size.Height), control.MaximumSize.Height));
         /// <summary>

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
     internal class Resources
     {
-        protected Filenames Filenames = new Filenames();
+        protected Filenames Filenames = new();
 
         public List<string> RegionsCacheLines;
         public SKBitmap Body { get; set; }

@@ -1,6 +1,5 @@
 ﻿using linerider.Game;
 using linerider.Tools;
-using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +56,7 @@ namespace linerider.Addons
                 window.Track.UndoManager.BeginAction();
             }
             TrackWriter trackWriter = window.Track.CreateTrackWriter();
-            List<GameLine> newLines = new List<GameLine>();
+            List<GameLine> newLines = [];
             foreach (LineSelection selection in selectedLines)
             {
                 GameLine selectedLine = selection.line;
@@ -128,7 +127,7 @@ namespace linerider.Addons
             if (!CurrentTools.CurrentTool.Equals(CurrentTools.SelectSubtool))
             {
                 // This tool shouldn't work mid-selection, or if the Selection tool isn't active
-                return new List<LineSelection>();
+                return [];
             }
 
             return CurrentTools.SelectSubtool.GetLineSelections();

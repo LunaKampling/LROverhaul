@@ -243,15 +243,12 @@ namespace Gwen.Controls
         // Giver
         public virtual void DragAndDrop_SetPackage(bool draggable, string name = "", object userData = null)
         {
-            if (m_DragAndDrop_Package == null)
-            {
-                m_DragAndDrop_Package = new Package
+            m_DragAndDrop_Package ??= new Package
                 {
                     IsDraggable = draggable,
                     Name = name,
                     UserData = userData
                 };
-            }
         }
 
         // Giver

@@ -8,7 +8,7 @@ namespace Gwen.Anim
         protected Controls.ControlBase m_Control;
 
         //private static List<Animation> g_AnimationsListed = new List<Animation>(); // Unused
-        private static readonly Dictionary<Controls.ControlBase, List<Animation>> m_Animations = new Dictionary<Controls.ControlBase, List<Animation>>();
+        private static readonly Dictionary<Controls.ControlBase, List<Animation>> m_Animations = [];
 
         protected virtual void Think()
         {
@@ -21,7 +21,7 @@ namespace Gwen.Anim
         {
             animation.m_Control = control;
             if (!m_Animations.ContainsKey(control))
-                m_Animations[control] = new List<Animation>();
+                m_Animations[control] = [];
             m_Animations[control].Add(animation);
         }
 

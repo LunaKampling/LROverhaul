@@ -1,11 +1,10 @@
 using linerider.Game;
 using linerider.IO.json;
-using OpenTK;
+using Newtonsoft.Json;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 
 namespace linerider.IO
 {
@@ -13,13 +12,13 @@ namespace linerider.IO
     {
         public static Track LoadTrack(string trackfile)
         {
-            Track ret = new Track
+            Track ret = new()
             {
                 Filename = trackfile
             };
             track_json trackobj;
 
-            using (StreamReader reader = new StreamReader(trackfile))
+            using (StreamReader reader = new(trackfile))
             {
                 try
                 {
@@ -89,7 +88,7 @@ namespace linerider.IO
             }
             if (trackobj.triggers != null)
             {
-                List<LineTrigger> linetriggers = new List<LineTrigger>();
+                List<LineTrigger> linetriggers = [];
                 foreach (track_json.zoomtrigger_json trigger in trackobj.triggers)
                 {
                     if (ret.LineLookup.TryGetValue(trigger.ID, out GameLine line))
@@ -176,7 +175,7 @@ namespace linerider.IO
             // Ignore leftLine, rightLine
             foreach (object[] lineobj in parser)
             {
-                line_json line = new line_json();
+                line_json line = new();
                 int idx = 0;
                 line.type = Convert.ToInt32(lineobj[idx++]);
                 line.id = Convert.ToInt32(lineobj[idx++]);
@@ -208,7 +207,7 @@ namespace linerider.IO
             {
                 case 0:
                 {
-                    StandardLine add = new StandardLine(
+                    StandardLine add = new(
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2),
                             Convert.ToBoolean(line.flipped))
@@ -225,7 +224,7 @@ namespace linerider.IO
                 }
                 case 1:
                 {
-                    RedLine add = new RedLine(
+                    RedLine add = new(
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2),
                             Convert.ToBoolean(line.flipped))
@@ -246,7 +245,7 @@ namespace linerider.IO
                 }
                 case 2:
                 {
-                    SceneryLine add = new SceneryLine(
+                    SceneryLine add = new(
                             new Vector2d(line.x1, line.y1),
                             new Vector2d(line.x2, line.y2))
                     {

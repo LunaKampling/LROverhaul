@@ -16,10 +16,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using linerider.UI;
-using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
-using System;
 using SkiaSharp;
 
 namespace linerider.Tools

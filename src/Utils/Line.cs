@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 namespace linerider.Utils
@@ -53,7 +52,7 @@ namespace linerider.Utils
             Vector2d pe1 = l1.Position2;
             if (rect.Contains(ps1.X, ps1.Y) || rect.Contains(pe1.X, pe1.Y))
                 return true;
-            Vector2d tl = new Vector2d(rect.Left, rect.Top);
+            Vector2d tl = new(rect.Left, rect.Top);
             Vector2d tr = tl;
             tr.X += rect.Width;
             Vector2d bl = tl;

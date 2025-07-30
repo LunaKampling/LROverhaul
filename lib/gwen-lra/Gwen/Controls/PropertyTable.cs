@@ -62,7 +62,7 @@ namespace Gwen.Controls
         /// <returns>Newly created row.</returns>
         public PropertyRow Add(string label, string value = "")
         {
-            TextProperty tx = new TextProperty(this);
+            TextProperty tx = new(this);
             PropertyRow ret = Add(label, tx);
             tx.Value = value;
             return ret;
@@ -75,7 +75,7 @@ namespace Gwen.Controls
         /// <returns>Newly created row.</returns>
         public PropertyRow AddLabel(string label, string value)
         {
-            LabelProperty tx = new LabelProperty(this);
+            LabelProperty tx = new(this);
             PropertyRow ret = Add(label, tx);
             tx.Value = value;
             return ret;
@@ -89,7 +89,7 @@ namespace Gwen.Controls
         /// <returns>Newly created row.</returns>
         public PropertyRow Add(string label, PropertyBase prop)
         {
-            PropertyRow row = new PropertyRow(this, prop)
+            PropertyRow row = new(this, prop)
             {
                 Dock = Dock.Top,
                 Label = label

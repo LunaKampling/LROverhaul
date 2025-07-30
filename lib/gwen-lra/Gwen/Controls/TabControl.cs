@@ -97,8 +97,8 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public TabPage AddPage(string label, ControlBase page = null)
         {
-            TabButton button = new TabButton(TabStrip);
-            TabPage tabpage = new TabPage(this, button)
+            TabButton button = new(TabStrip);
+            TabPage tabpage = new(this, button)
             {
                 Name = label
             };

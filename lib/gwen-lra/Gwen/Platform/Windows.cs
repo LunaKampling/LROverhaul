@@ -36,7 +36,7 @@ namespace Gwen.Platform
         private static void InitFontPaths()
         {
             // Very hacky but better than nothing
-            m_FontPaths = new Dictionary<string, string>();
+            m_FontPaths = [];
             string fontsDir = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
 
             RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default);

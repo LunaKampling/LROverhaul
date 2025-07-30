@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 
@@ -126,7 +125,7 @@ namespace linerider.Utils
         private Angle()
         {
         }
-        public Vector2d MovePoint(Vector2d input, double length) => new Vector2d(input.X + length * Cos, input.Y + length * Sin);
+        public Vector2d MovePoint(Vector2d input, double length) => new(input.X + length * Cos, input.Y + length * Sin);
         public static Angle operator +(Angle a1, Angle a2)
         {
             return FromDegrees(a1.Degrees + a2.Degrees);
@@ -137,10 +136,10 @@ namespace linerider.Utils
         }
         public double Difference(Angle a2) => (360 - (Degrees - a2.Degrees)) % 360;
         public double UnsignedDifference(Angle a2) => 180.0 - Math.Abs(Math.Abs(Degrees - a2.Degrees) - 180.0);
-        public static Angle FromRadians(double radians) => new Angle() { Radians = radians };
-        public static Angle FromDegrees(double Degrees) => new Angle(Degrees);
+        public static Angle FromRadians(double radians) => new() { Radians = radians };
+        public static Angle FromDegrees(double Degrees) => new(Degrees);
 
-        public static Angle FromRadians(float radians) => new Angle() { Radians = radians };
+        public static Angle FromRadians(float radians) => new() { Radians = radians };
 
         public static Angle FromVector(Vector2d p1) => FromRadians(Math.Atan2(p1.Y, p1.X));
 

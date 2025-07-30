@@ -6,7 +6,7 @@ namespace linerider
     {
         public SimulationCell FullClone()
         {
-            SimulationCell ret = new SimulationCell();
+            SimulationCell ret = new();
             foreach (StandardLine l in this)
             {
                 ret.AddLine((StandardLine)l.Clone());

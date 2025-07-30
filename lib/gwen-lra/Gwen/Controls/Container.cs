@@ -67,16 +67,14 @@ namespace Gwen.Controls
         protected virtual void RenderPanel(Skin.SkinBase skin)
         {
         }
-        protected class ContainerPanel : ControlBase
+        protected class ContainerPanel(ControlBase parent) : ControlBase(parent)
         {
             public override Margin Margin
             {
                 get => Parent is Container parent ? parent.PanelMargin : base.Margin;
                 set => throw new Exception("Attempt to set panel margin");
             }
-            public ContainerPanel(ControlBase parent) : base(parent)
-            {
-            }
+
             public override void SendToBack()
             {
                 Container container = Parent as Container;

@@ -29,7 +29,7 @@ namespace linerider
             public List<GameLine> States;
             public act()
             {
-                States = new List<GameLine>();
+                States = [];
             }
             private bool DoAction(TrackWriter track, GameLine beforeact, GameLine afteract)
             {
@@ -101,7 +101,7 @@ namespace linerider
         }
         public int ActionCount { get; private set; }
         private int _position = 0;
-        private readonly List<act> _actions = new List<act>();
+        private readonly List<act> _actions = [];
         private act _currentaction;
         private const int MaximumBufferSize = 10000;
         public UndoManager()

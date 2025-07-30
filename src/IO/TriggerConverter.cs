@@ -12,11 +12,11 @@ namespace linerider.IO
     {
         public static List<GameTrigger> ConvertTriggers(List<LineTrigger> triggers, Track track)
         {
-            List<GameTrigger> gametriggers = new List<GameTrigger>();
+            List<GameTrigger> gametriggers = [];
             const int minute = Constants.PhysicsRate * 60;
             int lasthit = 0;
             Rider rider = track.GetStart();
-            HitTestManager hittest = new HitTestManager();
+            HitTestManager hittest = new();
             int i = 1;
             int hitframe = -1;
             LineTrigger activetrigger = null;
@@ -24,7 +24,7 @@ namespace linerider.IO
             GameTrigger newtrigger = null;
             do
             {
-                LinkedList<int> collisions = new LinkedList<int>();
+                LinkedList<int> collisions = new();
                 rider = rider.Simulate(
                     track.Grid,
                     track.Bones,

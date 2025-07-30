@@ -20,15 +20,12 @@ using System;
 
 namespace linerider.Game
 {
-    public struct ImmutablePointCollection
+    public struct ImmutablePointCollection(SimulationPoint[] points)
     {
         public SimulationPoint this[int index] => _points[index];
         public int Length => _points.Length;
-        private readonly SimulationPoint[] _points;
-        public ImmutablePointCollection(SimulationPoint[] points)
-        {
-            _points = points;
-        }
+        private readonly SimulationPoint[] _points = points;
+
         /// <summary>
         /// Fast compare method for two collections so we can bypass
         /// struct copies

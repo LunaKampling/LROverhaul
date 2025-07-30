@@ -19,9 +19,8 @@
 using linerider.Drawing;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
@@ -34,8 +33,8 @@ namespace linerider.Rendering
 
         public static void DrawTrackLine(StandardLine line, Color color, bool drawwell, bool drawcolor)
         {
-            AutoArray<LineVertex> lv = new AutoArray<LineVertex>(24);
-            AutoArray<GenericVertex> verts = new AutoArray<GenericVertex>(30);
+            AutoArray<LineVertex> lv = new(24);
+            AutoArray<GenericVertex> verts = new(30);
             if (drawcolor)
             {
                 if (line is RedLine redline)
@@ -65,7 +64,7 @@ namespace linerider.Rendering
             {
                 if (verts.Count != 0)
                 {
-                    GenericVAO gvao = new GenericVAO();
+                    GenericVAO gvao = new();
                     foreach (GenericVertex v in verts.unsafe_array)
                     {
                         gvao.AddVertex(v);
@@ -78,8 +77,7 @@ namespace linerider.Rendering
         }
         private static LineVAO GetLineVAO()
         {
-            if (_linevao == null)
-                _linevao = new LineVAO();
+            _linevao ??= new LineVAO();
             _linevao.Clear();
             return _linevao;
         }
@@ -157,14 +155,14 @@ namespace linerider.Rendering
         public static void DbgDrawCamera()
         {
             GL.PushMatrix();
-            Vector2 center = new Vector2(Game.RenderSize.Width / 2, Game.RenderSize.Height / 2);
+            Vector2 center = new(Game.RenderSize.Width / 2, Game.RenderSize.Height / 2);
             DoubleRect rect = Game.Track.Camera.GetClamp(1, Game.RenderSize.Width, Game.RenderSize.Height);
 
             rect.Width *= Game.Track.Zoom;
             rect.Height *= Game.Track.Zoom;
             Vector2[] circle = StaticRenderer.GenerateEllipse((float)rect.Width, (float)rect.Height, 100);
 
-            DoubleRect clamprect = new DoubleRect(center.X, center.Y, 0, 0);
+            DoubleRect clamprect = new(center.X, center.Y, 0, 0);
             clamprect.Left -= rect.Width / 2;
             clamprect.Top -= rect.Height / 2;
             clamprect.Width = rect.Width;
@@ -252,7 +250,7 @@ namespace linerider.Rendering
             {
                 if (i == 0 || i == points.Count - 1)
                 {
-                    DoubleRect rect = new DoubleRect(points[i].X - nodeSize, points[i].Y - nodeSize, nodeSize * 2, nodeSize * 2);
+                    DoubleRect rect = new(points[i].X - nodeSize, points[i].Y - nodeSize, nodeSize * 2, nodeSize * 2);
                     RenderRoundedRectangle(rect, color, thickness);
                 }
                 else
@@ -281,7 +279,7 @@ namespace linerider.Rendering
             {
                 if (i == 0 || i == points.Count - 1)
                 {
-                    DoubleRect rect = new DoubleRect(points[i].X - nodeSize, points[i].Y - nodeSize, nodeSize * 2, nodeSize * 2);
+                    DoubleRect rect = new(points[i].X - nodeSize, points[i].Y - nodeSize, nodeSize * 2, nodeSize * 2);
                     RenderRoundedRectangle(rect, color, thickness);
                 }
                 else
@@ -294,7 +292,7 @@ namespace linerider.Rendering
         private static void renderPointTrace(List<Vector2d> points, BezierCurve curve, Color color)
         {
             double lineLength = 0;
-            List<double> lengthsPerPoint = new List<double> { 0 };
+            List<double> lengthsPerPoint = [0];
             for (int i = 1; i < points.Count; i++)
             {
                 lineLength += Distance(points[i - 1], points[i]);
@@ -316,10 +314,10 @@ namespace linerider.Rendering
             => Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         public static Vector2[] GenerateBezierCurve(Vector2[] points, int resPerHundred)
         {
-            BezierCurve curve = new BezierCurve(points);
+            BezierCurve curve = new(points);
             float curveLength = curve.CalculateLength(0.1f);
             float resolution = curveLength / 100 * resPerHundred;
-            List<Vector2> curvePoints = new List<Vector2> { };
+            List<Vector2> curvePoints = [];
 
             for (int i = 0; i < resolution; i++)
             {
@@ -327,7 +325,7 @@ namespace linerider.Rendering
                 curvePoints.Add(curve.CalculatePoint(t));
             }
 
-            return curvePoints.ToArray();
+            return [.. curvePoints];
         }
 
         public static Vector2[] GenerateBezierCurve(Vector2d[] points, int resPerHundred)
@@ -338,8 +336,8 @@ namespace linerider.Rendering
                 newPoints[i] = (Vector2)points[i];
             }
 
-            BezierCurve curve = new BezierCurve(newPoints);
-            List<Vector2> curvePoints = new List<Vector2> { };
+            BezierCurve curve = new(newPoints);
+            List<Vector2> curvePoints = [];
             float curveLength = curve.CalculateLength(0.1f);
             float resolution = curveLength / 100 * resPerHundred;
 
@@ -349,7 +347,7 @@ namespace linerider.Rendering
                 curvePoints.Add(curve.CalculatePoint(t));
             }
 
-            return curvePoints.ToArray();
+            return [.. curvePoints];
         }
 
         public static Vector2d[] GenerateBezierCurve2d(Vector2d[] points, int resPerHundred, out BezierCurve curveOut)
@@ -360,9 +358,9 @@ namespace linerider.Rendering
                 newPoints[i] = (Vector2)points[i];
             }
 
-            BezierCurve curve = new BezierCurve(newPoints);
+            BezierCurve curve = new(newPoints);
             curveOut = curve;
-            List<Vector2d> curvePoints = new List<Vector2d> { };
+            List<Vector2d> curvePoints = [];
             float curveLength = curve.CalculateLength(0.1f);
             float resolution = curveLength / 100 * resPerHundred;
 
@@ -372,7 +370,7 @@ namespace linerider.Rendering
                 curvePoints.Add((Vector2d)curve.CalculatePoint(t));
             }
 
-            return curvePoints.ToArray();
+            return [.. curvePoints];
         }
 
         public static void DrawFloatGrid() // Draws the grid of floating-point 'regions', used in the creation of stable angled kramuals
@@ -442,11 +440,11 @@ namespace linerider.Rendering
             {
                 for (int y = -sqsize; y < (Game.RenderSize.Height / Game.Track.Zoom); y += sqsize)
                 {
-                    Vector2d yv = new Vector2d(x + (Game.ScreenPosition.X - Game.ScreenPosition.X % sqsize), y + (Game.ScreenPosition.Y - Game.ScreenPosition.Y % sqsize));
+                    Vector2d yv = new(x + (Game.ScreenPosition.X - Game.ScreenPosition.X % sqsize), y + (Game.ScreenPosition.Y - Game.ScreenPosition.Y % sqsize));
 
                     if (!fastgrid)
                     {
-                        GridPoint gridpos = new GridPoint((int)Math.Floor(yv.X / sqsize), (int)Math.Floor(yv.Y / sqsize));
+                        GridPoint gridpos = new((int)Math.Floor(yv.X / sqsize), (int)Math.Floor(yv.Y / sqsize));
 
                         if (Game.Track.GridCheck(yv.X, yv.Y))
                         {
@@ -499,14 +497,14 @@ namespace linerider.Rendering
                 GL.Color3(Color.Red.R, Color.Red.G, Color.Red.B);
                 for (int x = -sqsize; x < (Game.RenderSize.Width / Game.Track.Zoom); x += sqsize)
                 {
-                    Vector2d yv = new Vector2d(x + (Game.ScreenPosition.X - Game.ScreenPosition.X % sqsize), Game.ScreenPosition.Y);
+                    Vector2d yv = new(x + (Game.ScreenPosition.X - Game.ScreenPosition.X % sqsize), Game.ScreenPosition.Y);
                     GL.Vertex2(yv);
                     yv.Y += Game.RenderSize.Height / Game.Track.Zoom;
                     GL.Vertex2(yv);
                 }
                 for (int y = -sqsize; y < (Game.RenderSize.Height / Game.Track.Zoom); y += sqsize)
                 {
-                    Vector2d yv = new Vector2d(Game.ScreenPosition.X, y + (Game.ScreenPosition.Y - Game.ScreenPosition.Y % sqsize));
+                    Vector2d yv = new(Game.ScreenPosition.X, y + (Game.ScreenPosition.Y - Game.ScreenPosition.Y % sqsize));
                     GL.Vertex2(yv);
                     yv.X += Game.RenderSize.Width / Game.Track.Zoom;
                     GL.Vertex2(yv);
@@ -525,26 +523,24 @@ namespace linerider.Rendering
 
             if (renderext)
             {
-                using (TrackReader trk = Game.Track.CreateTrackReader())
+                using TrackReader trk = Game.Track.CreateTrackReader();
+                foreach (GameLine v in trk.GetLinesInRect(Game.Track.Camera.GetViewport(
+                    Game.Track.Zoom,
+                    Game.RenderSize.Width,
+                    Game.RenderSize.Height), false))
                 {
-                    foreach (GameLine v in trk.GetLinesInRect(Game.Track.Camera.GetViewport(
-                        Game.Track.Zoom,
-                        Game.RenderSize.Width,
-                        Game.RenderSize.Height), false))
+                    if (v is StandardLine std)
                     {
-                        if (v is StandardLine std)
+                        if (std.Extension != StandardLine.Ext.None)
                         {
-                            if (std.Extension != StandardLine.Ext.None)
+                            Vector2d d = std.Difference * std.ExtensionRatio;
+                            if (std.Extension.HasFlag(StandardLine.Ext.Left))
                             {
-                                Vector2d d = std.Difference * std.ExtensionRatio;
-                                if (std.Extension.HasFlag(StandardLine.Ext.Left))
-                                {
-                                    RenderRoundedLine(std.Position1 - d, std.Position1, Color.Red, 1);
-                                }
-                                if (std.Extension.HasFlag(StandardLine.Ext.Right))
-                                {
-                                    RenderRoundedLine(std.Position2 + d, std.Position2, Color.Red, 1);
-                                }
+                                RenderRoundedLine(std.Position1 - d, std.Position1, Color.Red, 1);
+                            }
+                            if (std.Extension.HasFlag(StandardLine.Ext.Right))
+                            {
+                                RenderRoundedLine(std.Position2 + d, std.Position2, Color.Red, 1);
                             }
                         }
                     }

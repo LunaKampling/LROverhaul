@@ -17,7 +17,7 @@ namespace Gwen
         */
         public static int Ceil(float x) => (int)Math.Ceiling(x);
 
-        public static Rectangle FloatRect(float x, float y, float w, float h) => new Rectangle((int)x, (int)y, (int)w, (int)h);
+        public static Rectangle FloatRect(float x, float y, float w, float h) => new((int)x, (int)y, (int)w, (int)h);
 
         public static int Clamp(int x, int min, int max) => x < min ? min : x > max ? max : x;
 
@@ -67,7 +67,7 @@ namespace Gwen
         // From http://stackoverflow.com/questions/359612/how-to-change-rgb-color-to-hsv
         public static HSV ToHSV(this Color color)
         {
-            HSV hsv = new HSV();
+            HSV hsv = new();
             int max = Math.Max(color.R, Math.Max(color.G, color.B));
             int min = Math.Min(color.R, Math.Min(color.G, color.B));
 
@@ -105,7 +105,7 @@ namespace Gwen
 
         public static Color Multiply(this Color color, float amount) => Color.FromArgb(color.A, (int)(color.R * amount), (int)(color.G * amount), (int)(color.B * amount));
 
-        public static Rectangle Add(this Rectangle r, Rectangle other) => new Rectangle(r.X + other.X, r.Y + other.Y, r.Width + other.Width, r.Height + other.Height);
+        public static Rectangle Add(this Rectangle r, Rectangle other) => new(r.X + other.X, r.Y + other.Y, r.Width + other.Width, r.Height + other.Height);
 
         /// <summary>
         /// Splits a string but keeps the separators intact (at the end of split parts).

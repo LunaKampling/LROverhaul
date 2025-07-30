@@ -23,14 +23,9 @@ using System.Runtime.InteropServices;
 namespace linerider
 {
     [AttributeUsage(AttributeTargets.Assembly)]
-    public class CustomAttributes : Attribute
+    public class CustomAttributes(string subversion, string changelog) : Attribute
     {
-        public string SubVersion { get; set; }
-        public List<string> Changelog { get; set; }
-        public CustomAttributes(string subversion, string changelog)
-        {
-            SubVersion = subversion.Trim().ToLower();
-            Changelog = changelog.Replace("\r\n", "\n").Split('\n').ToList();
-        }
+        public string SubVersion { get; set; } = subversion.Trim().ToLower();
+        public List<string> Changelog { get; set; } = [.. changelog.Replace("\r\n", "\n").Split('\n')];
     }
 }

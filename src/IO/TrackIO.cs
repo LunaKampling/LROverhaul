@@ -29,14 +29,11 @@ namespace linerider.IO
 {
     public class TrackIO : GameService
     {
-        public class TrackLoadException : Exception
+        public class TrackLoadException(string message) : Exception(message)
         {
-            public TrackLoadException(string message) : base(message)
-            {
-            }
         }
 
-        public static string[] EnumerateTrackFiles(string folder) => Directory.GetFiles(folder, "*.*")
+        public static string[] EnumerateTrackFiles(string folder) => [.. Directory.GetFiles(folder, "*.*")
                 .Where(x =>
                     x.EndsWith(".trk", StringComparison.OrdinalIgnoreCase) ||
                     x.EndsWith(".json", StringComparison.OrdinalIgnoreCase)).
@@ -50,18 +47,18 @@ namespace linerider.IO
                                 return pt;
                         }
                         return 0;
-                    }).ToArray();
+                    })];
         public static string[] EnumerateSolFiles(string folder)
         {
-            string[] ret = Directory.GetFiles(folder, "*.*")
+            string[] ret = [.. Directory.GetFiles(folder, "*.*")
                 .Where(x =>
-                    x.EndsWith(".sol", StringComparison.OrdinalIgnoreCase)).ToArray();
+                    x.EndsWith(".sol", StringComparison.OrdinalIgnoreCase))];
             Array.Sort(ret, StringComparer.CurrentCultureIgnoreCase);
             return ret;
         }
         public static Dictionary<string, bool> GetTrackFeatures(Track trk)
         {
-            Dictionary<string, bool> ret = new Dictionary<string, bool>();
+            Dictionary<string, bool> ret = [];
             if (trk.ZeroStart)
             {
                 ret[TrackFeatures.zerostart] = true;
@@ -132,7 +129,7 @@ namespace linerider.IO
             {
                 // The ctor checks validity pretty well.
                 // It also does not have the requirement of the file existing.
-                FileInfo info = new FileInfo(relativefilename);
+                FileInfo info = new(relativefilename);
                 FileAttributes attr = info.Attributes;
                 if (attr != (FileAttributes)(-1) &&
                 attr.HasFlag(FileAttributes.Directory))
@@ -236,19 +233,19 @@ namespace linerider.IO
         }
         public static void ExportTrackData(Track track, string fn, int frames, ICamera camera)
         {
-            Timeline timeline = new Timeline(
+            Timeline timeline = new(
                 track);
             timeline.Restart(track.GetStart(), 1);
             _ = timeline.GetFrame(frames);
             camera.SetTimeline(timeline);
-            List<RiderData> data = new List<RiderData>();
+            List<RiderData> data = [];
             for (int idx = 0; idx < frames; idx++)
             {
                 Rider frame = timeline.GetFrame(idx);
-                RiderData framedata = new RiderData
+                RiderData framedata = new()
                 {
                     Frame = idx,
-                    Points = new List<track_json.point_json>()
+                    Points = []
                 };
                 for (int i = 0; i < frame.Body.Length; i++)
                 {
@@ -268,11 +265,9 @@ namespace linerider.IO
                 data.Add(framedata);
             }
 
-            using (StreamWriter writer = new StreamWriter(fn))
-            {
-                string json = JsonConvert.SerializeObject(data);
-                writer.WriteLine(json);
-            }
+            using StreamWriter writer = new(fn);
+            string json = JsonConvert.SerializeObject(data);
+            writer.WriteLine(json);
         }
         public static string SaveTrackToFile(Track track, string savename)
         {
@@ -332,7 +327,7 @@ namespace linerider.IO
         }
         public static void CreateTestFromTrack(Track track)
         {
-            Timeline timeline = new Timeline(
+            Timeline timeline = new(
                 track);
             timeline.Restart(track.GetStart(), 1);
             int framecount = Constants.PhysicsRate * Constants.FrameRate * 5;
@@ -340,16 +335,14 @@ namespace linerider.IO
             string filename = TRKWriter.SaveTrack(track, track.Name + ".test");
             if (File.Exists(filename + ".result"))
                 File.Delete(filename + ".result");
-            using (FileStream f = File.Create(filename + ".result"))
+            using FileStream f = File.Create(filename + ".result");
+            BinaryWriter bw = new(f);
+            bw.Write(framecount);
+            Rider state = timeline.GetFrame(framecount);
+            for (int i = 0; i < state.Body.Length; i++)
             {
-                BinaryWriter bw = new BinaryWriter(f);
-                bw.Write(framecount);
-                Rider state = timeline.GetFrame(framecount);
-                for (int i = 0; i < state.Body.Length; i++)
-                {
-                    bw.Write(state.Body[i].Location.X);
-                    bw.Write(state.Body[i].Location.Y);
-                }
+                bw.Write(state.Body[i].Location.X);
+                bw.Write(state.Body[i].Location.Y);
             }
         }
         public static bool TestCompare(Track track, string dir)
@@ -359,25 +352,23 @@ namespace linerider.IO
             {
                 return false;
             }
-            using (FileStream file =
-                    File.Open(testfile, FileMode.Open))
+            using FileStream file =
+                    File.Open(testfile, FileMode.Open);
+            BinaryReader br = new(file);
+            int frame = br.ReadInt32();
+            Timeline timeline = new(
+                track);
+            timeline.Restart(track.GetStart(), 1);
+            //track.Chunks.fg.PrintMetrics();
+            Rider state = timeline.GetFrame(frame);
+            for (int i = 0; i < state.Body.Length; i++)
             {
-                BinaryReader br = new BinaryReader(file);
-                int frame = br.ReadInt32();
-                Timeline timeline = new Timeline(
-                    track);
-                timeline.Restart(track.GetStart(), 1);
-                //track.Chunks.fg.PrintMetrics();
-                Rider state = timeline.GetFrame(frame);
-                for (int i = 0; i < state.Body.Length; i++)
-                {
-                    double x = br.ReadDouble();
-                    double y = br.ReadDouble();
-                    double riderx = state.Body[i].Location.X;
-                    double ridery = state.Body[i].Location.Y;
-                    if (x != riderx || y != ridery)
-                        return false;
-                }
+                double x = br.ReadDouble();
+                double y = br.ReadDouble();
+                double riderx = state.Body[i].Location.X;
+                double ridery = state.Body[i].Location.Y;
+                if (x != riderx || y != ridery)
+                    return false;
             }
             return true;
         }

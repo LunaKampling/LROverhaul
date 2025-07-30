@@ -8,13 +8,10 @@ namespace Gwen.Controls
     /// </summary>
     public class SpinnerG17 : ControlBase
     {
-        public class NumericUpDownTextbox : TextBoxNumericG17
+        public class NumericUpDownTextbox(SpinnerG17 parent) : TextBoxNumericG17(parent)
         {
-            private readonly SpinnerG17 m_parent;
-            public NumericUpDownTextbox(SpinnerG17 parent) : base(parent)
-            {
-                m_parent = parent;
-            }
+            private readonly SpinnerG17 m_parent = parent;
+
             public override void SetValue(double v) => m_parent.Value = v;
             protected override void UpdateAfterTextChanged()
             {

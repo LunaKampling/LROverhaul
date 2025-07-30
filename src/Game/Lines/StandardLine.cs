@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 
@@ -169,7 +168,7 @@ namespace linerider.Game
                     ZoomTarget = standardLine.Trigger.ZoomTarget
                 };
             }
-            StandardLine newLine = new StandardLine()
+            StandardLine newLine = new()
             {
                 ID = standardLine.ID,
                 Extension = standardLine.Extension,

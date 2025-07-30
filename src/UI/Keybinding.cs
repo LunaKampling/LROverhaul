@@ -1,4 +1,3 @@
-using OpenTK.Input;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Globalization;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;

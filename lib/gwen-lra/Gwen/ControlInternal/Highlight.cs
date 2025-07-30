@@ -3,16 +3,12 @@
     /// <summary>
     /// Drag&drop highlight.
     /// </summary>
-    public class Highlight : Controls.ControlBase
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="Highlight"/> class.
+    /// </remarks>
+    /// <param name="parent">Parent control.</param>
+    public class Highlight(Controls.ControlBase parent) : Controls.ControlBase(parent)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Highlight"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public Highlight(Controls.ControlBase parent) : base(parent)
-        {
-
-        }
 
         /// <summary>
         /// Renders the control using specified skin.

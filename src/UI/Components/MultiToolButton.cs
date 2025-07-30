@@ -8,7 +8,7 @@ namespace linerider.UI.Components
     public class MultiToolButton : WidgetButton
     {
         private int _currentidx = 0;
-        private readonly List<ToolButton> _buttons = new List<ToolButton>();
+        private readonly List<ToolButton> _buttons = [];
         private readonly Texture _indicatortexture;
         private ToolButton CurrentButton => _buttons[_currentidx];
 
@@ -25,13 +25,13 @@ namespace linerider.UI.Components
 
         public MultiToolButton(ControlBase parent, Tool[] tools) : base(parent)
         {
-            Texture tx = new Texture(parent.Skin.Renderer);
+            Texture tx = new(parent.Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, GameResources.ux_multitool_indicator.Bitmap);
             _indicatortexture = tx;
 
             foreach (Tool tool in tools)
             {
-                ToolButton toolButton = new ToolButton(this, tool)
+                ToolButton toolButton = new(this, tool)
                 {
                     Action = (o, e) => SelectNextTool(),
                     IsHidden = true,
@@ -91,7 +91,7 @@ namespace linerider.UI.Components
                 }
             }
 
-            Rectangle rect = new Rectangle(0, 0, _indicatortexture.Width, _indicatortexture.Height);
+            Rectangle rect = new(0, 0, _indicatortexture.Width, _indicatortexture.Height);
             int buttonWidth = RenderBounds.Width;
             int indicatorWidth = rect.Width;
             int indicatorsCount = _buttons.Count;

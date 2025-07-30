@@ -1,10 +1,7 @@
 ﻿using Gwen.Controls;
-using OpenTK;
-using OpenTK.Input;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Linq;
 
 namespace Gwen.Input
@@ -66,7 +63,7 @@ namespace Gwen.Input
 
             if (args is MouseMoveEventArgs)
             {
-                MouseMoveEventArgs ev = (MouseMoveEventArgs) args;// as MouseMoveEventArgs;
+                MouseMoveEventArgs ev = (MouseMoveEventArgs)args;// as MouseMoveEventArgs;
                 int dx = (int)ev.X - m_MouseX;
                 int dy = (int)ev.Y - m_MouseY;
 

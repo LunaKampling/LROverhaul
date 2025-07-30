@@ -6,10 +6,10 @@ namespace Gwen.Controls
 {
     public partial class ControlBase
     {
-        public class ControlCollection : IList<ControlBase>
+        public class ControlCollection(ControlBase parent) : IList<ControlBase>
         {
-            private readonly ControlBase _owner;
-            private readonly List<ControlBase> _controls;
+            private readonly ControlBase _owner = parent;
+            private readonly List<ControlBase> _controls = [];
             public ControlBase this[int index]
             {
                 get => _controls[index];
@@ -19,12 +19,6 @@ namespace Gwen.Controls
             public int Count => _controls.Count;
 
             public bool IsReadOnly => false;
-
-            public ControlCollection(ControlBase parent)
-            {
-                _owner = parent;
-                _controls = new List<ControlBase>();
-            }
 
             public void SendToBack(ControlBase child)
             {

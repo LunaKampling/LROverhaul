@@ -7,15 +7,12 @@ namespace Gwen.Controls
     /// Flow layout. Automatically space children left to right, creating rows
     /// when necessary
     /// </summary>
-    public class FlowLayout : ControlBase
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="FlowLayout"/> class.
+    /// </remarks>
+    /// <param name="parent">Parent control.</param>
+    public class FlowLayout(ControlBase parent) : ControlBase(parent)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FlowLayout"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public FlowLayout(ControlBase parent) : base(parent)
-        {
-        }
         public override Size GetSizeToFitContents()
         {
             Size size = Size.Empty;
@@ -76,7 +73,7 @@ namespace Gwen.Controls
             int x = 0;
             int y = 0;
             int rowheight = 0;
-            List<ControlBase> row = new List<ControlBase>();
+            List<ControlBase> row = [];
             foreach (ControlBase child in Children)
             {
                 if (child.IsHidden)

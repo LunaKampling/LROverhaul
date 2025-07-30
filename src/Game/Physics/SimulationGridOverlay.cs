@@ -27,10 +27,10 @@ namespace linerider.Game
     {
         public ResourceSync Sync => BaseGrid.Sync;
         public SimulationGrid BaseGrid;
-        public ConcurrentDictionary<GridPoint, SimulationCell> Overlay = new ConcurrentDictionary<GridPoint, SimulationCell>();
+        public ConcurrentDictionary<GridPoint, SimulationCell> Overlay = new();
         public SimulationCell GetCell(int x, int y)
         {
-            GridPoint gp = new GridPoint(x, y);
+            GridPoint gp = new(x, y);
             return !Overlay.TryGetValue(gp, out SimulationCell cell) ? BaseGrid.GetCell(x, y) : cell;
         }
         /// <summary>

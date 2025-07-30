@@ -18,7 +18,6 @@
 
 using linerider.Game.Physics;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -55,7 +54,7 @@ namespace linerider.Game
         {
             SimulationPoint[] joints = new SimulationPoint[RiderConstants.DefaultRider.Length];
             SimulationPoint[] scarf = new SimulationPoint[RiderConstants.DefaultScarf.Length + 1];
-            RectLRTB pbounds = new RectLRTB();
+            RectLRTB pbounds = new();
             for (int i = 0; i < joints.Length; i++)
             {
                 Vector2d coord = RiderConstants.DefaultRider[i] + start;
@@ -103,7 +102,7 @@ namespace linerider.Game
         {
             if (Crashed)
                 return Body[4].Location;
-            Vector2d anchorsaverage = new Vector2d();
+            Vector2d anchorsaverage = new();
             for (int i = 0; i < Body.Length; i++)
             {
                 anchorsaverage += Body[i].Location;
@@ -386,7 +385,7 @@ namespace linerider.Game
                 top = Math.Min(pos.Y, top);
                 bottom = Math.Max(pos.Y, bottom);
             }
-            DoubleRect ret = new DoubleRect(left, top, right - left, bottom - top);
+            DoubleRect ret = new(left, top, right - left, bottom - top);
             return ret;
         }
         public Rider Simulate(Track track, int maxiteration = 6, LinkedList<int> collisions = null, int maxsubiteration = RiderConstants.Subiterations) => Simulate(track.Grid, track.Bones, collisions, maxiteration);
@@ -423,7 +422,7 @@ namespace linerider.Game
             bool sledbroken = SledBroken;
             int rState = remountState;
             int rTimer = remountTimer;
-            RectLRTB phys = new RectLRTB(ref body[0]);
+            RectLRTB phys = new(ref body[0]);
             bool skipRestOfFrame = false;
             using (grid.Sync.AcquireRead())
             {
@@ -468,12 +467,12 @@ namespace linerider.Game
                 if (Settings.ScarfAmount > 1) // If using dual scarf
                 {
                     List<SimulationPoint>[] scarves = new List<SimulationPoint>[Settings.ScarfAmount];
-                    List<SimulationPoint> finalScarf = new List<SimulationPoint>();
+                    List<SimulationPoint> finalScarf = [];
 
                     for (int i = 0; i < Settings.ScarfAmount; i++)
                     {
                         scarf[i * (Settings.ScarfSegmentsSecondary + 1)] = body[RiderConstants.BodyShoulder];
-                        scarves[i] = new List<SimulationPoint>();
+                        scarves[i] = [];
 
                         if (i != Settings.ScarfAmount - 1)
                         {
@@ -490,7 +489,7 @@ namespace linerider.Game
                             }
                         }
 
-                        SimulationPoint[] scarfArr = scarves[i].ToArray();
+                        SimulationPoint[] scarfArr = [.. scarves[i]];
 
                         FlutterScarf(scarfArr, frameid, Utility.LengthFast(scarf[i * (Settings.ScarfSegmentsSecondary + 1)].Momentum) + i * 5);
                         ProcessScarfBones(RiderConstants.ScarfBones, scarfArr);
@@ -501,7 +500,7 @@ namespace linerider.Game
                         }
                     }
 
-                    scarf = finalScarf.ToArray();
+                    scarf = [.. finalScarf];
                 }
                 else
                 {
@@ -533,7 +532,7 @@ namespace linerider.Game
             int maxiteration = moment.Iteration;
             int maxsubiteration = moment.Subiteration;
             bool gravity = !(maxiteration == 0 && maxsubiteration < 3);
-            List<int> ret = new List<int>();
+            List<int> ret = [];
             if (Crashed)
                 return ret;
             Debug.Assert(maxiteration != 0, "Momentum tick can't die but attempted diagnose");
@@ -542,9 +541,9 @@ namespace linerider.Game
             _ = Body.Length;
             bool dead = Crashed;
             int rState = remountState;
-            RectLRTB phys = new RectLRTB(ref body[0]);
+            RectLRTB phys = new(ref body[0]);
             bool skipRestOfFrame = false;
-            List<int> breaks = new List<int>();
+            List<int> breaks = [];
             using (grid.Sync.AcquireRead())
             {
                 for (int i = 0; i < maxiteration; i++)

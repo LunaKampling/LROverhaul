@@ -23,11 +23,11 @@ namespace linerider.IO.SOL
 {
     internal class SOLFile
     {
-        public Amf0Object RootObject = new Amf0Object();
+        public Amf0Object RootObject = new();
         public SOLFile(string location)
         {
             byte[] bytes = File.ReadAllBytes(location);
-            BigEndianReader br = new BigEndianReader(bytes);
+            BigEndianReader br = new(bytes);
 
             ///HEADER///
             _ = br.ReadInt16(); // sol_version
@@ -42,7 +42,7 @@ namespace linerider.IO.SOL
                 throw new Exception("Invalid AMF version"); // AMF version, we only support 0o
 
             ///Items///			
-            Amf0 amf = new Amf0(br);
+            Amf0 amf = new(br);
             RootObject.data = amf.ReadAmf0(true);
         }
     }

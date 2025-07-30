@@ -19,7 +19,6 @@
 using linerider.Audio;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,12 +27,12 @@ namespace linerider
 {
     public class Track
     {
-        public SimulationGrid Grid = new SimulationGrid();
-        public LinkedList<int> Lines = new LinkedList<int>();
+        public SimulationGrid Grid = new();
+        public LinkedList<int> Lines = new();
         private int LinesMin = -1;
         private int LinesMax = 0;
-        public Dictionary<int, GameLine> LineLookup = new Dictionary<int, GameLine>();
-        public List<GameTrigger> Triggers = new List<GameTrigger>();
+        public Dictionary<int, GameLine> LineLookup = [];
+        public List<GameTrigger> Triggers = [];
 
         public string Name = Constants.InternalDefaultTrackName;
         public string Filename = null;
@@ -104,7 +103,7 @@ namespace linerider
         public GameLine[] GetSortedLines()
         {
             GameLine[] ret = new GameLine[LineLookup.Count];
-            SortedSet<int> temp = new SortedSet<int>(Lines);
+            SortedSet<int> temp = [.. Lines];
             int index = 0;
             // Sorted as -2 -1 0 1 2
             foreach (int line in temp)
@@ -137,7 +136,7 @@ namespace linerider
         {
             if (line.Type == LineType.Scenery)
             {
-                if (line.ID == GameLine.UninitializedID) 
+                if (line.ID == GameLine.UninitializedID)
                 {
                     line.ID = Lines.Count > 0 ? LinesMin - 1 : -1;
                 }

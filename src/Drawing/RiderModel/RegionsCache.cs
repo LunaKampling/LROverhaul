@@ -1,9 +1,9 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using SkiaSharp;
 
 namespace linerider.Drawing.RiderModel
 {
@@ -16,8 +16,8 @@ namespace linerider.Drawing.RiderModel
 
         public Filenames Filenames;
 
-        public List<Rectangle> RegionsBody = new List<Rectangle>();
-        public List<Rectangle> RegionsBodyDead = new List<Rectangle>();
+        public List<Rectangle> RegionsBody = [];
+        public List<Rectangle> RegionsBodyDead = [];
 
         private enum ParseMode
         {
@@ -75,23 +75,21 @@ namespace linerider.Drawing.RiderModel
                         string filename = parts[0];
                         string hashShouldBe = parts[1];
 
-                        using (FileStream inputStream = File.OpenRead(Path.Combine(SkinHomePath, filename)))
-                        {
-                            byte[] hash = MD5.Create().ComputeHash(inputStream);
-                            string hashStr = Convert.ToBase64String(hash);
+                        using FileStream inputStream = File.OpenRead(Path.Combine(SkinHomePath, filename));
+                        byte[] hash = MD5.Create().ComputeHash(inputStream);
+                        string hashStr = Convert.ToBase64String(hash);
 
-                            // Hash is invalid
-                            if (hashStr != hashShouldBe)
-                                return false;
-                        }
+                        // Hash is invalid
+                        if (hashStr != hashShouldBe)
+                            return false;
                     }
                     break;
                     case ParseMode.BodyRegions:
                     case ParseMode.BodyDeadRegions:
                     {
                         _ = new Rectangle();
-                        int[] ints = cacheLine.Split(", ").Select((str) => int.Parse(str)).ToArray();
-                        Rectangle region = new Rectangle(ints[0], ints[1], ints[2], ints[3]);
+                        int[] ints = [.. cacheLine.Split(", ").Select((str) => int.Parse(str))];
+                        Rectangle region = new(ints[0], ints[1], ints[2], ints[3]);
                         //Rectangle region = (Rectangle)converter.ConvertFrom(null, Program.Culture, cacheLine);
 
                         if (mode == ParseMode.BodyRegions)
@@ -105,18 +103,19 @@ namespace linerider.Drawing.RiderModel
             return true;
         }
 
-        public string RectangleToString(Rectangle r){
-            int[] ints = {r.Left, r.Top, r.Width, r.Height};
-            return string.Join(", ", ints.Select((i) => i.ToString()).ToArray());
+        public string RectangleToString(Rectangle r)
+        {
+            int[] ints = [r.Left, r.Top, r.Width, r.Height];
+            return string.Join(", ", [.. ints.Select((i) => i.ToString())]);
         }
 
         public void Build()
         {
-            string[] filesToHash = { Filenames.Regions, Filenames.Body, Filenames.BodyDead };
+            string[] filesToHash = [Filenames.Regions, Filenames.Body, Filenames.BodyDead];
             SKBitmap regionsPNG = SKBitmap.Decode(Path.Combine(SkinHomePath, Filenames.Regions));
             SKBitmap bodyPNG = SKBitmap.Decode(Path.Combine(SkinHomePath, Filenames.Body));
             SKBitmap bodyDeadPNG = SKBitmap.Decode(Path.Combine(SkinHomePath, Filenames.BodyDead));
-            List<string> regionsFileLines = new List<string>();
+            List<string> regionsFileLines = [];
 
             RegionsBody.Clear();
             RegionsBodyDead.Clear();
@@ -138,13 +137,13 @@ namespace linerider.Drawing.RiderModel
             regionsFileLines.Add(string.Empty);
 
             // Calc scarf regions
-            List<string> aliveRegions = new List<string>();
-            List<string> crashedRegions = new List<string>();
+            List<string> aliveRegions = [];
+            List<string> crashedRegions = [];
             //RectangleConverter converter = new RectangleConverter();
             for (int i = 0; i < regionsPNG.Width; i++)
             {
-                Rectangle aliveRegion = new Rectangle(bodyPNG.Width, bodyPNG.Height, 0, 0);
-                Rectangle crashedRegion = new Rectangle(bodyPNG.Width, bodyPNG.Height, 0, 0);
+                Rectangle aliveRegion = new(bodyPNG.Width, bodyPNG.Height, 0, 0);
+                Rectangle crashedRegion = new(bodyPNG.Width, bodyPNG.Height, 0, 0);
                 Color colorToFind = regionsPNG.GetPixel(i, 0);
                 colorToFind = Color.FromArgb(255, colorToFind); // Add 255 alpha
 

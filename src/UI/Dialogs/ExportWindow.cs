@@ -19,7 +19,7 @@ namespace linerider.UI
             "After recording, a console window may open to encode the video. " +
             "Closing it will cancel the process and all progress will be lost.";
 
-        private readonly Dictionary<string, Size> resolutions = new Dictionary<string, Size>
+        private readonly Dictionary<string, Size> resolutions = new()
         {
             { "360p", new Size(640, 360)},
             { "480p", new Size(854, 480)},
@@ -69,27 +69,27 @@ namespace linerider.UI
         }
         private CheckProperty AddPropertyCheckbox(PropertyTable prop, string label, bool value)
         {
-            CheckProperty check = new CheckProperty(null);
+            CheckProperty check = new(null);
             _ = prop.Add(label, check);
             check.IsChecked = value;
             return check;
         }
         private void Setup()
         {
-            Panel content = new Panel(this)
+            Panel content = new(this)
             {
                 Dock = Dock.Fill,
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false
             };
-            Panel bottomrow = new Panel(content)
+            Panel bottomrow = new(content)
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false,
 
             };
-            PropertyTree proptree = new PropertyTree(content)
+            PropertyTree proptree = new(content)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
@@ -97,7 +97,7 @@ namespace linerider.UI
                 Margin = new Margin(0, 0, 0, 10)
             };
             PropertyTable table = proptree.Add("Output Settings", 150);
-            ComboBoxProperty qualitycb = new ComboBoxProperty(table);
+            ComboBoxProperty qualitycb = new(table);
 
             foreach (KeyValuePair<string, Size> item in resolutions)
             {
@@ -196,7 +196,7 @@ namespace linerider.UI
                 Settings.Save();
             };
             proptree.ExpandAll();
-            Button Cancel = new Button(bottomrow)
+            Button Cancel = new(bottomrow)
             {
                 Dock = Dock.Right,
                 Text = "Cancel",
@@ -206,7 +206,7 @@ namespace linerider.UI
             {
                 _ = Close();
             };
-            Button ok = new Button(bottomrow)
+            Button ok = new(bottomrow)
             {
                 Dock = Dock.Right,
                 Text = "Export"

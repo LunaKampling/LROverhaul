@@ -17,7 +17,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -33,9 +32,9 @@ namespace linerider.Game
     /// </summary>
     public partial class Timeline
     {
-        private readonly ResourceSync changesync = new ResourceSync();
-        private readonly HashSet<GridPoint> _changedcells = new HashSet<GridPoint>();
-        private readonly SimulationGridOverlay _savedcells = new SimulationGridOverlay();
+        private readonly ResourceSync changesync = new();
+        private readonly HashSet<GridPoint> _changedcells = [];
+        private readonly SimulationGridOverlay _savedcells = new();
         private int _first_invalid_frame = 1;
         /// <summary>
         /// Backs up all the grid cells on a line for the recompute engine.
@@ -78,7 +77,7 @@ namespace linerider.Game
         {
             if (_changedcells.Count == 0)
                 return -1;
-            RectLRTB changebounds = new RectLRTB(_changedcells.First());
+            RectLRTB changebounds = new(_changedcells.First());
             foreach (GridPoint cell in _changedcells)
             {
                 changebounds.left = Math.Min(cell.X, changebounds.left);

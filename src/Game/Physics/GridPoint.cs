@@ -55,12 +55,12 @@ namespace linerider.Game
         /// <summary>
         /// Returns the Point (0, 0).
         /// </summary>
-        public static readonly GridPoint Zero = new GridPoint();
+        public static readonly GridPoint Zero = new();
 
         /// <summary>
         /// Returns the Point (0, 0).
         /// </summary>
-        public static readonly GridPoint Empty = new GridPoint();
+        public static readonly GridPoint Empty = new();
 
         /// <summary>
         /// Compares two instances for equality.

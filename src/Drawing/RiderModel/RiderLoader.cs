@@ -50,7 +50,7 @@ namespace linerider.Drawing.RiderModel
                 else
                 {
                     string scarfLocation = Path.Combine(Settings.Local.UserDirPath, Constants.ScarvesFolderName, Settings.SelectedScarf);
-                    ScarfLoader loader = new ScarfLoader(scarfLocation);
+                    ScarfLoader loader = new(scarfLocation);
 
                     ScarfColors.RemoveAll();
 

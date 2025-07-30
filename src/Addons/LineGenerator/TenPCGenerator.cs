@@ -1,5 +1,4 @@
-﻿using OpenTK;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +12,7 @@ namespace linerider.Game.LineGenerator
         public TenPCGenerator(string _name, Vector2d _speed, double _rotation)
         {
             name = _name;
-            lines = new List<GameLine>();
+            lines = [];
             speed = _speed;
             rotation = _rotation;
         }
@@ -54,7 +53,7 @@ namespace linerider.Game.LineGenerator
         public override void Generate_Internal(TrackWriter trk)
         {
             //int startFrame = 0;
-            Random rnd = new Random();
+            Random rnd = new();
             _ = rnd.NextDouble();
 
             int curFrame = game.Track.Offset;
@@ -67,7 +66,7 @@ namespace linerider.Game.LineGenerator
 
             for (int i = 0; i < defaultRider.Length; i++)
             {
-                Vector2d riderRotated = new Vector2d(rotationMat.M11 * defaultRider[i].X + rotationMat.M21 * defaultRider[i].Y,
+                Vector2d riderRotated = new(rotationMat.M11 * defaultRider[i].X + rotationMat.M21 * defaultRider[i].Y,
                                                     rotationMat.M12 * defaultRider[i].X + rotationMat.M22 * defaultRider[i].Y);
                 Vector2d target = curRider.Body[0].Location + riderRotated + speed;
                 double offset = 1.0 + rnd.NextDouble();

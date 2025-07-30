@@ -1,17 +1,12 @@
-using OpenTK;
 using OpenTK.Mathematics;
 namespace linerider.Game
 {
 
-    public struct CellLocation
+    public struct CellLocation(GridPoint point, Vector2d remainder)
     {
-        public Vector2d Remainder;
-        public GridPoint Point;
-        public CellLocation(GridPoint point, Vector2d remainder)
-        {
-            Point = point;
-            Remainder = remainder;
-        }
+        public Vector2d Remainder = remainder;
+        public GridPoint Point = point;
+
         public int X
         {
             get => Point.X;

@@ -279,7 +279,7 @@ namespace Gwen.Controls
             string EasySplit = str.Replace("\r\n", "\n").Replace("\r", "\n");
             string[] Lines = EasySplit.Split('\n');
 
-            m_TextLines = new List<string>(Lines);
+            m_TextLines = [.. Lines];
 
             Invalidate();
             RefreshCursorBounds();
@@ -305,7 +305,7 @@ namespace Gwen.Controls
         {
             Point p = CanvasPosToLocal(new Point(px, py));
             double distance = double.MaxValue;
-            Point Best = new Point(0, 0);
+            Point Best = new(0, 0);
             string sub = string.Empty;
 
             /* Find the appropriate Y row (always pick whichever y the mouse currently is on) */
@@ -939,7 +939,7 @@ namespace Gwen.Controls
                     Point pA = GetCharacterPosition(StartPoint);
                     Point pB = GetCharacterPosition(EndPoint);
 
-                    Rectangle SelectionBounds = new Rectangle
+                    Rectangle SelectionBounds = new()
                     {
                         X = Math.Min(pA.X, pB.X),
                         Y = pA.Y - VerticalOffset
@@ -956,7 +956,7 @@ namespace Gwen.Controls
                     Point pA = GetCharacterPosition(StartPoint);
                     Point pB = GetCharacterPosition(new Point(m_TextLines[StartPoint.Y].Length, StartPoint.Y));
 
-                    Rectangle SelectionBounds = new Rectangle
+                    Rectangle SelectionBounds = new()
                     {
                         X = Math.Min(pA.X, pB.X),
                         Y = pA.Y - VerticalOffset
@@ -1018,7 +1018,7 @@ namespace Gwen.Controls
         private Point m_CursorPos;
         private double m_LastInputTime;
         private readonly bool m_SelectAll;
-        private List<string> m_TextLines = new List<string>();
+        private List<string> m_TextLines = [];
 
         private Point EndPoint => CursorPosition.Y == m_CursorEnd.Y
                     ? CursorPosition.X > CursorEnd.X ? CursorPosition : CursorEnd
@@ -1045,7 +1045,7 @@ namespace Gwen.Controls
                 sub += m_TextLines[i] + "\n";
             }
 
-            Point p = new Point(Skin.Renderer.MeasureText(Font, CurrLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
+            Point p = new(Skin.Renderer.MeasureText(Font, CurrLine).X, Skin.Renderer.MeasureText(Font, sub).Y);
 
             return new Point(p.X + m_Text.X, p.Y + m_Text.Y + TextPadding.Top);
         }

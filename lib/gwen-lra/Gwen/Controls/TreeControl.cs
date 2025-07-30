@@ -23,7 +23,7 @@ namespace Gwen.Controls
         {
             get
             {
-                List<TreeNode> Trees = new List<TreeNode>();
+                List<TreeNode> Trees = [];
 
                 foreach (ControlBase child in Children)
                 {
@@ -62,7 +62,7 @@ namespace Gwen.Controls
         /// <returns>Newly created control.</returns>
         public TreeNode AddNode(string label)
         {
-            TreeNode node = new TreeNode(this)
+            TreeNode node = new(this)
             {
                 Text = label
             };

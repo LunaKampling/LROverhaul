@@ -23,7 +23,7 @@ namespace linerider
 {
     public class FPSCounter
     {
-        private readonly Queue<double> _queue = new Queue<double>();
+        private readonly Queue<double> _queue = new();
         public double FPS
         {
             get

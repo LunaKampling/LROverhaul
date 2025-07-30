@@ -36,7 +36,7 @@ namespace linerider.Rendering
         }
         public void Initialize(AutoArray<GameLine> lines)
         {
-            List<RedLine> red = new List<RedLine>(lines.Count / 4);
+            List<RedLine> red = new(lines.Count / 4);
             foreach (GameLine line in lines.unsafe_array)
             {
                 if (line.Type == LineType.Acceleration)

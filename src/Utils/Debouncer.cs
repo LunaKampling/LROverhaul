@@ -10,7 +10,7 @@ namespace linerider.Utils
 {
     public static class Debouncer
     {
-        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _tokens = new ConcurrentDictionary<string, CancellationTokenSource>();
+        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _tokens = new();
 
         /// <summary>
         /// Throttle action if it's already been called during specified amount of time.

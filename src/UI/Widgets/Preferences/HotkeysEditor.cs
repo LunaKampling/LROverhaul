@@ -16,7 +16,7 @@ namespace linerider.UI.Widgets
             {
                 Dock = Dock.Fill,
             };
-            ControlBase container = new ControlBase(this)
+            ControlBase container = new(this)
             {
                 Margin = new Margin(0, 5, 0, 0),
                 Dock = Dock.Bottom,
@@ -193,7 +193,7 @@ namespace linerider.UI.Widgets
         {
             System.Collections.Generic.List<Keybinding> hk = Settings.FetchBinding(hotkey);
             string hkstring = CreateBindingText(hotkey);
-            LabelProperty prop = new LabelProperty(null)
+            LabelProperty prop = new(null)
             {
                 Value = hkstring,
                 Name = hotkey.ToString(),
@@ -213,7 +213,7 @@ namespace linerider.UI.Widgets
             };
             prop.RightClicked += (o, e) =>
             {
-                Menu opt = new Menu(_canvas);
+                Menu opt = new(_canvas);
                 opt.AddItem("Change Primary").Clicked += (_o, _e) =>
                 {
                     ShowHotkeyWindow(hotkey, prop, 0);
@@ -264,7 +264,7 @@ namespace linerider.UI.Widgets
             string bindingName = row.Label.ToString();
             if (bindingName.EndsWith(_tooltipPostfix))
                 bindingName = bindingName.Remove(bindingName.Length - _tooltipPostfix.Length);
-            RebindHotkeyWindow wnd = new RebindHotkeyWindow(_canvas, bindingName);
+            RebindHotkeyWindow wnd = new(_canvas, bindingName);
             wnd.KeybindChanged += (x, newbind) =>
             {
                 _ = TryNewKeybind(hotkey, newbind, kbindex);

@@ -38,7 +38,7 @@ namespace linerider.UI.Widgets
 
         private void Setup()
         {
-            Panel sliderPanel = new Panel(this)
+            Panel sliderPanel = new(this)
             {
                 ShouldDrawBackground = false,
                 AutoSizeToContents = true,
@@ -96,7 +96,7 @@ namespace linerider.UI.Widgets
             };
             _playheadFlag.SendToBack();
 
-            Panel textPanel = new Panel(this)
+            Panel textPanel = new(this)
             {
                 ShouldDrawBackground = false,
                 AutoSizeToContents = true,

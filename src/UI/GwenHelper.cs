@@ -8,13 +8,10 @@ namespace linerider.UI
 {
     public static class GwenHelper
     {
-        public class ColorEventArgs : EventArgs
+        public class ColorEventArgs(Color color) : EventArgs
         {
-            public readonly Color _color;
-            public ColorEventArgs(Color color)
-            {
-                _color = color;
-            }
+            public readonly Color _color = color;
+
             public Color Value => _color;
         }
         public class ColorIndicator : ControlBase
@@ -38,14 +35,14 @@ namespace linerider.UI
 
         public static CheckProperty AddPropertyCheckbox(PropertyTable prop, string label, bool value)
         {
-            CheckProperty check = new CheckProperty(null);
+            CheckProperty check = new(null);
             _ = prop.Add(label, check);
             check.IsChecked = value;
             return check;
         }
         public static Checkbox AddCheckbox(ControlBase parent, string text, bool val, ControlBase.GwenEventHandler<EventArgs> checkedchanged, Dock dock = Dock.Top)
         {
-            Checkbox check = new Checkbox(parent)
+            Checkbox check = new(parent)
             {
                 Dock = dock,
                 Text = text,
@@ -57,7 +54,7 @@ namespace linerider.UI
         public static Panel CreateHeaderPanel(ControlBase parent, string headertext)
         {
             GameCanvas canvas = (GameCanvas)parent.GetCanvas();
-            Panel panel = new Panel(parent)
+            Panel panel = new(parent)
             {
                 Dock = Dock.Top,
                 Children =
@@ -80,7 +77,7 @@ namespace linerider.UI
         }
         public static Panel CreateHintLabel(ControlBase parent, string headertext)
         {
-            Panel panel = new Panel(parent)
+            Panel panel = new(parent)
             {
                 Dock = Dock.Top,
                 Children =
@@ -107,7 +104,7 @@ namespace linerider.UI
             {
                 control.Dock = Dock.Right;
             }
-            ControlBase container = new ControlBase(parent)
+            ControlBase container = new(parent)
             {
                 Children =
                 {
@@ -129,10 +126,10 @@ namespace linerider.UI
             }
             return container;
         }
-        public static ControlBase CreateLabeledControl(ControlBase parent, string label, ControlBase control) => CreateLabeledControl(parent, label, new ControlBase[1] { control });
+        public static ControlBase CreateLabeledControl(ControlBase parent, string label, ControlBase control) => CreateLabeledControl(parent, label, [control]);
         public static ComboBox CreateLabeledCombobox(ControlBase parent, string label)
         {
-            ComboBox combobox = new ComboBox(null)
+            ComboBox combobox = new(null)
             {
                 Dock = Dock.Right,
                 Width = 100
@@ -163,14 +160,14 @@ namespace linerider.UI
         /// <param name="valuechanged">Event that receives <see cref="Color"/>. Called only when a valid color is specified.</param>
         public static ControlBase CreateLabeledColorInput(ControlBase parent, string label, Color defaultColor, ControlBase.GwenEventHandler<ColorEventArgs> valuechanged)
         {
-            ControlBase container = new ControlBase(parent)
+            ControlBase container = new(parent)
             {
                 AutoSizeToContents = true,
                 Dock = Dock.Top,
                 Margin = new Margin(0, 1, 0, 1)
             };
 
-            Label description = new Label(null)
+            Label description = new(null)
             {
                 Text = label,
                 Dock = Dock.Left,
@@ -178,7 +175,7 @@ namespace linerider.UI
                 Margin = new Margin(0, 0, 10, 0)
             };
 
-            Label inputPrefix = new Label(null)
+            Label inputPrefix = new(null)
             {
                 Text = "#",
                 Dock = Dock.Right,
@@ -186,14 +183,14 @@ namespace linerider.UI
                 Margin = new Margin(0, 0, 5, 0)
             };
 
-            TextBox input = new TextBox(null)
+            TextBox input = new(null)
             {
                 Name = "input",
                 Width = 70,
                 Dock = Dock.Right,
             };
 
-            ColorIndicator preview = new ColorIndicator()
+            ColorIndicator preview = new()
             {
                 Name = "preview",
                 Margin = new Margin(2, 0, 0, 0),
@@ -232,7 +229,7 @@ namespace linerider.UI
                 bool isHex = int.TryParse(newValue, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out _);
                 if (!isHex)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new();
                     foreach (char c in newValue)
                         if ((c >= 'A' && c <= 'F') || (c >= '0' && c <= '9'))
                             _ = sb.Append(c);
@@ -262,7 +259,7 @@ namespace linerider.UI
                         int argb = int.Parse($"FF{colorRaw}", NumberStyles.HexNumber);
                         Color color = Color.FromArgb(argb);
 
-                        ColorEventArgs colorArg = new ColorEventArgs(color);
+                        ColorEventArgs colorArg = new(color);
                         preview.Color = color;
 
                         valuechanged(o, colorArg);

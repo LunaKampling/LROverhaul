@@ -1,5 +1,4 @@
 using linerider.Game;
-using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
@@ -41,7 +40,7 @@ namespace linerider.Tools
             clone = line.Clone();
             joint1 = bothjoints;
             joint2 = bothjoints;
-            snapped = new List<LineSelection>();
+            snapped = [];
         }
         /// <summary>
         /// Initialize a lineselection automatically generating clone and applying bothjoints
@@ -63,7 +62,7 @@ namespace linerider.Tools
             clone = line.Clone();
             joint1 = line.Position1 == snapjoint;
             joint2 = line.Position2 == snapjoint;
-            snapped = new List<LineSelection>();
+            snapped = [];
         }
 
         public LineType GetLineType() => line.Type;

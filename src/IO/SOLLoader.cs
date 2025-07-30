@@ -1,6 +1,5 @@
 ﻿using linerider.Game;
 using linerider.IO.SOL;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -12,14 +11,14 @@ namespace linerider.IO
     {
         public static List<sol_track> LoadSol(string sol_location)
         {
-            SOLFile sol = new SOLFile(sol_location);
+            SOLFile sol = new(sol_location);
             List<Amf0Object> tracks = (List<Amf0Object>)sol.RootObject.get_property("trackList");
-            List<sol_track> ret = new List<sol_track>();
+            List<sol_track> ret = [];
             for (int i = 0; i < tracks.Count; i++)
             {
                 if (tracks[i].data is List<Amf0Object> list)
                 {
-                    sol_track add = new sol_track { data = list, filename = sol_location };
+                    sol_track add = new() { data = list, filename = sol_location };
                     add.name = (string)add.get_property("label");
                     ret.Add(add);
                 }
@@ -28,10 +27,10 @@ namespace linerider.IO
         }
         public static Track LoadTrack(sol_track trackdata)
         {
-            Track ret = new Track { Name = trackdata.name, Filename = trackdata.filename };
+            Track ret = new() { Name = trackdata.name, Filename = trackdata.filename };
             List<Amf0Object> buffer = (List<Amf0Object>)trackdata.get_property("data");
-            List<GameLine> lineslist = new List<GameLine>(buffer.Count);
-            Dictionary<int, StandardLine> addedlines = new Dictionary<int, StandardLine>(buffer.Count);
+            List<GameLine> lineslist = new(buffer.Count);
+            Dictionary<int, StandardLine> addedlines = new(buffer.Count);
             string version = trackdata.data.First(x => x.name == "version").data as string;
 
             if (version == "6.2")
@@ -74,7 +73,7 @@ namespace linerider.IO
                     case 0:
                     {
                         StandardLine l =
-                            new StandardLine(
+                            new(
                                 new Vector2d(Convert.ToDouble(line[0].data, CultureInfo.InvariantCulture),
                                     Convert.ToDouble(line[1].data, CultureInfo.InvariantCulture)),
                                 new Vector2d(Convert.ToDouble(line[2].data, CultureInfo.InvariantCulture),
@@ -106,7 +105,7 @@ namespace linerider.IO
                     case 1:
                     {
                         RedLine l =
-                            new RedLine(
+                            new(
                                 new Vector2d(Convert.ToDouble(line[0].data, CultureInfo.InvariantCulture),
                                     Convert.ToDouble(line[1].data, CultureInfo.InvariantCulture)),
                                 new Vector2d(Convert.ToDouble(line[2].data, CultureInfo.InvariantCulture),
@@ -155,21 +154,21 @@ namespace linerider.IO
                 int conv = Convert.ToInt32(startlineprop, CultureInfo.InvariantCulture);
                 if (conv >= ret.Lines.Count || conv < 0)
                 {
-                    startline = new List<Amf0Object>
-                    {
-                        new Amf0Object { data = 100 },
-                        new Amf0Object { data = 100 }
-                    };
+                    startline =
+                    [
+                        new() { data = 100 },
+                        new() { data = 100 }
+                    ];
                 }
             }
             else if (startlineprop is double)
             {
                 int conv = Convert.ToInt32(startlineprop, CultureInfo.InvariantCulture);
-                startline = new List<Amf0Object>
-                {
-                    new Amf0Object { data = lineslist[conv].Position1.X },
-                    new Amf0Object { data = lineslist[conv].Position1.Y - 50 * 0.5 }
-                };
+                startline =
+                [
+                    new() { data = lineslist[conv].Position1.X },
+                    new() { data = lineslist[conv].Position1.Y - 50 * 0.5 }
+                ];
             }
             ret.StartOffset = new Vector2d(
                 Convert.ToDouble(startline[0].data, CultureInfo.InvariantCulture),

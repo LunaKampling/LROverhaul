@@ -21,7 +21,7 @@ namespace linerider.UI
         // cases the user could load a track, the window closes, the track
         // is loading, and opens another one. we want to consider the other
         // loading window a sister, and wait for its actions to complete.
-        private static readonly object _loadsync = new object();
+        private static readonly object _loadsync = new();
         public LoadWindow(GameCanvas parent, Editor editor) : base(parent, editor)
         {
             Title = title;
@@ -29,7 +29,7 @@ namespace linerider.UI
             {
                 Dock = Dock.Fill
             };
-            Panel bottom = new Panel(this)
+            Panel bottom = new(this)
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
@@ -252,14 +252,12 @@ namespace linerider.UI
         {
             string[] tracks = TrackIO.EnumerateTrackFiles(directory);
             string[] sol = TrackIO.EnumerateSolFiles(directory);
-            List<string> ret = new List<string>();
-            ret.AddRange(sol);
-            ret.AddRange(tracks);
+            List<string> ret = [.. sol, .. tracks];
             return ret;
         }
         private List<string> GetDirectories()
         {
-            List<string> ret = new List<string>();
+            List<string> ret = [];
             string dir = Path.Combine(Settings.Local.UserDirPath, Constants.TracksFolderName);
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);

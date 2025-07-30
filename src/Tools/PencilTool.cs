@@ -19,7 +19,6 @@
 using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
-using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
 using SkiaSharp;
@@ -55,19 +54,17 @@ namespace linerider.Tools
             if (EnableSnap)
             {
                 Vector2d gamepos = ScreenToGameCoords(pos);
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                using TrackReader trk = game.Track.CreateTrackReader();
+                Vector2d snap = TrySnapPoint(trk, gamepos, out bool snapped);
+                if (snapped)
                 {
-                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool snapped);
-                    if (snapped)
-                    {
-                        _start = snap;
-                        Snapped = true;
-                    }
-                    else
-                    {
-                        _start = gamepos;
-                        Snapped = false;
-                    }
+                    _start = snap;
+                    Snapped = true;
+                }
+                else
+                {
+                    _start = gamepos;
+                    Snapped = false;
                 }
             }
             else

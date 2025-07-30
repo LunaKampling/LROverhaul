@@ -1,5 +1,4 @@
-﻿using OpenTK;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
@@ -19,7 +18,7 @@ namespace linerider.Game.LineGenerator
         public CircleGenerator(string _name, double _radius, Vector2d _position, int _lineCount, bool _invert)
         {
             name = _name;
-            lines = new List<GameLine>();
+            lines = [];
             radius = _radius;
             position = _position;
             lineCount = _lineCount;
@@ -29,7 +28,7 @@ namespace linerider.Game.LineGenerator
 
         public override void Generate_Internal(TrackWriter trk)
         {
-            List<Vector2d> points = new List<Vector2d>();
+            List<Vector2d> points = [];
             for (double frac = 0.0; frac < 1.0; frac += 1.0 / lineCount)
             {
                 double ang = frac * 2.0 * Math.PI;
@@ -41,7 +40,7 @@ namespace linerider.Game.LineGenerator
                 {
                     addLine(trk, points[i], points[i - 1], lineType, reverse);
                 }
-                addLine(trk, points[0], points[points.Count - 1], lineType, reverse);
+                addLine(trk, points[0], points[^1], lineType, reverse);
             }
             else
             {
@@ -49,7 +48,7 @@ namespace linerider.Game.LineGenerator
                 {
                     addLine(trk, points[i - 1], points[i], lineType, reverse);
                 }
-                addLine(trk, points[points.Count - 1], points[0], lineType, reverse);
+                addLine(trk, points[^1], points[0], lineType, reverse);
             }
         }
         private void addLine(TrackWriter trk, Vector2d start, Vector2d end, LineType type, bool inv)

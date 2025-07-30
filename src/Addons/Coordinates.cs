@@ -28,10 +28,10 @@ namespace linerider.Addons
         public static double BodyFLY;
         public static double BodyFRY;
 
-        public static double[] CoordsX = new double[] { SledTLX, SledBLX, SledBRX, SledTRX, BodyBuX, BodyShX, BodyHLX, BodyHRX, BodyFLX, BodyFRX };
-        public static double[] CoordsY = new double[] { SledTLY, SledBLY, SledBRY, SledTRY, BodyBuY, BodyShY, BodyHLY, BodyHRY, BodyFLY, BodyFRY };
-        public static string[] ConPName = new string[] { "SledTL", "SledBL", "SledBR", "SledTR", "BodyBu", "BodySh", "BodyHL", "BodyHR", "BodyFL", "BodyFR" };
-        public static string[] CoordsData = new string[] { "", "", "", "", "", "", "", "", "", "" };
+        public static double[] CoordsX = [SledTLX, SledBLX, SledBRX, SledTRX, BodyBuX, BodyShX, BodyHLX, BodyHRX, BodyFLX, BodyFRX];
+        public static double[] CoordsY = [SledTLY, SledBLY, SledBRY, SledTRY, BodyBuY, BodyShY, BodyHLY, BodyHRY, BodyFLY, BodyFRY];
+        public static string[] ConPName = ["SledTL", "SledBL", "SledBR", "SledTR", "BodyBu", "BodySh", "BodyHL", "BodyHR", "BodyFL", "BodyFR"];
+        public static string[] CoordsData = ["", "", "", "", "", "", "", "", "", ""];
 
         public static int frame;
         public static int iteration;
@@ -60,7 +60,8 @@ namespace linerider.Addons
             iteration = game.Track.IterationsOffset;
             Rider rider = game.Track.Timeline.GetFrame(frame, iteration);
 
-            if (OperatingSystem.IsWindows()) {
+            if (OperatingSystem.IsWindows())
+            {
                 if (xClipboard)
                     game.Clipboard = rider.Body[integerClipboard].Location.X.ToString("G17");
                 if (yClipboard)

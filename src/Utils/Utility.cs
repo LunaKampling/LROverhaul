@@ -17,11 +17,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
-using System.Linq;
 using System.Globalization;
+using System.Linq;
 
 namespace linerider
 {
@@ -88,7 +87,7 @@ namespace linerider
         public static Vector2d AngleLock(Vector2d start, Vector2d end, Angle a)
         {
             double rad = a.Radians;
-            Vector2d scalar = new Vector2d(Math.Cos(rad), Math.Sin(rad));
+            Vector2d scalar = new(Math.Cos(rad), Math.Sin(rad));
             Vector2d ret = start + scalar * Vector2d.Dot(end - start, scalar);
             switch (a.Degrees)
             {
@@ -110,7 +109,7 @@ namespace linerider
             if (diff.Length != length)
             {
                 double angle = Math.Atan2(diff.Y, diff.X);
-                Turtle turtle = new Turtle(start);
+                Turtle turtle = new(start);
                 turtle.Move(Angle.FromRadians(angle).Degrees, length);
                 return turtle.Point;
             }
@@ -143,11 +142,13 @@ namespace linerider
         /// </summary>
         public static Vector2d[] RotateRect(DoubleRect rect, Vector2d origin, Angle angle)
         {
-            Vector2d[] ret = new Vector2d[4];
-            ret[0] = Rotate(new Vector2d(rect.Left, rect.Top), origin, angle);
-            ret[1] = Rotate(new Vector2d(rect.Right, rect.Top), origin, angle);
-            ret[2] = Rotate(new Vector2d(rect.Right, rect.Bottom), origin, angle);
-            ret[3] = Rotate(new Vector2d(rect.Left, rect.Bottom), origin, angle);
+            Vector2d[] ret =
+            [
+                Rotate(new Vector2d(rect.Left, rect.Top), origin, angle),
+                Rotate(new Vector2d(rect.Right, rect.Top), origin, angle),
+                Rotate(new Vector2d(rect.Right, rect.Bottom), origin, angle),
+                Rotate(new Vector2d(rect.Left, rect.Bottom), origin, angle),
+            ];
             return ret;
         }
         /// <summary>
@@ -155,12 +156,13 @@ namespace linerider
         /// </summary>
         public static Vector2[] RotateRect(FloatRect rect, Vector2 origin, Angle angle)
         {
-            Vector2[] ret = new Vector2[4];
-            ret[0] = Rotate(new Vector2(rect.Left, rect.Top), origin, angle);
-            ret[1] = Rotate(new Vector2(rect.Right, rect.Top), origin, angle);
-            ret[2] = Rotate(new Vector2(rect.Right, rect.Bottom), origin, angle);
-            ret[3] = Rotate(new Vector2(rect.Left, rect.Bottom), origin, angle);
-
+            Vector2[] ret =
+            [
+                Rotate(new Vector2(rect.Left, rect.Top), origin, angle),
+                Rotate(new Vector2(rect.Right, rect.Top), origin, angle),
+                Rotate(new Vector2(rect.Right, rect.Bottom), origin, angle),
+                Rotate(new Vector2(rect.Left, rect.Bottom), origin, angle),
+            ];
             return ret;
         }
         /// <summary>
@@ -169,10 +171,10 @@ namespace linerider
         public static Vector2[] GetThickLine(Vector2 p, Vector2 p1, Angle angle, float width)
         {
             angle.Radians -= 1.5708f; //90 degrees
-            Vector2 t = new Vector2(
+            Vector2 t = new(
                 (float)(angle.Cos * (width / 2)),
                 (float)(angle.Sin * (width / 2)));
-            return new Vector2[] { p - t, p + t, p1 + t, p1 - t };
+            return [p - t, p + t, p1 + t, p1 - t];
         }
 
         /// <summary>
@@ -181,15 +183,15 @@ namespace linerider
         public static Vector2d[] GetThickLine(Vector2d p, Vector2d p1, Angle angle, double width)
         {
             angle.Radians -= 1.5708f; //90 degrees
-            Vector2d t = new Vector2d(
+            Vector2d t = new(
                 angle.Cos * (width / 2),
                 angle.Sin * (width / 2));
-            return new Vector2d[] { p - t, p + t, p1 + t, p1 - t };
+            return [p - t, p + t, p1 + t, p1 - t];
         }
         /// <summary>
         /// Convert a line generated with GetThickLine into two triangles
         /// </summary>
-        public static Vector2[] TesselateThickLine(Vector2[] line) => new Vector2[] { line[0], line[1], line[2], line[2], line[3], line[0] };
+        public static Vector2[] TesselateThickLine(Vector2[] line) => [line[0], line[1], line[2], line[2], line[3], line[0]];
         /// <summary>
         /// Returns either p1 or p2 based on their distance from the input
         /// </summary>
@@ -214,7 +216,7 @@ namespace linerider
         public static double leftness(Vector2d[] rect, int a, int b, ref Vector2d point) => (rect[b].X - rect[a].X) * (point.Y - rect[a].Y) - (rect[b].Y - rect[a].Y) * (point.X - rect[a].X);
         public static bool isLeft(Vector2d[] rect, int a, int b, ref Vector2d point) => ((rect[b].X - rect[a].X) * (point.Y - rect[a].Y) - (rect[b].Y - rect[a].Y) * (point.X - rect[a].X)) > 0;
         public static bool isLeft(Vector2 a, Vector2 b, Vector2 point) => ((b.X - a.X) * (point.Y - a.Y) - (b.Y - a.Y) * (point.X - a.X)) > 0;
-        public static bool PointInRectangle(Vector2d tl, Vector2d tr, Vector2d br, Vector2d bl, Vector2d p) => PointInRectangle(new Vector2d[] { tl, tr, br, bl }, p);
+        public static bool PointInRectangle(Vector2d tl, Vector2d tr, Vector2d br, Vector2d bl, Vector2d p) => PointInRectangle([tl, tr, br, bl], p);
         public static bool PointInRectangle(Vector2d[] rect, Vector2d p) => !(isLeft(rect, 0, 3, ref p) ||
             isLeft(rect, 3, 2, ref p) ||
             isLeft(rect, 2, 1, ref p) ||

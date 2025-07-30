@@ -1,7 +1,6 @@
 ﻿//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 namespace linerider.Game
@@ -26,7 +25,7 @@ namespace linerider.Game
         }
         public static CameraBoundingBox Create(Vector2d center, float zoom)
         {
-            CameraBoundingBox box = new CameraBoundingBox(center);
+            CameraBoundingBox box = new(center);
             if (Settings.RoundLegacyCamera || Settings.SmoothCamera)
                 box.SetupSmooth(0, zoom);
             else

@@ -20,13 +20,13 @@ namespace linerider.UI
             Title = "Preferences";
             _ = SetSize(500, 550);
             MinimumSize = Size;
-            ControlBase bottom = new ControlBase(this)
+            ControlBase bottom = new(this)
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
                 Margin = new Margin(0, 5, 0, 0),
             };
-            Button defaults = new Button(bottom)
+            Button defaults = new(bottom)
             {
                 Dock = Dock.Right,
                 Margin = new Margin(0, 2, 0, 0),
@@ -113,7 +113,7 @@ namespace linerider.UI
         }
         private ControlBase AddPage(CollapsibleCategory category, string name)
         {
-            Panel panel = new Panel(this)
+            Panel panel = new(this)
             {
                 Dock = Dock.Fill,
                 Padding = Padding.Five
@@ -148,7 +148,7 @@ namespace linerider.UI
         {
             Panel advancedGroup = GwenHelper.CreateHeaderPanel(parent, "Advanced Visualization");
 
-            Panel advancedGroupLeft = new Panel(advancedGroup)
+            Panel advancedGroupLeft = new(advancedGroup)
             {
                 Dock = Dock.Left,
                 ShouldDrawBackground = false,
@@ -181,7 +181,7 @@ namespace linerider.UI
                 Settings.Save();
             });
 
-            Panel advancedGroupRight = new Panel(advancedGroup)
+            Panel advancedGroupRight = new(advancedGroup)
             {
                 Dock = Dock.Right,
                 ShouldDrawBackground = false,
@@ -215,7 +215,7 @@ namespace linerider.UI
                 Settings.OnionSkinning = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
-            Spinner pastOnionSkins = new Spinner(onionGroup)
+            Spinner pastOnionSkins = new(onionGroup)
             {
                 Min = 0,
                 Max = 1000,
@@ -226,7 +226,7 @@ namespace linerider.UI
                 Settings.PastOnionSkins = (int)((Spinner)o).Value;
                 Settings.Save();
             };
-            Spinner futureOnionSkins = new Spinner(onionGroup)
+            Spinner futureOnionSkins = new(onionGroup)
             {
                 Margin = new Margin(3, 0, 0, 0),
                 Min = 0,
@@ -238,14 +238,14 @@ namespace linerider.UI
                 Settings.FutureOnionSkins = (int)((Spinner)o).Value;
                 Settings.Save();
             };
-            _ = GwenHelper.CreateLabeledControl(onionGroup, "Onion Skins Before/After", new ControlBase[2] { pastOnionSkins, futureOnionSkins });
+            _ = GwenHelper.CreateLabeledControl(onionGroup, "Onion Skins Before/After", [pastOnionSkins, futureOnionSkins]);
 
             Panel overlayGroup = GwenHelper.CreateHeaderPanel(parent, "Frame Overlay");
 
             ControlBase offsetbase = null;
             ControlBase fixedbase = null;
 
-            Spinner offsetspinner = new Spinner(null)
+            Spinner offsetspinner = new(null)
             {
                 Min = -999,
                 Max = 999,
@@ -255,7 +255,7 @@ namespace linerider.UI
             {
                 Settings.Local.TrackOverlayOffset = (int)offsetspinner.Value;
             };
-            Spinner fixedspinner = new Spinner(null)
+            Spinner fixedspinner = new(null)
             {
                 Min = 0,
                 Max = _editor.FrameCount,
@@ -304,7 +304,7 @@ namespace linerider.UI
         {
             Panel zoomGroup = GwenHelper.CreateHeaderPanel(parent, "Playback Zoom");
 
-            RadioButtonGroup pbzoom = new RadioButtonGroup(zoomGroup)
+            RadioButtonGroup pbzoom = new(zoomGroup)
             {
                 Dock = Dock.Left,
                 ShouldDrawBackground = false,
@@ -355,7 +355,7 @@ namespace linerider.UI
                 Settings.Save();
             };
             ComboBox cbslowmo = GwenHelper.CreateLabeledCombobox(framerateGroup, "Slowmo FPS:");
-            int[] fpsarray = new[] { 1, 2, 5, 10, 20 };
+            int[] fpsarray = [1, 2, 5, 10, 20];
             for (int i = 0; i < fpsarray.Length; i++)
             {
                 _ = cbslowmo.AddItem(fpsarray[i].ToString(), fpsarray[i].ToString(CultureInfo.InvariantCulture),
@@ -370,7 +370,7 @@ namespace linerider.UI
             smooth.Tooltip = "Interpolates frames from the base\nphysics rate of 40 frames/second\nup to 60 frames/second";
 
             Panel otherGroup = GwenHelper.CreateHeaderPanel(parent, "Other");
-            
+
             Checkbox colorplayback = GwenHelper.AddCheckbox(otherGroup, "Color Playback", Settings.ColorPlayback, (o, e) =>
             {
                 Settings.ColorPlayback = ((Checkbox)o).IsChecked;
@@ -400,7 +400,7 @@ namespace linerider.UI
             });
             syncduration.Tooltip = "Timeline automatically extends/shrinks to the song duration.";
             syncduration.Tooltip += "\nIf enabled, \"Lock Track Duration\" option will be automatically enabled too.";
-            Spinner timelinelength = new Spinner(parent)
+            Spinner timelinelength = new(parent)
             {
                 Min = 1,
                 Max = 600,
@@ -414,7 +414,7 @@ namespace linerider.UI
             ControlBase timelinelengthbar = GwenHelper.CreateLabeledControl(otherGroup, "Default Timeline Length (Seconds)", timelinelength);
             timelinelengthbar.Tooltip = "Timeline length on game startup";
 
-            Spinner triggerlength = new Spinner(parent)
+            Spinner triggerlength = new(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -432,7 +432,7 @@ namespace linerider.UI
         {
             Panel typeGroup = GwenHelper.CreateHeaderPanel(parent, "Camera Type");
 
-            RadioButtonGroup rbcamera = new RadioButtonGroup(typeGroup)
+            RadioButtonGroup rbcamera = new(typeGroup)
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false,
@@ -515,7 +515,7 @@ namespace linerider.UI
 
             Panel otherGroup = GwenHelper.CreateHeaderPanel(parent, "Other");
 
-            Spinner zoomMultiplier = new Spinner(this)
+            Spinner zoomMultiplier = new(this)
             {
                 Min = 0.01,
                 Max = 100.0,
@@ -534,7 +534,7 @@ namespace linerider.UI
         {
             Panel bezierGroup = GwenHelper.CreateHeaderPanel(parent, "Bezier Tool");
 
-            Spinner resolution = new Spinner(bezierGroup)
+            Spinner resolution = new(bezierGroup)
             {
                 Min = 5,
                 Max = 100,
@@ -548,7 +548,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(bezierGroup, "Resolution (Lines Per 100 Pixels)", resolution);
 
-            Spinner nodeSize = new Spinner(bezierGroup)
+            Spinner nodeSize = new(bezierGroup)
             {
                 Min = 5,
                 Max = 100,
@@ -562,7 +562,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(bezierGroup, "Size of the bezier curve nodes", nodeSize);
 
-            RadioButtonGroup bezierModeSelector = new RadioButtonGroup(bezierGroup)
+            RadioButtonGroup bezierModeSelector = new(bezierGroup)
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false
@@ -590,7 +590,7 @@ namespace linerider.UI
             };
 
             Panel smoothpencilGroup = GwenHelper.CreateHeaderPanel(parent, "Smooth Pencil");
-            Spinner smUpdateSpeed = new Spinner(smoothpencilGroup)
+            Spinner smUpdateSpeed = new(smoothpencilGroup)
             {
                 Min = 0,
                 Max = 1000,
@@ -603,7 +603,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(smoothpencilGroup, "Update Speed in Milliseconds", smUpdateSpeed);
             smUpdateSpeed.Tooltip = "Determines how often the lines are dragged in milliseconds\nLeave at 0 to update as fast as your framerate allows";
-            Spinner smStabilizer = new Spinner(smoothpencilGroup)
+            Spinner smStabilizer = new(smoothpencilGroup)
             {
                 Min = 1,
                 Max = 24,
@@ -667,14 +667,14 @@ namespace linerider.UI
 
             Panel snappingGroup = GwenHelper.CreateHeaderPanel(parent, "Snapping");
 
-            Panel snappingGroupBottom = new Panel(snappingGroup)
+            Panel snappingGroupBottom = new(snappingGroup)
             {
                 Dock = Dock.Bottom,
                 ShouldDrawBackground = false,
                 AutoSizeToContents = true,
                 Margin = Margin.Zero,
             };
-            Spinner snapAngle = new Spinner(snappingGroupBottom)
+            Spinner snapAngle = new(snappingGroupBottom)
             {
                 Min = 0,
                 Max = 180,
@@ -689,7 +689,7 @@ namespace linerider.UI
             };
             ControlBase snapdegrees = GwenHelper.CreateLabeledControl(snappingGroupBottom, "X/Y Snap Degrees", snapAngle);
 
-            Panel snappingGroupLeft = new Panel(snappingGroup)
+            Panel snappingGroupLeft = new(snappingGroup)
             {
                 Dock = Dock.Left,
                 ShouldDrawBackground = false,
@@ -708,7 +708,7 @@ namespace linerider.UI
             });
             movelinesnap.Tooltip = "Snap to lines when using the\nselect tool to move a single line";
 
-            Panel snappingGroupRight = new Panel(snappingGroup)
+            Panel snappingGroupRight = new(snappingGroup)
             {
                 Dock = Dock.Right,
                 ShouldDrawBackground = false,
@@ -898,7 +898,7 @@ namespace linerider.UI
 
             Panel scarfGroup = GwenHelper.CreateHeaderPanel(parent, "Scarf Settings *");
 
-            Spinner scarvesAmount = new Spinner(parent)
+            Spinner scarvesAmount = new(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -911,7 +911,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(scarfGroup, "Scarves Amount:", scarvesAmount);
 
-            Spinner scarfSegmentsMain = new Spinner(parent)
+            Spinner scarfSegmentsMain = new(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -925,7 +925,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(scarfGroup, "Segments (Primary Scarf):", scarfSegmentsMain);
 
-            Spinner scarfSegmentsSecondary = new Spinner(parent)
+            Spinner scarfSegmentsSecondary = new(parent)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -941,7 +941,7 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(scarfGroup, "Segments (Secondary Scarves):", scarfSegmentsSecondary);
             _ = GwenHelper.CreateHintLabel(scarfGroup, "* Restart required");
 
-            Button openManualBtn = new Button(parent)
+            Button openManualBtn = new(parent)
             {
                 Dock = Dock.Bottom,
                 Text = "Open customization manual (GitHub)",
@@ -950,7 +950,7 @@ namespace linerider.UI
             };
             openManualBtn.Clicked += (o, e) => GameCanvas.OpenUrl(manualUrl);
 
-            Button forceReloadBtn = new Button(parent)
+            Button forceReloadBtn = new(parent)
             {
                 Dock = Dock.Bottom,
                 Text = "Force reload rider and scarf",
@@ -965,13 +965,13 @@ namespace linerider.UI
             bool isPortable = Settings.Computed.IsUserDirPortable;
 
             Panel currPathGroup = GwenHelper.CreateHeaderPanel(parent, "Current User Folder Location");
-            Label currPathLabel = new Label(currPathGroup)
+            Label currPathLabel = new(currPathGroup)
             {
                 TextColor = Color.Gray,
                 Dock = Dock.Top,
                 Text = Settings.Local.UserDirPath,
             };
-            Button openUserDirBtn = new Button(currPathGroup)
+            Button openUserDirBtn = new(currPathGroup)
             {
                 Dock = Dock.Bottom,
                 Text = "Open directory",
@@ -981,19 +981,19 @@ namespace linerider.UI
             openUserDirBtn.Clicked += (o, e) => GameCanvas.OpenUrl(Settings.Local.UserDirPath);
 
             Panel portableGroup = GwenHelper.CreateHeaderPanel(parent, "Portable Mode");
-            Label portableStatusLabel = new Label(null)
+            Label portableStatusLabel = new(null)
             {
                 Dock = Dock.Left,
                 Text = "Is Portable:",
             };
-            Label portableStatus = new Label(null)
+            Label portableStatus = new(null)
             {
                 TextColor = isPortable ? Color.Green : Color.Gray,
                 Dock = Dock.Left,
                 Text = isPortable.ToString(),
                 Margin = new Margin(5, 0, 0, 0),
             };
-            ControlBase portableControls = new ControlBase(portableGroup)
+            ControlBase portableControls = new(portableGroup)
             {
                 Children =
                 {
@@ -1004,7 +1004,7 @@ namespace linerider.UI
                 Dock = Dock.Top,
             };
 
-            Button transferUserDirBtn = new Button(portableGroup)
+            Button transferUserDirBtn = new(portableGroup)
             {
                 Dock = Dock.Top,
                 Text = "Switch " + (isPortable ? "from" : "to") + " portable mode",
@@ -1013,7 +1013,7 @@ namespace linerider.UI
             };
             transferUserDirBtn.Clicked += (o, e) =>
             {
-                UserFolderTransferrerWindow wnd = new UserFolderTransferrerWindow(_canvas, _editor);
+                UserFolderTransferrerWindow wnd = new(_canvas, _editor);
                 wnd.ShowCentered();
                 _ = Close();
             };
@@ -1022,7 +1022,7 @@ namespace linerider.UI
         {
             Panel audioGroup = GwenHelper.CreateHeaderPanel(parent, "Audio");
 
-            Label volumeLabel = new Label(null)
+            Label volumeLabel = new(null)
             {
                 Dock = Dock.Left,
                 Text = "Volume",
@@ -1035,7 +1035,7 @@ namespace linerider.UI
             });
             mute.Dock = Dock.Right;
 
-            HorizontalSlider volume = new HorizontalSlider(null)
+            HorizontalSlider volume = new(null)
             {
                 Dock = Dock.Fill,
                 Min = 0,
@@ -1049,7 +1049,7 @@ namespace linerider.UI
                 Settings.Save();
             };
 
-            ControlBase audioControls = new ControlBase(audioGroup)
+            ControlBase audioControls = new(audioGroup)
             {
                 Children =
                 {
@@ -1077,7 +1077,7 @@ namespace linerider.UI
             });
 
             Panel savesGroup = GwenHelper.CreateHeaderPanel(parent, "Saves");
-            Spinner autosaveMinutes = new Spinner(savesGroup)
+            Spinner autosaveMinutes = new(savesGroup)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -1090,7 +1090,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(savesGroup, "Minutes Between Autosaves", autosaveMinutes);
 
-            Spinner autosaveChanges = new Spinner(savesGroup)
+            Spinner autosaveChanges = new(savesGroup)
             {
                 Min = 1,
                 Max = int.MaxValue - 1,
@@ -1103,7 +1103,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(savesGroup, "Minimum Changes to Autosave", autosaveChanges);
 
-            TextBox autosaveName = new TextBox(savesGroup)
+            TextBox autosaveName = new(savesGroup)
             {
                 Text = Settings.AutosavePrefix,
                 Width = 100,
@@ -1167,7 +1167,7 @@ namespace linerider.UI
             defaultAutosaveType.SelectByUserData(Settings.DefaultAutosaveFormat);
             defaultAutosaveType.SelectByUserData(Settings.DefaultCrashBackupFormat);
 
-            Button openHomePageBtn = new Button(parent)
+            Button openHomePageBtn = new(parent)
             {
                 Dock = Dock.Bottom,
                 Text = "Open project page (GitHub)",
@@ -1176,7 +1176,7 @@ namespace linerider.UI
             };
             openHomePageBtn.Clicked += (o, e) => GameCanvas.OpenUrl(Constants.GithubPageHeader);
 
-            Button showChangelogButton = new Button(parent)
+            Button showChangelogButton = new(parent)
             {
                 Dock = Dock.Bottom,
                 Text = $"Show changelog ({AssemblyInfo.Version})",
@@ -1207,14 +1207,14 @@ namespace linerider.UI
                 Settings.Save();
             });
 
-            Spinner animationVelXSpinner = new Spinner(generalGroup)
+            Spinner animationVelXSpinner = new(generalGroup)
             {
                 Dock = Dock.Bottom,
                 Max = 1000,
                 Min = -1000,
                 Value = Settings.animationRelativeVelX
             };
-            Spinner animationVelYSpinner = new Spinner(generalGroup)
+            Spinner animationVelYSpinner = new(generalGroup)
             {
                 Dock = Dock.Bottom,
                 Max = 1000,

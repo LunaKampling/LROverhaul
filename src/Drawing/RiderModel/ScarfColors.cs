@@ -5,8 +5,8 @@ namespace linerider.Drawing.RiderModel
 {
     public static class ScarfColors
     {
-        private static readonly List<int> Colors = new List<int>();
-        private static readonly List<byte> Opacity = new List<byte>();
+        private static readonly List<int> Colors = [];
+        private static readonly List<byte> Opacity = [];
         public static List<int> GetColorList() => Colors;
         public static List<byte> GetOpacityList() => Opacity;
         public static int TotalSegments => Settings.ScarfSegmentsPrimary + (Settings.ScarfAmount - 1) * (Settings.ScarfSegmentsSecondary + 1);

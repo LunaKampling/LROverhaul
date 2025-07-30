@@ -19,14 +19,11 @@
 using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
-using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Input;
+using SkiaSharp;
 using System.Collections.Generic;
 using System.Linq;
-using SkiaSharp;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
 namespace linerider.Tools
@@ -41,8 +38,8 @@ namespace linerider.Tools
         public bool Snapped = false;
         private const float MINIMUM_LINE = 0.01f;
         private bool _addflip;
-        private readonly List<Vector2d> controlPoints = new List<Vector2d> { };
-        private readonly List<GameLine> workingLines = new List<GameLine> { };
+        private readonly List<Vector2d> controlPoints = [];
+        private readonly List<GameLine> workingLines = [];
         private Vector2d _end;
         private Vector2d _start;
         private bool moving = false;
@@ -63,19 +60,17 @@ namespace linerider.Tools
             Vector2d gamepos = ScreenToGameCoords(pos);
             if (EnableSnap)
             {
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                using TrackReader trk = game.Track.CreateTrackReader();
+                Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
+                if (success)
                 {
-                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
-                    if (success)
-                    {
-                        _start = snap;
-                        Snapped = true;
-                    }
-                    else
-                    {
-                        _start = gamepos;
-                        Snapped = false;
-                    }
+                    _start = snap;
+                    Snapped = true;
+                }
+                else
+                {
+                    _start = gamepos;
+                    Snapped = false;
                 }
             }
             else
@@ -167,13 +162,11 @@ namespace linerider.Tools
                 }
                 else if (EnableSnap)
                 {
-                    using (TrackReader trk = game.Track.CreateTrackReader())
+                    using TrackReader trk = game.Track.CreateTrackReader();
+                    Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
+                    if (snapped && snap != _start)
                     {
-                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
-                        if (snapped && snap != _start)
-                        {
-                            _end = snap;
-                        }
+                        _end = snap;
                     }
                 }
                 game.Invalidate();
@@ -197,13 +190,11 @@ namespace linerider.Tools
                 }
                 else if (EnableSnap)
                 {
-                    using (TrackWriter trk = game.Track.CreateTrackWriter())
+                    using TrackWriter trk = game.Track.CreateTrackWriter();
+                    Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
+                    if (snapped && snap != _start)
                     {
-                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
-                        if (snapped && snap != _start)
-                        {
-                            _end = snap;
-                        }
+                        _end = snap;
                     }
                 }
             }
@@ -238,7 +229,7 @@ namespace linerider.Tools
         }
         private void RenderDirect()
         {
-            _ = GameRenderer.GenerateBezierCurve2d(controlPoints.ToArray(), Settings.Bezier.Resolution, out BezierCurve curve);
+            _ = GameRenderer.GenerateBezierCurve2d([.. controlPoints], Settings.Bezier.Resolution, out BezierCurve curve);
             switch (Swatch.Selected)
             {
                 case LineType.Standard:
@@ -283,7 +274,7 @@ namespace linerider.Tools
         {
             if (controlPoints.Count > 1)
             {
-                List<Vector2> curvePoints = GameRenderer.GenerateBezierCurve(controlPoints.ToArray(), Settings.Bezier.Resolution).ToList();
+                List<Vector2> curvePoints = [.. GameRenderer.GenerateBezierCurve(controlPoints.ToArray(), Settings.Bezier.Resolution)];
                 if (!preview)
                     game.Track.UndoManager.BeginAction();
                 for (int i = 1; i < curvePoints.Count; i++)
@@ -305,19 +296,17 @@ namespace linerider.Tools
         }
         private void DeleteLines()
         {
-            using (TrackWriter trk = game.Track.CreateTrackWriter())
+            using TrackWriter trk = game.Track.CreateTrackWriter();
+            trk.DisableUndo();
+            if (workingLines.Count() == 0)
+                return;
+            foreach (GameLine line in workingLines)
             {
-                trk.DisableUndo();
-                if (workingLines.Count() == 0)
-                    return;
-                foreach (GameLine line in workingLines)
-                {
-                    trk.RemoveLine(line);
-                }
-                workingLines.Clear();
-                game.Track.Invalidate();
-                game.Track.NotifyTrackChanged();
+                trk.RemoveLine(line);
             }
+            workingLines.Clear();
+            game.Track.Invalidate();
+            game.Track.NotifyTrackChanged();
         }
         public override void Cancel() => Stop();
         public override void Stop()

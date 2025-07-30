@@ -1,5 +1,4 @@
 ﻿using linerider.Drawing.RiderModel;
-using OpenTK;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 
@@ -10,8 +9,8 @@ namespace linerider.Game
         public static Vector2d[] DefaultRider = CreateDefaultRider();
         public static Vector2d[] CreateDefaultRider()
         {
-            List<Vector2d> defaultRiderVectorList = new List<Vector2d>
-            {
+            List<Vector2d> defaultRiderVectorList =
+            [
                 new Vector2d(0, 0),
                 new Vector2d(0, 5),
                 new Vector2d(15, 5),
@@ -22,14 +21,14 @@ namespace linerider.Game
                 new Vector2d(11.5, -5),
                 new Vector2d(10, 5),
                 new Vector2d(10, 5)
-            };
+            ];
 
-            return defaultRiderVectorList.ToArray();
+            return [.. defaultRiderVectorList];
         }
         public static Vector2d[] DefaultScarf = CreateDefaultScarf();
         public static Vector2d[] CreateDefaultScarf()
         {
-            List<Vector2d> scarfVectors = new List<Vector2d>();
+            List<Vector2d> scarfVectors = [];
             double scarfPos = 0;
             for (int i = 0; i < ScarfColors.TotalSegments; i++)
             {
@@ -44,13 +43,13 @@ namespace linerider.Game
                     scarfVectors.Add(new Vector2d(scarfPos, 0.5));
                 }
             }
-            return scarfVectors.ToArray();
+            return [.. scarfVectors];
         }
         public const double EnduranceFactor = 0.0285;
         public const double RemountEnduranceMultiplier = 2.0;
         public const double RemountStrengthMultiplier = 0.5;
         public const double StartingMomentum = 0.4;
-        public static Vector2d Gravity = new Vector2d(0, 0.175); // Gravity
+        public static Vector2d Gravity = new(0, 0.175); // Gravity
         public const int SledTL = 0;
         public const int SledBL = 1;
         public const int SledBR = 2;
@@ -98,8 +97,8 @@ namespace linerider.Game
         public static Bone[] ScarfBones;
         static RiderConstants()
         {
-            List<Bone> bonelist = new List<Bone>
-            {
+            List<Bone> bonelist =
+            [
                 CreateBone(SledTL, SledBL),
                 CreateBone(SledBL, SledBR),
                 CreateBone(SledBR, SledTR),
@@ -126,15 +125,15 @@ namespace linerider.Game
 
                 CreateBone(BodyShoulder, BodyFootLeft, repel: true),
                 CreateBone(BodyShoulder, BodyFootRight, repel: true)
-            };
-            Bones = bonelist.ToArray();
-            bonelist = new List<Bone>();
+            ];
+            Bones = [.. bonelist];
+            bonelist = [];
 
             for (int i = 0; i < ScarfColors.TotalSegments; i++)
             {
                 AddScarfBone(bonelist, i + 1);
             }
-            ScarfBones = bonelist.ToArray();
+            ScarfBones = [.. bonelist];
         }
         private static void AddScarfBone(List<Bone> bones, int index)
         {
@@ -148,7 +147,7 @@ namespace linerider.Game
             {
                 rest *= 0.5;
             }
-            Bone ret = new Bone(a, b, rest, breakable, repel);
+            Bone ret = new(a, b, rest, breakable, repel);
             return ret;
         }
     }

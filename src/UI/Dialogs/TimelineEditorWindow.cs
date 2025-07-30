@@ -1,5 +1,5 @@
-﻿using Gwen.Controls;
-using Gwen;
+﻿using Gwen;
+using Gwen.Controls;
 using linerider.Utils;
 
 namespace linerider.UI
@@ -20,14 +20,14 @@ namespace linerider.UI
         {
             Panel positionGroup = GwenHelper.CreateHeaderPanel(this, "Current Position");
 
-            Spinner positionFrameSpinner = new Spinner(null)
+            Spinner positionFrameSpinner = new(null)
             {
                 Min = 0,
                 Max = Constants.MaximumFrames,
                 Value = _editor.Offset,
                 Width = _controlWidth,
             };
-            TextBox positionTimeTextBox = new TextBox(null)
+            TextBox positionTimeTextBox = new(null)
             {
                 Width = _controlWidth,
                 Text = Utility.FrameToTime(_editor.Offset),
@@ -37,14 +37,14 @@ namespace linerider.UI
 
             Panel durationGroup = GwenHelper.CreateHeaderPanel(this, "Total Duration");
 
-            Spinner totalFramesSpinner = new Spinner(null)
+            Spinner totalFramesSpinner = new(null)
             {
                 Min = Constants.MinimumFrames,
                 Max = Constants.MaximumFrames,
                 Value = _canvas.TrackDuration,
                 Width = _controlWidth,
             };
-            TextBox totalTimeTextBox = new TextBox(null)
+            TextBox totalTimeTextBox = new(null)
             {
                 Width = _controlWidth,
                 Text = Utility.FrameToTime(_canvas.TrackDuration),
@@ -125,13 +125,13 @@ namespace linerider.UI
                 }
             };
 
-            ControlBase bottomContainer = new ControlBase(this)
+            ControlBase bottomContainer = new(this)
             {
                 Margin = new Margin(0, 10, 0, 0),
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true
             };
-            Button closeButton = new Button(bottomContainer)
+            Button closeButton = new(bottomContainer)
             {
                 Text = "Close",
                 Dock = Dock.Right,

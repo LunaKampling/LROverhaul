@@ -10,14 +10,14 @@ namespace linerider.IO.json
     public class LZString
     {
         private static readonly string keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-        private static readonly Dictionary<string, Dictionary<char, int>> baseReverseDic = new Dictionary<string, Dictionary<char, int>>();
+        private static readonly Dictionary<string, Dictionary<char, int>> baseReverseDic = [];
         private static int[] base64Dictionary = null;
 
         private static int getBaseValue(string alphabet, char character)
         {
             if (!baseReverseDic.ContainsKey(alphabet))
             {
-                baseReverseDic[alphabet] = new Dictionary<char, int>();
+                baseReverseDic[alphabet] = [];
                 for (int i = 0; i < alphabet.Length; i++)
                 {
                     baseReverseDic[alphabet][alphabet[i]] = i;
@@ -109,13 +109,13 @@ namespace linerider.IO.json
             int enlargeIn = 4;
             int numBits = 3;
             int c = 0;
-            dec_data data = new dec_data() { position = resetValue, index = 0, input = input };
+            dec_data data = new() { position = resetValue, index = 0, input = input };
             data.val = NextValue(ref data);
             EnsureSize(ref dictionary, dictSize + 4);
             EnsureSize(ref result, resultArraySize + 2);
             for (int i = 0; i < 3; i++)
             {
-                dictionary[dictSize++] = new char[] { (char)i };
+                dictionary[dictSize++] = [(char)i];
             }
             int bits = 0;
             bits = new_bits(powers[2], ref data);
@@ -131,8 +131,9 @@ namespace linerider.IO.json
                     break;
                 case 2:
                     return "";
-            };
-            char[] w = new char[1] { (char)c };
+            }
+            ;
+            char[] w = [(char)c];
             //string w = new string(c, 1);
             result[resultArraySize++] = w;
             charstoreturn += w.Length;
@@ -151,18 +152,18 @@ namespace linerider.IO.json
                 {
                     case 0:
                         bits = new_bits(powers[8], ref data);
-                        dictionary[dictSize++] = new char[] { (char)bits };
+                        dictionary[dictSize++] = [(char)bits];
                         c = (char)(dictSize - 1);
                         enlargeIn--;
                         break;
                     case 1:
                         bits = new_bits(powers[16], ref data);
-                        dictionary[dictSize++] = new char[] { (char)bits };
+                        dictionary[dictSize++] = [(char)bits];
                         c = (char)(dictSize - 1);
                         enlargeIn--;
                         break;
                     case 2:
-                        StringBuilder ret = new StringBuilder(charstoreturn);
+                        StringBuilder ret = new(charstoreturn);
                         foreach (char[] str in result)
                         {
                             _ = ret.Append(str);

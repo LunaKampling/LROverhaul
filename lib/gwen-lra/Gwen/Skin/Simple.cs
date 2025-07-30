@@ -85,7 +85,7 @@
             {
                 m_Renderer.DrawColor = Color.FromArgb(255, 0, 0, 0);
 
-                Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+                Rectangle r = new(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
                 DrawCheck(r);
             }
         }
@@ -218,13 +218,13 @@
             if (depressed)
             {
                 m_Renderer.DrawColor = Color.FromArgb(255, 100, 100, 100);
-                Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+                Rectangle r = new(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
                 DrawCheck(r);
             }
             else if (selected)
             {
                 m_Renderer.DrawColor = Color.FromArgb(255, 0, 0, 0);
-                Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+                Rectangle r = new(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
                 DrawCheck(r);
             }
         }
@@ -540,7 +540,7 @@
 
             m_Renderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
-            Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+            Rectangle r = new(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
 
             if (direction == Pos.Top)
                 DrawArrowUp(r);
@@ -556,7 +556,7 @@
         {
             m_Renderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
-            Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+            Rectangle r = new(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
             DrawArrowDown(r);
         }
 
@@ -566,7 +566,7 @@
 
             m_Renderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
-            Rectangle r = new Rectangle(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
+            Rectangle r = new(control.Width / 2 - 2, control.Height / 2 - 2, 5, 5);
 
             if (up)
                 DrawArrowUp(r);

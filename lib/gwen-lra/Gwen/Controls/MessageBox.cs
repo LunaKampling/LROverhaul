@@ -20,7 +20,7 @@ namespace Gwen.Controls
         private bool _wordwrap;
         public static MessageBox Show(Canvas canvas, string text, string title, bool modal = true, bool dim = false, bool wordwrap = true)
         {
-            MessageBox ret = new MessageBox(canvas, text, title, ButtonType.Ok, wordwrap);
+            MessageBox ret = new(canvas, text, title, ButtonType.Ok, wordwrap);
             if (modal)
                 ret.MakeModal(dim);
             ret.ShowCentered();
@@ -28,7 +28,7 @@ namespace Gwen.Controls
         }
         public static MessageBox Show(Canvas canvas, string text, string title, ButtonType buttons, bool modal = true, bool dim = false, bool wordwrap = true)
         {
-            MessageBox ret = new MessageBox(canvas, text, title, buttons, wordwrap);
+            MessageBox ret = new(canvas, text, title, buttons, wordwrap);
             if (modal)
                 ret.MakeModal(dim);
             ret.ShowCentered();
@@ -141,7 +141,7 @@ namespace Gwen.Controls
         }
         private void AddButton(string text, DialogResult result)
         {
-            Button btn = new Button(Container)
+            Button btn = new(Container)
             {
                 Margin = new Margin(7, 1, 1, 1),
                 Dock = Dock.Right,

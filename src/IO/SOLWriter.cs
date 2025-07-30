@@ -33,22 +33,22 @@ namespace linerider.IO
             if (!Directory.Exists(dir))
                 _ = Directory.CreateDirectory(dir);
             string filename = Path.Combine(dir, savename + ".sol");
-            BigEndianWriter bw = new BigEndianWriter();
+            BigEndianWriter bw = new();
             bw.WriteShort(0x00BF); // .sol version
             bw.WriteInt(0); // Length, placeholder            
             bw.WriteString("TCSO");
-            bw.WriteBytes(new byte[] { 0, 4, 0, 0, 0, 0 });
+            bw.WriteBytes([0, 4, 0, 0, 0, 0]);
             bw.WriteMapleString("savedLines");
             bw.WriteInt(0); // Padding
-            Amf0Object rootobj = new Amf0Object
+            Amf0Object rootobj = new()
             {
                 name = "trackList",
                 type = Amf0Object.Amf0Type.AMF0_ECMA_ARRAY
             };
-            List<Amf0Object> tracks = new List<Amf0Object>();
+            List<Amf0Object> tracks = [];
             rootobj.data = tracks;
             WriteTrack(tracks, track);
-            Amf0 amf = new Amf0(bw);
+            Amf0 amf = new(bw);
             amf.WriteAmf0Object(rootobj);
             bw.WriteByte(0);
             bw.Reset(2);
@@ -58,24 +58,24 @@ namespace linerider.IO
         }
         private static void WriteTrack(List<Amf0Object> parent, Track trk)
         {
-            Amf0Object track = new Amf0Object(parent.Count);
+            Amf0Object track = new(parent.Count);
             parent.Add(track);
-            List<Amf0Object> trackdata = new List<Amf0Object>();
+            List<Amf0Object> trackdata = [];
             track.data = trackdata;
             trackdata.Add(new Amf0Object("label", trk.Name));
             trackdata.Add(new Amf0Object("version", "6.2"));
             trackdata.Add(new Amf0Object("level", trk.Lines.Count));
-            Amf0Object sl = new Amf0Object("startLine");
-            Amf0Object dataobj = new Amf0Object("data") { type = Amf0Object.Amf0Type.AMF0_ECMA_ARRAY };
+            Amf0Object sl = new("startLine");
+            Amf0Object dataobj = new("data") { type = Amf0Object.Amf0Type.AMF0_ECMA_ARRAY };
 
-            List<Amf0Object> data = new List<Amf0Object>();
+            List<Amf0Object> data = [];
             dataobj.data = data;
-            sl.data = new List<Amf0Object>() { new Amf0Object(0, trk.StartOffset.X), new Amf0Object(1, trk.StartOffset.Y) };
+            sl.data = new List<Amf0Object>() { new(0, trk.StartOffset.X), new(1, trk.StartOffset.Y) };
 
             trackdata.Add(sl);
             trackdata.Add(dataobj);
 
-            SortedList<int, GameLine> list = new SortedList<int, GameLine>();
+            SortedList<int, GameLine> list = [];
             GameLine[] lines = trk.GetLines();
             for (int i = lines.Length - 1; i >= 0; i--)
             {
@@ -91,9 +91,9 @@ namespace linerider.IO
             {
                 GameLine line = list.Values[i];
                 StandardLine stl = line as StandardLine;
-                Amf0Object lineobj = new Amf0Object(counter++);
-                List<Amf0Object> linedata = new List<Amf0Object>
-                {
+                Amf0Object lineobj = new(counter++);
+                List<Amf0Object> linedata =
+                [
                     new Amf0Object(0, line.Position1.X),
                     new Amf0Object(1, line.Position1.Y),
                     new Amf0Object(2, line.Position2.X),
@@ -104,7 +104,7 @@ namespace linerider.IO
                     new Amf0Object(7, 0), //tl?.Next?.ID
                     new Amf0Object(8, list.Keys[i]),
                     new Amf0Object(9, LineTypeForSOL(line.Type))
-                };
+                ];
 
                 lineobj.type = Amf0Object.Amf0Type.AMF0_ECMA_ARRAY;
                 lineobj.data = linedata;
@@ -112,18 +112,18 @@ namespace linerider.IO
             }
             if (trk.ZeroStart)
             {
-                List<Amf0Object> kevans = new List<Amf0Object>
-                {
+                List<Amf0Object> kevans =
+                [
                     new Amf0Object(0) { type = Amf0Object.Amf0Type.AMF0_NULL }
-                };
-                List<Amf0Object> in1 = new List<Amf0Object>
-                {
+                ];
+                List<Amf0Object> in1 =
+                [
                     new Amf0Object(0) { type = Amf0Object.Amf0Type.AMF0_NULL },
                     new Amf0Object(1) { type = Amf0Object.Amf0Type.AMF0_NULL },
                     new Amf0Object(2) { type = Amf0Object.Amf0Type.AMF0_NULL }
-                };
+                ];
                 kevans.Add(new Amf0Object(1) { type = Amf0Object.Amf0Type.AMF0_ECMA_ARRAY, data = in1 });
-                List<Amf0Object> importantpart = new List<Amf0Object>(3)
+                List<Amf0Object> importantpart = new(3)
                 {
                     new Amf0Object(0) { type = Amf0Object.Amf0Type.AMF0_NULL },
                     new Amf0Object(1) { type = Amf0Object.Amf0Type.AMF0_NULL },

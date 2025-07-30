@@ -13,7 +13,7 @@ namespace linerider.IO
         public static string SaveTrack(Track trk, string savename)
         {
             _ = Stopwatch.StartNew();
-            track_json trackobj = new track_json
+            track_json trackobj = new()
             {
                 label = trk.Name,
                 startPosition = new track_json.point_json()
@@ -45,11 +45,11 @@ namespace linerider.IO
                     break;
             }
             GameLine[] sort = trk.GetSortedLines();
-            trackobj.lines = new List<line_json>();
-            trackobj.gameTriggers = new List<track_json.gametrigger_json>();
+            trackobj.lines = [];
+            trackobj.gameTriggers = [];
             foreach (GameLine line in sort)
             {
-                line_json jline = new line_json();
+                line_json jline = new();
                 switch (line.Type)
                 {
                     case LineType.Standard:
@@ -131,7 +131,7 @@ namespace linerider.IO
                 _ = Directory.CreateDirectory(dir);
             string filename = Path.Combine(dir, savename + ".track.json");
 
-            using (StreamWriter writer = new StreamWriter(filename))
+            using (StreamWriter writer = new(filename))
             {
                 string json = JsonConvert.SerializeObject(trackobj);
                 writer.WriteLine(json);

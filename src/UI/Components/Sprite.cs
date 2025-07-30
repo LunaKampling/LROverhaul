@@ -38,7 +38,7 @@ namespace linerider.UI.Components
         {
             m_texture?.Dispose();
 
-            Texture tx = new Texture(Skin.Renderer);
+            Texture tx = new(Skin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, bmp);
             m_texture = tx;
             Size = new Size(bmp.Width, bmp.Height);

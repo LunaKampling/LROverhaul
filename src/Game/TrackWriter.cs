@@ -19,7 +19,6 @@
 using linerider.Game;
 using linerider.Rendering;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -70,7 +69,7 @@ namespace linerider
             SimulationRenderer renderer,
             UndoManager undo,
             Timeline timeline,
-            EditorGrid cells) => new TrackWriter(sync.AcquireWrite(), track)
+            EditorGrid cells) => new(sync.AcquireWrite(), track)
             {
                 _undo = undo,
                 _renderer = renderer,
@@ -206,14 +205,14 @@ namespace linerider
         private void RemoveExtensions(StandardLine input) => UpdateExtensions(input, false);
         private SimulationCell GetPairs(StandardLine input)
         {
-            SimulationCell list = new SimulationCell();
+            SimulationCell list = new();
             EditorCell c1 = _editorcells.GetCellFromPoint(input.Position1);
             EditorCell c2 = _editorcells.GetCellFromPoint(input.Position2);
-            LineContainer<GameLine>[] cells = new LineContainer<GameLine>[]
-            {
+            LineContainer<GameLine>[] cells =
+            [
                 c1,
                 c1 == c2 ? null : c2
-            };
+            ];
             foreach (LineContainer<GameLine> cell in cells)
             {
                 if (cell == null)

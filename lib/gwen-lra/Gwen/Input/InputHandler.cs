@@ -10,7 +10,7 @@ namespace Gwen.Input
     /// </summary>
     public static class InputHandler
     {
-        private static readonly KeyData m_KeyData = new KeyData();
+        private static readonly KeyData m_KeyData = new();
         private static readonly double[] m_LastClickTime = new double[MaxMouseButtons];
         private static double m_TooltipCounter;
         private static Point m_LastClickPos;
@@ -138,7 +138,7 @@ namespace Gwen.Input
         public static bool HandleAccelerator(Controls.ControlBase canvas, char chr)
         {
             // Build the accelerator search string
-            StringBuilder accelString = new StringBuilder();
+            StringBuilder accelString = new();
             if (IsControlDown)
                 _ = accelString.Append("CTRL+");
             if (IsShiftDown)
@@ -290,26 +290,26 @@ namespace Gwen.Input
                     switch (mouseButton)
                     {
                         case 0:
-                        {
-                            if (DragAndDrop.OnMouseButton(HoveredControl, MousePosition.X, MousePosition.Y, down))
-                                return true;
+                            {
+                                if (DragAndDrop.OnMouseButton(HoveredControl, MousePosition.X, MousePosition.Y, down))
+                                    return true;
 
-                            if (isDoubleClick)
-                                HoveredControl.InputMouseDoubleClickedLeft(MousePosition.X, MousePosition.Y);
-                            else
-                                HoveredControl.InputMouseClickedLeft(MousePosition.X, MousePosition.Y, down);
-                            UpdateHoveredControl(canvas);
-                            return true;
-                        }
+                                if (isDoubleClick)
+                                    HoveredControl.InputMouseDoubleClickedLeft(MousePosition.X, MousePosition.Y);
+                                else
+                                    HoveredControl.InputMouseClickedLeft(MousePosition.X, MousePosition.Y, down);
+                                UpdateHoveredControl(canvas);
+                                return true;
+                            }
 
                         case 1:
-                        {
-                            if (isDoubleClick)
-                                HoveredControl.InputMouseDoubleClickedRight(MousePosition.X, MousePosition.Y);
-                            else
-                                HoveredControl.InputMouseClickedRight(MousePosition.X, MousePosition.Y, down);
-                            return true;
-                        }
+                            {
+                                if (isDoubleClick)
+                                    HoveredControl.InputMouseDoubleClickedRight(MousePosition.X, MousePosition.Y);
+                                else
+                                    HoveredControl.InputMouseClickedRight(MousePosition.X, MousePosition.Y, down);
+                                return true;
+                            }
                     }
                 }
 

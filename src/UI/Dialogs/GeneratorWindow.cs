@@ -1,7 +1,6 @@
 using Gwen;
 using Gwen.Controls;
 using linerider.Game.LineGenerator;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 
@@ -120,21 +119,21 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            ControlBase top = new ControlBase(this)
+            ControlBase top = new(this)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
                 Margin = new Margin(0, 0, 0, 5),
             };
 
-            ControlBase panel = new ControlBase(this)
+            ControlBase panel = new(this)
             {
                 Margin = Margin.Zero,
                 Dock = Dock.Fill,
                 AutoSizeToContents = true
             };
 
-            ControlBase bottom = new ControlBase(this)
+            ControlBase bottom = new(this)
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
@@ -147,7 +146,7 @@ namespace linerider.UI
                 Padding = Padding.Five,
             };
 
-            Button generate = new Button(bottom)
+            Button generate = new(bottom)
             {
                 Dock = Dock.Left,
                 Margin = new Margin(0, 2, 0, 0),
@@ -315,7 +314,7 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Acceleration Multiplier", CircleMultiplier);
             _ = GwenHelper.CreateLabeledControl(CircleGenOptions, "Scenery Width Multiplier", CircleWidth);
 
-            RadioButtonGroup lineTypeRadioGroup = new RadioButtonGroup(CircleGenOptions)
+            RadioButtonGroup lineTypeRadioGroup = new(CircleGenOptions)
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false
@@ -521,7 +520,7 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(LineGenOptions, "Acceleration Multiplier", LineMultiplier);
             _ = GwenHelper.CreateLabeledControl(LineGenOptions, "Scenery Width Multiplier", LineWidth);
 
-            RadioButtonGroup lineTypeRadioGroup = new RadioButtonGroup(LineGenOptions)
+            RadioButtonGroup lineTypeRadioGroup = new(LineGenOptions)
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false
@@ -653,7 +652,7 @@ namespace linerider.UI
             _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "X Position", KramualX);
             _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "Y Position", KramualY);
 
-            RadioButtonGroup axisRadioGroup = new RadioButtonGroup(KramualGenOptions) //horizontal or vertical kramual?
+            RadioButtonGroup axisRadioGroup = new(KramualGenOptions) //horizontal or vertical kramual?
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false
@@ -667,8 +666,6 @@ namespace linerider.UI
                     break;
                 case true:
                     vertical.Select();
-                    break;
-                default:
                     break;
             }
             horizontal.CheckChanged += (o, e) =>
@@ -746,7 +743,7 @@ namespace linerider.UI
             };
             _ = GwenHelper.CreateLabeledControl(KramualGenOptions, "Acceleration Multiplier", KramualMultiplier);
 
-            RadioButtonGroup lineTypeRadioGroup = new RadioButtonGroup(KramualGenOptions) //linetype
+            RadioButtonGroup lineTypeRadioGroup = new(KramualGenOptions) //linetype
             {
                 Dock = Dock.Top,
                 ShouldDrawBackground = false

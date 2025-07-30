@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Diagnostics;
-using SkiaSharp;
 using System.IO;
 
 namespace Gwen.Renderer
@@ -321,7 +321,7 @@ namespace Gwen.Renderer
         /// <summary>
         /// Translates a panel's local drawing coordinate into view space, taking offsets into account.
         /// </summary>
-        public Rectangle Translate(Rectangle rect) => new Rectangle(TranslateX(rect.X), TranslateY(rect.Y), Util.Ceil(rect.Width), Util.Ceil(rect.Height));
+        public Rectangle Translate(Rectangle rect) => new(TranslateX(rect.X), TranslateY(rect.Y), Util.Ceil(rect.Width), Util.Ceil(rect.Height));
 
         /// <summary>
         /// Adds a point to the render offset.

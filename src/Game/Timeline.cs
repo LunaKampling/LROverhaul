@@ -18,8 +18,6 @@
 
 using linerider.Game.Physics;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -35,9 +33,9 @@ namespace linerider.Game
             public Color4 BGColor;
             public Color LineColor;
         }
-        private readonly HitTestManager _hittest = new HitTestManager();
-        private readonly ResourceSync _framesync = new ResourceSync();
-        private readonly AutoArray<FrameInfo> _frames = new AutoArray<FrameInfo>();
+        private readonly HitTestManager _hittest = new();
+        private readonly ResourceSync _framesync = new();
+        private readonly AutoArray<FrameInfo> _frames = new();
         private readonly Track _track;
         public event EventHandler<int> FrameInvalidated;
         public Timeline(Track track)
@@ -157,7 +155,7 @@ namespace linerider.Game
             Rider next = GetFrame(frame + 1);
             Rider rider = GetFrame(frame);
             return next.Crashed == rider.Crashed
-                ? new List<int>()
+                ? []
                 : rider.Diagnose(
                     _track.Grid,
                     _track.Bones,
@@ -184,13 +182,13 @@ namespace linerider.Game
             {
                 return GetFrame(moment.Frame, moment.Iteration);
             }
-            
+
             Rider past;
-            
+
             if (moment.Iteration != 0)
             {
                 past = GetFrame(moment.Frame - 1);
-                return past.Simulate(_track.Grid, _track.Bones,null, moment, frameid: moment.Frame);
+                return past.Simulate(_track.Grid, _track.Bones, null, moment, frameid: moment.Frame);
             }
 
             if (moment.Frame <= 1)
@@ -202,7 +200,7 @@ namespace linerider.Game
             var extra_past_frame = moment.Frame - 2;
             var extra_past = GetFrame(extra_past_frame);
 
-            past = extra_past.Simulate(_track.Grid, _track.Bones,null, new Moment(extra_past_frame), frameid: extra_past_frame, momentumsubit: moment.Subiteration);
+            past = extra_past.Simulate(_track.Grid, _track.Bones, null, new Moment(extra_past_frame), frameid: extra_past_frame, momentumsubit: moment.Subiteration);
             return past.Simulate(_track.Grid, _track.Bones, null, moment);
         }
 
@@ -339,7 +337,7 @@ namespace linerider.Game
         public void ThreadUnsafeRunFrames(int start, int count)
         {
             FrameInfo[] steps = new FrameInfo[count];
-            List<LinkedList<int>> collisionlist = new List<LinkedList<int>>(count);
+            List<LinkedList<int>> collisionlist = new(count);
             FrameInfo current = _frames[start - 1];
             int framecount = _frames.Count;
             Bone[] bones = _track.Bones;
@@ -360,7 +358,7 @@ namespace linerider.Game
                 for (int i = 0; i < count; i++)
                 {
                     int currentframe = start + i;
-                    LinkedList<int> collisions = new LinkedList<int>();
+                    LinkedList<int> collisions = new();
                     current.Rider = current.Rider.Simulate(
                         _savedcells,
                         bones,

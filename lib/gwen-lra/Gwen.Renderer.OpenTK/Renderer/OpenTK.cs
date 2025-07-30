@@ -1,8 +1,8 @@
 ﻿using OpenTK.Graphics.OpenGL;
+using SkiaSharp;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using SkiaSharp;
 using PixelFormat = SkiaSharp.SKColorType;
 
 namespace Gwen.Renderer
@@ -318,7 +318,7 @@ namespace Gwen.Renderer
         /// </summary>
         public override Texture CreateTexture(SKBitmap bmp)
         {
-            Texture t = new Texture(this);
+            Texture t = new(this);
             LoadTextureInternal(t, bmp);
             return t;
         }
@@ -346,7 +346,8 @@ namespace Gwen.Renderer
             {
                 unsafe
                 {
-                    fixed (byte* ptr = &pixelData[0]){
+                    fixed (byte* ptr = &pixelData[0])
+                    {
                         bmp = new SKBitmap(t.Width, t.Height);
                         bmp.SetPixels((IntPtr)ptr);
                     }

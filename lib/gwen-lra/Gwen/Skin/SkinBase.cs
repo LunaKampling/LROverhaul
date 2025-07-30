@@ -41,8 +41,7 @@ namespace Gwen.Skin
         /// <param name="renderer">Renderer to use.</param>
         protected SkinBase(Renderer.RendererBase renderer)
         {
-            if (DefaultSkin == null)
-                DefaultSkin = this;
+            DefaultSkin ??= this;
             m_DefaultFont = new Font(renderer);
             m_Renderer = renderer;
         }
@@ -220,14 +219,14 @@ namespace Gwen.Skin
         public virtual void DrawDebugOutlines(Controls.ControlBase control)
         {
             m_Renderer.DrawColor = control.PaddingOutlineColor;
-            Rectangle inner = new Rectangle(control.Bounds.Left + control.Padding.Left,
+            Rectangle inner = new(control.Bounds.Left + control.Padding.Left,
                                             control.Bounds.Top + control.Padding.Top,
                                             control.Bounds.Width - control.Padding.Right - control.Padding.Left,
                                             control.Bounds.Height - control.Padding.Bottom - control.Padding.Top);
             m_Renderer.DrawLinedRect(inner);
 
             m_Renderer.DrawColor = control.MarginOutlineColor;
-            Rectangle outer = new Rectangle(control.Bounds.Left - control.Margin.Left,
+            Rectangle outer = new(control.Bounds.Left - control.Margin.Left,
                                             control.Bounds.Top - control.Margin.Top,
                                             control.Bounds.Width + control.Margin.Right + control.Margin.Left,
                                             control.Bounds.Height + control.Margin.Bottom + control.Margin.Top);

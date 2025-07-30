@@ -1,9 +1,8 @@
 using linerider.Drawing;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 namespace linerider.Rendering
@@ -11,7 +10,7 @@ namespace linerider.Rendering
     public class WellRenderer : IDisposable
     {
         private readonly GLBuffer<GenericVertex> _vbo;
-        private readonly Dictionary<int, int> _lines = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _lines = [];
         private int _vertexcounter = 0;
         private const int wellsize = 6;
         public WellRenderer()
@@ -47,7 +46,7 @@ namespace linerider.Rendering
         public void Initialize(AutoArray<GameLine> lines)
         {
             Clear();
-            ResourceSync initsync = new ResourceSync();
+            ResourceSync initsync = new();
             GenericVertex[] vertices = new GenericVertex[lines.Count * wellsize];
             _ = System.Threading.Tasks.Parallel.For(0, lines.Count, (idx) =>
               {
@@ -126,15 +125,15 @@ namespace linerider.Rendering
             angle.Radians += line.inv ? -1.5708 : 1.5708; //90 degrees
             Vector2d offset = angle.MovePoint(Vector2d.Zero, StandardLine.Zone);
             Color wellcolor = Color.FromArgb(80, 80, 80, 80);
-            GenericVertex tl = new GenericVertex((Vector2)line.Start, wellcolor);
-            GenericVertex tr = new GenericVertex((Vector2)line.End, wellcolor);
-            GenericVertex bl = new GenericVertex((Vector2)(line.End + offset), wellcolor);
-            GenericVertex br = new GenericVertex((Vector2)(line.Start + offset), wellcolor);
-            return new GenericVertex[]
-                {
+            GenericVertex tl = new((Vector2)line.Start, wellcolor);
+            GenericVertex tr = new((Vector2)line.End, wellcolor);
+            GenericVertex bl = new((Vector2)(line.End + offset), wellcolor);
+            GenericVertex br = new((Vector2)(line.Start + offset), wellcolor);
+            return
+                [
                     tl, tr, bl,
                     bl, br, tl
-                };
+                ];
         }
     }
 }

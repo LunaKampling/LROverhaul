@@ -17,13 +17,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.UI;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using SkiaSharp;
 
 #pragma warning disable IDE1006 // Naming Styles
 
@@ -44,8 +44,7 @@ namespace linerider
         {
             if (Assembly == null)
                 Assembly = typeof(GameResources).Assembly;
-            if (_lookuptable == null)
-                _lookuptable = new Dictionary<string, object>();
+            _lookuptable ??= [];
         }
         #endregion
         #region Getters
@@ -55,32 +54,28 @@ namespace linerider
             {
                 return (SKBitmap)lookup;
             }
-            using (Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
-            {
-                // PNG spec says alpha is never premultiplied, skia assumes premultiplied anyways
-                // and this is what has to be done to have it not do that
-                var codec = SKCodec.Create(stream);
-                var info = codec.Info;
-                var imageInfo = new SKImageInfo(info.Width, info.Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
-                SKBitmap ret = new SKBitmap(imageInfo);
-                codec.GetPixels(ret.Info, ret.GetPixels());
-                _lookuptable[name] = ret;
-                return ret;
-            }
+            using Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name);
+            // PNG spec says alpha is never premultiplied, skia assumes premultiplied anyways
+            // and this is what has to be done to have it not do that
+            var codec = SKCodec.Create(stream);
+            var info = codec.Info;
+            var imageInfo = new SKImageInfo(info.Width, info.Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
+            SKBitmap ret = new(imageInfo);
+            codec.GetPixels(ret.Info, ret.GetPixels());
+            _lookuptable[name] = ret;
+            return ret;
         }
         private static byte[] GetBytes(string name)
         {
             if (_lookuptable.TryGetValue(name, out object lookup))
             {
-                return ((byte[])lookup).ToArray(); // Prevent writing to resource
+                return [.. ((byte[])lookup)]; // Prevent writing to resource
             }
-            using (Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
-            {
-                byte[] ret = new byte[stream.Length];
-                _ = stream.Read(ret, 0, ret.Length);
-                _lookuptable[name] = ret;
-                return ret;
-            }
+            using Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name);
+            byte[] ret = new byte[stream.Length];
+            _ = stream.Read(ret, 0, ret.Length);
+            _lookuptable[name] = ret;
+            return ret;
         }
         private static string GetString(string name)
         {
@@ -88,19 +83,15 @@ namespace linerider
             {
                 return (string)lookup; // Strings are immutable so there's no chance of writing to resource
             }
-            using (Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name))
-            {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    string ret = reader.ReadToEnd();
-                    _lookuptable[name] = ret;
-                    return ret;
-                }
-            }
+            using Stream stream = Assembly.GetManifestResourceStream("linerider.Resources." + name);
+            using StreamReader reader = new(stream);
+            string ret = reader.ReadToEnd();
+            _lookuptable[name] = ret;
+            return ret;
         }
         public static VectorResource GetVectorImage(string name)
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             string raw = GetString(name);
 
             doc.LoadXml(raw);
@@ -112,12 +103,12 @@ namespace linerider
             double.TryParse(boundings[2], System.Globalization.NumberStyles.Any, Program.Culture.NumberFormat, out double rawW);
             double.TryParse(boundings[3], System.Globalization.NumberStyles.Any, Program.Culture.NumberFormat, out double rawH);
 
-            Size size = new Size(
+            Size size = new(
                 (int)Math.Round(rawW),
                 (int)Math.Round(rawH)
             );
 
-            VectorResource res = new VectorResource()
+            VectorResource res = new()
             {
                 Raw = raw,
                 BaseSize = size,
@@ -132,10 +123,10 @@ namespace linerider
             string fntbold = GetString($"{name}_bold.fnt");
             SKBitmap bitmapbold = GetBitmap($"{name}_bold_0.png");
 
-            Gwen.Renderer.OpenTK renderer = new Gwen.Renderer.OpenTK();
-            Gwen.Renderer.BitmapFont bitmapfont = new Gwen.Renderer.BitmapFont(renderer, fnt, renderer.CreateTexture(bitmap));
-            Gwen.Renderer.BitmapFont bitmapfontbold = new Gwen.Renderer.BitmapFont(renderer, fntbold, renderer.CreateTexture(bitmapbold));
-            Fonts font = new Fonts(bitmapfont, bitmapfontbold);
+            Gwen.Renderer.OpenTK renderer = new();
+            Gwen.Renderer.BitmapFont bitmapfont = new(renderer, fnt, renderer.CreateTexture(bitmap));
+            Gwen.Renderer.BitmapFont bitmapfontbold = new(renderer, fntbold, renderer.CreateTexture(bitmapbold));
+            Fonts font = new(bitmapfont, bitmapfontbold);
 
             return font;
         }

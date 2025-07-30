@@ -5,16 +5,12 @@ namespace Gwen.Controls
     /// <summary>
     /// Property table/tree.
     /// </summary>
-    public class PropertyTree : TreeControl
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="PropertyTree"/> class.
+    /// </remarks>
+    /// <param name="parent">Parent control.</param>
+    public class PropertyTree(ControlBase parent) : TreeControl(parent)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyTree"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public PropertyTree(ControlBase parent)
-            : base(parent)
-        {
-        }
 
         /// <summary>
         /// Adds a new properties node.
@@ -23,11 +19,11 @@ namespace Gwen.Controls
         /// <returns>Newly created control</returns>
         public PropertyTable Add(string label, int startingbarposition = 80)
         {
-            PropertyTreeNode node = new PropertyTreeNode(this)
+            PropertyTreeNode node = new(this)
             {
                 Text = label
             };
-            PropertyTable props = new PropertyTable(node, startingbarposition)
+            PropertyTable props = new(node, startingbarposition)
             {
                 Dock = Dock.Fill,
                 AutoSizeToContents = true

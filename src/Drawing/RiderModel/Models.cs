@@ -36,14 +36,14 @@ namespace linerider.Drawing.RiderModel
         public static int ArmTexture;
         public static int LegTexture;
 
-        public static readonly FloatRect BodyUV = new FloatRect(0, 0, 1, 1);
-        public static readonly FloatRect BodyDeadUV = new FloatRect(0, 0, 1, 1);
+        public static readonly FloatRect BodyUV = new(0, 0, 1, 1);
+        public static readonly FloatRect BodyDeadUV = new(0, 0, 1, 1);
 
-        public static readonly FloatRect SledUV = new FloatRect(0, 0, 1, 1);
-        public static readonly FloatRect SledBrokenUV = new FloatRect(0, 0, 1, 1);
+        public static readonly FloatRect SledUV = new(0, 0, 1, 1);
+        public static readonly FloatRect SledBrokenUV = new(0, 0, 1, 1);
 
-        public static readonly FloatRect ArmUV = new FloatRect(0, 0, 1, 1);
-        public static readonly FloatRect LegUV = new FloatRect(0, 0, 1, 1);
+        public static readonly FloatRect ArmUV = new(0, 0, 1, 1);
+        public static readonly FloatRect LegUV = new(0, 0, 1, 1);
 
         public static float RopeThickness = 0;
         public static Color RopeColor = Color.Black;

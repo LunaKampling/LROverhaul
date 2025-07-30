@@ -5,36 +5,28 @@ namespace Gwen
     /// <summary>
     /// Represents outer spacing.
     /// </summary>
-    public struct Margin : IEquatable<Margin>
+    public struct Margin(int left, int top, int right, int bottom) : IEquatable<Margin>
     {
-        public int Top;
-        public int Bottom;
-        public int Left;
-        public int Right;
+        public int Top = top;
+        public int Bottom = bottom;
+        public int Left = left;
+        public int Right = right;
         public int Width => Left + Right;
         public int Height => Top + Bottom;
-        public Size Size => new Size(Width, Height);
+        public Size Size => new(Width, Height);
 
         // Common values
-        public static Margin Zero = new Margin(0, 0, 0, 0);
-        public static Margin One = new Margin(1, 1, 1, 1);
-        public static Margin Two = new Margin(2, 2, 2, 2);
-        public static Margin Three = new Margin(3, 3, 3, 3);
-        public static Margin Four = new Margin(4, 4, 4, 4);
-        public static Margin Five = new Margin(5, 5, 5, 5);
-        public static Margin Six = new Margin(6, 6, 6, 6);
-        public static Margin Seven = new Margin(7, 7, 7, 7);
-        public static Margin Eight = new Margin(8, 8, 8, 8);
-        public static Margin Nine = new Margin(9, 9, 9, 9);
-        public static Margin Ten = new Margin(10, 10, 10, 10);
-
-        public Margin(int left, int top, int right, int bottom)
-        {
-            Top = top;
-            Bottom = bottom;
-            Left = left;
-            Right = right;
-        }
+        public static Margin Zero = new(0, 0, 0, 0);
+        public static Margin One = new(1, 1, 1, 1);
+        public static Margin Two = new(2, 2, 2, 2);
+        public static Margin Three = new(3, 3, 3, 3);
+        public static Margin Four = new(4, 4, 4, 4);
+        public static Margin Five = new(5, 5, 5, 5);
+        public static Margin Six = new(6, 6, 6, 6);
+        public static Margin Seven = new(7, 7, 7, 7);
+        public static Margin Eight = new(8, 8, 8, 8);
+        public static Margin Nine = new(9, 9, 9, 9);
+        public static Margin Ten = new(10, 10, 10, 10);
 
         public bool Equals(Margin other) => other.Top == Top && other.Bottom == Bottom && other.Left == Left && other.Right == Right;
 

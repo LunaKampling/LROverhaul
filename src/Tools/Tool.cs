@@ -19,13 +19,11 @@
 using linerider.Game;
 using linerider.UI;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Windowing.Common.Input;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+using OpenTK.Windowing.Common.Input;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using SkiaSharp;
 using System.Linq;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
@@ -33,8 +31,8 @@ namespace linerider.Tools
 {
     public abstract class Tool : GameService
     {
-        private static readonly Swatch Default = new Swatch();
-        public virtual SKBitmap Icon => new SKBitmap(1, 1);
+        private static readonly Swatch Default = new();
+        public virtual SKBitmap Icon => new(1, 1);
         public virtual Hotkey Hotkey => Hotkey.None;
         public virtual string Name => "";
         public virtual Swatch Swatch => Default;
@@ -187,7 +185,7 @@ namespace linerider.Tools
                     break;
 
                 case LineType.Acceleration:
-                    RedLine red = new RedLine(start, end, inv)
+                    RedLine red = new(start, end, inv)
                     { Multiplier = multiplier };
                     red.CalculateConstants(); // Multiplier needs to be recalculated
                     added = red;
@@ -222,7 +220,7 @@ namespace linerider.Tools
         /// <returns>a sorted array of lines where 0 is the closest point</returns>
         public GameLine[] LinesInRadius(TrackWriter trk, Vector2d position, double rad)
         {
-            SortedList<int, GameLine> lines = new SortedList<int, GameLine>();
+            SortedList<int, GameLine> lines = [];
             IEnumerable<GameLine> inrect =
                 trk.GetLinesInRect(new DoubleRect(position - new Vector2d(24, 24), new Vector2d(24 * 2, 24 * 2)),
                     false);
@@ -265,7 +263,7 @@ namespace linerider.Tools
             {
                 ret[i] = lines.Values[lines.Count - 1 - i];
             }
-            return lines.Values.ToArray();
+            return [.. lines.Values];
         }
         /// <summary>
         /// Gets line ends near the point by radius.
@@ -277,7 +275,7 @@ namespace linerider.Tools
             IEnumerable<GameLine> lines =
                 trk.GetLinesInRect(new DoubleRect(point - new Vector2d(24, 24), new Vector2d(24 * 2, 24 * 2)),
                     false);
-            SortedList<double, List<GameLine>> ret = new SortedList<double, List<GameLine>>();
+            SortedList<double, List<GameLine>> ret = [];
             foreach (GameLine line in lines)
             {
                 double p1 = (point - line.Position1).Length;
@@ -291,20 +289,20 @@ namespace linerider.Tools
                     }
                     else
                     {
-                        List<GameLine> l = new List<GameLine>
-                        {
+                        List<GameLine> l =
+                        [
                             line
-                        };
+                        ];
                         ret[closer] = l;
                     }
                 }
             }
-            List<GameLine> retn = new List<GameLine>();
+            List<GameLine> retn = [];
             for (int i = 0; i < ret.Values.Count; i++)
             {
                 retn.AddRange(ret.Values[i]);
             }
-            return retn.ToArray();
+            return [.. retn];
         }
         protected bool LifeLock(TrackReader track, Timeline timeline, StandardLine line)
         {
@@ -328,8 +326,7 @@ namespace linerider.Tools
                 }
                 if (Settings.Editor.LifeLockNoOrange)
                 {
-                    if (diagnosis == null)
-                        diagnosis = timeline.DiagnoseFrame(offset, iteration);
+                    diagnosis ??= timeline.DiagnoseFrame(offset, iteration);
                     foreach (int v in diagnosis)
                     {
                         // The next frame dies on something that isnt a fakie, so we cant stop here
@@ -350,7 +347,7 @@ namespace linerider.Tools
             int offset = game.Track.Offset;
             Rider lastFrame = timeline.GetFrame(offset - 1);
             bool usingjoint1 = line.Position1 == movejoint;
-            Random rnd = new Random();
+            Random rnd = new();
             _ = rnd.NextDouble(); // Call this once to make sure the RNG is fully shuffled (just in case initial seeds correlate a bit)
 
             if (!lastFrame.Crashed)
@@ -405,7 +402,7 @@ namespace linerider.Tools
                 Vector2d jointPos = movejoint;
                 GameLine newLine = line;
                 GameLine currentLine = line;
-                Random rnd = new Random();
+                Random rnd = new();
                 for (int i = 0; i < attemptCount; i++)
                 {
                     GameLine oldLine = newLine;
@@ -479,7 +476,7 @@ namespace linerider.Tools
         /// </summary>
         protected void SnapLineEnd(TrackWriter trk, GameLine line, Vector2d endpoint)
         {
-            int[] ignore = new int[] { line.ID };
+            int[] ignore = [line.ID];
             bool snapped = GetSnapPoint(
                 trk,
                 line.Position1,

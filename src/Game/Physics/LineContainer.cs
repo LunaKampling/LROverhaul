@@ -15,7 +15,7 @@ namespace linerider
     public class LineContainer<T> : IEnumerable<T>, ICollection<T>
     where T : GameLine
     {
-        private readonly LinkedList<T> _list = new LinkedList<T>();
+        private readonly LinkedList<T> _list = new();
         public int Count => _list.Count;
         bool ICollection<T>.IsReadOnly => false;
 
@@ -101,7 +101,7 @@ namespace linerider
         }
         public LineContainer<T> Clone()
         {
-            LineContainer<T> ret = new LineContainer<T>();
+            LineContainer<T> ret = new();
             foreach (T l in this)
             {
                 ret.AddLine(l);

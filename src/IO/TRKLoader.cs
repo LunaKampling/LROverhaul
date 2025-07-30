@@ -1,7 +1,6 @@
 ﻿using linerider.Audio;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -13,13 +12,13 @@ namespace linerider.IO
 {
     public static class TRKLoader
     {
-        private static readonly string[] supported_features = {
+        private static readonly string[] supported_features = [
     "REDMULTIPLIER",
     "SCENERYWIDTH",
     "6.1","SONGINFO",
     "IGNORABLE_TRIGGER",
     "ZEROSTART",
-        };
+        ];
 
         //private const int REDMULTIPLIER_INDEX = 0;
         //private const int SCENERYWIDTH_INDEX = 1;
@@ -165,24 +164,24 @@ namespace linerider.IO
         }
         public static Track LoadTrack(string trackfile, string trackname)
         {
-            Track ret = new Track
+            Track ret = new()
             {
                 Filename = trackfile,
                 Name = trackname,
                 Remount = false
             };
-            Dictionary<int, StandardLine> addedlines = new Dictionary<int, StandardLine>();
+            Dictionary<int, StandardLine> addedlines = [];
             string location = trackfile;
             byte[] bytes = File.ReadAllBytes(location);
             using (MemoryStream file =
-                    new MemoryStream(bytes))
+                    new(bytes))
             {
-                BinaryReader br = new BinaryReader(file);
+                BinaryReader br = new(file);
                 int magic = br.ReadInt32();
                 if (magic != ('T' | 'R' << 8 | 'K' << 16 | 0xF2 << 24))
                     throw new TrackIO.TrackLoadException("File was read as .trk but it is not valid");
                 byte version = br.ReadByte();
-                string[] features = ReadString(br).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] features = ReadString(br).Split([';'], StringSplitOptions.RemoveEmptyEntries);
                 if (version != 1)
                     throw new TrackIO.TrackLoadException("Unsupported version");
                 bool redmultipier = false;
@@ -243,7 +242,7 @@ namespace linerider.IO
                     string song = br.ReadString();
                     try
                     {
-                        string[] strings = song.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] strings = song.Split(["\r\n"], StringSplitOptions.RemoveEmptyEntries);
                         string fn = Path.Combine(Settings.Local.UserDirPath, Constants.SongsFolderName, strings[0]);
                         if (File.Exists(fn))
                         {
@@ -264,7 +263,7 @@ namespace linerider.IO
                 }
                 ret.StartOffset = new Vector2d(br.ReadDouble(), br.ReadDouble());
                 int lines = br.ReadInt32();
-                List<LineTrigger> linetriggers = new List<LineTrigger>();
+                List<LineTrigger> linetriggers = [];
                 for (int i = 0; i < lines; i++)
                 {
                     GameLine l;
@@ -332,7 +331,7 @@ namespace linerider.IO
                     switch (lt)
                     {
                         case LineType.Standard:
-                            StandardLine bl = new StandardLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            StandardLine bl = new(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
                             {
                                 ID = ID,
                                 Extension = (StandardLine.Ext)lim
@@ -341,7 +340,7 @@ namespace linerider.IO
                             break;
 
                         case LineType.Acceleration:
-                            RedLine rl = new RedLine(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
+                            RedLine rl = new(new Vector2d(x1, y1), new Vector2d(x2, y2), inv)
                             {
                                 ID = ID,
                                 Extension = (StandardLine.Ext)lim

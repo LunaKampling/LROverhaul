@@ -74,7 +74,7 @@ namespace Gwen.Controls
         /// </summary>
         /// <param name="categoryName">Name of the category.</param>
         /// <returns>Newly created control.</returns>
-        public virtual CollapsibleCategory Add(string categoryName) => new CollapsibleCategory(this) { Text = categoryName };
+        public virtual CollapsibleCategory Add(string categoryName) => new(this) { Text = categoryName };
 
         /// <summary>
         /// Renders the control using specified skin.

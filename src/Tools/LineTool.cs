@@ -19,11 +19,10 @@
 using linerider.Game;
 using linerider.Rendering;
 using linerider.UI;
-using OpenTK;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
-using System;
 using SkiaSharp;
+using System;
 
 namespace linerider.Tools
 {
@@ -52,19 +51,17 @@ namespace linerider.Tools
             Vector2d gamepos = ScreenToGameCoords(pos);
             if (EnableSnap)
             {
-                using (TrackReader trk = game.Track.CreateTrackReader())
+                using TrackReader trk = game.Track.CreateTrackReader();
+                Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
+                if (success)
                 {
-                    Vector2d snap = TrySnapPoint(trk, gamepos, out bool success);
-                    if (success)
-                    {
-                        _start = snap;
-                        Snapped = true;
-                    }
-                    else
-                    {
-                        _start = gamepos;
-                        Snapped = false;
-                    }
+                    _start = snap;
+                    Snapped = true;
+                }
+                else
+                {
+                    _start = gamepos;
+                    Snapped = false;
                 }
             }
             else
@@ -90,13 +87,11 @@ namespace linerider.Tools
                 }
                 else if (EnableSnap)
                 {
-                    using (TrackReader trk = game.Track.CreateTrackReader())
+                    using TrackReader trk = game.Track.CreateTrackReader();
+                    Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
+                    if (snapped && snap != _start)
                     {
-                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
-                        if (snapped && snap != _start)
-                        {
-                            _end = snap;
-                        }
+                        _end = snap;
                     }
                 }
                 game.Invalidate();
@@ -121,13 +116,11 @@ namespace linerider.Tools
                 }
                 else if (EnableSnap)
                 {
-                    using (TrackWriter trk = game.Track.CreateTrackWriter())
+                    using TrackWriter trk = game.Track.CreateTrackWriter();
+                    Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
+                    if (snapped && snap != _start)
                     {
-                        Vector2d snap = TrySnapPoint(trk, _end, out bool snapped);
-                        if (snapped && snap != _start)
-                        {
-                            _end = snap;
-                        }
+                        _end = snap;
                     }
                 }
                 if ((_end - _start).Length >= MINIMUM_LINE)
@@ -171,13 +164,13 @@ namespace linerider.Tools
                     switch (Swatch.Selected)
                     {
                         case LineType.Standard:
-                            StandardLine sl = new StandardLine(_start, _end, _addflip);
+                            StandardLine sl = new(_start, _end, _addflip);
                             sl.CalculateConstants();
                             GameRenderer.DrawTrackLine(sl, c, Settings.Editor.RenderGravityWells, true);
                             break;
 
                         case LineType.Acceleration:
-                            RedLine rl = new RedLine(_start, _end, _addflip)
+                            RedLine rl = new(_start, _end, _addflip)
                             {
                                 Multiplier = Swatch.RedMultiplier
                             };

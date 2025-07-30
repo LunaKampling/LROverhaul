@@ -73,7 +73,7 @@ namespace linerider.IO.ffmpeg
             TryInitialize();
             if (!file.EndsWith(".ogg", true, Program.Culture))
             {
-                FFMPEGParameters par = new FFMPEGParameters();
+                FFMPEGParameters par = new();
                 par.AddOption("i", "\"" + file + "\"");
                 par.OutputFilePath = file.Remove(file.IndexOf(".", StringComparison.Ordinal)) + ".ogg";
                 if (File.Exists(par.OutputFilePath))
@@ -105,56 +105,53 @@ namespace linerider.IO.ffmpeg
             {
                 throw new Exception("FFMPEG parameters cannot be completely null");
             }
-            using (Process ffmpegProcess = new Process())
+            using Process ffmpegProcess = new();
+            ProcessStartInfo info = new(ffmpeg_path)
             {
-                ProcessStartInfo info = new ProcessStartInfo(ffmpeg_path)
+                Arguments = parameters.ToString(),
+                WorkingDirectory = Path.GetDirectoryName(ffmpeg_dir),
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = false,
+                RedirectStandardError = false
+            };
+            info.RedirectStandardOutput = true;
+            info.RedirectStandardError = true;
+            ffmpegProcess.StartInfo = info;
+            _ = ffmpegProcess.Start();
+            if (stdout != null)
+            {
+                while (true)
                 {
-                    Arguments = parameters.ToString(),
-                    WorkingDirectory = Path.GetDirectoryName(ffmpeg_dir),
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = false,
-                    RedirectStandardError = false
-                };
-                info.RedirectStandardOutput = true;
-                info.RedirectStandardError = true;
-                ffmpegProcess.StartInfo = info;
-                _ = ffmpegProcess.Start();
-                if (stdout != null)
-                {
-                    while (true)
+                    string str = "";
+                    try
                     {
-                        string str = "";
-                        try
-                        {
-                            str = ffmpegProcess.StandardError.ReadLine();
-                        }
-                        catch
-                        {
-                            Console.WriteLine("stdout log failed");
-                            break;
-                            // Ignored 
-                        }
-                        if (ffmpegProcess.HasExited)
-                            break;
-                        if (str == null)
-                            str = "";
-                        if (!stdout.Invoke(str))
-                        {
-                            ffmpegProcess.Kill();
-                            return;
-                        }
+                        str = ffmpegProcess.StandardError.ReadLine();
+                    }
+                    catch
+                    {
+                        Console.WriteLine("stdout log failed");
+                        break;
+                        // Ignored 
+                    }
+                    if (ffmpegProcess.HasExited)
+                        break;
+                    str ??= "";
+                    if (!stdout.Invoke(str))
+                    {
+                        ffmpegProcess.Kill();
+                        return;
                     }
                 }
-                else
+            }
+            else
+            {
+                /*if (debug)
                 {
-                    /*if (debug)
-					{
-						string processOutput = ffmpegProcess.StandardError.ReadToEnd();
-					}*/
+                    string processOutput = ffmpegProcess.StandardError.ReadToEnd();
+                }*/
 
-                    ffmpegProcess.WaitForExit();
-                }
+                ffmpegProcess.WaitForExit();
             }
         }
         private static void MakeffmpegExecutable()
@@ -163,20 +160,18 @@ namespace linerider.IO.ffmpeg
             {
                 try
                 {
-                    using (Process chmod = new Process())
+                    using Process chmod = new();
+                    ProcessStartInfo info = new("/bin/chmod")
                     {
-                        ProcessStartInfo info = new ProcessStartInfo("/bin/chmod")
-                        {
-                            Arguments = "+x ffmpeg",
-                            WorkingDirectory = Path.GetDirectoryName(ffmpeg_dir),
-                            UseShellExecute = false,
-                        };
-                        chmod.StartInfo = info;
-                        _ = chmod.Start();
-                        if (!chmod.WaitForExit(1000))
-                        {
-                            chmod.Close();
-                        }
+                        Arguments = "+x ffmpeg",
+                        WorkingDirectory = Path.GetDirectoryName(ffmpeg_dir),
+                        UseShellExecute = false,
+                    };
+                    chmod.StartInfo = info;
+                    _ = chmod.Start();
+                    if (!chmod.WaitForExit(1000))
+                    {
+                        chmod.Close();
                     }
                 }
                 catch (Exception e)

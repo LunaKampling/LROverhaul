@@ -24,7 +24,6 @@ using linerider.IO;
 using linerider.Rendering;
 using linerider.Tools;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -45,23 +44,23 @@ namespace linerider
         private int _iteration = 6;
         private bool _renderriderinvalid = true;
         private RiderFrame _renderrider = null;
-        private readonly ResourceSync _tracksync = new ResourceSync();
-        public SimulationRenderer _renderer = new SimulationRenderer();
+        private readonly ResourceSync _tracksync = new();
+        public SimulationRenderer _renderer = new();
         private bool _refreshtrack = false;
         private Vector2d _savedcamera;
         private float _savedzoom;
         private bool _hasstopped = true;
-        private readonly EditorGrid _cells = new EditorGrid();
+        private readonly EditorGrid _cells = new();
         private bool _invalidated = false;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public readonly GameScheduler Scheduler = new GameScheduler();
+        public readonly GameScheduler Scheduler = new();
         /// <summary>
         /// A sync object for loading track files
         /// </summary>
-        public readonly object LoadSync = new object();
-        public readonly Stopwatch FramerateWatch = new Stopwatch();
-        public readonly FPSCounter FramerateCounter = new FPSCounter();
+        public readonly object LoadSync = new();
+        public readonly Stopwatch FramerateWatch = new();
+        public readonly FPSCounter FramerateCounter = new();
         private bool _paused = false;
         public float Zoom
         {
@@ -319,9 +318,9 @@ namespace linerider
         /// <summary>
         /// The current number of frames since start (incl flag)
         /// </summary>
-        public int Offset { get => momentOffset.Frame; private set { momentOffset.Frame = value; } } 
+        public int Offset { get => momentOffset.Frame; private set { momentOffset.Frame = value; } }
 
-        public Moment momentOffset = new Moment(0);
+        public Moment momentOffset = new(0);
 
         public Timeline Timeline { get; private set; }
         public bool MoveStartWarned = false;
@@ -347,7 +346,7 @@ namespace linerider
                 }
                 _refreshtrack = false;
             }
-            DrawOptions drawOptions = new DrawOptions
+            DrawOptions drawOptions = new()
             {
                 DrawFlag = HasFlag && !Settings.Local.RecordingMode
             };
@@ -709,36 +708,34 @@ namespace linerider
                 if (_track.Lines.Count == 0)
                     return;
                 game.Canvas.Loading = true;
-                using (TrackReader trk = CreateTrackReader())
+                using TrackReader trk = CreateTrackReader();
+                if (Crash)
                 {
-                    if (Crash)
+                    string backupName = Constants.CrashBackupPrefix + " " + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");
+                    switch (Settings.DefaultCrashBackupFormat)
                     {
-                        string backupName = Constants.CrashBackupPrefix + " " + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss");
-                        switch (Settings.DefaultCrashBackupFormat)
-                        {
-                            case ".trk":
-                                _ = TrackIO.SaveTrackToFile(_track, backupName);
-                                break;
-                            case ".json":
-                                _ = TrackIO.SaveTrackToJsonFile(_track, backupName);
-                                break;
-                            case ".sol":
-                                _ = TrackIO.SaveToSOL(_track, backupName);
-                                break;
-                            default:
-                                _ = TrackIO.SaveTrackToJsonFile(_track, backupName);
-                                break;
-                        }
+                        case ".trk":
+                            _ = TrackIO.SaveTrackToFile(_track, backupName);
+                            break;
+                        case ".json":
+                            _ = TrackIO.SaveTrackToJsonFile(_track, backupName);
+                            break;
+                        case ".sol":
+                            _ = TrackIO.SaveToSOL(_track, backupName);
+                            break;
+                        default:
+                            _ = TrackIO.SaveTrackToJsonFile(_track, backupName);
+                            break;
                     }
-                    else
+                }
+                else
+                {
+                    if (TrackChanges >= Settings.autosaveChanges)
                     {
-                        if (TrackChanges >=  Settings.autosaveChanges)
-                        {
-                            TrackIO.CreateAutosave(_track);
-                            ResetTrackChangeCounter();
-                            Settings.LastSelectedTrack = _track.Filename;
-                            Settings.Save();
-                        }
+                        TrackIO.CreateAutosave(_track);
+                        ResetTrackChangeCounter();
+                        Settings.LastSelectedTrack = _track.Filename;
+                        Settings.Save();
                     }
                 }
             }

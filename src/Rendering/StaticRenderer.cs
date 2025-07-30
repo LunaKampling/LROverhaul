@@ -18,12 +18,11 @@
 
 using linerider.Drawing;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using SkiaSharp;
 
 namespace linerider.Rendering
 {
@@ -31,12 +30,12 @@ namespace linerider.Rendering
     {
         public static Vector2[] Arc(float cx, float cy, float r, float start_angle, float end_angle)
         {
-            List<Vector2> ret = new List<Vector2>();
+            List<Vector2> ret = [];
             for (float i = start_angle; i < end_angle; i += 0.05f)
             {
                 ret.Add(new Vector2(cx + (float)Math.Cos(i) * r, cy + (float)Math.Sin(i) * r));
             }
-            return ret.ToArray();
+            return [.. ret];
         }
 
         internal static Vector2 CalculateLine(Vector2 position, Angle angle, double length)
@@ -91,11 +90,11 @@ namespace linerider.Rendering
 
         public static void DrawTexture(int tex, DoubleRect rect, float alpha = 1, float u1 = 0, float v1 = 0, float u2 = 1, float v2 = 1)
         {
-            GenericVAO buf = new GenericVAO();
-            Vector2d tr = new Vector2d(rect.Right, rect.Top);
-            Vector2d tl = new Vector2d(rect.Left, rect.Top);
-            Vector2d bl = new Vector2d(rect.Left, rect.Bottom);
-            Vector2d br = new Vector2d(rect.Right, rect.Bottom);
+            GenericVAO buf = new();
+            Vector2d tr = new(rect.Right, rect.Top);
+            Vector2d tl = new(rect.Left, rect.Top);
+            Vector2d bl = new(rect.Left, rect.Bottom);
+            Vector2d br = new(rect.Right, rect.Bottom);
             Color c = Color.FromArgb((int)Math.Min(255, alpha * 255), 255, 255, 255);
             buf.AddVertex(new GenericVertex((Vector2)tl, c, u1, v1));
             buf.AddVertex(new GenericVertex((Vector2)tr, c, u2, v1));
@@ -136,14 +135,14 @@ namespace linerider.Rendering
                 x *= radialFactor;
                 y *= radialFactor;
             }
-            ret[ret.Length - 1] = ret[0];
+            ret[^1] = ret[0];
             return ret;
         }
 
         public static Vector2d[] GenerateBezierCurve(int num_segments)
         {
             Vector2d[] ret = new Vector2d[num_segments + 1];
-            ret[ret.Length - 1] = ret[0];
+            ret[^1] = ret[0];
             return ret;
         }
         public static int LoadTexture(SKBitmap bmp)
@@ -207,7 +206,7 @@ namespace linerider.Rendering
         public static Vector2[] GenerateThickLine(Vector2 p, Vector2 p1, float width) => GenerateThickLine(p, p1, Angle.FromLine(p, p1), width);
         public static Vector2[] GenerateThickLine(Vector2 p, Vector2 p1, Angle angle, float width)
         {
-            FloatRect rect = new FloatRect(
+            FloatRect rect = new(
                 p.X - width / 2,
                 p.Y,
                 width,
@@ -216,7 +215,7 @@ namespace linerider.Rendering
             // Returns tl tr br bl of the rotated rectangle
             Vector2[] rot = Utility.RotateRect(rect, p, angle);
             // We return tr br bl tl
-            return new Vector2[] { rot[1], rot[2], rot[3], rot[0] };
+            return [rot[1], rot[2], rot[3], rot[0]];
         }
         public static void RenderRect(FloatRect rect, Color color) => RenderRect(new RectangleF(rect.Left, rect.Top, rect.Width, rect.Height), color);
 

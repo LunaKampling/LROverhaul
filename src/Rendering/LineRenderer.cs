@@ -1,9 +1,8 @@
 using linerider.Drawing;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
@@ -20,8 +19,8 @@ namespace linerider.Rendering
         private readonly Shader _shader;
         private readonly GLBuffer<LineVertex> _vbo;
         private readonly GLBuffer<int> _ibo;
-        private readonly AutoArray<int> _indices = new AutoArray<int>(StartingLineCount * linesize);
-        private readonly Queue<int> freevertices = new Queue<int>();
+        private readonly AutoArray<int> _indices = new(StartingLineCount * linesize);
+        private readonly Queue<int> freevertices = new();
         private int _vertexcount = 0;
         private const int linesize = 6;
         private const int nullindex = 0;
@@ -60,7 +59,7 @@ namespace linerider.Rendering
         }
         public Dictionary<int, int> AddLines(AutoArray<GameLine> lines, LineVertex[] vertices)
         {
-            Dictionary<int, int> ret = new Dictionary<int, int>(lines.Count);
+            Dictionary<int, int> ret = new(lines.Count);
             int startidx = _indices.Count;
             int startvert = _vertexcount;
             _indices.EnsureCapacity(vertices.Length);
@@ -254,7 +253,7 @@ namespace linerider.Rendering
         {
             Vector2d d = lnend - lnstart;
             Angle rad = Angle.FromVector(d);
-            Vector2d c = new Vector2d(rad.Cos, rad.Sin);
+            Vector2d c = new(rad.Cos, rad.Sin);
             // Create line cap ends
             lnstart += c * (-1 * (size / 2));
             lnend += c * (1 * (size / 2));

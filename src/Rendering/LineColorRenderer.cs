@@ -1,7 +1,6 @@
 using linerider.Drawing;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ namespace linerider.Rendering
 {
     public class LineColorRenderer : IDisposable
     {
-        private Dictionary<int, int> _lines = new Dictionary<int, int>();
+        private Dictionary<int, int> _lines = [];
         private const int linesize = 6;
         private readonly LineRenderer _linebuffer;
         public LineColorRenderer()
@@ -25,7 +24,7 @@ namespace linerider.Rendering
         {
             Clear();
             LineVertex[] vertices = new LineVertex[lines.Count * linesize];
-            AutoArray<GenericVertex> redverts = new AutoArray<GenericVertex>(lines.Count / 2 * 3);
+            AutoArray<GenericVertex> redverts = new(lines.Count / 2 * 3);
             _ = System.Threading.Tasks.Parallel.For(0, lines.Count, (idx) =>
             {
                 StandardLine line = (StandardLine)lines[idx];
@@ -75,7 +74,7 @@ namespace linerider.Rendering
         public void Dispose() => _linebuffer.Dispose();
         public static LineVertex[] CreateDecorationLine(StandardLine line, Color color)
         {
-            Vector2d slant = new Vector2d(
+            Vector2d slant = new(
                 line.DiffNormal.X > 0 ? Math.Ceiling(line.DiffNormal.X) : Math.Floor(line.DiffNormal.X),
                 line.DiffNormal.Y > 0 ? Math.Ceiling(line.DiffNormal.Y) : Math.Floor(line.DiffNormal.Y));
             return LineRenderer.CreateTrackLine(line.Position1 + slant, line.Position2 + slant, 2, Utility.ColorToRGBA_LE(color));

@@ -2,9 +2,8 @@ using linerider.Drawing;
 using linerider.Game;
 using linerider.IO;
 using linerider.Tools;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace linerider.Rendering
 {
@@ -32,7 +31,7 @@ namespace linerider.Rendering
                 Vector2d diff = offs - camera.GetFrameCamera(game.Track.Offset);
                 GL.PushMatrix();
                 GL.Translate(new Vector3d(-diff * game.Track.Zoom));
-                DrawOptions overlayopts = new DrawOptions
+                DrawOptions overlayopts = new()
                 {
                     Zoom = options.Zoom,
                     LineColors = false,

@@ -25,7 +25,7 @@ namespace linerider.UI.Components
     /// Just a label that is intend to go on top of the track
     /// Its color inherits line color to stay visible on any background
     /// </summary>
-    public class TrackLabel : Label
+    public class TrackLabel(ControlBase parent) : Label(parent)
     {
         protected override Color CurrentColor
         {
@@ -35,7 +35,5 @@ namespace linerider.UI.Components
                 return recording ? Constants.ExportLineColor : Settings.Computed.LineColor;
             }
         }
-        public TrackLabel(ControlBase parent) : base(parent)
-        { }
     }
 }

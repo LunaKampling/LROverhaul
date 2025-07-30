@@ -24,7 +24,7 @@ namespace linerider.Drawing
     public abstract class GLArray<T>
     where T : struct
     {
-        public AutoArray<T> Array = new AutoArray<T>(500);
+        public AutoArray<T> Array = new(500);
         public GLArray()
         {
         }

@@ -1,5 +1,4 @@
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 namespace linerider.Game
 {

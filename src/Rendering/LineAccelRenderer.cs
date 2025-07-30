@@ -1,9 +1,8 @@
 using linerider.Drawing;
 using linerider.Game;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 namespace linerider.Rendering
@@ -16,9 +15,9 @@ namespace linerider.Rendering
             public int start;
             public int shapes;
         }
-        private readonly AutoArray<int> _indices = new AutoArray<int>(LineRenderer.StartingLineCount / 4 * ShapeSize);
-        private readonly Dictionary<int, accelentry> _lookup = new Dictionary<int, accelentry>();
-        private readonly Queue<int> _freeverts = new Queue<int>();
+        private readonly AutoArray<int> _indices = new(LineRenderer.StartingLineCount / 4 * ShapeSize);
+        private readonly Dictionary<int, accelentry> _lookup = [];
+        private readonly Queue<int> _freeverts = new();
         private int _vertcount = 0;
         private const int nullindex = 0;
         private readonly GLBuffer<GenericVertex> _accelbuffer;
@@ -42,7 +41,7 @@ namespace linerider.Rendering
                 return;
             // Max size for init
             GenericVertex[][] redshapes = new GenericVertex[lines.Count * ShapeSize * 3][];
-            ResourceSync initsync = new ResourceSync();
+            ResourceSync initsync = new();
             int vertcount = 0;
             _ = System.Threading.Tasks.Parallel.For(0, lines.Count,
             (idx) =>
@@ -58,7 +57,7 @@ namespace linerider.Rendering
             for (int idx = 0; idx < lines.Count; idx++)
             {
                 GenericVertex[] acc = redshapes[idx];
-                accelentry entry = new accelentry()
+                accelentry entry = new()
                 {
                     start = shapepos,
                     shapes = acc.Length / ShapeSize

@@ -8,14 +8,10 @@ namespace Gwen.Controls
     /// </summary>
     public class WindowControl : ResizableControl
     {
-        private class TitleLabel : Label
+        private class TitleLabel(ControlBase parent, WindowControl window) : Label(parent)
         {
-            private readonly WindowControl m_Window;
+            private readonly WindowControl m_Window = window;
             protected override Color CurrentColor => m_Window.IsOnTop ? Skin.Colors.Text.AccentForeground : Skin.Colors.Text.Foreground;
-            public TitleLabel(ControlBase parent, WindowControl window) : base(parent)
-            {
-                m_Window = window;
-            }
         }
         #region Events
 

@@ -25,13 +25,20 @@ namespace linerider.Utils
 {
     public sealed class ResourceSync
     {
-        public sealed class ResourceLock : IDisposable
+        /// <summary>
+        /// Creates a disposable object around a recently acquired lock
+        /// </summary>
+        public sealed class ResourceLock(
+            bool read,
+            bool write,
+            bool upgradableread,
+            ResourceSync parent) : IDisposable
         {
             private bool _disposed = false;
-            private readonly bool _upgradableread = false;
-            private readonly bool _read;
-            private bool _write;
-            private readonly ResourceSync _parent;
+            private readonly bool _upgradableread = upgradableread;
+            private readonly bool _read = read;
+            private bool _write = write;
+            private readonly ResourceSync _parent = parent;
             public bool WaitedOn
             {
                 get
@@ -42,23 +49,10 @@ namespace linerider.Utils
                     l.WaitingWriteCount > 0;
                 }
             }
-            /// <summary>
-            /// Creates a disposable object around a recently acquired lock
-            /// </summary>
-            public ResourceLock(
-                bool read,
-                bool write,
-                bool upgradableread,
-                ResourceSync parent)
-            {
-                _read = read;
-                _write = write;
-                _parent = parent;
-                _upgradableread = upgradableread;
-            }
-            public static ResourceLock Reader(ResourceSync parent) => new ResourceLock(true, false, false, parent);
-            public static ResourceLock Writer(ResourceSync parent) => new ResourceLock(false, true, false, parent);
-            public static ResourceLock UpgradableReader(ResourceSync parent) => new ResourceLock(false, false, true, parent);
+
+            public static ResourceLock Reader(ResourceSync parent) => new(true, false, false, parent);
+            public static ResourceLock Writer(ResourceSync parent) => new(false, true, false, parent);
+            public static ResourceLock UpgradableReader(ResourceSync parent) => new(false, false, true, parent);
             public void UpgradeToWriter()
             {
                 if (_disposed)
@@ -137,7 +131,7 @@ namespace linerider.Utils
                 _disposed = true;
             }
         }
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        private readonly ReaderWriterLockSlim _lock = new(LockRecursionPolicy.SupportsRecursion);
         public ResourceLock TryAcquireRead() => _lock.TryEnterReadLock(0) ? ResourceLock.Reader(this) : null;
         public ResourceLock AcquireRead()
         {

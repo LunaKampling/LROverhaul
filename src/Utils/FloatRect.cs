@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 namespace linerider.Utils
@@ -27,8 +26,8 @@ namespace linerider.Utils
         public float Top;
         public float Width;
         public float Height;
-        public Vector2 Vector => new Vector2(Left, Top);
-        public Vector2 Size => new Vector2(Width, Height);
+        public Vector2 Vector => new(Left, Top);
+        public Vector2 Size => new(Width, Height);
         public float Right => Left + Width;
         public float Bottom => Top + Height;
         public FloatRect(float left, float top, float width, float height)
@@ -43,7 +42,7 @@ namespace linerider.Utils
             this = new FloatRect(position.X, position.Y, size.X, size.Y);
         }
 
-        public static FloatRect FromLRTB(float left, float right, float top, float bottom) => new FloatRect(left, top, right - left, bottom - top);
+        public static FloatRect FromLRTB(float left, float right, float top, float bottom) => new(left, top, right - left, bottom - top);
         public Vector2 EllipseClamp(Vector2 position)
         {
             Vector2 center = Vector + Size / 2;
@@ -123,8 +122,8 @@ namespace linerider.Utils
             overlap.Height = 0f;
             return false;
         }
-        public override string ToString() => string.Concat(new object[]
-                {
+        public override string ToString() => string.Concat(
+                [
                     "[FloatRect] Left(",
                     Left,
                     ") Top(",
@@ -134,7 +133,7 @@ namespace linerider.Utils
                     ") Height(",
                     Height,
                     ")"
-                });
+                ]);
         public override bool Equals(object obj) => obj is FloatRect && obj.Equals(this);
         public bool Equals(FloatRect other) => Left == other.Left && Top == other.Top && Width == other.Width && Height == other.Height;
         public override int GetHashCode() => (int)((uint)Left ^ ((uint)Top << 13 | (uint)Top >> 19) ^ ((uint)Width << 26 | (uint)Width >> 6) ^ ((uint)Height << 7 | (uint)Height >> 25));

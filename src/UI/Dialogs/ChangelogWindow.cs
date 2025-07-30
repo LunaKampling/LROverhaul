@@ -2,9 +2,7 @@ using Gwen;
 using Gwen.Controls;
 using linerider.Utils;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace linerider.UI
 {
@@ -37,13 +35,13 @@ namespace linerider.UI
             Color colorNormal = Skin.Colors.Text.Foreground;
             Color colorGray = Color.Gray;
 
-            ScrollControl scrollContainer = new ScrollControl(this)
+            ScrollControl scrollContainer = new(this)
             {
                 Dock = Dock.Fill,
             };
             scrollContainer.EnableScroll(false, true);
 
-            RichLabel textContainer = new RichLabel(scrollContainer)
+            RichLabel textContainer = new(scrollContainer)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
@@ -64,21 +62,21 @@ namespace linerider.UI
                 // Header line (starts with any # count)
                 if (line.StartsWith("#"))
                 {
-                    line = line.Trim(new char[] { '#', ' ' });
+                    line = line.Trim(['#', ' ']);
                     font = fontBold;
                 }
 
                 // Italic line (cannot render it italic so rendering it gray colored)
                 else if (line.StartsWith("*") && line.EndsWith("*") || line.StartsWith("_") && line.EndsWith("_"))
                 {
-                    line = line.Trim(new char[] { '*', '_', ' ' });
+                    line = line.Trim(['*', '_', ' ']);
                     color = colorGray;
                 }
 
                 // Bold line
                 else if (line.StartsWith("**") && line.EndsWith("**") || line.StartsWith("__") && line.EndsWith("__"))
                 {
-                    line = line.Trim(new char[] { '*', '_', ' ' });
+                    line = line.Trim(['*', '_', ' ']);
                     font = fontBold;
                 }
 
@@ -86,14 +84,14 @@ namespace linerider.UI
                 textContainer.AddLineBreak();
             }
 
-            ControlBase bottomcontainer = new ControlBase(this)
+            ControlBase bottomcontainer = new(this)
             {
                 Margin = new Margin(0, 10, 0, 0),
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true
             };
 
-            Button btngithub = new Button(null)
+            Button btngithub = new(null)
             {
                 Text = "Previous Changelogs",
                 Dock = Dock.Left,
@@ -112,7 +110,7 @@ namespace linerider.UI
                 _ = Close();
             };
 
-            Button btnclose = new Button(null)
+            Button btnclose = new(null)
             {
                 Text = "Close",
                 Dock = Dock.Right,
@@ -120,7 +118,7 @@ namespace linerider.UI
             };
             btnclose.Clicked += CloseButtonPressed;
 
-            ControlBase buttoncontainer = new ControlBase(bottomcontainer)
+            ControlBase buttoncontainer = new(bottomcontainer)
             {
                 Margin = Margin.Zero,
                 Dock = Dock.Bottom,

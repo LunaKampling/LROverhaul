@@ -47,7 +47,7 @@ namespace linerider
             _track = track;
             _sync = sync;
         }
-        public static TrackReader AcquireRead(ResourceSync sync, Track track, EditorGrid cells) => new TrackReader(sync.AcquireRead(), track) { _editorcells = cells };
+        public static TrackReader AcquireRead(ResourceSync sync, Track track, EditorGrid cells) => new(sync.AcquireRead(), track) { _editorcells = cells };
 
         public GameLine GetNewestLine() => Track.Lines.Count == 0 ? null : Track.LineLookup[Track.Lines.First.Value];
 
@@ -57,7 +57,7 @@ namespace linerider
             EditorCell ret = _editorcells.LinesInRect(rect);
             if (precise)
             {
-                List<GameLine> newret = new List<GameLine>(ret.Count);
+                List<GameLine> newret = new(ret.Count);
                 foreach (GameLine line in ret)
                 {
                     if (Line.DoesLineIntersectRect(

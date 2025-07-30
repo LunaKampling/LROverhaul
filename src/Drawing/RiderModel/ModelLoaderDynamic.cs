@@ -9,10 +9,10 @@ namespace linerider.Drawing.RiderModel
 
         private class ContactPointPos
         {
-            public static readonly Point Sled = new Point(-552, -167);
-            public static readonly Point Body = new Point(-424, 0);
-            public static readonly Point Arm = new Point(-216, 0);
-            public static readonly Point Leg = new Point(-224, 0);
+            public static readonly Point Sled = new(-552, -167);
+            public static readonly Point Body = new(-424, 0);
+            public static readonly Point Arm = new(-216, 0);
+            public static readonly Point Leg = new(-224, 0);
         }
 
         protected override void ApplyScarfColorsToBody()
@@ -45,8 +45,9 @@ namespace linerider.Drawing.RiderModel
 
         private SKBitmap Rotate90(SKBitmap img)
         {
-            SKBitmap clone = new SKBitmap(img.Height, img.Width, img.ColorType, img.AlphaType);
-            using (var surface = new SKCanvas(clone)) {
+            SKBitmap clone = new(img.Height, img.Width, img.ColorType, img.AlphaType);
+            using (var surface = new SKCanvas(clone))
+            {
                 surface.Translate(clone.Width, 0);
                 surface.RotateDegrees(90);
                 surface.DrawBitmap(img, 0, 0);
@@ -54,7 +55,7 @@ namespace linerider.Drawing.RiderModel
             return clone;
         }
 
-        private DoubleRect CalcRect(SKBitmap img, Point shift) => new DoubleRect(
+        private DoubleRect CalcRect(SKBitmap img, Point shift) => new(
                 (img.Width / 2 + shift.X) * -1 * TextureScale,
                 (img.Height / 2 + shift.Y) * -1 * TextureScale,
                 img.Width * TextureScale,

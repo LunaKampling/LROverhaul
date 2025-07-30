@@ -21,7 +21,7 @@ namespace linerider.UI
         }
         private void ListSongs(ControlBase parent)
         {
-            ListBox Songs = new ListBox(parent)
+            ListBox Songs = new(parent)
             {
                 AllowMultiSelect = false
             };
@@ -37,11 +37,11 @@ namespace linerider.UI
             if (Directory.Exists(filedir))
             {
                 string[] songfiles = Directory.GetFiles(filedir, "*.*");
-                List<string> supportedfiles = new List<string>();
-                string[] supportedfiletypes = new string[]
-                {
+                List<string> supportedfiles = [];
+                string[] supportedfiletypes =
+                [
                     ".mp3",".wav",".wave",".ogg",".wma",".m4a",".aac"
-                };
+                ];
 
                 foreach (string file in songfiles)
                 {
@@ -88,7 +88,7 @@ namespace linerider.UI
             });
             limitedduration.Tooltip = "Lock timeline to song duration.\nAffects \"Sync Song And Track Duration\" and \"Lock Track Duration\" options.";
 
-            Spinner offset = new Spinner(null)
+            Spinner offset = new(null)
             {
                 Min = -2000,
                 Max = 2000,
@@ -101,7 +101,7 @@ namespace linerider.UI
                 _editor.Song = song;
             };
             CreateLabeledControl(opts, "Song Offset", offset);
-            Button help = new Button(parent)
+            Button help = new(parent)
             {
                 Dock = Dock.Bottom,
                 Text = "Help",
@@ -153,7 +153,7 @@ namespace linerider.UI
             {
                 trackfeatures = trk.GetFeatures();
             }
-            TabControl tabs = new TabControl(this)
+            TabControl tabs = new(this)
             {
                 Dock = Dock.Fill
             };
@@ -164,7 +164,7 @@ namespace linerider.UI
                 Dock = Dock.Fill,
             };
             PropertyTable table = _tree.Add("Settings", 150);
-            NumberProperty startzoom = new NumberProperty(null)
+            NumberProperty startzoom = new(null)
             {
                 Min = Constants.MinimumZoom,
                 NumberValue = _editor.StartZoom,
@@ -187,7 +187,7 @@ namespace linerider.UI
                 _editor.Frictionless = frictionless.IsChecked;
             };
 
-            NumberProperty ygravity = new NumberProperty(null)
+            NumberProperty ygravity = new(null)
             {
                 Min = float.MinValue + 1,
                 Max = float.MaxValue - 1,
@@ -198,7 +198,7 @@ namespace linerider.UI
                 _editor.YGravity = float.Parse(ygravity.Value);
             };
             _ = table.Add("Y Gravity Multiplier", ygravity);
-            NumberProperty xgravity = new NumberProperty(null)
+            NumberProperty xgravity = new(null)
             {
                 Min = float.MinValue + 1,
                 Max = float.MaxValue - 1,
@@ -210,7 +210,7 @@ namespace linerider.UI
             };
             _ = table.Add("X Gravity Multiplier", xgravity);
 
-            NumberProperty gravitywellsize = new NumberProperty(null)
+            NumberProperty gravitywellsize = new(null)
             {
                 Min = 0,
                 Max = double.MaxValue - 1,
@@ -224,7 +224,7 @@ namespace linerider.UI
 
             // Background colors
             table = _tree.Add("Starting Background Color", 150);
-            NumberProperty startbgred = new NumberProperty(null)
+            NumberProperty startbgred = new(null)
             {
                 Min = 0,
                 Max = 255,
@@ -235,7 +235,7 @@ namespace linerider.UI
                 _editor.StartingBGColorR = int.Parse(startbgred.Value);
             };
             _ = table.Add("Background Red", startbgred);
-            NumberProperty startbggreen = new NumberProperty(null)
+            NumberProperty startbggreen = new(null)
             {
                 Min = 0,
                 Max = 255,
@@ -246,7 +246,7 @@ namespace linerider.UI
                 _editor.StartingBGColorG = int.Parse(startbggreen.Value);
             };
             _ = table.Add("Background Green", startbggreen);
-            NumberProperty startbgblue = new NumberProperty(null)
+            NumberProperty startbgblue = new(null)
             {
                 Min = 0,
                 Max = 255,
@@ -260,7 +260,7 @@ namespace linerider.UI
 
             // Line colors
             table = _tree.Add("Starting Line Color", 150);
-            NumberProperty startlinered = new NumberProperty(null)
+            NumberProperty startlinered = new(null)
             {
                 Min = 0,
                 Max = 255,
@@ -271,7 +271,7 @@ namespace linerider.UI
                 _editor.StartingLineColorR = int.Parse(startlinered.Value);
             };
             _ = table.Add("Line Red", startlinered);
-            NumberProperty startlinegreen = new NumberProperty(null)
+            NumberProperty startlinegreen = new(null)
             {
                 Min = 0,
                 Max = 255,
@@ -282,7 +282,7 @@ namespace linerider.UI
                 _editor.StartingLineColorG = int.Parse(startlinegreen.Value);
             };
             _ = table.Add("Line Green", startlinegreen);
-            NumberProperty startlineblue = new NumberProperty(null)
+            NumberProperty startlineblue = new(null)
             {
                 Min = 0,
                 Max = 255,

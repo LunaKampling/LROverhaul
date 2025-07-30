@@ -17,7 +17,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using linerider.Utils;
-using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,14 +25,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace linerider
 {
     public static class Program
     {
         public static string BinariesFolder = "bin";
-        public static readonly CultureInfo Culture = new CultureInfo("en-US");
+        public static readonly CultureInfo Culture = new("en-US");
         public static string NewVersion = null;
         public static readonly string WindowTitle = AssemblyInfo.Title + " \u22C5 " + AssemblyInfo.FullVersion;
         public static Random Random;
@@ -87,8 +85,7 @@ namespace linerider
         {
             get
             {
-                if (_currdir == null)
-                    _currdir = AppDomain.CurrentDomain.BaseDirectory;
+                _currdir ??= AppDomain.CurrentDomain.BaseDirectory;
                 return _currdir;
             }
         }
@@ -120,30 +117,31 @@ namespace linerider
 #if WINDOWS
             System.Windows.Forms.DialogResult btn = System.Windows.Forms.MessageBox.Show(msg, title, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error);
 
-                if (btn == System.Windows.Forms.DialogResult.Yes)
-                {
-                    string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
-                    string headerSeparator = new string('-', 3);
-                    string header = $"{headerSeparator} {AssemblyInfo.FullVersion} {headerSeparator} {now} {headerSeparator}";
-                    string newLine = "\r\n";
+            if (btn == System.Windows.Forms.DialogResult.Yes)
+            {
+                string now = DateTime.Now.ToString("yyyy-MM-dd HH':'mm':'ss");
+                string headerSeparator = new('-', 3);
+                string header = $"{headerSeparator} {AssemblyInfo.FullVersion} {headerSeparator} {now} {headerSeparator}";
+                string newLine = "\r\n";
 
-                    if (!File.Exists(logFilePath))
-                        File.Create(logFilePath).Dispose();
+                if (!File.Exists(logFilePath))
+                    File.Create(logFilePath).Dispose();
 
-                    string oldRecords = File.ReadAllText(logFilePath, System.Text.Encoding.UTF8);
-                    string newRecord = header + newLine + newLine + e.ToString() + newLine;
-                    if (!string.IsNullOrEmpty(oldRecords))
-                        newRecord = newLine + newRecord;
+                string oldRecords = File.ReadAllText(logFilePath, System.Text.Encoding.UTF8);
+                string newRecord = header + newLine + newLine + e.ToString() + newLine;
+                if (!string.IsNullOrEmpty(oldRecords))
+                    newRecord = newLine + newRecord;
 
-                    File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
-                }
+                File.WriteAllText(logFilePath, oldRecords + newRecord, System.Text.Encoding.UTF8);
+            }
 #endif
 
             if (!nothrow)
                 throw e;
         }
 
-        public static void NonFatalError(string err) {
+        public static void NonFatalError(string err)
+        {
 #if WINDOWS
             System.Windows.Forms.MessageBox.Show("Non Fatal Error: " + err);
 #endif
@@ -163,20 +161,20 @@ namespace linerider
 
             //using (Toolkit.Init(new ToolkitOptions { EnableHighResolution = true, Backend = PlatformBackend.Default }))
             //{
-                using (glGame = new MainWindow())
-                {
-                    UI.InputUtils.SetWindow(glGame);
-                    glGame.RenderSize = new Size(glGame.Size.X, glGame.Size.Y);
-                    Rendering.GameRenderer.Game = glGame;
-                    MemoryStream ms = new MemoryStream(GameResources.icon);
-                    //glGame.Icon = new System.Drawing.Icon(ms);
+            using (glGame = new MainWindow())
+            {
+                UI.InputUtils.SetWindow(glGame);
+                glGame.RenderSize = new Size(glGame.Size.X, glGame.Size.Y);
+                Rendering.GameRenderer.Game = glGame;
+                MemoryStream ms = new(GameResources.icon);
+                //glGame.Icon = new System.Drawing.Icon(ms);
 
-                    ms.Dispose();
-                    glGame.Title = WindowTitle;
-                    glGame.Run();
-                    //glGame.Run(Constants.FrameRate, 0); // TODO: Maybe not limit this
-                }
-                Audio.AudioService.CloseDevice();
+                ms.Dispose();
+                glGame.Title = WindowTitle;
+                glGame.Run();
+                //glGame.Run(Constants.FrameRate, 0); // TODO: Maybe not limit this
+            }
+            Audio.AudioService.CloseDevice();
             //}
         }
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -197,27 +195,25 @@ namespace linerider
                 {
                     try
                     {
-                        using (WebClient wc = new WebClient())
+                        using WebClient wc = new();
+                        string recentVersion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version").Trim();
+
+                        if (recentVersion.Length > 0)
                         {
-                            string recentVersion = wc.DownloadString($"{Constants.GithubRawHeader}/main/version").Trim();
+                            try
+                            {
+                                // Try to check every number of N.N.N.N format
+                                List<int> current = [.. AssemblyInfo.Version.Split('.').Select(int.Parse)];
+                                List<int> recent = [.. recentVersion.Split('.').Select(int.Parse)];
 
-                            if (recentVersion.Length > 0)
-                            { 
-                                try
-                                {
-                                    // Try to check every number of N.N.N.N format
-                                    List<int> current = AssemblyInfo.Version.Split('.').Select(int.Parse).ToList();
-                                    List<int> recent = recentVersion.Split('.').Select(int.Parse).ToList();
-
-                                    if (recent[0] > current[0] || recent[1] > current[1] || recent[2] > current[2] || recent[3] > current[3])
-                                        NewVersion = recentVersion;
-                                }
-                                catch
-                                {
-                                    // Fallback to string comparison
-                                    if (recentVersion != AssemblyInfo.Version)
-                                        NewVersion = recentVersion;
-                                }
+                                if (recent[0] > current[0] || recent[1] > current[1] || recent[2] > current[2] || recent[3] > current[3])
+                                    NewVersion = recentVersion;
+                            }
+                            catch
+                            {
+                                // Fallback to string comparison
+                                if (recentVersion != AssemblyInfo.Version)
+                                    NewVersion = recentVersion;
                             }
                         }
                     }

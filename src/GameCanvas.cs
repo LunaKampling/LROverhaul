@@ -35,7 +35,7 @@ namespace linerider
 {
     public class GameCanvas : Canvas
     {
-        public static readonly Queue<Action> QueuedActions = new Queue<Action>();
+        public static readonly Queue<Action> QueuedActions = new();
         public Gwen.Renderer.OpenTK Renderer;
         private ControlBase _topArea;
         private ControlBase _leftArea;
@@ -157,7 +157,7 @@ namespace linerider
                 AutoSizeToContents = true,
                 Dock = Dock.Left,
             };
-            _= new WidgetButton(_speedDecreaseWrapper)
+            _ = new WidgetButton(_speedDecreaseWrapper)
             {
                 Dock = Dock.Top,
                 Name = "Decrease Speed",
@@ -283,16 +283,16 @@ namespace linerider
                     "(" + name + ")\n" +
                     "Some issues with the save may cause the file to always crash this program.\n" +
                     "Are you sure you want to load it?";
-                string title = "So about that crash backup...";
-                
-                if (System.Windows.Forms.MessageBox.Show(text, title,
-                    System.Windows.Forms.MessageBoxButtons.YesNo)
-                    == System.Windows.Forms.DialogResult.Yes)
-                {
-                    ret = true;
-                    Settings.LastSelectedTrack = "";
-                    Settings.Save();
-                }
+            string title = "So about that crash backup...";
+
+            if (System.Windows.Forms.MessageBox.Show(text, title,
+                System.Windows.Forms.MessageBoxButtons.YesNo)
+                == System.Windows.Forms.DialogResult.Yes)
+            {
+                ret = true;
+                Settings.LastSelectedTrack = "";
+                Settings.Save();
+            }
 #endif
             return ret;
         }
@@ -323,7 +323,7 @@ namespace linerider
         public void ShowError(string message) => MessageBox.Show(this, message, "Error!");
         public List<ControlBase> GetOpenWindows()
         {
-            List<ControlBase> ret = new List<ControlBase>();
+            List<ControlBase> ret = [];
             foreach (ControlBase child in Children)
             {
                 if (child is WindowControl)
@@ -393,7 +393,7 @@ namespace linerider
         }
         public void ShowLineWindow(Game.GameLine line, int x, int y)
         {
-            LineWindow wnd = new LineWindow(this, game.Track, line);
+            LineWindow wnd = new(this, game.Track, line);
             ShowDialog(wnd);
             wnd.SetPosition(x - wnd.Width / 2, y - wnd.Height / 2);
         }

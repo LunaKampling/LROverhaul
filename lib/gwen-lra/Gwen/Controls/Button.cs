@@ -122,7 +122,7 @@ namespace Gwen.Controls
         protected virtual void SetupDefault()
         {
             int extra = TextHeight / 3;
-            Padding textpadding = new Padding(extra, extra, extra, extra);
+            Padding textpadding = new(extra, extra, extra, extra);
             if (TextPadding != textpadding)
             {
                 TextPadding = textpadding;
@@ -157,11 +157,7 @@ namespace Gwen.Controls
                 return;
             }
 
-            if (m_Image == null)
-            {
-                m_Image = new ImagePanel(this);
-            }
-
+            m_Image ??= new ImagePanel(this);
             m_Image.ImageName = textureName;
             m_Image.SizeToContents();
             m_Image.SetPosition(Math.Max(Padding.Left, 2), 2);

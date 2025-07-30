@@ -510,7 +510,7 @@ namespace Gwen.Skin
         }
         private void InitializeColors()
         {
-            System.Xml.XmlDocument read = new System.Xml.XmlDocument();
+            System.Xml.XmlDocument read = new();
 
             read.LoadXml(_colorxml);
             //https://palx.jxnblk.com/07c

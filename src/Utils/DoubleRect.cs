@@ -16,21 +16,20 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 namespace linerider.Utils
 {
     public struct DoubleRect : IEquatable<DoubleRect>
     {
-        public static readonly DoubleRect Empty = new DoubleRect(0, 0, 0, 0);
+        public static readonly DoubleRect Empty = new(0, 0, 0, 0);
         public double Left;
         public double Top;
         public double Width;
         public double Height;
         public Vector2d Vector
         {
-            get => new Vector2d(Left, Top);
+            get => new(Left, Top);
             set
             {
                 Left = value.X;
@@ -39,7 +38,7 @@ namespace linerider.Utils
         }
         public Vector2d Size
         {
-            get => new Vector2d(Width, Height);
+            get => new(Width, Height);
             set
             {
                 Width = value.X;
@@ -70,15 +69,15 @@ namespace linerider.Utils
         {
             Vector2d vec1 = Vector;
             Vector2d vec2 = vec1 + Size;
-            Vector2d topleft = new Vector2d(
+            Vector2d topleft = new(
                 Math.Min(vec1.X, vec2.X), Math.Min(vec1.Y, vec2.Y));
-            Vector2d bottomright = new Vector2d(
+            Vector2d bottomright = new(
                 Math.Max(vec1.X, vec2.X), Math.Max(vec1.Y, vec2.Y));
             return new DoubleRect(topleft, bottomright - topleft);
         }
-        public static DoubleRect FromLRTB(double left, double right, double top, double bottom) => new DoubleRect(left, top, right - left, bottom - top);
+        public static DoubleRect FromLRTB(double left, double right, double top, double bottom) => new(left, top, right - left, bottom - top);
 
-        public FloatRect ToFloatRect() => new FloatRect((float)Left, (float)Top, (float)Width, (float)Height);
+        public FloatRect ToFloatRect() => new((float)Left, (float)Top, (float)Width, (float)Height);
 
         public Vector2d EllipseClamp(Vector2d position)
         {
@@ -183,8 +182,8 @@ namespace linerider.Utils
             overlap.Height = 0f;
             return false;
         }
-        public override string ToString() => string.Concat(new object[]
-                {
+        public override string ToString() => string.Concat(
+                [
                     "[DoubleRect] Left(",
                     Left,
                     ") Top(",
@@ -194,7 +193,7 @@ namespace linerider.Utils
                     ") Height(",
                     Height,
                     ")"
-                });
+                ]);
         public override bool Equals(object obj) => obj is FloatRect && obj.Equals(this);
         public bool Equals(DoubleRect other) => Left == other.Left && Top == other.Top && Width == other.Width && Height == other.Height;
         public override int GetHashCode() => (int)((uint)Left ^ ((uint)Top << 13 | (uint)Top >> 19) ^ ((uint)Width << 26 | (uint)Width >> 6) ^ ((uint)Height << 7 | (uint)Height >> 25));

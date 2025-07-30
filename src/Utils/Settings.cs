@@ -18,8 +18,6 @@
 
 using linerider.UI;
 using linerider.Utils;
-using OpenTK;
-using OpenTK.Input;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
@@ -185,9 +183,9 @@ namespace linerider
         public static int PastOnionSkins;
         public static int FutureOnionSkins;
         private static string _lastSelectedTrack = "";
-        public static Dictionary<Hotkey, KeyConflicts> KeybindConflicts = new Dictionary<Hotkey, KeyConflicts>();
-        public static Dictionary<Hotkey, List<Keybinding>> Keybinds = new Dictionary<Hotkey, List<Keybinding>>();
-        private static readonly Dictionary<Hotkey, List<Keybinding>> DefaultKeybinds = new Dictionary<Hotkey, List<Keybinding>>();
+        public static Dictionary<Hotkey, KeyConflicts> KeybindConflicts = [];
+        public static Dictionary<Hotkey, List<Keybinding>> Keybinds = [];
+        private static readonly Dictionary<Hotkey, List<Keybinding>> DefaultKeybinds = [];
         public static string LastSelectedTrack
         {
             get
@@ -229,7 +227,7 @@ namespace linerider
                 if (hk == Hotkey.None)
                     continue;
                 KeybindConflicts.Add(hk, KeyConflicts.General);
-                Keybinds.Add(hk, new List<Keybinding>());
+                Keybinds.Add(hk, []);
             }
             // Conflicts, for keybinds that depend on a state, so keybinds 
             // outside of its state can be set as long
@@ -507,10 +505,10 @@ namespace linerider
         {
             if (keybinding.IsEmpty)
                 return;
-            DefaultKeybinds[hotkey] = new List<Keybinding>
-            {
+            DefaultKeybinds[hotkey] =
+            [
                 keybinding
-            };
+            ];
             if (secondary != null)
             {
                 DefaultKeybinds[hotkey].Add(secondary);
@@ -554,7 +552,7 @@ namespace linerider
         public static List<Keybinding> FetchBinding(Hotkey hotkey)
         {
             if (!Keybinds.ContainsKey(hotkey))
-                Keybinds[hotkey] = new List<Keybinding>();
+                Keybinds[hotkey] = [];
             List<Keybinding> ret = Keybinds[hotkey];
             if (ret.Count == 0)
                 ret.Add(new Keybinding()); // Empty
@@ -567,7 +565,7 @@ namespace linerider
             else
             {
                 List<Keybinding> keybindings = FetchBinding(hotkey);
-                List<string> keys = new List<string>();
+                List<string> keys = [];
 
                 foreach (Keybinding keybinding in keybindings)
                 {
@@ -653,26 +651,13 @@ namespace linerider
         }
         public static void PostprocessValues()
         {
-            if (DefaultSaveFormat == null)
-                DefaultSaveFormat = ".json";
-
-            if (DefaultQuicksaveFormat == null)
-                DefaultQuicksaveFormat = ".json";
-
-            if (DefaultAutosaveFormat == null)
-                DefaultAutosaveFormat = ".json";
-
-            if (DefaultCrashBackupFormat == null)
-                DefaultCrashBackupFormat = ".json";
-
-            if (AutosavePrefix == null)
-                AutosavePrefix = "Autosave";
-
-            if (SelectedBoshSkin == null)
-                SelectedBoshSkin = Constants.InternalDefaultName;
-
-            if (SelectedScarf == null)
-                SelectedScarf = Constants.InternalDefaultName;
+            DefaultSaveFormat ??= ".json";
+            DefaultQuicksaveFormat ??= ".json";
+            DefaultAutosaveFormat ??= ".json";
+            DefaultCrashBackupFormat ??= ".json";
+            AutosavePrefix ??= "Autosave";
+            SelectedBoshSkin ??= Constants.InternalDefaultName;
+            SelectedScarf ??= Constants.InternalDefaultName;
 
             Volume = MathHelper.Clamp(Volume, 0, 100);
 
@@ -812,11 +797,7 @@ namespace linerider
 
         public static void ForceSave()
         {
-            List<string> lines = new List<string>();
-
-            lines.AddRange(BuildMainSettingsList());
-            lines.AddRange(BuildAddonSettingsList());
-            lines.AddRange(BuildKeybindsList());
+            List<string> lines = [.. BuildMainSettingsList(), .. BuildAddonSettingsList(), .. BuildKeybindsList()];
 
             if (!Directory.Exists(Local.UserDirPath))
                 Directory.CreateDirectory(Local.UserDirPath);
@@ -827,8 +808,8 @@ namespace linerider
 
         private static List<string> BuildMainSettingsList()
         {
-            List<string> lines = new List<string>
-            {
+            List<string> lines =
+            [
                 MakeSetting(nameof(Local.Version), AssemblyInfo.Version),
                 MakeSetting(nameof(LastSelectedTrack), _lastSelectedTrack),
                 MakeSetting(nameof(Volume), Volume.ToString(Program.Culture)),
@@ -930,26 +911,26 @@ namespace linerider
                 MakeSetting(nameof(SmoothPencil.smoothStabilizer), SmoothPencil.smoothStabilizer.ToString(Program.Culture)),
                 MakeSetting(nameof(SmoothPencil.smoothUpdateSpeed), SmoothPencil.smoothUpdateSpeed.ToString(Program.Culture)),
                 MakeSetting(nameof(InvisibleRider), InvisibleRider.ToString(Program.Culture)),
-            };
+            ];
 
             return lines;
         }
         private static List<string> BuildAddonSettingsList()
         {
-            List<string> lines = new List<string>
-            {
+            List<string> lines =
+            [
                 MakeSetting(nameof(velocityReferenceFrameAnimation), velocityReferenceFrameAnimation.ToString()),
                 MakeSetting(nameof(forwardLinesAsScenery), forwardLinesAsScenery.ToString()),
                 MakeSetting(nameof(recededLinesAsScenery), recededLinesAsScenery.ToString()),
                 MakeSetting(nameof(animationRelativeVelX), animationRelativeVelX.ToString()),
                 MakeSetting(nameof(animationRelativeVelY), animationRelativeVelY.ToString()),
-            };
+            ];
 
             return lines;
         }
         private static List<string> BuildKeybindsList()
         {
-            List<string> lines = new List<string>();
+            List<string> lines = [];
 
             foreach (KeyValuePair<Hotkey, List<Keybinding>> binds in Keybinds)
             {
@@ -991,12 +972,12 @@ namespace linerider
             string hotkeyname = hotkey.ToString();
             string setting = GetSetting(config, hotkeyname, ref line);
             if (setting != null)
-                Keybinds[hotkey] = new List<Keybinding>();
+                Keybinds[hotkey] = [];
             while (setting != null)
             {
                 line++;
                 string[] items = setting.Trim(' ', '\t', '[', ']').Split('+');
-                Keybinding ret = new Keybinding();
+                Keybinding ret = new();
                 foreach (string item in items)
                 {
                     if (!ret.UsesModifiers &&
@@ -1068,14 +1049,14 @@ namespace linerider
         {
             if (setting != null)
             {
-                int[] vals = setting.Split(',').Select(int.Parse).ToArray();
+                int[] vals = [.. setting.Split(',').Select(int.Parse)];
                 var = Color.FromArgb(vals[0], vals[1], vals[2]);
             }
         }
 
         private static string SaveColor(Color color)
         {
-            int[] colorValues = { color.R, color.G, color.B };
+            int[] colorValues = [color.R, color.G, color.B];
             return string.Join(",", colorValues);
         }
     }

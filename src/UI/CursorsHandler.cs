@@ -1,10 +1,10 @@
 ﻿using linerider.Utils;
 using OpenTK.Windowing.Common.Input;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml;
-using SkiaSharp;
 
 namespace linerider.UI
 {
@@ -36,7 +36,7 @@ namespace linerider.UI
             public const string HotSpot = "HotSpot";
         }
 
-        public Dictionary<Type, MouseCursor> List = new Dictionary<Type, MouseCursor>();
+        public Dictionary<Type, MouseCursor> List = [];
 
         public void Reload()
         {
@@ -61,7 +61,7 @@ namespace linerider.UI
         internal void Refresh(GameCanvas canvas) => canvas.Platform.SetCursor(Gwen.Cursors.Default);
         private void AddSvgCursor(Type name, GameResources.VectorResource res)
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.LoadXml(res.Raw);
 
             Point hotspot = GetSvgHotSpot(doc);
@@ -80,19 +80,20 @@ namespace linerider.UI
         }
         private SKBitmap AddShadow(SKBitmap bitmap, int shiftX, int shiftY, float shadowOpacity, bool applyBlur)
         {
-            GaussianBlur blur = new GaussianBlur();
-            SKBitmap bitmapWithShadow = new SKBitmap(bitmap.Info);
+            GaussianBlur blur = new();
+            SKBitmap bitmapWithShadow = new(bitmap.Info);
 
-            SKBitmap shadow = new SKBitmap(bitmap.Info);
+            SKBitmap shadow = new(bitmap.Info);
             using (var surface = new SKCanvas(shadow))
             {
-                SKPaint paint = new SKPaint {
-                    ColorFilter = SKColorFilter.CreateColorMatrix(new float[] {
+                SKPaint paint = new()
+                {
+                    ColorFilter = SKColorFilter.CreateColorMatrix([
                         0,0,0,shadowOpacity,0,
                         0,0,0,shadowOpacity,0,
                         0,0,0,shadowOpacity,0,
                         0,0,0,shadowOpacity,0
-                    })
+                    ])
                 };
 
                 surface.DrawBitmap(bitmap, shiftX, shiftY, paint);
@@ -124,7 +125,7 @@ namespace linerider.UI
             catch (Exception)
             { }
 
-            List<XmlNode> layers = new List<XmlNode>();
+            List<XmlNode> layers = [];
             foreach (XmlNode el in layerNodes)
             {
                 bool isRightLayer = GetSvgAttrId(el).StartsWith(SvgLayerName.Prefix);

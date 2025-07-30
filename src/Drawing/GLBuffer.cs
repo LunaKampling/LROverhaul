@@ -39,7 +39,7 @@ namespace linerider.Drawing
         protected int _objectsize;
         protected IntPtr _map = IntPtr.Zero;
         private readonly bool _is_size4_valuetype = false;
-        private static readonly Dictionary<BufferTarget, int> BoundBuffers = new Dictionary<BufferTarget, int>();
+        private static readonly Dictionary<BufferTarget, int> BoundBuffers = [];
         public GLBuffer(BufferTarget target)
         {
             _objectsize = Marshal.SizeOf(typeof(T));
@@ -57,7 +57,7 @@ namespace linerider.Drawing
         /// </summary>
         public void SetSize(int newsize, BufferUsageHint usageHint, bool shouldcopy = true)
         {
-            T[] copy = new T[0];
+            T[] copy = [];
             if (shouldcopy)
                 copy = GetData(0, BufferSize);
             GL.BufferData(
@@ -75,7 +75,7 @@ namespace linerider.Drawing
         public T[] GetData(int start, int length)
         {
             if (length == 0)
-                return new T[0];
+                return [];
             T[] copy = new T[length];
             if (Mapped)
                 throw new Exception("cannot call getdata while buffer is mapped");
@@ -150,7 +150,7 @@ namespace linerider.Drawing
                 }
             }
         }
-        public virtual void SetData(T value, int dststart) => SetData(new T[] { value }, 0, dststart, 1);
+        public virtual void SetData(T value, int dststart) => SetData([value], 0, dststart, 1);
         /// <summary>
         /// Binds the buffer to the current context
         /// call this before doing anything

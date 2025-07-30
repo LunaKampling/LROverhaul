@@ -60,10 +60,7 @@ namespace linerider.IO.SOL
                     int counter = 0;
                     foreach (Amf0Object lobj in list)
                     {
-                        if (lobj.name == null)
-                        {
-                            lobj.name = counter++.ToString(Program.Culture);
-                        }
+                        lobj.name ??= counter++.ToString(Program.Culture);
                         WriteAmf0Object(lobj);
                     }
                     bw.WriteShort(0);
@@ -77,10 +74,7 @@ namespace linerider.IO.SOL
                     int counter = 0;
                     foreach (Amf0Object lobj in list)
                     {
-                        if (lobj.name == null)
-                        {
-                            lobj.name = counter++.ToString(Program.Culture);
-                        }
+                        lobj.name ??= counter++.ToString(Program.Culture);
                         WriteAmf0Object(lobj);
                     }
                     bw.WriteShort(0);
@@ -123,10 +117,10 @@ namespace linerider.IO.SOL
         }
         public List<Amf0Object> ReadAmf0(bool rootobject = false)
         {
-            List<Amf0Object> retlist = new List<Amf0Object>();
+            List<Amf0Object> retlist = [];
             while (true)
             {
-                Amf0Object ret = new Amf0Object();
+                Amf0Object ret = new();
                 if (br.Remaining < 2 && rootobject)
                     return retlist;
                 ret.name = Encoding.ASCII.GetString(br.ReadBytes(br.ReadInt16())); // Object name

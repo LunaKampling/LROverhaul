@@ -2,7 +2,6 @@ using Gwen;
 using Gwen.Controls;
 using linerider.UI.Components;
 using linerider.Utils;
-using OpenTK;
 using OpenTK.Mathematics;
 using System;
 
@@ -46,7 +45,7 @@ namespace linerider.UI.Widgets
 
         private void Setup()
         {
-            Panel sliderPanel = new Panel(this)
+            Panel sliderPanel = new(this)
             {
                 ShouldDrawBackground = false,
                 AutoSizeToContents = true,
@@ -87,7 +86,7 @@ namespace linerider.UI.Widgets
             _playheadDefaultZoom.Clicked += (o, e) => _editor.ResetCamera();
             _playheadDefaultZoom.SendToBack();
 
-            Panel textPanel = new Panel(this)
+            Panel textPanel = new(this)
             {
                 ShouldDrawBackground = false,
                 AutoSizeToContents = true,

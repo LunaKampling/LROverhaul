@@ -1,49 +1,33 @@
-using Gwen.Controls;
 using Gwen;
-using Gwen.Skin.Texturing;
-using System;
+using Gwen.Controls;
 using Gwen.Input;
-using OpenTK;
+using Gwen.Skin.Texturing;
 using OpenTK.Mathematics;
 using SkiaSharp;
+using System;
 
 namespace linerider.UI.Components
 {
-    public class PointEventArgs : EventArgs
+    public class PointEventArgs(int x, int y) : EventArgs
     {
-        public readonly int X;
-        public readonly int Y;
+        public readonly int X = x;
+        public readonly int Y = y;
         public PointEventArgs() : this(0, 0)
         { }
         public PointEventArgs(Point point) : this(point.X, point.Y)
         { }
-        public PointEventArgs(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
     }
 
-    public class PlayheadValueEventArgs : EventArgs
+    public class PlayheadValueEventArgs(int value, bool byUser) : EventArgs
     {
-        public readonly int Value;
-        public readonly bool ByUser;
-        public PlayheadValueEventArgs(int value, bool byUser)
-        {
-            Value = value;
-            ByUser = byUser;
-        }
+        public readonly int Value = value;
+        public readonly bool ByUser = byUser;
     }
 
-    public class PlayheadRangeEventArgs : EventArgs
+    public class PlayheadRangeEventArgs(int min, int max) : EventArgs
     {
-        public readonly int Min;
-        public readonly int Max;
-        public PlayheadRangeEventArgs(int min, int max)
-        {
-            Min = min;
-            Max = max;
-        }
+        public readonly int Min = min;
+        public readonly int Max = max;
     }
 
     /// <summary>
@@ -189,7 +173,7 @@ namespace linerider.UI.Components
         private void SetupBackground()
         {
             int height = Utility.NumberToCurrentScale(3);
-            Utils.RoundedSquareTexture rst = new Utils.RoundedSquareTexture(height, stretchVertically: false);
+            Utils.RoundedSquareTexture rst = new(height, stretchVertically: false);
             _background = rst.Bordered;
             _bitmap = rst.Bitmap;
         }
@@ -260,7 +244,7 @@ namespace linerider.UI.Components
             Pos.Y = MathHelper.Clamp(Pos.Y, 0, Height);
             Dragged?.Invoke(this, new PointEventArgs(Pos));
         }
-        
+
         public override void Think()
         {
             if (Width != _oldWidth)
@@ -281,7 +265,7 @@ namespace linerider.UI.Components
 
         protected override void Render(Gwen.Skin.SkinBase skin)
         {
-            Rectangle bounds = new Rectangle(
+            Rectangle bounds = new(
                 MinX + InternalPadding.Left,
                 RenderBounds.Y + base.Padding.Top,
                 MaxX - MinX - InternalPadding.Width,

@@ -1,11 +1,7 @@
 namespace Gwen
 {
-    public class Cursor
+    public class Cursor(string name)
     {
-        public readonly string Name;
-        public Cursor(string name)
-        {
-            Name = name;
-        }
+        public readonly string Name = name;
     }
 }

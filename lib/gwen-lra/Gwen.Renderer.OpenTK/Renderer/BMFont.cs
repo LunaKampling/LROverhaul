@@ -63,20 +63,20 @@ namespace Gwen.Renderer
         //private const int charAmount = 256; // ASCII
         private const int charAmount = 65535; // Unicode
         //private const int charAmount = 200813; // Unicode + CJK
-        private FontGlyph _invalid = new FontGlyph();
+        private FontGlyph _invalid = new();
         private readonly FontGlyph[] _glyphs = new FontGlyph[charAmount];
         internal int _texWidth;
         internal int _texHeight;
         // Creates a bitmap ASCII font
         public BMFont(string bmfont)
         {
-            using (StringReader sr = new StringReader(bmfont))
+            using (StringReader sr = new(bmfont))
             {
                 string fullline;
                 while ((fullline = sr.ReadLine()) != null)
                 {
-                    string[] line = fullline.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    Queue<string> lq = new Queue<string>();
+                    string[] line = fullline.Split([' '], StringSplitOptions.RemoveEmptyEntries);
+                    Queue<string> lq = new();
                     foreach (string lword in line)
                     {
                         lq.Enqueue(lword);
@@ -122,7 +122,7 @@ namespace Gwen.Renderer
                     }
                     else if (cword == "char")
                     {
-                        FontGlyph glyph = new FontGlyph
+                        FontGlyph glyph = new()
                         {
                             id = 0
                         };
@@ -231,7 +231,7 @@ namespace Gwen.Renderer
         }
         private FontGlyph CreateEmpty(int id)
         {
-            FontGlyph ret = new FontGlyph
+            FontGlyph ret = new()
             {
                 id = id
             };
@@ -268,8 +268,8 @@ namespace Gwen.Renderer
         private List<string> WrapLine(string line, int maxpx, List<int> widths)
         {
             string[] wordarr = line.Split(' ');
-            List<string> ret = new List<string>();
-            List<string> words = new List<string>(wordarr.Length);
+            List<string> ret = [];
+            List<string> words = new(wordarr.Length);
             foreach (string word in wordarr)
             {
                 if (MeasureText(word).Width >= maxpx)
@@ -292,7 +292,7 @@ namespace Gwen.Renderer
                 }
             }
             string seperator = string.Empty;
-            StringBuilder linebuilder = new StringBuilder();
+            StringBuilder linebuilder = new();
             int lnwidth = 0;
             for (int i = 0; i < words.Count; i++)
             {
@@ -326,8 +326,8 @@ namespace Gwen.Renderer
             // This function isnt 100% for performance but i think thats okay.
             string[] originallines = input.Replace("\r\n", "\n").Split('\n');
 
-            List<string> ret = new List<string>();
-            List<int> widths = new List<int>();
+            List<string> ret = [];
+            List<int> widths = [];
             foreach (string line in originallines)
             {
                 widths.Clear();
@@ -355,7 +355,7 @@ namespace Gwen.Renderer
         }
         private List<Vertex> GenerateTextInternal(int posx, int posy, string text, bool render, out Size size)
         {
-            List<Vertex> ret = new List<Vertex>(text.Length * 4);
+            List<Vertex> ret = new(text.Length * 4);
             int retwidth = 0;
             int retheight = LineHeight;
             int x = posx;

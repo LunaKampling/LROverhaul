@@ -16,7 +16,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using OpenTK.Graphics;
 using OpenTK.Mathematics;
 using System;
 
@@ -145,7 +144,7 @@ namespace linerider.Game
             return handled;
         }
 
-        public GameTrigger Clone() => new GameTrigger()
+        public GameTrigger Clone() => new()
         {
             Start = Start,
             End = End,

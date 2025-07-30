@@ -56,7 +56,7 @@ namespace linerider.UI
         }
         private CheckProperty AddPropertyCheckbox(PropertyTable prop, string label, bool value)
         {
-            CheckProperty check = new CheckProperty(null);
+            CheckProperty check = new(null);
             _ = prop.Add(label, check);
             check.IsChecked = value;
 
@@ -64,19 +64,19 @@ namespace linerider.UI
         }
         private void Setup()
         {
-            Panel content = new Panel(this)
+            Panel content = new(this)
             {
                 Dock = Dock.Fill,
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false
             };
-            Panel bottomrow = new Panel(content)
+            Panel bottomrow = new(content)
             {
                 Dock = Dock.Bottom,
                 AutoSizeToContents = true,
                 ShouldDrawBackground = false,
             };
-            PropertyTree proptree = new PropertyTree(content)
+            PropertyTree proptree = new(content)
             {
                 Dock = Dock.Top,
                 AutoSizeToContents = true,
@@ -101,14 +101,14 @@ namespace linerider.UI
                 Settings.Save();
             };
 
-            NumberProperty width = new NumberProperty(null)
+            NumberProperty width = new(null)
             {
                 Min = 1,
                 Max = 50000,
                 NumberValue = Settings.ScreenshotWidth,
                 OnlyWholeNumbers = true
             };
-            NumberProperty height = new NumberProperty(null)
+            NumberProperty height = new(null)
             {
                 Min = 1,
                 Max = 50000,
@@ -189,7 +189,7 @@ namespace linerider.UI
                 Settings.Save();
             };
             proptree.ExpandAll();
-            Button Cancel = new Button(bottomrow)
+            Button Cancel = new(bottomrow)
             {
                 Dock = Dock.Right,
                 Text = "Cancel",
@@ -199,7 +199,7 @@ namespace linerider.UI
             {
                 _ = Close();
             };
-            Button ok = new Button(bottomrow)
+            Button ok = new(bottomrow)
             {
                 Dock = Dock.Right,
                 Text = "Export"

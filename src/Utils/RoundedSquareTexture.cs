@@ -1,6 +1,5 @@
-﻿using Gwen.Skin.Texturing;
-using Gwen;
-using System;
+﻿using Gwen;
+using Gwen.Skin.Texturing;
 using SkiaSharp;
 
 namespace linerider.Utils
@@ -47,14 +46,14 @@ namespace linerider.Utils
             int flatAreaStart = Radius - 1;
             int flatAreaEnd = Radius + 1;
 
-            Margin bounds = new Margin(
+            Margin bounds = new(
                 _stretchHorizontally ? flatAreaStart : _width,
                 _stretchVertically ? flatAreaStart : _height,
                 _stretchHorizontally ? flatAreaEnd : 0,
                 _stretchVertically ? flatAreaEnd : 0
             );
 
-            Texture tx = new Texture(Gwen.Skin.SkinBase.DefaultSkin.Renderer);
+            Texture tx = new(Gwen.Skin.SkinBase.DefaultSkin.Renderer);
             Gwen.Renderer.OpenTK.LoadTextureInternal(tx, _bitmap);
 
             _texture = tx;
@@ -65,13 +64,15 @@ namespace linerider.Utils
         {
             int radius = _stretchHorizontally || _stretchVertically ? Radius - 1 : Radius;
 
-            SKBitmap bitmap = new SKBitmap(_width + radius, _height + radius);
-            SKPaint paint = new SKPaint {
+            SKBitmap bitmap = new(_width + radius, _height + radius);
+            SKPaint paint = new()
+            {
                 Color = Color.White
             };
-            
-            using (var surface = new SKCanvas(bitmap)) {
-                surface.DrawRoundRect(new Rectangle(0,0,_width, _height), radius, radius, paint);
+
+            using (var surface = new SKCanvas(bitmap))
+            {
+                surface.DrawRoundRect(new Rectangle(0, 0, _width, _height), radius, radius, paint);
             }
 
             return bitmap;
