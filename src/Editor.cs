@@ -521,7 +521,7 @@ namespace linerider
             Invalidate();
         }
 
-        public void NextFrame() => SetFrame(++Offset);
+        public void NextFrame() => SetFrame(Offset + 1);
 
         public void PreviousFrame() => SetFrame(Math.Max(0, Offset - 1));
         public void TogglePause()

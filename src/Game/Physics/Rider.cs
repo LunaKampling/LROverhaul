@@ -431,7 +431,7 @@ namespace linerider.Game
                     if (i < maxiteration - 1) ProcessBones(bones, body, ref dead, ref rState);
                     else
                     {
-                        ProcessBones(bones, body, ref dead, ref rTimer, subiteration: maxsubiteration);
+                        ProcessBones(bones, body, ref dead, ref rState, subiteration: maxsubiteration);
                         if (maxsubiteration < RiderConstants.Subiterations)
                         {
                             skipRestOfFrame = true;
