@@ -146,17 +146,7 @@ namespace linerider.UI.Widgets
         }
         public override void Think()
         {
-            if (_editor.Playing)
-                _slider.Max = Math.Max(_slider.Max, _editor.Offset);
-
-            if (_editor.Offset > _slider.Max)
-            {
-                _editor.SetFrame(_slider.Max, false);
-                _editor.UpdateCamera();
-                _editor.Scheduler.Reset();
-                Audio.AudioService.EnsureSync();
-            }
-
+            _slider.Max = Math.Max(_slider.Max, _editor.Offset);
             _slider.Value = _editor.Offset;
 
             if (!_playheadLimiter.IsHeld && _playheadLimiter.Value != _slider.Max)
