@@ -92,6 +92,12 @@ namespace linerider
                 RenderSize.Width,
                 RenderSize.Height).Vector;
 
+        public new Vector2i ClientSize
+        {
+            get => cachedClientSize;
+            set => base.ClientSize = value;
+        }
+        Vector2i cachedClientSize = Vector2i.Zero;
         public Editor Track { get; }
         private bool _uicursor = false;
         private Gwen.Input.OpenTK _input;
@@ -112,6 +118,7 @@ namespace linerider
             WindowBorder = WindowBorder.Resizable;
             RenderFrame += (o) => { Render(); };
             UpdateFrame += (o) => { GameUpdate(); };
+            Resize += (o) => { cachedClientSize = o.Size; };
             new Thread(AutosaveThreadRunner) { IsBackground = true, Name = "Autosave" }.Start();
             GameService.Initialize(this);
             AddonManager.Initialize(this);
