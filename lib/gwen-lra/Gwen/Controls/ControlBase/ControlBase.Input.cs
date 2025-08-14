@@ -244,11 +244,11 @@ namespace Gwen.Controls
         public virtual void DragAndDrop_SetPackage(bool draggable, string name = "", object userData = null)
         {
             m_DragAndDrop_Package ??= new Package
-                {
-                    IsDraggable = draggable,
-                    Name = name,
-                    UserData = userData
-                };
+            {
+                IsDraggable = draggable,
+                Name = name,
+                UserData = userData
+            };
         }
 
         // Giver

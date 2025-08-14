@@ -117,6 +117,10 @@ namespace linerider.UI.Widgets
                     _menu.Show();
                 },
             };
+            _ = new WidgetButton(this)
+            {
+
+            };
         }
         private void PopulateMenu()
         {
