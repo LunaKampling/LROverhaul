@@ -22,6 +22,7 @@ using linerider.UI;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
 using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Key = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
@@ -56,6 +57,8 @@ namespace linerider.Tools
         public override void OnChangingTool() => Stop();
         public override void OnMouseDown(Vector2d pos)
         {
+            Console.WriteLine(
+                "test");
             Active = true;
             Vector2d gamepos = ScreenToGameCoords(pos);
             if (EnableSnap)
