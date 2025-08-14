@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "Auto-formatting code..."
-make format
-git add -u
