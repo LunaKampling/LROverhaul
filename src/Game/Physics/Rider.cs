@@ -110,6 +110,16 @@ namespace linerider.Game
             return anchorsaverage / Body.Length;
         }
 
+        public double CalculateStrain(Bone[] bones)
+        {
+            double strain = 0.0;
+            foreach (Bone bone in bones)
+            {
+                strain += Math.Abs(bone.RestLength * (bone.OnlyRepel ? 2.0 : 1.0) - (Body[bone.joint1].Location - Body[bone.joint2].Location).Length);
+            }
+            return strain;
+        }
+
         public Vector2d CalculateMomentum()
         {
             Vector2d mo = Vector2d.Zero;

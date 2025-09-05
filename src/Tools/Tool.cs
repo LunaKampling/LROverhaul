@@ -310,6 +310,13 @@ namespace linerider.Tools
             int iteration = game.Track.IterationsOffset;
             if (offset == 0)
                 return false;
+            if (Settings.Editor.LifeLockStrainConstraint)
+            {
+                Rider _6th_it = timeline.GetFrame(offset);
+                double strain = _6th_it.CalculateStrain(timeline.Bones);
+                if (strain > Settings.Editor.LifeLockMaxStrain)
+                    return false;
+            }
             Rider frame = timeline.GetFrame(offset, iteration);
             if (!frame.Crashed)
             {

@@ -664,6 +664,28 @@ namespace linerider.UI
                 Settings.Editor.LifeLockNoFakie = ((Checkbox)o).IsChecked;
                 Settings.Save();
             });
+            
+            Spinner max_strain = new(lifelockGroup)
+            {
+                Min = 0,
+                Max = 99999999999,
+                Value = Settings.Editor.LifeLockMaxStrain,
+                IncrementSize = 0.1,
+                IsDisabled = !Settings.Editor.LifeLockStrainConstraint,
+            };
+            max_strain.ValueChanged += (o, e) =>
+            {
+                Settings.Editor.LifeLockMaxStrain = (float)((Spinner)o).Value;
+                Settings.Save();
+            };
+            
+            _ = GwenHelper.AddCheckbox(lifelockGroup, "Use Strain Constraint", Settings.Editor.LifeLockStrainConstraint, (o, e) =>
+            {
+                Settings.Editor.LifeLockStrainConstraint = ((Checkbox)o).IsChecked;
+                max_strain.IsDisabled = !Settings.Editor.LifeLockStrainConstraint;
+                Settings.Save();
+            });
+            _ = GwenHelper.CreateLabeledControl(lifelockGroup, "Max Strain", max_strain);
 
             Panel snappingGroup = GwenHelper.CreateHeaderPanel(parent, "Snapping");
 

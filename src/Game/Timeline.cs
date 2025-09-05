@@ -37,6 +37,14 @@ namespace linerider.Game
         private readonly ResourceSync _framesync = new();
         private readonly AutoArray<FrameInfo> _frames = new();
         private readonly Track _track;
+
+        public Bone[] Bones
+        {
+            get
+            {
+                return _track.Bones;
+            }
+        }
         public event EventHandler<int> FrameInvalidated;
         public Timeline(Track track)
         {
