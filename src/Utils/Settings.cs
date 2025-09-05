@@ -77,6 +77,8 @@ namespace linerider
             public static bool DrawContactPoints;
             public static bool LifeLockNoOrange;
             public static bool LifeLockNoFakie;
+            public static bool LifeLockStrainConstraint;
+            public static float LifeLockMaxStrain;
             public static bool ShowLineLength;
             public static bool ShowLineAngle;
             public static bool ShowLineID;
@@ -278,6 +280,8 @@ namespace linerider
             Editor.DrawContactPoints = false;
             Editor.LifeLockNoOrange = false;
             Editor.LifeLockNoFakie = false;
+            Editor.LifeLockStrainConstraint = false;
+            Editor.LifeLockMaxStrain = 100.0f;
             Editor.ShowLineLength = true;
             Editor.ShowLineAngle = true;
             Editor.ShowLineID = false;
@@ -714,6 +718,8 @@ namespace linerider
             LoadBool(GetSetting(lines, nameof(Editor.ShowCoordinateMenu)), ref Editor.ShowCoordinateMenu);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoFakie)), ref Editor.LifeLockNoFakie);
             LoadBool(GetSetting(lines, nameof(Editor.LifeLockNoOrange)), ref Editor.LifeLockNoOrange);
+            LoadBool(GetSetting(lines, nameof(Editor.LifeLockStrainConstraint)), ref Editor.LifeLockStrainConstraint);
+            LoadFloat(GetSetting(lines, nameof(Editor.LifeLockMaxStrain)), ref Editor.LifeLockMaxStrain);
             LoadBool(GetSetting(lines, nameof(LimitLineKnobsSize)), ref LimitLineKnobsSize);
             LoadInt(GetSetting(lines, nameof(SettingsPane)), ref SettingsPane);
             LoadBool(GetSetting(lines, nameof(MuteAudio)), ref MuteAudio);
@@ -852,6 +858,8 @@ namespace linerider
                 MakeSetting(nameof(Editor.ShowCoordinateMenu), Editor.ShowCoordinateMenu.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoFakie), Editor.LifeLockNoFakie.ToString(Program.Culture)),
                 MakeSetting(nameof(Editor.LifeLockNoOrange), Editor.LifeLockNoOrange.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.LifeLockStrainConstraint), Editor.LifeLockStrainConstraint.ToString(Program.Culture)),
+                MakeSetting(nameof(Editor.LifeLockMaxStrain), Editor.LifeLockMaxStrain.ToString(Program.Culture)),
                 MakeSetting(nameof(LimitLineKnobsSize), LimitLineKnobsSize.ToString(Program.Culture)),
                 MakeSetting(nameof(SettingsPane), SettingsPane.ToString(Program.Culture)),
                 MakeSetting(nameof(MuteAudio), MuteAudio.ToString(Program.Culture)),
